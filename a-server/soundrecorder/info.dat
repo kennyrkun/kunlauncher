@@ -1,0 +1,4 @@
+name="Sound Recorder";
+description="A simple sound recorder.";
+version="1.0";
+files="soundrecorder.exe";

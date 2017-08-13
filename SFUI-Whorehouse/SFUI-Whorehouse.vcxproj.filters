@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Backend">
+      <UniqueIdentifier>{caae652c-4633-4dbc-a7bc-ffb000be1681}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Backend\Base">
+      <UniqueIdentifier>{a925831e-8462-4458-9125-ee861f290a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Backend\Graphics">
+      <UniqueIdentifier>{8b23f8a4-1ca8-46b3-a1eb-59f55618fba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Launcher">
+      <UniqueIdentifier>{49766223-fb17-4305-bf41-56373eb750a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Launcher\States">
+      <UniqueIdentifier>{849e70b2-49f7-4852-9ad7-bae2d05af7e3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Link.cpp">
+      <Filter>Source Files\Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files\Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="Download.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadManager.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Modal.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Scrollbar.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="AppEngine.cpp">
+      <Filter>Source Files\Backend\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="AppListState.cpp">
+      <Filter>Source Files\Launcher\States</Filter>
+    </ClCompile>
+    <ClCompile Include="AppInfoState.cpp">
+      <Filter>Source Files\Launcher\States</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Link.hpp">
+      <Filter>Source Files\Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.hpp">
+      <Filter>Source Files\Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Download.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadManager.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Modal.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Scrollbar.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="AppEngine.hpp">
+      <Filter>Source Files\Backend\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="AppState.hpp">
+      <Filter>Source Files\Backend\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="AppListState.hpp">
+      <Filter>Source Files\Launcher\States</Filter>
+    </ClInclude>
+    <ClInclude Include="constants.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="AppInfoState.hpp">
+      <Filter>Source Files\Launcher\States</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

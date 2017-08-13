@@ -1,0 +1,4 @@
+name="VoidChat 2";
+description="it's a chat thingy.";
+version="2.1";
+files="release.zip";
