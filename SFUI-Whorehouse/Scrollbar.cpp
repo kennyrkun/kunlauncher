@@ -35,9 +35,6 @@ void Scrollbar::create(sf::RenderWindow* target_window)
 
 void Scrollbar::update(float contentHeight_, float viewportHeight)
 {
-	std::cout << "-----------------------" << std::endl;
-	std::cout << "recalculating scrollbar" << std::endl;
-
 	contentHeight_ += 8; // padding at the end
 	contentHeight = contentHeight_;
 	maxHeight = contentHeight;
@@ -54,27 +51,15 @@ void Scrollbar::update(float contentHeight_, float viewportHeight)
 	scrollbarThumb.setSize(sf::Vector2f(scrollbarThumb.getSize().x, thumbHeight));
 	scrollbarThumb.setOrigin(scrollbarThumb.getLocalBounds().width / 2, scrollbarThumb.getLocalBounds().height / 2);
 	scrollbarThumb.setPosition(scrollbar.getPosition().x, scrollbarThumb.getLocalBounds().height / 2);
-
-	std::cout << "content height: "	  << contentHeight << std::endl;
-	std::cout << "viewport height: "   << viewportHeight << std::endl;
-	std::cout << "viewable ratio: "	  << viewableRatio << std::endl;
-	std::cout << "track space: "	  << scrollTrackSpace << std::endl;
-	std::cout << "thumb jump: "		  << scrollJump << std::endl;
-	std::cout << "thumb height: "	  << thumbHeight << std::endl;
-	std::cout << "-----------------------" << std::endl;
 }
 
 void Scrollbar::moveThumbUp()
 {
-	std::cout << "moving thumb down" << std::endl;
-
 	scrollbarThumb.move(0, 1 * scrollJumpMultiplier);
 }
 
 void Scrollbar::moveThumbDown()
 {
-	std::cout << "moving thumb up" << std::endl;
-
 	scrollbarThumb.move(0, -1 * scrollJumpMultiplier);
 }
 

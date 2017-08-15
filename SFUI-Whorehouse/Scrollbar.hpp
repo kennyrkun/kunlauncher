@@ -23,6 +23,7 @@ public:
 	float minHeight;
 	float contentHeight;
 
+private:
 	sf::RenderWindow* targetWindow;
 };
 
