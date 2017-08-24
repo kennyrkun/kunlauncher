@@ -75,7 +75,14 @@ int Download::download()
 		if (!silent)
 			std::cout << "file does not exist on remote server (404)" << std::endl;
 
-		return 0;
+		return sf::Http::Response::NotFound;
+	}
+	else if (response.getStatus() == response.InternalServerError)
+	{
+		if (!silent)
+			std::cout << "internal server error was encountered, aborting..." << std::endl;
+
+		return sf::Http::Response::InternalServerError;
 	}
 
 	fileSize = response.getBody().size();
@@ -86,7 +93,7 @@ int Download::download()
 	if (!silent)
 		std::cout << "done downloading." << std::endl;
 
-	return 1;
+	return sf::Http::Response::Ok;
 }
 
 void Download::save()
