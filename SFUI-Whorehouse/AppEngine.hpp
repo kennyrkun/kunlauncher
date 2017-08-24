@@ -5,59 +5,33 @@
 #include <vector>
 #include <string>
 
-//class AppState;
-class AppState2;
-/*class AppEngine
+class AppState3;
+class AppEngine3
 {
 public:
-	void Init(std::string title, int width = 525, int height = 325);
+
+	void Init(std::string title, int width = 525, int height = 325, bool fullscreen = false);
 	void Cleanup();
 
-	void ChangeState(AppState* state);
-	void PushState(AppState* state);
+	void ChangeState(AppState3* state);
+	void PushState(AppState3* state);
 	void PopState();
 
 	void HandleEvents();
 	void Update();
 	void Draw();
 
-	bool Running() { return running; }
-	void Quit() { running = false; }
+	bool Running() { return m_running; }
+	void Quit() { m_running = false; }
 
 	sf::RenderWindow* window;
 
 private:
-	std::vector<AppState*> states;
+	// the stack of states
+	std::vector<AppState3*> states;
 
-	bool running;
-	bool fullscreen;
-};*/
-
-class AppEngine2
-{
-public:
-	AppEngine2(std::string title, int width = 525, int height = 325);
-	~AppEngine2();
-
-	void ChangeState(AppState2* state);
-	void PushState(AppState2* state);
-	void PopState();
-
-	void HandleEvents();
-	void Update();
-	void Draw();
-
-	bool Running() { return running; }
-	void Quit() { running = false; }
-
-	sf::RenderWindow* window;
-
-	std::vector<AppState2*> states;
-
-private:
-
-	bool running;
-	bool fullscreen;
+	bool m_running;
+	bool m_fullscreen;
 };
 
 #endif // !PROGRAM_ENGINE_HPP

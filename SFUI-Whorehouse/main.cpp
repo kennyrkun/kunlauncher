@@ -1,6 +1,5 @@
 #include "AppEngine.hpp"
 #include "AppListState.hpp"
-#include "AppInfoState.hpp"
 
 #include <iostream>
 
@@ -36,25 +35,18 @@ int main(int argc, char *argv[])
 	std::cout << std::endl;
 
 	{
-		AppEngine2* program = new AppEngine2("waiting");
+		AppEngine3* app = new AppEngine3;
+		app->Init("waiting");
 
-		AppListState *appListState = new AppListState(program);
-		program->ChangeState(appListState);
+		app->ChangeState(AppListState::Instance());
 
-		while (program->Running())
+		while (app->Running())
 		{
-			if (program->Running())
-				program->HandleEvents();
-
-			if (program->Running())
-				program->Update();
-
-			if (program->Running())
-				program->Draw();
+			app->HandleEvents();
+			app->Update();
+			app->Draw();
 		}
 
-		delete appListState;
-		delete program;
 	}
 
 	std::cin.get();

@@ -58,7 +58,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 
-	if (!downloadButtonTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\res\\tex\\get_app_1x.png"))
+	if (!downloadButtonTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + TEXTURE_DIRECTORY + "\\get_app_1x.png"))
 		downloadButton.setFillColor(sf::Color::Green);
 	downloadButtonTexture.setSmooth(true);
 	downloadButton.setTexture(&downloadButtonTexture);
@@ -66,7 +66,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	downloadButton.setOrigin(sf::Vector2f(downloadButton.getLocalBounds().width / 2, downloadButton.getLocalBounds().height / 2));
 	downloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 
-	redownloadButtonTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\res\\tex\\auto_renew_1x.png");
+	redownloadButtonTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + TEXTURE_DIRECTORY + "\\auto_renew_1x.png");
 	redownloadButtonTexture.setSmooth(true);
 	redownloadButton.setTexture(&redownloadButtonTexture);
 	redownloadButton.setRadius(10);
@@ -74,7 +74,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
 
-	if (!removeButtonTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\res\\tex\\delete_forever_1x.png"))
+	if (!removeButtonTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + TEXTURE_DIRECTORY + "\\delete_forever_1x.png"))
 		removeButton.setFillColor(sf::Color::Red);
 	removeButtonTexture.setSmooth(true);
 	removeButton.setTexture(&removeButtonTexture);
@@ -82,7 +82,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	removeButton.setOrigin(sf::Vector2f(removeButton.getLocalBounds().width / 2, removeButton.getLocalBounds().height / 2));
 	removeButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 15));
 
-	if (!launchButtonTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\res\\tex\\launch_1x.png"))
+	if (!launchButtonTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + TEXTURE_DIRECTORY + "\\launch_1x.png"))
 		launchButton.setFillColor(sf::Color::Green);
 	launchButtonTexture.setSmooth(true);
 	launchButton.setTexture(&launchButtonTexture);
@@ -104,6 +104,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 			std::cout << "info is missing, downloading..." << std::endl;
 
 			downloadInfo();
+			parseInfo(installDir);
 		}
 		else
 		{
@@ -114,9 +115,8 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 		{
 			cardShape.setFillColor(sf::Color(100, 100, 100));
 			downloaded = true;
+			checkForUpdate();
 		}
-
-		checkForUpdate();
 	}
 	else // if we don't know about it, learn about it
 	{
@@ -177,7 +177,7 @@ bool Item::checkForUpdate()
 	}
 	else
 	{
-		std::cout << "item is up to date! :D" << std::endl;
+		std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
 	}
 
 	return false;
@@ -225,8 +225,17 @@ void Item::download()
 	}
 
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
+
+	if (updateIsAvailable)
+	{
+		redownloadButton.setFillColor(sf::Color::White);
+		updateIsAvailable = false;
+	}
+
 	redownloadButton.setRotation(30);
 	isDownloading = false;
+
+	parseInfo(installDir);
 }
 
 void Item::openItem()

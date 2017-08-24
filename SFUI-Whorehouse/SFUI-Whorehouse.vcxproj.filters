@@ -49,9 +49,6 @@
     <ClCompile Include="AppListState.cpp">
       <Filter>Source Files\Launcher\States</Filter>
     </ClCompile>
-    <ClCompile Include="AppInfoState.cpp">
-      <Filter>Source Files\Launcher\States</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Link.hpp">
@@ -83,9 +80,6 @@
     </ClInclude>
     <ClInclude Include="constants.hpp">
       <Filter>Source Files\Backend</Filter>
-    </ClInclude>
-    <ClInclude Include="AppInfoState.hpp">
-      <Filter>Source Files\Launcher\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

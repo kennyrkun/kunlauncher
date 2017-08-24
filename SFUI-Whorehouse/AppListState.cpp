@@ -1,7 +1,6 @@
 #include "AppEngine.hpp"
 #include "AppState.hpp"
 #include "AppListState.hpp"
-#include "AppInfoState.hpp"
 
 #include "Download.hpp"
 #include "Modal.hpp"
@@ -15,10 +14,12 @@
 #include <fstream>
 #include <experimental\filesystem>
 
+AppListState AppListState::AppListState_dontfuckwithme;
+
 sf::Font font;
 std::vector<std::thread> threads;
 
-AppListState::AppListState(AppEngine2* app_)
+void AppListState::Init(AppEngine3* app_)
 {
 	std::cout << "AppListState Init" << std::endl;
 
@@ -100,10 +101,11 @@ AppListState::AppListState(AppEngine2* app_)
 	updateScrollThumb();
 }
 
-AppListState::~AppListState()
+void AppListState::Cleanup()
 {
 	delete cardScroller;
-	delete app;
+//	delete app; // dont delete app because it's being used by the thing and we need it.
+//	app = nullptr;
 
 	std::cout << "AppListState Cleanup" << std::endl;
 }
@@ -126,6 +128,11 @@ void AppListState::HandleEvents()
 		if (event.type == sf::Event::EventType::Closed)
 		{
 			app->Quit();
+		}
+		else if (event.type == sf::Event::EventType::Resized)
+		{
+			cardScroller->setCenter(0, 0);
+			cardScroller->setSize(event.size.width, event.size.height);
 		}
 		else if (event.type == sf::Event::EventType::MouseWheelMoved) // thanks sfconsole
 		{
@@ -161,7 +168,7 @@ void AppListState::HandleEvents()
 						{
 							ModalOptions modOptions;
 							modOptions.title = "Confirm Deletion";
-							modOptions.text = "Delete " + items[i]->itemName;
+							modOptions.text = "Delete \"" + items[i]->itemName + "\"?";
 							std::vector<std::string> modaloptions;
 							modaloptions.push_back("No");
 							modaloptions.push_back("Yes");
@@ -205,10 +212,6 @@ void AppListState::HandleEvents()
 
 							clicked = true;
 							break;
-						}
-						else if (false)
-						{
-							app->PushState(new AppInfoState2(this->app, app->states.size()));
 						}
 					}
 					else
@@ -261,8 +264,6 @@ void AppListState::Update()
 void AppListState::Draw()
 {
 	app->window->clear(sf::Color(50, 50, 50));
-
-	items[0]->name.setString(std::to_string(threads.size()));
 
 	for (size_t i = 0; i < threads.size(); i++)
 	{
@@ -319,6 +320,8 @@ void AppListState::loadApps()
 	{
 		setTaskSubtext("creating bin folder");
 		std::experimental::filesystem::create_directory(".\\" + BASE_DIRECTORY);
+
+		settings.updateItemsOnStart = true;
 	}
 	else
 	{
@@ -336,6 +339,8 @@ void AppListState::loadApps()
 		setTaskSubtext("creating empty index files");
 		std::ofstream createIndex(".\\" + BASE_DIRECTORY + "\\index.dat");
 		createIndex.close();
+
+		settings.updateItemsOnStart = true;
 	}
 
 	//TODO: this will stop items from updating if it's disabled
@@ -561,8 +566,6 @@ bool AppListState::mouseIsOver(sf::Text &object)
 
 void AppListState::setTaskText(std::string text)
 {
-	std::cout << "setting text to \"" << text << "\"" << std::endl;
-
 	currentLauncherTask.setString(text);
 	currentLauncherTask.setOrigin(currentLauncherTask.getLocalBounds().width / 2, currentLauncherTask.getLocalBounds().height - 20);
 	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getDefaultView().getCenter().x), static_cast<int>(app->window->getDefaultView().getCenter().y + 70)));
@@ -570,8 +573,6 @@ void AppListState::setTaskText(std::string text)
 
 void AppListState::setTaskSubtext(std::string text)
 {
-	std::cout << "setting subtext to \"" << text << "\"" << std::endl;
-
 	currentLauncherSubtask.setString(text);
 	currentLauncherSubtask.setOrigin(currentLauncherSubtask.getLocalBounds().width / 2, currentLauncherSubtask.getLocalBounds().height - 20);
 	currentLauncherSubtask.setPosition(sf::Vector2f(static_cast<int>(app->window->getDefaultView().getCenter().x), static_cast<int>(app->window->getDefaultView().getCenter().y + 96)));
