@@ -10,7 +10,7 @@ public:
 	~Link();
 
 	sf::RectangleShape cardShape;
-	sf::RectangleShape followLink;
+	sf::RectangleShape followLinkButton;
 	std::string linkRel;
 	sf::Text linkText;
 	int cardNumber; // used to store depth

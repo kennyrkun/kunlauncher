@@ -50,17 +50,17 @@ private:
 	sf::Font	font;
 	sf::Text	description;
 	sf::Text	version;
-	std::string fileName;
 
-	std::ifstream& GotoLine(std::ifstream& file, unsigned int num);
+	std::ifstream& GotoLine(std::ifstream& file, unsigned int line);
 
 	void parseInfo(std::string dir);
 
-	void downloadIcon();
-	void downloadInfo();
-	void downloadFiles();
-	void deleteIcon();
-	void deleteInfo();
+	int downloadIcon();
+	int downloadInfo();
+	int downloadFiles();
+
+	int downloadFile(std::string fileName, std::string inPath, std::string outPath);
+	int deleteFile(std::string fileName, std::string filePath);
 };
 
 #endif

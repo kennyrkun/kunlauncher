@@ -6,23 +6,31 @@
 #include <fstream>
 #include <cmath>
 
-Download::Download(bool)
+Download::Download(bool silent_)
 {
-	silent = true;
+	if (silent_ == true)
+		silent = true;
+	else
+		silent = false;
 
-	// nothing
+	silent = false;
+
+	if (!silent)
+		std::cout << "downloader created" << std::endl;
 }
 
 Download::Download()
 {
 	silent = false;
 
-	// nothing
+	if (!silent)
+		std::cout << "downloader created" << std::endl;
 }
 
 Download::~Download()
 {
-	// nothing
+	if (!silent)
+		std::cout << "downloader killed" << std::endl;
 }
 
 void Download::setOutputDir(std::string dir)
@@ -32,7 +40,7 @@ void Download::setOutputDir(std::string dir)
 	if (!silent)
 		std::cout << "output set to: " << outdir << std::endl;
 
-	if (!exists(outdir))
+	if (!std::experimental::filesystem::exists(outdir))
 		createDirectory(outdir);
 }
 
@@ -41,13 +49,13 @@ std::string Download::getOutputDir()
 	return outdir;
 }
 
-void Download::setOutputFile(std::string file)
+void Download::setOutputFilename(std::string file)
 {
 	outfile = file;
 //	std::cout << "output file set to: " << outfile << std::endl;
 }
 
-std::string Download::getOutputFile()
+std::string Download::getOutputFilename()
 {
 	return outfile;
 }
@@ -70,37 +78,47 @@ int Download::download()
 	sf::Http::Request request("/" + inpath, sf::Http::Request::Get);
 	sf::Http::Response response = http.sendRequest(request);
 
-	if (response.getStatus() == response.NotFound)
-	{
-		if (!silent)
-			std::cout << "file does not exist on remote server (404)" << std::endl;
-
-		return sf::Http::Response::NotFound;
-	}
-	else if (response.getStatus() == response.InternalServerError)
-	{
-		if (!silent)
-			std::cout << "internal server error was encountered, aborting..." << std::endl;
-
-		return sf::Http::Response::InternalServerError;
-	}
-
 	fileSize = response.getBody().size();
 	if (!silent)
-		std::cout << "downloading remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... ";
+		std::cout << "downloading remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... " << std::endl;
 	 
 	fileBuffer = response.getBody();
 	if (!silent)
 		std::cout << "done downloading." << std::endl;
 
-	return sf::Http::Response::Ok;
+	switch (response.getStatus())
+	{
+	case response.Ok:
+		if (!silent)
+			std::cout << "successfully connected to file server, and got files" << std::endl;
+
+		return sf::Http::Response::Status::Ok;
+		break;
+
+	case response.NotFound:
+		if (!silent)
+			std::cout << "file does not exist on remote server (404)" << std::endl;
+
+		return sf::Http::Response::Status::NotFound;
+		break;
+
+	case response.InternalServerError:
+		if (!silent)
+			std::cout << "internal server error was encountered, aborting..." << std::endl;
+
+		return sf::Http::Response::Status::InternalServerError;
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Download::save()
 {
 	std::ofstream downloadFile(outdir + outfile, std::ios::out | std::ios::binary);
 	if (!silent)
-		std::cout << "saving file to \"" << outdir << outfile << "\"... ";
+		std::cout << "saving file to \"" << outdir << outfile << "\"... " << std::endl;
 
 	for (int i = 0; i < fileSize; i++)
 		downloadFile << fileBuffer[i];
@@ -116,7 +134,7 @@ void Download::save()
 
 std::string Download::getAppropriateFileSize(const long long int bytes, const int decimals)
 {
-	int bytesPerUnit = 1000;
+	int bytesPerUnit = 1024;
 	std::string sizes[] = { "Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "UNDEFINED" };
 	int i = std::floor(std::log(bytes) / std::log(bytesPerUnit));
 
@@ -129,42 +147,22 @@ std::string Download::getAppropriateFileSize(const long long int bytes, const in
 
 void Download::createDirectory(std::string dir)
 {
-	namespace fs = std::experimental::filesystem;
-
 //	std::cout << "creating " << dir << "... ";
 
-	std::vector<fs::path> subdirectories;
+	std::vector<std::experimental::filesystem::path> subdirectories;
 	dir.erase(0, 2); // .\\
 
-	for (auto& part : fs::path(dir))
+	for (auto& part : std::experimental::filesystem::path(dir))
 	{
 		subdirectories.push_back(part);
 	}
 
-	fs::path last = subdirectories.front(); // first path
+	std::experimental::filesystem::path last = subdirectories.front(); // first path
 	for (size_t i = 0; i < subdirectories.size() - 1; i++)
 	{
-		fs::create_directory(last);
+		std::experimental::filesystem::create_directory(last);
 		last = last.append(subdirectories[i + 1]); // add the next path to this path
 	}
 
 //	std::cout << "done." << std::endl;
-}
-
-bool Download::exists(std::string thing)
-{
-//	std::cout << "checking if " << thing << " exists... ";
-
-	if (std::experimental::filesystem::exists(thing))
-	{
-//		std::cout << "yes" << std::endl;
-
-		return true;
-	}
-	else
-	{
-//		std::cout << "no" << std::endl;
-
-		return false;
-	}
 }

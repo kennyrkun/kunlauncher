@@ -233,7 +233,7 @@ int Launcher::Main()
 					//links
 					for (size_t i = 0; i < links.size(); i++)
 					{
-						if (mouseIsOver(links[i]->linkText) || mouseIsOver(links[i]->followLink))
+						if (mouseIsOver(links[i]->linkText) || mouseIsOver(links[i]->followLinkButton))
 						{
 							// follow link
 							links[i]->follow();
@@ -614,7 +614,7 @@ bool Launcher::checkForLauncherUpdates()
 		Download getNewWhorehouse;
 		getNewWhorehouse.setInputPath("latest.noexe");
 		getNewWhorehouse.setOutputDir(".\\");
-		getNewWhorehouse.setOutputFile("kunlauncher.exe");
+		getNewWhorehouse.setOutputFilename("kunlauncher.exe");
 		getNewWhorehouse.download();
 
 		setTaskSubtext("saving updated launcher");

@@ -3,10 +3,10 @@
 
 #include "AppEngine.hpp"
 
-class AppState3
+class AppState
 {
 public:
-	virtual void Init(AppEngine3* app_) = 0;
+	virtual void Init(AppEngine* app_) = 0;
 	virtual void Cleanup() = 0;
 
 	virtual void Pause() = 0;
@@ -16,16 +16,16 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
-	void ChangeState(AppState3* state)
+	void ChangeState(AppState* state)
 	{
 		app->ChangeState(state);
 	}
 
 protected:
-	AppState3() { }
+	AppState() { }
 
 private:
-	AppEngine3* app;
+	AppEngine* app;
 };
 
 #endif // !APP_STATE_HPP

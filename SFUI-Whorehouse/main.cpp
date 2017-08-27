@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 	std::cout << std::endl;
 
 	{
-		AppEngine3* app = new AppEngine3;
+		AppEngine* app = new AppEngine;
 		app->Init("waiting");
 
 		app->ChangeState(AppListState::Instance());

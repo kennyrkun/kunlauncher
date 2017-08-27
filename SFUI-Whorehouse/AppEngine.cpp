@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-void AppEngine3::Init(std::string title, int width, int height, bool fullscreen)
+void AppEngine::Init(std::string title, int width, int height, bool fullscreen)
 {
 	// initialize SDL
 	window = new sf::RenderWindow(sf::VideoMode(width, height), "oof");
@@ -11,11 +11,13 @@ void AppEngine3::Init(std::string title, int width, int height, bool fullscreen)
 	m_fullscreen = fullscreen;
 	m_running = true;
 
-	std::cout << "CGameEngine Init" << std::endl;
+	std::cout << "AppEngine Init" << std::endl;
 }
 
-void AppEngine3::Cleanup()
+void AppEngine::Cleanup()
 {
+	std::cout << "Cleaning up AppEngine." << std::endl;
+	
 	// cleanup the all states
 	while (!states.empty())
 	{
@@ -25,10 +27,10 @@ void AppEngine3::Cleanup()
 
 	window->close();
 
-	std::cout << "CGameEngine Cleanup" << std::endl;
+	std::cout << "AppEngine cleaned up." << std::endl;
 }
 
-void AppEngine3::ChangeState(AppState3* state)
+void AppEngine::ChangeState(AppState* state)
 {
 	// cleanup the current state
 	if (!states.empty()) {
@@ -41,7 +43,7 @@ void AppEngine3::ChangeState(AppState3* state)
 	states.back()->Init(this);
 }
 
-void AppEngine3::PushState(AppState3* state)
+void AppEngine::PushState(AppState* state)
 {
 	// pause current state
 	if (!states.empty())
@@ -52,7 +54,7 @@ void AppEngine3::PushState(AppState3* state)
 	states.back()->Init(this);
 }
 
-void AppEngine3::PopState()
+void AppEngine::PopState()
 {
 	// cleanup the current state
 	if (!states.empty())
@@ -68,18 +70,18 @@ void AppEngine3::PopState()
 	}
 }
 
-void AppEngine3::HandleEvents()
+void AppEngine::HandleEvents()
 {
 	states.back()->HandleEvents();
 }
 
-void AppEngine3::Update()
+void AppEngine::Update()
 {
 	// let the state update the game
 	states.back()->Update();
 }
 
-void AppEngine3::Draw()
+void AppEngine::Draw()
 {
 	// let the state draw the screen
 	states.back()->Draw();

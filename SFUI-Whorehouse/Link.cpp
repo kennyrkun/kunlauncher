@@ -19,36 +19,23 @@ Link::Link(std::string raw, sf::RenderWindow* target_window, float xPos)
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
 	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, xPos)); // probably not the best
 	cardShape.setFillColor(sf::Color(100, 100, 100));
-//	cardShape.setOutlineColor(sf::Color::Magenta);
-//	cardShape.setOutlineThickness(1.0f);
 
 	font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
 	linkText.setFont(font);
-	linkText.setPosition(sf::Vector2f(cardShape.getPosition().x - 230, cardShape.getPosition().y));
-
-	std::string text = linkText.getString();
-	if (text.find('p') != std::string::npos ||
-		text.find('g') != std::string::npos ||
-		text.find('j') != std::string::npos ||
-		text.find('q') != std::string::npos ||
-		text.find('y') != std::string::npos)
-		linkText.setPosition(cardShape.getPosition().x - 230, cardShape.getPosition().y + 4);
-	else
-		linkText.setPosition(cardShape.getPosition().x - 230, cardShape.getPosition().y - 2);
-
-	linkText.setOrigin(0, linkText.getLocalBounds().height - 1);
+//	linkText.setPosition(sf::Vector2f(cardShape.getPosition().x - 240, cardShape.getPoint(0).y + 5));
+	linkText.setPosition(sf::Vector2f(cardShape.getPosition().x - 242, cardShape.getPosition().y - 22));
 	linkText.setStyle(sf::Text::Underlined);
 	linkText.setFillColor(sf::Color(0, 170, 232));
 
 	// don't center them because they may get longer or shorter, but they need to be left aligned
-	followLinkTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\res\\tex\\input_1x.png");
+	followLinkTexture.loadFromFile(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + TEXTURE_DIRECTORY + "\\input_1x.png");
 	followLinkTexture.setSmooth(true);
-	followLink.setTexture(&followLinkTexture);
-	followLink.setSize(sf::Vector2f(24, 24));
-	followLink.setOrigin(sf::Vector2f(followLink.getLocalBounds().width / 2, followLink.getLocalBounds().height / 2));
+	followLinkButton.setTexture(&followLinkTexture);
+	followLinkButton.setSize(sf::Vector2f(24, 24));
+	followLinkButton.setOrigin(sf::Vector2f(followLinkButton.getLocalBounds().width / 2, followLinkButton.getLocalBounds().height / 2));
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
-	followLink.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
+	followLinkButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 
 	std::cout << "card is ready" << std::endl;
 }
@@ -72,7 +59,7 @@ void Link::draw()
 {
 	targetWindow->draw(cardShape);
 	targetWindow->draw(linkText);
-	targetWindow->draw(followLink);
+	targetWindow->draw(followLinkButton);
 }
 
 // private

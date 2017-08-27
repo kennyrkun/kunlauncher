@@ -5,16 +5,16 @@
 #include <vector>
 #include <string>
 
-class AppState3;
-class AppEngine3
+class AppState;
+class AppEngine
 {
 public:
 
 	void Init(std::string title, int width = 525, int height = 325, bool fullscreen = false);
 	void Cleanup();
 
-	void ChangeState(AppState3* state);
-	void PushState(AppState3* state);
+	void ChangeState(AppState* state);
+	void PushState(AppState* state);
 	void PopState();
 
 	void HandleEvents();
@@ -28,7 +28,7 @@ public:
 
 private:
 	// the stack of states
-	std::vector<AppState3*> states;
+	std::vector<AppState*> states;
 
 	bool m_running;
 	bool m_fullscreen;

@@ -14,8 +14,8 @@ class Item;
 struct LaunchOptions
 {
 #ifdef _DEBUG
-	bool updateItemsOnStart = false;
-	bool updateLauncherOnStart = false;
+	bool updateItemsOnStart = true;
+	bool updateLauncherOnStart = true;
 #else
 	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = true;
@@ -23,10 +23,10 @@ struct LaunchOptions
 	int width = 525;
 };
 
-class AppListState : public AppState3
+class AppListState : public AppState
 {
 public:
-	void Init(AppEngine3* app_);
+	void Init(AppEngine* app_);
 	void Cleanup();
 
 	void Pause();
@@ -46,7 +46,7 @@ protected:
 
 private:
 	static AppListState AppListState_dontfuckwithme;
-	AppEngine3* app;
+	AppEngine* app;
 
 	LaunchOptions settings;
 	sf::View *cardScroller;
@@ -68,7 +68,9 @@ private:
 
 	void initialisise();
 	void loadApps();
+
 	bool checkForLauncherUpdates();
+	std::string updateLauncher();
 
 	void updateScrollThumb();
 

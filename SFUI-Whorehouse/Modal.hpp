@@ -21,6 +21,7 @@ public:
 	Modal(ModalOptions settings_);
 	~Modal();
 
+	void close();
 	int returnCode;
 
 private:

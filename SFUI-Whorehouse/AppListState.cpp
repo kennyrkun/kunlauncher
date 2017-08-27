@@ -19,7 +19,7 @@ AppListState AppListState::AppListState_dontfuckwithme;
 sf::Font font;
 std::vector<std::thread> threads;
 
-void AppListState::Init(AppEngine3* app_)
+void AppListState::Init(AppEngine* app_)
 {
 	std::cout << "AppListState Init" << std::endl;
 
@@ -69,12 +69,14 @@ void AppListState::Init(AppEngine3* app_)
 		{
 			if (event.type == sf::Event::EventType::Closed)
 			{
-				app->window->close();
+				app->Quit();
 			}
 		}
 
 		if (helperDone)
 		{
+			std::cout << "joining" << std::endl;
+
 			helperThread->join();
 			delete helperThread;
 			helperDone = true;
@@ -138,11 +140,11 @@ void AppListState::HandleEvents()
 		{
 			if (event.mouseWheel.delta < 0) // up
 			{
-				if ((cardScroller->getCenter().y - cardScroller->getSize().y) < scrollbar.scrollJumpMultiplier) // top of the thing
-				{
+//				if ((cardScroller->getCenter().y - cardScroller->getSize().y) < scrollbar.scrollJumpMultiplier) // bottom of the thing
+//				{
 					cardScroller->move(0, scrollbar.scrollJump);
 					scrollbar.moveThumbUp();
-				}
+//				}
 			}
 			else if (event.mouseWheel.delta > 0) // scroll down
 			{
@@ -235,7 +237,7 @@ void AppListState::HandleEvents()
 				//links
 				for (size_t i = 0; i < links.size(); i++)
 				{
-					if (mouseIsOver(links[i]->linkText) || mouseIsOver(links[i]->followLink))
+					if (mouseIsOver(links[i]->linkText) || mouseIsOver(links[i]->followLinkButton))
 					{
 						// follow link
 						links[i]->follow();
@@ -297,21 +299,60 @@ void AppListState::initialisise()
 	if (settings.updateLauncherOnStart)
 	{
 		setTaskText("checking for updates...");
-		checkForLauncherUpdates();
+		
+		if (checkForLauncherUpdates())
+		{
+			std::string remoteVersion = updateLauncher(); // feels kinda hacky
+
+			ModalOptions modOptions;
+			modOptions.text = "Launcher updated";
+
+			if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
+			{
+				modOptions.text = "server fucked up, committing suicide.";
+				modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
+			}
+			else
+			{
+				modOptions.text = "Launcher updated to v" + remoteVersion + "! Restart it!";
+				modOptions.settings = { "Restart Now", "Restart Later" };
+			}
+
+
+			Modal updateSuccessfulModal(modOptions);
+
+			switch (updateSuccessfulModal.returnCode)
+			{
+			case 0:
+				std::cout << "restarting now" << std::endl;
+				exit(0); // TODO: shutdown properly
+				break;
+				
+			case 1:
+				std::cout << "restarting later" << std::endl;
+				updateSuccessfulModal.close();
+
+				setTaskText("setting up UI");
+
+				scrollbar.create(app->window);
+				updateScrollThumb();
+
+				loadApps();
+				setTaskText("ready");
+
+				break;
+
+			default:
+				break;
+			}
+			
+		}
 	}
-
-	setTaskText("setting up UI");
-
-	scrollbar.create(app->window);
-	updateScrollThumb();
-
-	loadApps();
-	setTaskText("ready");
 
 	helperDone = true;
 }
 
-void AppListState::loadApps()
+void AppListState::loadApps() // TOOD: this.
 {
 	setTaskText("loading apps");
 	setTaskSubtext("checking files");
@@ -394,6 +435,7 @@ void AppListState::loadApps()
 
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
+	std::cout << std::endl;
 
 	std::ifstream readIndex(".\\" + BASE_DIRECTORY + "\\index.dat", std::ios::in);
 	int loopi(0);
@@ -407,33 +449,30 @@ void AppListState::loadApps()
 		{
 			if (comesAfterItem)
 			{
-				std::cout << "comes after item" << std::endl;
+				std::cout << "(link after item)" << std::endl;
 
-				std::cout << "link: " << line << std::endl;
 				Link* newLink = new Link(line, app->window, items.back()->cardShape.getPosition().y + 65); // we don't check to make sure this isn't empty, because we know there's an item before it.
 				links.push_back(newLink);
 			}
-			else // after a link or first
+			else // after a link or first of  either
 			{
-				std::cout << "does not come after item" << std::endl;
-
 				Link* newLink;
 
 				if (links.empty())
 				{
 					newLink = new Link(line, app->window, 28);
 
-					std::cout << "does not come after link" << std::endl;
+					std::cout << "(link not after item, first link)" << std::endl;
 				}
-				else
+				else // not the first link
 				{
 					newLink = new Link(line, app->window, links.back()->cardShape.getPosition().y + 48);
 
-					std::cout << "comes after link" << std::endl;
+					std::cout << "(link after link, not after item)" << std::endl;
 				}
 
-				std::cout << "link2: " << line << std::endl;
 				links.push_back(newLink);
+				std::cout << std::endl;
 			}
 
 			comesAfterItem = false;
@@ -443,7 +482,7 @@ void AppListState::loadApps()
 		{
 			if (comesAfterLink)
 			{
-				std::cout << "comes after link" << std::endl;
+				std::cout << "(item after link)" << std::endl;
 
 				Item* newItem = new Item(line, app->window, links.back()->cardShape.getPosition().y + 65);
 				items.push_back(newItem);
@@ -451,7 +490,7 @@ void AppListState::loadApps()
 			}
 			else // not after a link
 			{
-				std::cout << "does not come after link" << std::endl;
+				std::cout << "(item not after link)" << std::endl;
 
 				Item* newItem;
 
@@ -500,6 +539,22 @@ bool AppListState::checkForLauncherUpdates()
 	std::cout << "r" << remoteVersion << " : " << "l" << launcherVersion << std::endl;
 
 	if (remoteVersion != launcherVersion)
+		return true;
+	else
+		return false;
+}
+
+std::string AppListState::updateLauncher()
+{
+	Download getHoHouse;
+	getHoHouse.setInputPath("version.info");
+	getHoHouse.download();
+
+	std::string remoteVersion = getHoHouse.fileBuffer;
+
+	std::cout << "r" << remoteVersion << " : " << "l" << launcherVersion << std::endl;
+
+	if (remoteVersion != launcherVersion)
 	{
 		setTaskText("updating launcher");
 
@@ -509,7 +564,7 @@ bool AppListState::checkForLauncherUpdates()
 		Download getNewWhorehouse;
 		getNewWhorehouse.setInputPath("latest.noexe");
 		getNewWhorehouse.setOutputDir(".\\");
-		getNewWhorehouse.setOutputFile("kunlauncher.exe");
+		getNewWhorehouse.setOutputFilename("kunlauncher.exe");
 		getNewWhorehouse.download();
 
 		setTaskSubtext("saving updated launcher");
@@ -525,13 +580,11 @@ bool AppListState::checkForLauncherUpdates()
 
 		getNewWhorehouse.save();
 
-		helperDone = true;
-		return true;
+		return remoteVersion;
 	}
 	else
 	{
-		//helperDone = true;
-		return false;
+		return launcherVersion;
 	}
 }
 

@@ -44,7 +44,7 @@ Modal::Modal(ModalOptions settings_)
 		{
 			std::cout << "first shape x is " << newButton->m_shape.getGlobalBounds().width << std::endl;
 
-			newButton->setPosition(sf::Vector2f((window.getDefaultView().getCenter().x * 2) - (newButton->m_shape.getLocalBounds().width / 2) - 4, static_cast<int>(window.getDefaultView().getCenter().y + 20)));
+			newButton->setPosition(sf::Vector2f((window.getDefaultView().getCenter().x * 2) - (newButton->m_shape.getLocalBounds().width / 2) - 4, static_cast<int>(window.getDefaultView().getCenter().y + 22)));
 		}
 		else
 		{
@@ -68,6 +68,8 @@ Modal::Modal(ModalOptions settings_)
 			if (event.type == sf::Event::EventType::Closed)
 			{
 				window.close();
+
+				returnCode = -1;
 			}
 			else if (event.type == sf::Event::EventType::MouseButtonReleased)
 			{
@@ -116,6 +118,10 @@ Modal::~Modal()
 
 // public:
 
+void Modal::close()
+{
+	window.close();
+}
 
 
 // private:

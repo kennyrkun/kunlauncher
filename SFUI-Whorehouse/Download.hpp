@@ -13,8 +13,8 @@ public:
 	void setOutputDir(std::string dir);
 	std::string getOutputDir();
 
-	void setOutputFile(std::string file);
-	std::string getOutputFile();
+	void setOutputFilename(std::string file);
+	std::string getOutputFilename();
 
 	void setInputPath(std::string path);
 	std::string getInputPath();
@@ -35,7 +35,6 @@ private:
 	bool silent;
 
 	void createDirectory(std::string dir);
-	bool exists(std::string thing);
 };
 
 #endif
