@@ -75,7 +75,7 @@ void AppListState::Init(AppEngine* app_)
 
 		if (helperDone)
 		{
-			std::cout << "joining" << std::endl;
+			std::cout << "helper is done, joining" << std::endl;
 
 			helperThread->join();
 			delete helperThread;
@@ -100,7 +100,8 @@ void AppListState::Init(AppEngine* app_)
 	std::cout << "helperDone: " << helperDone << std::endl;
 	std::cout << "helperRunning: " << helperRunning << std::endl;
 
-	updateScrollThumb();
+	std::cout << "links: " << links.size() << std::endl;
+	std::cout << "items: " << items.size() << std::endl;
 }
 
 void AppListState::Cleanup()
@@ -296,6 +297,8 @@ void AppListState::Draw()
 
 void AppListState::initialisise()
 {
+	scrollbar.create(app->window);
+
 	if (settings.updateLauncherOnStart)
 	{
 		setTaskText("checking for updates...");
@@ -318,7 +321,6 @@ void AppListState::initialisise()
 				modOptions.settings = { "Restart Now", "Restart Later" };
 			}
 
-
 			Modal updateSuccessfulModal(modOptions);
 
 			switch (updateSuccessfulModal.returnCode)
@@ -332,22 +334,22 @@ void AppListState::initialisise()
 				std::cout << "restarting later" << std::endl;
 				updateSuccessfulModal.close();
 
-				setTaskText("setting up UI");
-
-				scrollbar.create(app->window);
-				updateScrollThumb();
-
-				loadApps();
-				setTaskText("ready");
-
-				break;
-
 			default:
 				break;
 			}
-			
+		}
+		else
+		{
+			std::cout << "no updates were found" << std::endl;
 		}
 	}
+	else
+	{
+		std::cout << "skipping check for updates" << std::endl;
+	}
+
+	loadApps();
+	setTaskText("ready");
 
 	helperDone = true;
 }
@@ -507,6 +509,7 @@ void AppListState::loadApps() // TOOD: this.
 			comesAfterLink = false;
 		}
 
+		updateScrollThumb();
 		loopi += 1;
 	}
 

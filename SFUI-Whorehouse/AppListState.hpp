@@ -60,7 +60,7 @@ private:
 	bool helperRunning = false;
 	bool helperDone = false;
 
-	std::string launcherVersion = "0.10.0";
+	std::string launcherVersion = "0.10.1";
 
 	sf::Text initalisingText;
 	sf::Text currentLauncherTask;
