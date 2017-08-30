@@ -68,9 +68,7 @@ void AppListState::Init(AppEngine* app_)
 		while (app->window->pollEvent(event))
 		{
 			if (event.type == sf::Event::EventType::Closed)
-			{
 				app->Quit();
-			}
 		}
 
 		if (helperDone)
@@ -256,6 +254,17 @@ void AppListState::HandleEvents()
 				helperThread = new std::thread(&AppListState::loadApps, this);
 			}
 		}
+		else if (event.type == sf::Event::EventType::MouseMoved)
+		{
+			if (mouseIsOver(scrollbar.scrollbarThumb))
+			{
+				scrollbar.scrollbarThumb.setFillColor(sf::Color(158, 158, 158));
+			}
+			else
+			{
+				scrollbar.scrollbarThumb.setFillColor(sf::Color(110, 110, 110));
+			}
+		}
 	}
 }
 
@@ -305,37 +314,86 @@ void AppListState::initialisise()
 		
 		if (checkForLauncherUpdates())
 		{
-			std::string remoteVersion = updateLauncher(); // feels kinda hacky
+			bool doUpdate = false;
 
-			ModalOptions modOptions;
-			modOptions.text = "Launcher updated";
+			Download getHoHouse;
+			getHoHouse.setInputPath("version.info");
+			getHoHouse.download();
 
-			if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
+			if (getHoHouse.fileBuffer != launcherVersion)
 			{
-				modOptions.text = "server fucked up, committing suicide.";
-				modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
+				ModalOptions modOptions;
+
+				if (getHoHouse.fileBuffer.find("500 Internal Server Error") != std::string::npos)
+				{
+					modOptions.title = "fuckin peice of shit is broken again";
+					modOptions.text = "server fucked up, committing suicide.";
+					modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
+				}
+				else
+				{
+					modOptions.title = "Update Available";
+					modOptions.text = "Version " + getHoHouse.fileBuffer + " is available, would you like to update?";
+					modOptions.settings = { "Yes", "No" };
+				}
+
+				Modal doYouWannaUpdate(modOptions);
+
+				switch (doYouWannaUpdate.returnCode)
+				{
+				case 0:
+					std::cout << "yes, update now." << std::endl;
+					doUpdate = true;
+					break;
+
+				case 1:
+					std::cout << "don't update now" << std::endl;
+					doUpdate = false;
+					break;
+
+				default:
+					break;
+				}
+			}
+
+			if (doUpdate)
+			{
+				std::string remoteVersion = updateLauncher(); // feels kinda hacky
+
+				ModalOptions modOptions;
+				modOptions.text = "Launcher updated";
+
+				if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
+				{
+					modOptions.text = "server fucked up, committing suicide.";
+					modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
+				}
+				else
+				{
+					modOptions.text = "Launcher updated to v" + remoteVersion + "! Restart it!";
+					modOptions.settings = { "Restart Now", "Restart Later" };
+				}
+
+				Modal updateSuccessfulModal(modOptions);
+
+				switch (updateSuccessfulModal.returnCode)
+				{
+				case 0:
+					std::cout << "restarting now" << std::endl;
+					exit(0); // TODO: shutdown properly
+					break;
+
+				case 1:
+					std::cout << "restarting later" << std::endl;
+					updateSuccessfulModal.close();
+
+				default:
+					break;
+				}
 			}
 			else
 			{
-				modOptions.text = "Launcher updated to v" + remoteVersion + "! Restart it!";
-				modOptions.settings = { "Restart Now", "Restart Later" };
-			}
-
-			Modal updateSuccessfulModal(modOptions);
-
-			switch (updateSuccessfulModal.returnCode)
-			{
-			case 0:
-				std::cout << "restarting now" << std::endl;
-				exit(0); // TODO: shutdown properly
-				break;
-				
-			case 1:
-				std::cout << "restarting later" << std::endl;
-				updateSuccessfulModal.close();
-
-			default:
-				break;
+				std::cout << "updating skipped" << std::endl;
 			}
 		}
 		else

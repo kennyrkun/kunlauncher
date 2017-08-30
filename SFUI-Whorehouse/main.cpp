@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
 			app->Draw();
 		}
 
+		app->Cleanup();
 	}
 
 	std::cin.get();
