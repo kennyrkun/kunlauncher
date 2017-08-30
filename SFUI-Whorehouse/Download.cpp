@@ -1,4 +1,5 @@
 #include "Download.hpp"
+#include "constants.hpp"
 
 #include <SFML\Network.hpp>
 #include <experimental\filesystem>
@@ -13,16 +14,12 @@ Download::Download(bool silent_)
 	else
 		silent = false;
 
-	silent = false;
-
 	if (!silent)
 		std::cout << "downloader created" << std::endl;
 }
 
 Download::Download()
 {
-	silent = false;
-
 	if (!silent)
 		std::cout << "downloader created" << std::endl;
 }
@@ -74,7 +71,7 @@ int Download::download()
 {
 	sf::Clock timer;
 
-	sf::Http http("kunlauncher.000webhostapp.com/");
+	sf::Http http(WEB_HOSTNAME);
 	sf::Http::Request request("/" + inpath, sf::Http::Request::Get);
 	sf::Http::Response response = http.sendRequest(request);
 

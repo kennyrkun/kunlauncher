@@ -32,7 +32,7 @@ private:
 	std::string outfile;
 	std::string inpath;
 
-	bool silent;
+	bool silent = false;
 
 	void createDirectory(std::string dir);
 };

@@ -50,17 +50,16 @@ private:
 
 	LaunchOptions settings;
 	sf::View *cardScroller;
+	Scrollbar scrollbar;
 
 	std::vector<Item*> items;
 	std::vector<Link*> links;
-
-	Scrollbar scrollbar;
 
 	std::thread *helperThread;
 	bool helperRunning = false;
 	bool helperDone = false;
 
-	std::string launcherVersion = "0.10.1";
+	std::string launcherVersion = "0.10.2";
 
 	sf::Text initalisingText;
 	sf::Text currentLauncherTask;
