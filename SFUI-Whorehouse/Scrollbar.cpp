@@ -20,21 +20,31 @@ void Scrollbar::create(sf::RenderWindow* target_window)
 
 	scrollbar.setSize(sf::Vector2f(10, targetWindow->getSize().y));
 	scrollbar.setOrigin(sf::Vector2f(scrollbar.getLocalBounds().width / 2, scrollbar.getLocalBounds().height / 2));
-	scrollbar.setPosition((targetWindow->getDefaultView().getCenter().x * 2) - scrollbar.getLocalBounds().width / 2, targetWindow->getDefaultView().getCenter().y);
+	scrollbar.setPosition((targetWindow->getView().getCenter().x * 2) - scrollbar.getLocalBounds().width / 2, targetWindow->getView().getCenter().y);
 	scrollbar.setFillColor(sf::Color(80, 80, 80));
 		
-	scrollbarThumb.setSize(sf::Vector2f(scrollbar.getSize().x, targetWindow->getSize().y));
-	scrollbarThumb.setOrigin(sf::Vector2f(scrollbarThumb.getLocalBounds().width / 2, scrollbarThumb.getLocalBounds().height / 2));
-	scrollbarThumb.setPosition((targetWindow->getDefaultView().getCenter().x * 2) - scrollbarThumb.getLocalBounds().width / 2, targetWindow->getDefaultView().getCenter().y);
-	scrollbarThumb.setFillColor(sf::Color(110, 110, 110));
+	scrollThumb.setSize(sf::Vector2f(scrollbar.getSize().x, targetWindow->getSize().y));
+	scrollThumb.setOrigin(sf::Vector2f(scrollThumb.getLocalBounds().width / 2, scrollThumb.getLocalBounds().height / 2));
+	scrollThumb.setPosition((targetWindow->getView().getCenter().x * 2) - scrollThumb.getLocalBounds().width, targetWindow->getView().getCenter().y);
+	scrollThumb.setFillColor(sf::Color(110, 110, 110));
 
-	std::cout << "scrollbar thumb is " << scrollbarThumb.getSize().x << " by " << scrollbarThumb.getSize().y << std::endl;
+	std::cout << "scrollbar thumb is " << scrollThumb.getSize().x << " by " << scrollThumb.getSize().y << std::endl;
 
 	scrollJumpMultiplier = 16;
 }
 
 void Scrollbar::update(float contentHeight_, float viewportHeight)
 {
+	std::cout << "updating scrollbar" << std::endl;
+
+	scrollbar.setSize(sf::Vector2f(10, targetWindow->getSize().y));
+	scrollbar.setOrigin(sf::Vector2f(scrollbar.getLocalBounds().width / 2, scrollbar.getLocalBounds().height / 2));
+	scrollbar.setPosition((targetWindow->getView().getCenter().x * 2) - scrollbar.getLocalBounds().width / 2, targetWindow->getView().getCenter().y);
+
+	scrollThumb.setSize(sf::Vector2f(scrollbar.getSize().x, targetWindow->getSize().y));
+	scrollThumb.setOrigin(sf::Vector2f(scrollThumb.getLocalBounds().width / 2, scrollThumb.getLocalBounds().height / 2));
+	scrollThumb.setPosition((targetWindow->getView().getCenter().x * 2) - scrollThumb.getLocalBounds().width, targetWindow->getView().getCenter().y);
+
 	contentHeight_ += 8; // padding at the end
 	contentHeight = contentHeight_;
 	maxHeight = contentHeight;
@@ -48,23 +58,23 @@ void Scrollbar::update(float contentHeight_, float viewportHeight)
 	float scrollThumbSpace = viewportHeight - thumbHeight;
 	scrollJump = (scrollTrackSpace / scrollThumbSpace) * scrollJumpMultiplier;
 
-	scrollbarThumb.setSize(sf::Vector2f(scrollbarThumb.getSize().x, thumbHeight));
-	scrollbarThumb.setOrigin(scrollbarThumb.getLocalBounds().width / 2, scrollbarThumb.getLocalBounds().height / 2);
-	scrollbarThumb.setPosition(scrollbar.getPosition().x, scrollbarThumb.getLocalBounds().height / 2);
+	scrollThumb.setSize(sf::Vector2f(scrollThumb.getSize().x, thumbHeight));
+	scrollThumb.setOrigin(scrollThumb.getLocalBounds().width / 2, scrollThumb.getLocalBounds().height / 2);
+	scrollThumb.setPosition(scrollbar.getPosition().x, scrollThumb.getLocalBounds().height / 2);
 }
 
 void Scrollbar::moveThumbUp()
 {
-	scrollbarThumb.move(0, 1 * scrollJumpMultiplier);
+	scrollThumb.move(0, 1 * scrollJumpMultiplier);
 }
 
 void Scrollbar::moveThumbDown()
 {
-	scrollbarThumb.move(0, -1 * scrollJumpMultiplier);
+	scrollThumb.move(0, -1 * scrollJumpMultiplier);
 }
 
 void Scrollbar::draw()
 {
 	targetWindow->draw(scrollbar);
-	targetWindow->draw(scrollbarThumb);
+	targetWindow->draw(scrollThumb);
 }

@@ -41,14 +41,14 @@ void AppListState::Init(AppEngine* app_)
 
 	app->window->setTitle("KunLauncher " + launcherVersion);
 
-	cardScroller = new sf::View(app->window->getDefaultView().getCenter(), app->window->getDefaultView().getSize());
+	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	app->window->setVerticalSyncEnabled(true);
 
-	initalisingText.setFont(font);
+	initalisingText.setFont(font); 
 	initalisingText.setCharacterSize(72);
 	initalisingText.setString("initialising");
 	initalisingText.setOrigin(initalisingText.getLocalBounds().width / 2, initalisingText.getLocalBounds().height - 20);
-	initalisingText.setPosition(sf::Vector2f(static_cast<int>(app->window->getDefaultView().getCenter().x), static_cast<int>(app->window->getDefaultView().getCenter().y)));
+	initalisingText.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y)));
 
 	currentLauncherTask.setFont(font);
 	currentLauncherTask.setCharacterSize(26);
@@ -83,7 +83,7 @@ void AppListState::Init(AppEngine* app_)
 			isReady = true;
 		}
 
-		app->window->clear(sf::Color(50, 50, 50));
+		app->window->clear(CONST_COLOURS::BACKGROUND);
 
 		app->window->draw(initalisingText);
 		app->window->draw(currentLauncherTask);
@@ -132,11 +132,46 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
-			cardScroller->setCenter(0, 0);
+			sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+			app->window->setView(sf::View(visibleArea));
+
 			cardScroller->setSize(event.size.width, event.size.height);
+			cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().x / 2);
+
+			// set the scrollbar size
+			float contentHeight = 0;
+			contentHeight += 43 * links.size();
+			contentHeight += 83 * items.size();
+
+			scrollbar.update(contentHeight, cardScroller->getSize().y);
+//			updateScrollThumb();
+
+			for (size_t i = 0; i < items.size(); i++)
+			{
+				items[i]->update(items[i]->cardShape.getPosition().y);
+			}
+		}
+		else if (event.type == sf::Event::EventType::MouseMoved)
+		{
+			if (!scrollbar.thumbDragging)
+			{
+				if (mouseIsOver(scrollbar.scrollThumb))
+				{
+					scrollbar.scrollThumb.setFillColor(sf::Color(158, 158, 158));
+				}
+				else
+				{
+					scrollbar.scrollThumb.setFillColor(sf::Color(110, 110, 110));
+				}
+			}
 		}
 		else if (event.type == sf::Event::EventType::MouseWheelMoved) // thanks sfconsole
 		{
+			std::cout << "center x: " << app->window->getView().getCenter().x << std::endl;
+			std::cout << "center y: " << app->window->getView().getCenter().y << std::endl;
+			std::cout << "size x: " << app->window->getView().getSize().x << std::endl;
+			std::cout << "size y: " << app->window->getView().getSize().y << std::endl;
+
 			if (event.mouseWheel.delta < 0) // up
 			{
 //				if ((cardScroller->getCenter().y - cardScroller->getSize().y) < scrollbar.scrollJumpMultiplier) // bottom of the thing
@@ -159,6 +194,12 @@ void AppListState::HandleEvents()
 			if (event.key.code == sf::Mouse::Button::Left)
 			{
 				bool clicked;
+
+				if (mouseIsOver(scrollbar.scrollThumb))
+				{
+					scrollbar.thumbDragging = true;
+					scrollbar.scrollThumb.setFillColor(CONST_COLOURS::SCROLLBAR::SCROLLTHUMB_HOLD);
+				}
 
 				//links
 				for (size_t i = 0; i < items.size(); i++)
@@ -244,6 +285,14 @@ void AppListState::HandleEvents()
 				}
 			}
 		}
+		else if (event.type == sf::Event::EventType::MouseButtonReleased)
+		{
+			if (scrollbar.thumbDragging)
+			{
+				scrollbar.thumbDragging = false;
+				scrollbar.scrollThumb.setFillColor(CONST_COLOURS::SCROLLBAR::SCROLLTHUMB_HOVER);
+			}
+		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Key::R)
@@ -252,17 +301,6 @@ void AppListState::HandleEvents()
 				items.clear();
 
 				helperThread = new std::thread(&AppListState::loadApps, this);
-			}
-		}
-		else if (event.type == sf::Event::EventType::MouseMoved)
-		{
-			if (mouseIsOver(scrollbar.scrollbarThumb))
-			{
-				scrollbar.scrollbarThumb.setFillColor(sf::Color(158, 158, 158));
-			}
-			else
-			{
-				scrollbar.scrollbarThumb.setFillColor(sf::Color(110, 110, 110));
 			}
 		}
 	}
@@ -275,7 +313,7 @@ void AppListState::Update()
 
 void AppListState::Draw()
 {
-	app->window->clear(sf::Color(50, 50, 50));
+	app->window->clear(CONST_COLOURS::BACKGROUND);
 
 	for (size_t i = 0; i < threads.size(); i++)
 	{
@@ -298,7 +336,10 @@ void AppListState::Draw()
 			links[i]->draw();
 
 	//anchored
-	app->window->setView(app->window->getDefaultView());
+//	app->window->setView(app->window->getDefaultView());
+	// HACK: don't do this over and over. why does it even change when we scroll? I don't understand!
+	sf::View visibleArea2(sf::FloatRect(0, 0, app->window->getSize().x, app->window->getSize().y));
+	app->window->setView(visibleArea2);
 	scrollbar.draw();
 
 	app->window->display();
@@ -306,7 +347,79 @@ void AppListState::Draw()
 
 void AppListState::initialisise()
 {
-	scrollbar.create(app->window);
+	if (!std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY))
+	{
+		setTaskSubtext("creating bin folder");
+		std::experimental::filesystem::create_directory(".\\" + BASE_DIRECTORY);
+
+		settings.updateItemsOnStart = true;
+	}
+	else
+	{
+		if (std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + TEXTURE_DIRECTORY + "\\icon.png"))
+		{
+			//	sf::Image icon;
+			//	icon.loadFromFile(".\\" + BASE_FOLDER + "\\res\\tex\\icon.png");
+			//	window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+		}
+	}
+
+	setTaskSubtext("checking if index file exists");
+	if (!std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY + "\\index.dat"))
+	{
+		setTaskSubtext("creating empty index files");
+		std::ofstream createIndex(".\\" + BASE_DIRECTORY + "\\index.dat");
+		createIndex.close();
+
+		settings.updateItemsOnStart = true;
+	}
+
+	//TODO: this will stop items from updating if it's disabled
+	if (settings.updateItemsOnStart)
+	{
+		setTaskSubtext("connecting to file server");
+
+		// download the index file (or at least store it)
+		sf::Http http("kunlauncher.000webhostapp.com/");
+		sf::Http::Request request("/index.dat", sf::Http::Request::Get);
+		sf::Http::Response response = http.sendRequest(request);
+
+		int fileSize = response.getBody().size();
+
+		// if the index file on the server has a different filesize than the one we've got, download it
+		setTaskSubtext("gathering apps list");
+		if (std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") != fileSize)
+		{
+			std::cout << "index file has been updated (difference of ";
+			if (std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") > fileSize)
+			{
+				std::cout << std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") - fileSize << " bytes)" << std::endl;
+			}
+			else
+			{
+				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") << " bytes)" << std::endl;
+			}
+
+			setTaskSubtext("updating apps list");
+			std::cout << "updating apps list" << std::endl;
+
+			std::string fileContainer = response.getBody();
+			std::ofstream downloadFile(".\\" + BASE_DIRECTORY + "\\index.dat", std::ios::out | std::ios::binary);
+			std::cout << "saving file to \"" + BASE_DIRECTORY + "\\index.dat\"... ";
+
+			for (int i = 0; i < fileSize; i++)
+				downloadFile << fileContainer[i];
+			downloadFile.close();
+
+			if (downloadFile.fail())
+				std::cout << "failed" << std::endl;
+			else
+				std::cout << "finished" << std::endl;
+
+			std::cout << "index file is ready." << std::endl;
+		}
+	}
+
 
 	if (settings.updateLauncherOnStart)
 	{
@@ -406,6 +519,8 @@ void AppListState::initialisise()
 		std::cout << "skipping check for updates" << std::endl;
 	}
 
+	scrollbar.create(app->window);
+
 	loadApps();
 	setTaskText("ready");
 
@@ -416,79 +531,6 @@ void AppListState::loadApps() // TOOD: this.
 {
 	setTaskText("loading apps");
 	setTaskSubtext("checking files");
-
-	if (!std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY))
-	{
-		setTaskSubtext("creating bin folder");
-		std::experimental::filesystem::create_directory(".\\" + BASE_DIRECTORY);
-
-		settings.updateItemsOnStart = true;
-	}
-	else
-	{
-		if (std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + TEXTURE_DIRECTORY + "\\icon.png"))
-		{
-			//	sf::Image icon;
-			//	icon.loadFromFile(".\\" + BASE_FOLDER + "\\res\\tex\\icon.png");
-			//	window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-		}
-	}
-
-	setTaskSubtext("checking if index file exists");
-	if (!std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY + "\\index.dat"))
-	{
-		setTaskSubtext("creating empty index files");
-		std::ofstream createIndex(".\\" + BASE_DIRECTORY + "\\index.dat");
-		createIndex.close();
-
-		settings.updateItemsOnStart = true;
-	}
-
-	//TODO: this will stop items from updating if it's disabled
-	if (settings.updateItemsOnStart)
-	{
-		setTaskSubtext("connecting to file server");
-
-		// download the index file (or at least store it)
-		sf::Http http("kunlauncher.000webhostapp.com/");
-		sf::Http::Request request("/index.dat", sf::Http::Request::Get);
-		sf::Http::Response response = http.sendRequest(request);
-
-		int fileSize = response.getBody().size();
-
-		// if the index file on the server has a different filesize than the one we've got, download it
-		setTaskSubtext("gathering apps list");
-		if (std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") != fileSize)
-		{
-			std::cout << "index file has been updated (difference of ";
-			if (std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") > fileSize)
-			{
-				std::cout << std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") - fileSize << " bytes)" << std::endl;
-			}
-			else
-			{
-				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") << " bytes)" << std::endl;
-			}
-
-			setTaskSubtext("updating apps list");
-			std::cout << "updating apps list" << std::endl;
-
-			std::string fileContainer = response.getBody();
-			std::ofstream downloadFile(".\\" + BASE_DIRECTORY + "\\index.dat", std::ios::out | std::ios::binary);
-			std::cout << "saving file to \"" + BASE_DIRECTORY + "\\index.dat\"... ";
-
-			for (int i = 0; i < fileSize; i++)
-				downloadFile << fileContainer[i];
-			downloadFile.close();
-
-			if (downloadFile.fail())
-				std::cout << "failed" << std::endl;
-			else
-				std::cout << "finished" << std::endl;
-
-			std::cout << "index file is ready." << std::endl;
-		}
-	}
 
 	setTaskText("loading apps (this may take a while)");
 	setTaskSubtext("");
@@ -653,11 +695,8 @@ void AppListState::updateScrollThumb()
 {
 	// set the scrollbar size
 	float contentHeight = 0;
-	for (size_t i = 0; i < links.size(); i++)
-		contentHeight += 43;
-
-	for (size_t i = 0; i < items.size(); i++)
-		contentHeight += 83;
+	contentHeight += 43 * links.size();
+	contentHeight += 83 * items.size();
 
 	scrollbar.update(contentHeight, cardScroller->getSize().y);
 }
@@ -682,12 +721,12 @@ void AppListState::setTaskText(std::string text)
 {
 	currentLauncherTask.setString(text);
 	currentLauncherTask.setOrigin(currentLauncherTask.getLocalBounds().width / 2, currentLauncherTask.getLocalBounds().height - 20);
-	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getDefaultView().getCenter().x), static_cast<int>(app->window->getDefaultView().getCenter().y + 70)));
+	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y + 70)));
 }
 
 void AppListState::setTaskSubtext(std::string text)
 {
 	currentLauncherSubtask.setString(text);
-	currentLauncherSubtask.setOrigin(currentLauncherSubtask.getLocalBounds().width / 2, currentLauncherSubtask.getLocalBounds().height - 20);
-	currentLauncherSubtask.setPosition(sf::Vector2f(static_cast<int>(app->window->getDefaultView().getCenter().x), static_cast<int>(app->window->getDefaultView().getCenter().y + 96)));
+	currentLauncherSubtask.setOrigin(currentLauncherSubtask.getLocalBounds().width / 2.0f, currentLauncherSubtask.getLocalBounds().height - 20.0f);
+	currentLauncherSubtask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y + 96)));
 }

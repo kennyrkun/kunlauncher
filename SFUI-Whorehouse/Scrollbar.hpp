@@ -10,13 +10,14 @@ public:
 	~Scrollbar();
 
 	void create(sf::RenderWindow* target_window);
-	void update(float contentHeight, float viewportHeight);
+	void update(float contentHeight_, float viewportHeight);
 	void moveThumbUp();
 	void moveThumbDown();
 	void draw();
 
 	sf::RectangleShape scrollbar;
-	sf::RectangleShape scrollbarThumb;
+	sf::RectangleShape scrollThumb;
+	bool thumbDragging;
 	float scrollJump = 0;
 	float scrollJumpMultiplier = 16;
 	float maxHeight;

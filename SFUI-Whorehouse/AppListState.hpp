@@ -50,6 +50,7 @@ private:
 
 	LaunchOptions settings;
 	sf::View *cardScroller;
+	sf::View *defaultView;
 	Scrollbar scrollbar;
 
 	std::vector<Item*> items;
