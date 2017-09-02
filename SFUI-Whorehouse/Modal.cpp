@@ -33,7 +33,7 @@ Modal::Modal(ModalOptions settings_)
 
 	window.create(sf::VideoMode(text.getLocalBounds().width + 18, settings.height), settings.title, sf::Style::Titlebar);
 	window.setVerticalSyncEnabled(true);
-	text.setPosition(static_cast<int>(window.getDefaultView().getCenter().x), static_cast<int>(text.getCharacterSize()));
+	text.setPosition(static_cast<int>(window.getView().getCenter().x), static_cast<int>(text.getCharacterSize()));
 
 	std::vector<SFUI::Button*> buttons;
 	for (size_t i = 0; i < settings.settings.size(); i++)
@@ -44,7 +44,7 @@ Modal::Modal(ModalOptions settings_)
 		{
 			std::cout << "first shape x is " << newButton->m_shape.getGlobalBounds().width << std::endl;
 
-			newButton->setPosition(sf::Vector2f((window.getDefaultView().getCenter().x * 2) - (newButton->m_shape.getLocalBounds().width / 2) - 4, static_cast<int>(window.getDefaultView().getCenter().y + 22)));
+			newButton->setPosition(sf::Vector2f((window.getView().getCenter().x * 2) - (newButton->m_shape.getLocalBounds().width / 2) - 4, static_cast<int>(window.getView().getCenter().y + 22)));
 		}
 		else
 		{
