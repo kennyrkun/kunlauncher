@@ -44,6 +44,7 @@ namespace CONST_COLOURS
 	{
 		const sf::Color SCROLLBAR		  = sf::Color(80, 80, 80);
 		const sf::Color SCROLLTHUMB		  = sf::Color(110, 110, 110);
+		const sf::Color SCROLLTHUMB_HOLD  = sf::Color(158, 158, 158);
 		const sf::Color SCROLLTHUMB_HOVER = sf::Color(239, 235, 239);
 	}
 
