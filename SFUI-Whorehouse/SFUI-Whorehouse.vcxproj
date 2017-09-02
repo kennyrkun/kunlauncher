@@ -129,6 +129,7 @@
     <ClCompile Include="Download.cpp" />
     <ClCompile Include="AppListState.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Launcher.cpp" />
     <ClCompile Include="Link.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Modal.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Download.hpp" />
     <ClInclude Include="AppListState.hpp" />
     <ClInclude Include="Item.hpp" />
+    <ClInclude Include="Launcher.hpp" />
     <ClInclude Include="Link.hpp" />
     <ClInclude Include="Modal.hpp" />
     <ClInclude Include="AppEngine.hpp" />
