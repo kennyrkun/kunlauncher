@@ -121,7 +121,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 75));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
 	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5.0f, yPos)); // probably not the best
-	cardShape.setFillColor(sf::Color(100, 100, 100));
+	cardShape.setFillColor(CONST_COLOURS::ITEM::CARD);
 
 	totalHeight = cardShape.getLocalBounds().height + 10;
 
@@ -182,48 +182,6 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	launchButton.setSize(sf::Vector2f(20, 20));
 	launchButton.setOrigin(sf::Vector2f(launchButton.getLocalBounds().width / 2, launchButton.getLocalBounds().height / 2));
 	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
-
-	/*
-	if (fs::exists(installDir)) // if we know about it
-	{
-		if (!fs::exists(installDir + "icon.png")) // if it's missing the icon
-		{
-			std::cout << "icon is missing, downloading..." << std::endl;
-
-			if (downloadIcon())
-			{
-				std::cout << "download successful" << std::endl;
-			}
-		}
-
-		if (!fs::exists(installDir + "info.dat")) // if it's missing the info
-		{
-			std::cout << "info is missing, downloading..." << std::endl;
-
-			if (downloadFile(itemName, itemName + "/info.dat", installDir) == sf::Http::Response::Status::Ok)
-			{
-				parseInfo(installDir);
-			}
-		}
-		else // not missing
-		{
-			parseInfo(installDir);
-		}
-
-		if (fs::exists(installDir + "release.zip")) // if it's installed
-		{
-			cardShape.setFillColor(sf::Color(100, 100, 100));
-			downloaded = true;
-			checkForUpdate();
-		}
-	}
-	else // if we don't know about it, learn about it
-	{
-		downloadIcon();
-		downloadInfo();
-		parseInfo(installDir); // teach us what we learned.
-	}
-	*/
 
 	std::cout << "card is ready" << std::endl;
 }
@@ -343,6 +301,37 @@ void Item::openItem()
 	std::string launch = "start " + installDir + "release.zip";
 	system((launch).c_str());
 #endif
+}
+
+void Item::update(float yPos)
+{
+	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 75));
+	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
+	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5.0f, yPos)); // probably not the best
+
+	totalHeight = cardShape.getLocalBounds().height + 10;
+
+	icon.setOrigin(sf::Vector2f(icon.getLocalBounds().width / 2, icon.getLocalBounds().height / 2));
+	icon.setPosition(sf::Vector2f(cardShape.getPosition().x - (cardShape.getSize().x / 2) + icon.getLocalBounds().width / 2, cardShape.getPosition().y));
+
+	name.setPosition(static_cast<int>(icon.getPosition().x + 45), static_cast<int>(cardShape.getPosition().y - 40));
+	description.setPosition(static_cast<int>(icon.getPosition().x + 45), static_cast<int>(cardShape.getPosition().y - 15));
+	version.setPosition(static_cast<int>(icon.getPosition().x + 45), static_cast<int>(cardShape.getPosition().y + 10));
+
+	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
+
+	downloadButton.setOrigin(sf::Vector2f(downloadButton.getLocalBounds().width / 2, downloadButton.getLocalBounds().height / 2));
+	downloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
+
+	redownloadButton.setRotation(30);
+	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
+	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
+
+	removeButton.setOrigin(sf::Vector2f(removeButton.getLocalBounds().width / 2, removeButton.getLocalBounds().height / 2));
+	removeButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 15));
+
+	launchButton.setOrigin(sf::Vector2f(launchButton.getLocalBounds().width / 2, launchButton.getLocalBounds().height / 2));
+	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
 }
 
 void Item::draw()

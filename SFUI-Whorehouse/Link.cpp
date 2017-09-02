@@ -55,6 +55,21 @@ void Link::follow()
 #endif
 }
 
+void Link::update()
+{
+	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
+	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
+	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, cardShape.getPosition().x)); // probably not the best
+
+	linkText.setPosition(sf::Vector2f(cardShape.getPosition().x - 242, cardShape.getPosition().y - 22));
+
+	followLinkButton.setSize(sf::Vector2f(24, 24));
+	followLinkButton.setOrigin(sf::Vector2f(followLinkButton.getLocalBounds().width / 2, followLinkButton.getLocalBounds().height / 2));
+
+	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
+	followLinkButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
+}
+
 void Link::draw()
 {
 	targetWindow->draw(cardShape);

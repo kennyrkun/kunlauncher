@@ -15,7 +15,7 @@ public:
 	sf::CircleShape    redownloadButton;
 	sf::RectangleShape removeButton;
 	sf::RectangleShape launchButton;
-	sf::RectangleShape controlBar;
+//	sf::RectangleShape controlBar;
 
 	sf::Text	name;
 	std::string itemName;
@@ -33,6 +33,7 @@ public:
 	void download();
 	void openItem();
 
+	void update(float yPos);
 	void draw();
 
 private:

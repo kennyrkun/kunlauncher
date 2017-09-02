@@ -16,6 +16,7 @@ public:
 	int cardNumber; // used to store depth
 
 	void follow();
+	void update();
 	void draw();
 
 private:
