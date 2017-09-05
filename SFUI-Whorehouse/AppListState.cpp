@@ -26,79 +26,16 @@ void AppListState::Init(AppEngine* app_)
 
 	bool isReady(false);
 
-	if (!font.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::FONT + "\\Product Sans.ttf"))
-	{
-		std::cout << "failed to load product sans, falling back to Arial!" << std::endl;
-
-		if (!font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
-		{
-			std::cout << "failed to load a font!" << std::endl;
-
-			abort();
-		}
-	}
-
 	app->window->setTitle("KunLauncher " + CONST::VERSION);
 
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 
-	initalisingText.setFont(font); 
-	initalisingText.setCharacterSize(72);
-	initalisingText.setString("initialising");
-	initalisingText.setOrigin(initalisingText.getLocalBounds().width / 2, initalisingText.getLocalBounds().height - 20);
-	initalisingText.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y)));
-
-	currentLauncherTask.setFont(font);
-	currentLauncherTask.setCharacterSize(26);
-	setTaskText("waiting");
-
-	currentLauncherSubtask.setFont(font);
-	currentLauncherSubtask.setCharacterSize(15);
-	setTaskSubtext("waiting");
+	scrollbar.create(app->window);
 	
-	helperThread = new std::thread(&AppListState::initialisise, this);
+	helperThread = new std::thread(&AppListState::loadApps, this);
 	helperRunning = true;
 	std::cout << "thread launched" << std::endl;
-
-	while (!isReady)
-	{
-		sf::Event event;
-		while (app->window->pollEvent(event))
-		{
-			if (event.type == sf::Event::EventType::Closed)
-				app->Quit();
-		}
-
-		if (helperDone)
-		{
-			std::cout << "helper is done, joining" << std::endl;
-
-			helperThread->join();
-			delete helperThread;
-			helperDone = true;
-			helperRunning = false;
-
-			isReady = true;
-		}
-
-		app->window->clear(CONST::COLOR::BACKGROUND);
-
-		app->window->draw(initalisingText);
-		app->window->draw(currentLauncherTask);
-		app->window->draw(currentLauncherSubtask);
-
-		app->window->display();
-	}
-
-	std::cout << "initialising finished" << std::endl;
-
-	std::cout << std::boolalpha;
-	std::cout << "helperDone: " << helperDone << std::endl;
-	std::cout << "helperRunning: " << helperRunning << std::endl;
-
-	std::cout << "links: " << links.size() << std::endl;
-	std::cout << "items: " << items.size() << std::endl;
 }
 
 void AppListState::Cleanup()
@@ -361,202 +298,8 @@ void AppListState::Draw()
 	app->window->display();
 }
 
-void AppListState::initialisise()
-{
-	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE))
-	{
-		setTaskSubtext("creating bin folder");
-		std::experimental::filesystem::create_directory(".\\" + CONST::DIR::BASE);
-
-		settings.updateItemsOnStart = true;
-	}
-	else
-	{
-		if (std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::TEXTURE + "\\icon.png"))
-		{
-			setTaskSubtext("setting custom window icon");
-
-			//	sf::Image icon;
-			//	icon.loadFromFile(".\\" + BASE_FOLDER + "\\res\\tex\\icon.png");
-			//	window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-		}
-	}
-
-	if (settings.updateLauncherOnStart)
-	{
-		setTaskText("checking for updates...");
-
-		if (checkForLauncherUpdates())
-		{
-			bool doUpdate = false;
-
-			Download getHoHouse;
-			getHoHouse.setInputPath("version.info");
-			getHoHouse.download();
-
-			if (getHoHouse.fileBuffer != CONST::VERSION)
-			{
-				ModalOptions modOptions;
-
-				if (getHoHouse.fileBuffer.find("500 Internal Server Error") != std::string::npos)
-				{
-					modOptions.title = "fuckin peice of shit is broken again";
-					modOptions.text = "server fucked up, committing suicide.";
-					modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
-				}
-				else
-				{
-					modOptions.title = "Update Available";
-					modOptions.text = "Version " + getHoHouse.fileBuffer + " is available, would you like to update?";
-					modOptions.settings = { "Yes", "No" };
-				}
-
-				setTaskText("waiting on user confirmation");
-				setTaskSubtext("does the bitch want to update?");
-				Modal doYouWannaUpdate(modOptions);
-
-				switch (doYouWannaUpdate.returnCode)
-				{
-				case 0:
-					std::cout << "yes, update now." << std::endl;
-					doUpdate = true;
-					break;
-
-				case 1:
-					std::cout << "don't update now" << std::endl;
-					doUpdate = false;
-					break;
-
-				default:
-					break;
-				}
-			}
-
-			if (doUpdate)
-			{
-				std::string remoteVersion = updateLauncher(); // feels kinda hacky
-
-				ModalOptions modOptions;
-				modOptions.text = "Launcher updated";
-
-				if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
-				{
-					modOptions.text = "server fucked up, committing suicide.";
-					modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
-				}
-				else
-				{
-					modOptions.text = "Launcher updated to v" + remoteVersion + "! Restart it!";
-					modOptions.settings = { "Restart Now", "Restart Later" };
-				}
-
-				Modal updateSuccessfulModal(modOptions);
-
-				switch (updateSuccessfulModal.returnCode)
-				{
-				case 0:
-					std::cout << "restarting now" << std::endl;
-					exit(0); // TODO: shutdown properly
-					break;
-
-				case 1:
-					std::cout << "restarting later" << std::endl;
-					updateSuccessfulModal.close();
-
-				default:
-					break;
-				}
-			}
-			else
-			{
-				std::cout << "updating skipped" << std::endl;
-			}
-		}
-		else
-		{
-			std::cout << "no updates were found" << std::endl;
-		}
-	}
-	else
-	{
-		std::cout << "skipping check for updates" << std::endl;
-	}
-
-	setTaskSubtext("checking if index file exists");
-	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + "\\index.dat"))
-	{
-		setTaskSubtext("creating empty index files");
-		std::ofstream createIndex(".\\" + CONST::DIR::BASE + "\\index.dat");
-		createIndex.close();
-
-		settings.updateItemsOnStart = true; // for first time
-	}
-
-	//TODO: this will stop items from updating if it's disabled
-	if (settings.updateItemsOnStart)
-	{
-		setTaskText("updating applist");
-		setTaskSubtext("connecting to file server");
-
-		// download the index file (or at least store it)
-		sf::Http http(CONST::DIR::WEB_HOSTNAME);
-		sf::Http::Request request("/index.dat", sf::Http::Request::Get);
-
-		setTaskSubtext("downloading");
-		sf::Http::Response response = http.sendRequest(request);
-
-		int fileSize = response.getBody().size();
-
-		// if the index file on the server has a different filesize than the one we've got, download it
-		setTaskSubtext("gathering apps list");
-		if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") != fileSize)
-		{
-			std::cout << "index file has been updated (difference of ";
-			if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") > fileSize)
-			{
-				std::cout << std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") - fileSize << " bytes)" << std::endl;
-			}
-			else
-			{
-				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") << " bytes)" << std::endl;
-			}
-
-			setTaskSubtext("updating apps list");
-			std::cout << "updating apps list" << std::endl;
-
-			std::string fileContainer = response.getBody();
-			std::ofstream downloadFile(".\\" + CONST::DIR::BASE + "\\index.dat", std::ios::out | std::ios::binary);
-			std::cout << "saving file to \"" + CONST::DIR::BASE + "\\index.dat\"... ";
-
-			for (int i = 0; i < fileSize; i++)
-				downloadFile << fileContainer[i];
-			downloadFile.close();
-
-			if (downloadFile.fail())
-				std::cout << "failed" << std::endl;
-			else
-				std::cout << "finished" << std::endl;
-
-			std::cout << "index file is ready." << std::endl;
-		}
-	}
-
-	scrollbar.create(app->window);
-
-	loadApps();
-	setTaskText("ready");
-
-	helperDone = true;
-}
-
 void AppListState::loadApps() // TOOD: this.
 {
-	setTaskText("loading apps");
-	setTaskSubtext("checking files");
-
-	setTaskText("loading apps (this may take a while)");
-	setTaskSubtext("");
-
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
 	std::cout << std::endl;
@@ -566,8 +309,6 @@ void AppListState::loadApps() // TOOD: this.
 	while (std::getline(readIndex, line))
 	{
 		std::cout << loopi << " - " << line << std::endl;
-
-		setTaskSubtext("loading app \"" + line + "\"");
 
 		if (line[0] == 'l' && line[1] == ':') // is a link
 		{
@@ -635,82 +376,7 @@ void AppListState::loadApps() // TOOD: this.
 		loopi += 1;
 	}
 
-	setTaskSubtext("");
 	helperDone = true;
-}
-
-bool AppListState::checkForLauncherUpdates()
-{
-	setTaskText("checking for updates...");
-
-	if (std::experimental::filesystem::exists("kunlauncher.exe.old"))
-	{
-		try
-		{
-			std::experimental::filesystem::remove("kunlauncher.exe.old");
-		}
-		catch (const std::exception& e)
-		{
-			std::cout << e.what() << std::endl;
-		}
-	}
-
-	Download getHoHouse;
-	getHoHouse.setInputPath("version.info");
-	getHoHouse.download();
-
-	std::string remoteVersion = getHoHouse.fileBuffer;
-
-	std::cout << "r" << remoteVersion << " : " << "l" << CONST::VERSION << std::endl;
-
-	if (remoteVersion != CONST::VERSION)
-		return true;
-	else
-		return false;
-}
-
-std::string AppListState::updateLauncher()
-{
-	Download getHoHouse;
-	getHoHouse.setInputPath("version.info");
-	getHoHouse.download();
-
-	std::string remoteVersion = getHoHouse.fileBuffer;
-
-	std::cout << "r" << remoteVersion << " : " << "l" << CONST::VERSION << std::endl;
-
-	if (remoteVersion != CONST::VERSION)
-	{
-		setTaskText("updating launcher");
-
-		std::cout << "launcher is out of date (current: " << CONST::VERSION << "; remote: " << remoteVersion << ")" << std::endl;
-		setTaskSubtext("downloading updated launcher");
-
-		Download getNewWhorehouse;
-		getNewWhorehouse.setInputPath("latest.noexe");
-		getNewWhorehouse.setOutputDir(".\\");
-		getNewWhorehouse.setOutputFilename("kunlauncher.exe");
-		getNewWhorehouse.download();
-
-		setTaskSubtext("saving updated launcher");
-
-		try
-		{
-			std::experimental::filesystem::rename("kunlauncher.exe", "kunlauncher.exe.old");
-		}
-		catch (const std::exception& e)
-		{
-			std::cout << e.what() << std::endl;
-		}
-
-		getNewWhorehouse.save();
-
-		return remoteVersion;
-	}
-	else
-	{
-		return CONST::VERSION;
-	}
 }
 
 void AppListState::updateScrollThumb()
@@ -719,16 +385,12 @@ void AppListState::updateScrollThumb()
 	float contentHeight(0);
 	for (size_t i = 0; i < items.size(); i++)
 	{
-//		contentHeight += 83;
 		contentHeight += items[i]->totalHeight;
-//		contentHeight += 5;
 	}
 
 	for (size_t i = 0; i < links.size(); i++)
 	{
-//		contentHeight += 43;
 		contentHeight += links[i]->totalHeight;
-//		contentHeight += 5;
 	}
 
 	scrollbar.update(contentHeight, cardScroller->getSize().y);
@@ -748,18 +410,4 @@ bool AppListState::mouseIsOver(sf::Text &object)
 		return true;
 	else
 		return false;
-}
-
-void AppListState::setTaskText(std::string text)
-{
-	currentLauncherTask.setString(text);
-	currentLauncherTask.setOrigin(currentLauncherTask.getLocalBounds().width / 2, currentLauncherTask.getLocalBounds().height - 20);
-	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y + 70)));
-}
-
-void AppListState::setTaskSubtext(std::string text)
-{
-	currentLauncherSubtask.setString(text);
-	currentLauncherSubtask.setOrigin(currentLauncherSubtask.getLocalBounds().width / 2.0f, currentLauncherSubtask.getLocalBounds().height - 20.0f);
-	currentLauncherSubtask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y + 96)));
 }

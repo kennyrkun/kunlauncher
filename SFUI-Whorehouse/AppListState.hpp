@@ -11,18 +11,6 @@
 class Link;
 class Item;
 
-struct LaunchOptions
-{
-#ifdef _DEBUG
-	bool updateItemsOnStart = false;
-	bool updateLauncherOnStart = false;
-#else
-	bool updateItemsOnStart = true;
-	bool updateLauncherOnStart = true;
-#endif
-	int width = 525;
-};
-
 class AppListState : public AppState
 {
 public:
@@ -52,7 +40,6 @@ private:
 	sf::View *cardScroller;
 	Scrollbar scrollbar;
 
-	LaunchOptions settings;
 	std::vector<Item*> items;
 	std::vector<Link*> links;
 
@@ -60,24 +47,12 @@ private:
 	bool helperRunning = false;
 	bool helperDone = false;
 
-	sf::Font font;
-	sf::Text initalisingText;
-	sf::Text currentLauncherTask;
-	sf::Text currentLauncherSubtask;
-
-	void initialisise();
 	void loadApps();
-
-	bool checkForLauncherUpdates();
-	std::string updateLauncher();
 
 	void updateScrollThumb();
 
 	bool mouseIsOver(sf::Shape &object);
 	bool mouseIsOver(sf::Text &object);
-
-	void setTaskText(std::string text);
-	void setTaskSubtext(std::string text);
 };
 
 #endif // !APPLIST_STATE_HPP

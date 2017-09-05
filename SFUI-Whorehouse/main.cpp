@@ -1,5 +1,6 @@
 #include "AppEngine.hpp"
-#include "AppListState.hpp"
+//#include "AppListState.hpp"
+#include "InitialiseState.hpp"
 
 #include <iostream>
 
@@ -38,7 +39,8 @@ int main(int argc, char *argv[])
 		AppEngine* app = new AppEngine;
 		app->Init("waiting");
 
-		app->ChangeState(AppListState::Instance());
+//		app->ChangeState(AppListState::Instance());
+		app->ChangeState(InitialiseState::Instance());
 
 		while (app->Running())
 		{

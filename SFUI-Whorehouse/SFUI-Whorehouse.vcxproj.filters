@@ -20,16 +20,13 @@
     <Filter Include="Source Files\Launcher\States">
       <UniqueIdentifier>{849e70b2-49f7-4852-9ad7-bae2d05af7e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Launcher\States\AppList">
+      <UniqueIdentifier>{12a224ad-429e-4800-a713-ea9138b7adfe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Link.cpp">
-      <Filter>Source Files\Launcher</Filter>
-    </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>Source Files\Launcher</Filter>
     </ClCompile>
     <ClCompile Include="Download.cpp">
       <Filter>Source Files\Backend</Filter>
@@ -46,9 +43,6 @@
     <ClCompile Include="AppEngine.cpp">
       <Filter>Source Files\Backend\Base</Filter>
     </ClCompile>
-    <ClCompile Include="AppListState.cpp">
-      <Filter>Source Files\Launcher\States</Filter>
-    </ClCompile>
     <ClCompile Include="Launcher.cpp">
       <Filter>Source Files\Launcher</Filter>
     </ClCompile>
@@ -58,14 +52,17 @@
     <ClCompile Include="HomeState.cpp">
       <Filter>Source Files\Launcher\States</Filter>
     </ClCompile>
+    <ClCompile Include="Link.cpp">
+      <Filter>Source Files\Launcher\States\AppList</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files\Launcher\States\AppList</Filter>
+    </ClCompile>
+    <ClCompile Include="AppListState.cpp">
+      <Filter>Source Files\Launcher\States\AppList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Link.hpp">
-      <Filter>Source Files\Launcher</Filter>
-    </ClInclude>
-    <ClInclude Include="Item.hpp">
-      <Filter>Source Files\Launcher</Filter>
-    </ClInclude>
     <ClInclude Include="Download.hpp">
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
@@ -84,9 +81,6 @@
     <ClInclude Include="AppState.hpp">
       <Filter>Source Files\Backend\Base</Filter>
     </ClInclude>
-    <ClInclude Include="AppListState.hpp">
-      <Filter>Source Files\Launcher\States</Filter>
-    </ClInclude>
     <ClInclude Include="constants.hpp">
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
@@ -98,6 +92,15 @@
     </ClInclude>
     <ClInclude Include="HomeState.hpp">
       <Filter>Source Files\Launcher\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Link.hpp">
+      <Filter>Source Files\Launcher\States\AppList</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.hpp">
+      <Filter>Source Files\Launcher\States\AppList</Filter>
+    </ClInclude>
+    <ClInclude Include="AppListState.hpp">
+      <Filter>Source Files\Launcher\States\AppList</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
