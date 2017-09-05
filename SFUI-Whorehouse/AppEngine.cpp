@@ -7,6 +7,7 @@ void AppEngine::Init(std::string title, int width, int height, bool fullscreen)
 {
 	// initialize SDL
 	window = new sf::RenderWindow(sf::VideoMode(width, height), "oof");
+	window->setVerticalSyncEnabled(true);
 
 	m_fullscreen = fullscreen;
 	m_running = true;

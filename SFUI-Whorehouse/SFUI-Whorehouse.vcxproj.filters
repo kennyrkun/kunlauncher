@@ -52,6 +52,9 @@
     <ClCompile Include="Launcher.cpp">
       <Filter>Source Files\Launcher</Filter>
     </ClCompile>
+    <ClCompile Include="InitialiseState.cpp">
+      <Filter>Source Files\Launcher\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Link.hpp">
@@ -86,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="Launcher.hpp">
       <Filter>Source Files\Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="InitialiseState.hpp">
+      <Filter>Source Files\Launcher\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

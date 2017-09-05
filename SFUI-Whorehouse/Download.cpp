@@ -69,11 +69,12 @@ std::string Download::getInputPath()
 
 int Download::download()
 {
-	sf::Clock timer;
-
-	sf::Http http(WEB_HOSTNAME);
+	sf::Http http(CONST::DIR::WEB_HOSTNAME);
 	sf::Http::Request request("/" + inpath, sf::Http::Request::Get);
+
+	sf::Clock timer;
 	sf::Http::Response response = http.sendRequest(request);
+	float elapsedTime = timer.getElapsedTime().asSeconds();
 
 	fileSize = response.getBody().size();
 	if (!silent)
@@ -81,7 +82,7 @@ int Download::download()
 	 
 	fileBuffer = response.getBody();
 	if (!silent)
-		std::cout << "done downloading." << std::endl;
+		std::cout << "done downloading. (took " << elapsedTime << " seconds.)" << std::endl;
 
 	switch (response.getStatus())
 	{

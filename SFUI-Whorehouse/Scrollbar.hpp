@@ -11,8 +11,12 @@ public:
 
 	void create(sf::RenderWindow* target_window);
 	void update(float contentHeight_, float viewportHeight);
+
 	void moveThumbUp();
 	void moveThumbDown();
+	void moveToTop();
+	void moveToBottom();
+
 	void draw();
 
 	sf::RectangleShape scrollbar;

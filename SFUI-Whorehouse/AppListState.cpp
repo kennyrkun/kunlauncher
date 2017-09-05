@@ -16,7 +16,6 @@
 
 AppListState AppListState::AppListState_dontfuckwithme;
 
-sf::Font font;
 std::vector<std::thread> threads;
 
 void AppListState::Init(AppEngine* app_)
@@ -27,7 +26,7 @@ void AppListState::Init(AppEngine* app_)
 
 	bool isReady(false);
 
-	if (!font.loadFromFile(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + FONT_DIRECTORY + "\\Product Sans.ttf"))
+	if (!font.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::FONT + "\\Product Sans.ttf"))
 	{
 		std::cout << "failed to load product sans, falling back to Arial!" << std::endl;
 
@@ -39,11 +38,10 @@ void AppListState::Init(AppEngine* app_)
 		}
 	}
 
-	app->window->setTitle("KunLauncher " + launcherVersion);
+	app->window->setTitle("KunLauncher " + CONST::VERSION);
 
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
-	app->window->setVerticalSyncEnabled(true);
 
 	initalisingText.setFont(font); 
 	initalisingText.setCharacterSize(72);
@@ -84,7 +82,7 @@ void AppListState::Init(AppEngine* app_)
 			isReady = true;
 		}
 
-		app->window->clear(CONST_COLOURS::BACKGROUND);
+		app->window->clear(CONST::COLOR::BACKGROUND);
 
 		app->window->draw(initalisingText);
 		app->window->draw(currentLauncherTask);
@@ -215,7 +213,7 @@ void AppListState::HandleEvents()
 				if (mouseIsOver(scrollbar.scrollThumb))
 				{
 					scrollbar.thumbDragging = true;
-					scrollbar.scrollThumb.setFillColor(CONST_COLOURS::SCROLLBAR::SCROLLTHUMB_HOLD);
+					scrollbar.scrollThumb.setFillColor(CONST::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD);
 				}
 
 				//links
@@ -307,7 +305,7 @@ void AppListState::HandleEvents()
 			if (scrollbar.thumbDragging)
 			{
 				scrollbar.thumbDragging = false;
-				scrollbar.scrollThumb.setFillColor(CONST_COLOURS::SCROLLBAR::SCROLLTHUMB_HOVER);
+				scrollbar.scrollThumb.setFillColor(CONST::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
 			}
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
@@ -332,7 +330,7 @@ void AppListState::Update()
 
 void AppListState::Draw()
 {
-	app->window->clear(CONST_COLOURS::BACKGROUND);
+	app->window->clear(CONST::COLOR::BACKGROUND);
 
 	for (size_t i = 0; i < threads.size(); i++)
 	{
@@ -365,84 +363,29 @@ void AppListState::Draw()
 
 void AppListState::initialisise()
 {
-	if (!std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY))
+	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE))
 	{
 		setTaskSubtext("creating bin folder");
-		std::experimental::filesystem::create_directory(".\\" + BASE_DIRECTORY);
+		std::experimental::filesystem::create_directory(".\\" + CONST::DIR::BASE);
 
 		settings.updateItemsOnStart = true;
 	}
 	else
 	{
-		if (std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY + "\\" + RESOURCE_DIRECTORY + "\\" + TEXTURE_DIRECTORY + "\\icon.png"))
+		if (std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::TEXTURE + "\\icon.png"))
 		{
+			setTaskSubtext("setting custom window icon");
+
 			//	sf::Image icon;
 			//	icon.loadFromFile(".\\" + BASE_FOLDER + "\\res\\tex\\icon.png");
 			//	window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 		}
 	}
 
-	setTaskSubtext("checking if index file exists");
-	if (!std::experimental::filesystem::exists(".\\" + BASE_DIRECTORY + "\\index.dat"))
-	{
-		setTaskSubtext("creating empty index files");
-		std::ofstream createIndex(".\\" + BASE_DIRECTORY + "\\index.dat");
-		createIndex.close();
-
-		settings.updateItemsOnStart = true;
-	}
-
-	//TODO: this will stop items from updating if it's disabled
-	if (settings.updateItemsOnStart)
-	{
-		setTaskSubtext("connecting to file server");
-
-		// download the index file (or at least store it)
-		sf::Http http("kunlauncher.000webhostapp.com/");
-		sf::Http::Request request("/index.dat", sf::Http::Request::Get);
-		sf::Http::Response response = http.sendRequest(request);
-
-		int fileSize = response.getBody().size();
-
-		// if the index file on the server has a different filesize than the one we've got, download it
-		setTaskSubtext("gathering apps list");
-		if (std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") != fileSize)
-		{
-			std::cout << "index file has been updated (difference of ";
-			if (std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") > fileSize)
-			{
-				std::cout << std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") - fileSize << " bytes)" << std::endl;
-			}
-			else
-			{
-				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + BASE_DIRECTORY + "\\index.dat") << " bytes)" << std::endl;
-			}
-
-			setTaskSubtext("updating apps list");
-			std::cout << "updating apps list" << std::endl;
-
-			std::string fileContainer = response.getBody();
-			std::ofstream downloadFile(".\\" + BASE_DIRECTORY + "\\index.dat", std::ios::out | std::ios::binary);
-			std::cout << "saving file to \"" + BASE_DIRECTORY + "\\index.dat\"... ";
-
-			for (int i = 0; i < fileSize; i++)
-				downloadFile << fileContainer[i];
-			downloadFile.close();
-
-			if (downloadFile.fail())
-				std::cout << "failed" << std::endl;
-			else
-				std::cout << "finished" << std::endl;
-
-			std::cout << "index file is ready." << std::endl;
-		}
-	}
-
-
 	if (settings.updateLauncherOnStart)
 	{
 		setTaskText("checking for updates...");
-		
+
 		if (checkForLauncherUpdates())
 		{
 			bool doUpdate = false;
@@ -451,7 +394,7 @@ void AppListState::initialisise()
 			getHoHouse.setInputPath("version.info");
 			getHoHouse.download();
 
-			if (getHoHouse.fileBuffer != launcherVersion)
+			if (getHoHouse.fileBuffer != CONST::VERSION)
 			{
 				ModalOptions modOptions;
 
@@ -468,6 +411,8 @@ void AppListState::initialisise()
 					modOptions.settings = { "Yes", "No" };
 				}
 
+				setTaskText("waiting on user confirmation");
+				setTaskSubtext("does the bitch want to update?");
 				Modal doYouWannaUpdate(modOptions);
 
 				switch (doYouWannaUpdate.returnCode)
@@ -537,6 +482,65 @@ void AppListState::initialisise()
 		std::cout << "skipping check for updates" << std::endl;
 	}
 
+	setTaskSubtext("checking if index file exists");
+	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + "\\index.dat"))
+	{
+		setTaskSubtext("creating empty index files");
+		std::ofstream createIndex(".\\" + CONST::DIR::BASE + "\\index.dat");
+		createIndex.close();
+
+		settings.updateItemsOnStart = true; // for first time
+	}
+
+	//TODO: this will stop items from updating if it's disabled
+	if (settings.updateItemsOnStart)
+	{
+		setTaskText("updating applist");
+		setTaskSubtext("connecting to file server");
+
+		// download the index file (or at least store it)
+		sf::Http http(CONST::DIR::WEB_HOSTNAME);
+		sf::Http::Request request("/index.dat", sf::Http::Request::Get);
+
+		setTaskSubtext("downloading");
+		sf::Http::Response response = http.sendRequest(request);
+
+		int fileSize = response.getBody().size();
+
+		// if the index file on the server has a different filesize than the one we've got, download it
+		setTaskSubtext("gathering apps list");
+		if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") != fileSize)
+		{
+			std::cout << "index file has been updated (difference of ";
+			if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") > fileSize)
+			{
+				std::cout << std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") - fileSize << " bytes)" << std::endl;
+			}
+			else
+			{
+				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") << " bytes)" << std::endl;
+			}
+
+			setTaskSubtext("updating apps list");
+			std::cout << "updating apps list" << std::endl;
+
+			std::string fileContainer = response.getBody();
+			std::ofstream downloadFile(".\\" + CONST::DIR::BASE + "\\index.dat", std::ios::out | std::ios::binary);
+			std::cout << "saving file to \"" + CONST::DIR::BASE + "\\index.dat\"... ";
+
+			for (int i = 0; i < fileSize; i++)
+				downloadFile << fileContainer[i];
+			downloadFile.close();
+
+			if (downloadFile.fail())
+				std::cout << "failed" << std::endl;
+			else
+				std::cout << "finished" << std::endl;
+
+			std::cout << "index file is ready." << std::endl;
+		}
+	}
+
 	scrollbar.create(app->window);
 
 	loadApps();
@@ -557,7 +561,7 @@ void AppListState::loadApps() // TOOD: this.
 	std::string line; // each line of index.dat;
 	std::cout << std::endl;
 
-	std::ifstream readIndex(".\\" + BASE_DIRECTORY + "\\index.dat", std::ios::in);
+	std::ifstream readIndex(".\\" + CONST::DIR::BASE + "\\index.dat", std::ios::in);
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
@@ -657,9 +661,9 @@ bool AppListState::checkForLauncherUpdates()
 
 	std::string remoteVersion = getHoHouse.fileBuffer;
 
-	std::cout << "r" << remoteVersion << " : " << "l" << launcherVersion << std::endl;
+	std::cout << "r" << remoteVersion << " : " << "l" << CONST::VERSION << std::endl;
 
-	if (remoteVersion != launcherVersion)
+	if (remoteVersion != CONST::VERSION)
 		return true;
 	else
 		return false;
@@ -673,13 +677,13 @@ std::string AppListState::updateLauncher()
 
 	std::string remoteVersion = getHoHouse.fileBuffer;
 
-	std::cout << "r" << remoteVersion << " : " << "l" << launcherVersion << std::endl;
+	std::cout << "r" << remoteVersion << " : " << "l" << CONST::VERSION << std::endl;
 
-	if (remoteVersion != launcherVersion)
+	if (remoteVersion != CONST::VERSION)
 	{
 		setTaskText("updating launcher");
 
-		std::cout << "launcher is out of date (current: " << launcherVersion << "; remote: " << remoteVersion << ")" << std::endl;
+		std::cout << "launcher is out of date (current: " << CONST::VERSION << "; remote: " << remoteVersion << ")" << std::endl;
 		setTaskSubtext("downloading updated launcher");
 
 		Download getNewWhorehouse;
@@ -705,7 +709,7 @@ std::string AppListState::updateLauncher()
 	}
 	else
 	{
-		return launcherVersion;
+		return CONST::VERSION;
 	}
 }
 

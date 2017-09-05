@@ -73,6 +73,14 @@ void Scrollbar::moveThumbDown()
 	scrollThumb.move(0, -1 * scrollJumpMultiplier);
 }
 
+void Scrollbar::moveToTop()
+{
+}
+
+void Scrollbar::moveToBottom()
+{
+}
+
 void Scrollbar::draw()
 {
 	targetWindow->draw(scrollbar);

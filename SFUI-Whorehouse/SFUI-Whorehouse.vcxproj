@@ -128,6 +128,7 @@
   <ItemGroup>
     <ClCompile Include="Download.cpp" />
     <ClCompile Include="AppListState.cpp" />
+    <ClCompile Include="InitialiseState.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Launcher.cpp" />
     <ClCompile Include="Link.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="constants.hpp" />
     <ClInclude Include="Download.hpp" />
     <ClInclude Include="AppListState.hpp" />
+    <ClInclude Include="InitialiseState.hpp" />
     <ClInclude Include="Item.hpp" />
     <ClInclude Include="Launcher.hpp" />
     <ClInclude Include="Link.hpp" />

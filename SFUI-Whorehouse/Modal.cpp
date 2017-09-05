@@ -29,6 +29,8 @@ Modal::Modal(ModalOptions settings_)
 	{
 		std::cerr << "unable to load font" << std::endl;
 		abort();
+
+		//TODO: handle this better
 	}
 
 	window.create(sf::VideoMode(text.getLocalBounds().width + 18, settings.height), settings.title, sf::Style::Titlebar);
@@ -86,17 +88,19 @@ Modal::Modal(ModalOptions settings_)
 					}
 				}
 			}
-		}
-
-		for (size_t i = 0; i < buttons.size(); i++)
-		{
-			if (mouseIsOver(buttons[i]->m_shape))
+			else if (sf::Event::EventType::MouseMoved)
 			{
-				buttons[i]->setButtonColor(sf::Color(200, 200, 200));
-			}
-			else
-			{
-				buttons[i]->setButtonColor(sf::Color(240, 240, 240));
+				for (size_t i = 0; i < buttons.size(); i++)
+				{
+					if (mouseIsOver(buttons[i]->m_shape))
+					{
+						buttons[i]->setButtonColor(sf::Color(200, 200, 200));
+					}
+					else
+					{
+						buttons[i]->setButtonColor(sf::Color(240, 240, 240));
+					}
+				}
 			}
 		}
 

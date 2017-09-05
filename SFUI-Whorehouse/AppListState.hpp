@@ -14,8 +14,8 @@ class Item;
 struct LaunchOptions
 {
 #ifdef _DEBUG
-	bool updateItemsOnStart = true;
-	bool updateLauncherOnStart = true;
+	bool updateItemsOnStart = false;
+	bool updateLauncherOnStart = false;
 #else
 	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = true;
@@ -48,11 +48,11 @@ private:
 	static AppListState AppListState_dontfuckwithme;
 	AppEngine* app;
 
-	LaunchOptions settings;
 	sf::View *mainView;
 	sf::View *cardScroller;
 	Scrollbar scrollbar;
 
+	LaunchOptions settings;
 	std::vector<Item*> items;
 	std::vector<Link*> links;
 
@@ -60,8 +60,7 @@ private:
 	bool helperRunning = false;
 	bool helperDone = false;
 
-	std::string launcherVersion = "0.10.3";
-
+	sf::Font font;
 	sf::Text initalisingText;
 	sf::Text currentLauncherTask;
 	sf::Text currentLauncherSubtask;
