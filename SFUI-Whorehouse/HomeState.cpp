@@ -39,8 +39,8 @@ void HomeState::Init(AppEngine* app_)
 	app->window->setTitle("KunLauncher " + CONST::VERSION);
 
 	homeText.setFont(font);
-	homeText.setCharacterSize(72);
-	homeText.setString("click to continue");
+	homeText.setCharacterSize(42);
+	homeText.setString("click for applist");
 	homeText.setOrigin(homeText.getLocalBounds().width / 2, homeText.getLocalBounds().height - 20);
 	homeText.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y)));
 }
