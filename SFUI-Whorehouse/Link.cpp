@@ -61,6 +61,8 @@ void Link::update()
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
 	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, cardShape.getPosition().x)); // probably not the best
 
+	totalHeight = cardShape.getLocalBounds().height;
+
 	linkText.setPosition(sf::Vector2f(cardShape.getPosition().x - 242, cardShape.getPosition().y - 22));
 
 	followLinkButton.setSize(sf::Vector2f(24, 24));

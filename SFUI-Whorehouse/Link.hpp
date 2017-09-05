@@ -14,6 +14,7 @@ public:
 	std::string linkRel;
 	sf::Text linkText;
 	int cardNumber; // used to store depth
+	int totalHeight;
 
 	void follow();
 	void update();

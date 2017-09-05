@@ -10,7 +10,7 @@ class AppEngine
 {
 public:
 
-	void Init(std::string title, int width = 800, int height = 500, bool fullscreen = false);
+	void Init(std::string title, int width = 525, int height = 325, bool fullscreen = false);
 	void Cleanup();
 
 	void ChangeState(AppState* state);

@@ -42,6 +42,7 @@ void AppListState::Init(AppEngine* app_)
 	app->window->setTitle("KunLauncher " + launcherVersion);
 
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
+	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	app->window->setVerticalSyncEnabled(true);
 
 	initalisingText.setFont(font); 
@@ -132,23 +133,39 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
-			sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-			app->window->setView(sf::View(visibleArea));
+			std::cout << "new width: " << event.size.width << std::endl;
+			std::cout << "new height: " << event.size.height << std::endl;
 
-			cardScroller->setSize(event.size.width, event.size.height);
-			cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().x / 2);
+			sf::Vector2u newSize(event.size.width, event.size.height);
 
-			// set the scrollbar size
-			float contentHeight = 0;
-			contentHeight += 43 * links.size();
-			contentHeight += 83 * items.size();
-
-			scrollbar.update(contentHeight, cardScroller->getSize().y);
-//			updateScrollThumb();
-
-			for (size_t i = 0; i < items.size(); i++)
+			if (newSize.x >= 525 && newSize.y >= 325)
 			{
-				items[i]->update(items[i]->cardShape.getPosition().y);
+				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+				*mainView = sf::View(visibleArea);
+				app->window->setView(sf::View(visibleArea));
+
+				cardScroller->setSize(event.size.width, event.size.height);
+				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
+
+				// set the scrollbar size
+				updateScrollThumb();
+
+				for (size_t i = 0; i < items.size(); i++)
+					items[i]->update(items[i]->cardShape.getPosition().y);
+
+				for (size_t i = 0; i < links.size(); i++)
+					links[i]->update();
+			}
+			else
+			{
+
+				if (event.size.width <= 525)
+					newSize.x = 525;
+
+				if (event.size.height <= 325)
+					newSize.y = 325;
+
+				app->window->setSize(newSize);
 			}
 		}
 		else if (event.type == sf::Event::EventType::MouseMoved)
@@ -167,10 +184,10 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::MouseWheelMoved) // thanks sfconsole
 		{
-			std::cout << "center x: " << app->window->getView().getCenter().x << std::endl;
-			std::cout << "center y: " << app->window->getView().getCenter().y << std::endl;
-			std::cout << "size x: " << app->window->getView().getSize().x << std::endl;
-			std::cout << "size y: " << app->window->getView().getSize().y << std::endl;
+//			std::cout << "center x: " << app->window->getView().getCenter().x << std::endl;
+//			std::cout << "center y: " << app->window->getView().getCenter().y << std::endl;
+//			std::cout << "size x: " << app->window->getView().getSize().x << std::endl;
+//			std::cout << "size y: " << app->window->getView().getSize().y << std::endl;
 
 			if (event.mouseWheel.delta < 0) // up
 			{
@@ -301,6 +318,8 @@ void AppListState::HandleEvents()
 				items.clear();
 
 				helperThread = new std::thread(&AppListState::loadApps, this);
+
+				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
 			}
 		}
 	}
@@ -338,8 +357,7 @@ void AppListState::Draw()
 	//anchored
 //	app->window->setView(app->window->getDefaultView());
 	// HACK: don't do this over and over. why does it even change when we scroll? I don't understand!
-	sf::View visibleArea2(sf::FloatRect(0, 0, app->window->getSize().x, app->window->getSize().y));
-	app->window->setView(visibleArea2);
+	app->window->setView(*mainView);
 	scrollbar.draw();
 
 	app->window->display();
@@ -694,9 +712,20 @@ std::string AppListState::updateLauncher()
 void AppListState::updateScrollThumb()
 {
 	// set the scrollbar size
-	float contentHeight = 0;
-	contentHeight += 43 * links.size();
-	contentHeight += 83 * items.size();
+	float contentHeight(0);
+	for (size_t i = 0; i < items.size(); i++)
+	{
+//		contentHeight += 83;
+		contentHeight += items[i]->totalHeight;
+//		contentHeight += 5;
+	}
+
+	for (size_t i = 0; i < links.size(); i++)
+	{
+//		contentHeight += 43;
+		contentHeight += links[i]->totalHeight;
+//		contentHeight += 5;
+	}
 
 	scrollbar.update(contentHeight, cardScroller->getSize().y);
 }

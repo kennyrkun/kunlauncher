@@ -49,8 +49,8 @@ private:
 	AppEngine* app;
 
 	LaunchOptions settings;
+	sf::View *mainView;
 	sf::View *cardScroller;
-	sf::View *defaultView;
 	Scrollbar scrollbar;
 
 	std::vector<Item*> items;
@@ -60,7 +60,7 @@ private:
 	bool helperRunning = false;
 	bool helperDone = false;
 
-	std::string launcherVersion = "0.10.2";
+	std::string launcherVersion = "0.10.3";
 
 	sf::Text initalisingText;
 	sf::Text currentLauncherTask;
