@@ -6,7 +6,7 @@
 
 namespace CONST
 {
-	const std::string VERSION = "0.10.4";
+	const std::string VERSION = "0.11.0";
 
 	namespace DIR
 	{

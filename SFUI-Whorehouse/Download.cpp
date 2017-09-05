@@ -9,7 +9,7 @@
 
 Download::Download(bool silent_)
 {
-	if (silent_ == true)
+	if (silent_)
 		silent = true;
 	else
 		silent = false;
