@@ -68,6 +68,12 @@ void InitialiseState::Cleanup()
 	std::cout << "helperDone: " << helperDone << std::endl;
 	std::cout << "helperRunning: " << helperRunning << std::endl;
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
+	{
+		std::cout << "developer mode activated" << std::endl;
+		developerActivated = true;
+	}
+
 	std::cout << "IntialiseState Cleanedup" << std::endl;
 }
 
@@ -116,14 +122,6 @@ void InitialiseState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 		}
-		else if (event.type == sf::Event::EventType::KeyPressed)
-		{
-			if (event.key.code == sf::Keyboard::Key::LShift)
-			{
-				developerKeyPresses++;
-				std::cout << "developer key pressed " << developerKeyPresses << "times" << std::endl;
-			}
-		}
 	}
 }
 
@@ -134,8 +132,6 @@ void InitialiseState::Update()
 
 void InitialiseState::Draw()
 {
-	std::cout << helperDone << std::endl;
-
 	if (helperDone)
 	{
 		std::cout << "helper is done, joining" << std::endl;

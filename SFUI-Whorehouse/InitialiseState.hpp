@@ -51,7 +51,7 @@ private:
 
 	LaunchOptions settings;
 	std::vector<std::thread> threads;
-	int developerKeyPresses = 0;
+	bool developerActivated = 0;
 
 	std::thread *helperThread;
 	bool helperRunning = false;
