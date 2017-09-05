@@ -247,12 +247,14 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
-			if (event.key.code == sf::Keyboard::Key::R)
+			if (event.key.code == sf::Keyboard::Key::R && !helperRunning)
 			{
 				links.clear();
 				items.clear();
 
 				helperThread = new std::thread(&AppListState::loadApps, this);
+				helperDone = false;
+				helperRunning = true;
 
 				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
 			}
@@ -377,6 +379,7 @@ void AppListState::loadApps() // TOOD: this.
 	}
 
 	helperDone = true;
+	helperRunning = false;
 }
 
 void AppListState::updateScrollThumb()
