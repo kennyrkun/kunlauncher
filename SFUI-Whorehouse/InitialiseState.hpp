@@ -14,8 +14,8 @@ class Item;
 struct LaunchOptions
 {
 #ifdef _DEBUG
-	bool updateItemsOnStart = true;
-	bool updateLauncherOnStart = true;
+	bool updateItemsOnStart = false;
+	bool updateLauncherOnStart = false;
 #else
 	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = true;
@@ -49,36 +49,24 @@ private:
 	static InitialiseState IntialiseState_dontfuckwithme;
 	AppEngine* app;
 
-	sf::View *mainView;
-	sf::View *cardScroller;
-	Scrollbar scrollbar;
-
 	LaunchOptions settings;
 	std::vector<std::thread> threads;
-	std::vector<Item*> items;
-	std::vector<Link*> links;
+	int developerKeyPresses = 0;
 
 	std::thread *helperThread;
 	bool helperRunning = false;
 	bool helperDone = false;
-
-	sf::Font font;
-	sf::Text initalisingText;
-	sf::Text currentLauncherTask;
-	sf::Text currentLauncherSubtask;
+	bool isReady = false;
 
 	void initialisise();
-	void loadApps();
-
 	bool checkForLauncherUpdates();
 	std::string updateLauncher();
 
-	void updateScrollThumb();
-
-	bool mouseIsOver(sf::Shape &object);
-	bool mouseIsOver(sf::Text &object);
-
+	sf::Font font;
+	sf::Text homeText;
+	sf::Text currentLauncherTask;
 	void setTaskText(std::string text);
+	sf::Text currentLauncherSubtask;
 	void setTaskSubtext(std::string text);
 };
 
