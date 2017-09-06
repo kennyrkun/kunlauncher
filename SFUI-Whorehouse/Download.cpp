@@ -49,7 +49,9 @@ std::string Download::getOutputDir()
 void Download::setOutputFilename(std::string file)
 {
 	outfile = file;
-//	std::cout << "output file set to: " << outfile << std::endl;
+
+	if (!silent)
+		std::cout << "output file set to: " << outfile << std::endl;
 }
 
 std::string Download::getOutputFilename()
@@ -73,7 +75,7 @@ int Download::download()
 	sf::Http::Request request("/" + inpath, sf::Http::Request::Get);
 
 	sf::Clock timer;
-	sf::Http::Response response = http.sendRequest(request);
+	sf::Http::Response response = http.sendRequest(request, sf::seconds(10));
 	float elapsedTime = timer.getElapsedTime().asSeconds();
 
 	fileSize = response.getBody().size();
@@ -86,21 +88,21 @@ int Download::download()
 
 	switch (response.getStatus())
 	{
-	case response.Ok:
+	case sf::Http::Response::Ok:
 		if (!silent)
 			std::cout << "successfully connected to file server, and got files" << std::endl;
 
 		return sf::Http::Response::Status::Ok;
 		break;
 
-	case response.NotFound:
+	case sf::Http::Response::NotFound:
 		if (!silent)
 			std::cout << "file does not exist on remote server (404)" << std::endl;
 
 		return sf::Http::Response::Status::NotFound;
 		break;
 
-	case response.InternalServerError:
+	case sf::Http::Response::InternalServerError:
 		if (!silent)
 			std::cout << "internal server error was encountered, aborting..." << std::endl;
 

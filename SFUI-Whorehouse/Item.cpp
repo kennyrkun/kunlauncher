@@ -381,6 +381,8 @@ std::ifstream& Item::GotoLine(std::ifstream& file, unsigned int line)
 
 void Item::parseInfo(std::string dir) // a lot easier than I thought it would be.
 {
+	//TODO: add checks here to make sure we don't try to parse a file that ended up being a 500
+
 	std::ifstream getit(dir + "info.dat", std::ios::in);
 
 	std::string name_;

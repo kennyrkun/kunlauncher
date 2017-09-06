@@ -188,7 +188,7 @@ void InitialiseState::initialisise()
 	//TODO: this will stop items from updating if it's disabled
 	if (settings.updateItemsOnStart)
 	{
-		setTaskSubtext("connecting to file server");
+		setTaskSubtext("checking for item updates");
 
 		// download the index file (or at least store it)
 		sf::Http http(CONST::DIR::WEB_HOSTNAME);
@@ -231,10 +231,9 @@ void InitialiseState::initialisise()
 		}
 	}
 
-
 	if (settings.updateLauncherOnStart)
 	{
-		setTaskText("checking for updates...");
+		setTaskText("checking for item updates...");
 
 		if (checkForLauncherUpdates())
 		{

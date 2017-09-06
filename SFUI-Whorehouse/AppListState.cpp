@@ -1,6 +1,7 @@
 #include "AppEngine.hpp"
 #include "AppState.hpp"
 #include "AppListState.hpp"
+#include "HomeState.hpp"
 
 #include "Download.hpp"
 #include "Modal.hpp"
@@ -235,6 +236,10 @@ void AppListState::HandleEvents()
 						links[i]->follow();
 					}
 				}
+			}
+			else if (event.key.code == sf::Mouse::Button::Right)
+			{
+				app->ChangeState(HomeState::Instance());
 			}
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonReleased)
