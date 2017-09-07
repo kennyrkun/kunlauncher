@@ -1,12 +1,12 @@
-#ifndef CONSTANTS_HPP
-#define CONSTANTS_HPP
+#ifndef Globals_HPP
+#define Globals_HPP
 
 #include <SFML\Graphics\Color.hpp>
 #include <string>
 
 namespace CONST
 {
-	const std::string VERSION = "0.11.0";
+	const std::string VERSION = "0.11.1";
 
 	namespace DIR
 	{

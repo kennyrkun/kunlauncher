@@ -3,7 +3,7 @@
 #include <iostream>
 #include <experimental\filesystem>
 
-#include "constants.hpp"
+#include "Globals.hpp"
 
 #include "Link.hpp"
 #include "Download.hpp"

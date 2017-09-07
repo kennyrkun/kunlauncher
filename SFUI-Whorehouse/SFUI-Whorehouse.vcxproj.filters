@@ -81,9 +81,6 @@
     <ClInclude Include="AppState.hpp">
       <Filter>Source Files\Backend\Base</Filter>
     </ClInclude>
-    <ClInclude Include="constants.hpp">
-      <Filter>Source Files\Backend</Filter>
-    </ClInclude>
     <ClInclude Include="Launcher.hpp">
       <Filter>Source Files\Launcher</Filter>
     </ClInclude>
@@ -101,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="AppListState.hpp">
       <Filter>Source Files\Launcher\States\AppList</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.hpp">
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

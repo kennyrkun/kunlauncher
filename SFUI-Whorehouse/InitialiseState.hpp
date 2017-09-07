@@ -6,7 +6,6 @@
 #include "Scrollbar.hpp"
 
 #include <thread>
-#include <vector>
 
 class Link;
 class Item;
@@ -50,7 +49,6 @@ private:
 	AppEngine* app;
 
 	LaunchOptions settings;
-	std::vector<std::thread> threads;
 	bool developerActivated = 0;
 
 	std::thread *helperThread;

@@ -7,7 +7,7 @@
 #include "Modal.hpp"
 #include "Item.hpp"
 #include "Link.hpp"
-#include "constants.hpp"
+#include "Globals.hpp"
 
 #include <SFML\Graphics.hpp>
 #include <SFML\Network.hpp>

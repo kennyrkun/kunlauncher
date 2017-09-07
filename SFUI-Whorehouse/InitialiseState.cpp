@@ -7,7 +7,7 @@
 #include "Modal.hpp"
 #include "Item.hpp"
 #include "Link.hpp"
-#include "constants.hpp"
+#include "Globals.hpp"
 
 #include <SFML\Graphics.hpp>
 #include <SFML\Network.hpp>
@@ -388,6 +388,22 @@ std::string InitialiseState::updateLauncher()
 		getNewWhorehouse.setOutputDir(".\\");
 		getNewWhorehouse.setOutputFilename("kunlauncher.exe");
 		getNewWhorehouse.download();
+
+		try
+		{
+			std::experimental::filesystem::remove(CONST::DIR::BASE + "change.log");
+
+			Download getChangelog;
+			getNewWhorehouse.setInputPath(CONST::DIR::BASE + "change.log");
+			getNewWhorehouse.setOutputDir(".\\");
+			getNewWhorehouse.setOutputFilename(CONST::DIR::BASE + "change.log");
+			getNewWhorehouse.download();
+		}
+		catch (const std::exception& e)
+		{
+			std::cout << "unable to download new changelog :" << std::endl;
+			std::cout << e.what() << std::endl;
+		}
 
 		setTaskSubtext("saving updated launcher");
 

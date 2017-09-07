@@ -25,7 +25,7 @@ void Scrollbar::create(sf::RenderWindow* target_window)
 		
 	scrollThumb.setSize(sf::Vector2f(scrollbar.getSize().x, targetWindow->getSize().y));
 	scrollThumb.setOrigin(sf::Vector2f(scrollThumb.getLocalBounds().width / 2, scrollThumb.getLocalBounds().height / 2));
-	scrollThumb.setPosition((targetWindow->getView().getCenter().x * 2) - scrollThumb.getLocalBounds().width, targetWindow->getView().getCenter().y);
+	scrollThumb.setPosition((targetWindow->getView().getCenter().x * 2) - scrollThumb.getLocalBounds().width / 2, targetWindow->getView().getCenter().y);
 	scrollThumb.setFillColor(sf::Color(110, 110, 110));
 
 	std::cout << "scrollbar thumb is " << scrollThumb.getSize().x << " by " << scrollThumb.getSize().y << std::endl;

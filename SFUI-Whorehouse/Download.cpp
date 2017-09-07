@@ -1,5 +1,5 @@
 #include "Download.hpp"
-#include "constants.hpp"
+#include "Globals.hpp"
 
 #include <SFML\Network.hpp>
 #include <experimental\filesystem>

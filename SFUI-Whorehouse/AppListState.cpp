@@ -7,7 +7,7 @@
 #include "Modal.hpp"
 #include "Item.hpp"
 #include "Link.hpp"
-#include "constants.hpp"
+#include "Globals.hpp"
 
 #include <SFML\Graphics.hpp>
 #include <SFML\Network.hpp>
@@ -42,6 +42,15 @@ void AppListState::Init(AppEngine* app_)
 void AppListState::Cleanup()
 {
 	delete cardScroller;
+
+	if (helperRunning)
+	{
+		std::cout << "waiting on helper thread to finish" << std::endl;
+		helperThread->join();
+	}
+
+	items.clear();
+	links.clear();
 //	delete app; // dont delete app because it's being used by the thing and we need it.
 //	app = nullptr;
 
@@ -269,12 +278,14 @@ void AppListState::HandleEvents()
 
 void AppListState::Update()
 {
+	if (helperDone && !helperRunning)
+	{
+		std::cout << "helper done, joining" << std::endl;
+		helperThread->join();
 
-}
-
-void AppListState::Draw()
-{
-	app->window->clear(CONST::COLOR::BACKGROUND);
+		helperDone = false;
+		helperRunning = false;
+	}
 
 	for (size_t i = 0; i < threads.size(); i++)
 	{
@@ -286,15 +297,19 @@ void AppListState::Draw()
 			threads.erase(threads.begin() + i);
 		}
 	}
+}
+
+void AppListState::Draw()
+{
+	app->window->clear(CONST::COLOR::BACKGROUND);
 
 	//scrollable
 	app->window->setView(*cardScroller);
 	for (size_t i = 0; i < items.size(); i++)
 		items[i]->draw();
 
-	if (!links.empty())
-		for (size_t i = 0; i < links.size(); i++)
-			links[i]->draw();
+	for (size_t i = 0; i < links.size(); i++)
+		links[i]->draw();
 
 	//anchored
 //	app->window->setView(app->window->getDefaultView());
@@ -384,7 +399,6 @@ void AppListState::loadApps() // TOOD: this.
 	}
 
 	helperDone = true;
-	helperRunning = false;
 }
 
 void AppListState::updateScrollThumb()
