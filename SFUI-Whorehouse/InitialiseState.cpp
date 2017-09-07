@@ -249,8 +249,8 @@ void InitialiseState::initialisise()
 
 				if (getHoHouse.fileBuffer.find("500 Internal Server Error") != std::string::npos)
 				{
-					modOptions.title = "fuckin peice of shit is broken again";
-					modOptions.text = "server fucked up, committing suicide.";
+					modOptions.title = "BRKOEN AGAIN!";
+					modOptions.text = "server fucked up, try again.";
 					modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
 				}
 				else
@@ -261,7 +261,7 @@ void InitialiseState::initialisise()
 				}
 
 				setTaskText("waiting on user confirmation");
-				setTaskSubtext("you want it shiney?");
+				setTaskSubtext("you want it sHI-NEY like the treasure from a sunken pirate wreck??");
 				Modal doYouWannaUpdate(modOptions);
 
 				switch (doYouWannaUpdate.returnCode)
@@ -290,13 +290,13 @@ void InitialiseState::initialisise()
 
 				if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
 				{
-					modOptions.text = "server fucked up, committing suicide.";
-					modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
+					modOptions.title = "BRKOEN AGAIN!";
+					modOptions.text = "server fucked up, try again.";
 				}
 				else
 				{
 					modOptions.text = "Launcher updated to v" + remoteVersion + "! Restart it!";
-					modOptions.settings = { "Restart Now", "Restart Later" };
+					modOptions.settings = { "Restart Now", "Restart Later", "View Changelog" };
 				}
 
 				Modal updateSuccessfulModal(modOptions);
@@ -311,6 +311,15 @@ void InitialiseState::initialisise()
 				case 1:
 					std::cout << "restarting later" << std::endl;
 					updateSuccessfulModal.close();
+					break;
+
+				case 2:
+				{
+					std::cout << "opening changelog" << std::endl;
+					std::string command("start " + CONST::DIR::BASE + "\\change.log");
+					system(command.c_str());
+					break;
+				}
 
 				default:
 					break;
@@ -391,12 +400,12 @@ std::string InitialiseState::updateLauncher()
 
 		try
 		{
-			std::experimental::filesystem::remove(CONST::DIR::BASE + "change.log");
+			std::experimental::filesystem::remove(CONST::DIR::BASE + "\\change.log");
 
 			Download getChangelog;
-			getNewWhorehouse.setInputPath(CONST::DIR::BASE + "change.log");
+			getNewWhorehouse.setInputPath(CONST::DIR::BASE + "\\change.log");
 			getNewWhorehouse.setOutputDir(".\\");
-			getNewWhorehouse.setOutputFilename(CONST::DIR::BASE + "change.log");
+			getNewWhorehouse.setOutputFilename(CONST::DIR::BASE + "\\change.log");
 			getNewWhorehouse.download();
 		}
 		catch (const std::exception& e)

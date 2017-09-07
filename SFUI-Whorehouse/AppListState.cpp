@@ -261,16 +261,25 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
-			if (event.key.code == sf::Keyboard::Key::R && !helperRunning)
+			if (event.key.code == sf::Keyboard::Key::R)
 			{
-				links.clear();
-				items.clear();
+				if (helperRunning)
+				{
+					std::cout << "refreshing applist" << std::endl;
 
-				helperThread = new std::thread(&AppListState::loadApps, this);
-				helperDone = false;
-				helperRunning = true;
+					links.clear();
+					items.clear();
 
-				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
+					helperThread = new std::thread(&AppListState::loadApps, this);
+					helperDone = false;
+					helperRunning = true;
+
+					cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
+				}
+				else
+				{
+					std::cout << "helper is running, not reloading." << std::endl;
+				}
 			}
 		}
 	}
