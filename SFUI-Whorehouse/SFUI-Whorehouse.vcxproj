@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Section.cpp" />
     <ClCompile Include="Download.cpp" />
     <ClCompile Include="AppListState.cpp" />
     <ClCompile Include="HomeState.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Section.hpp" />
     <ClInclude Include="Globals.hpp" />
     <ClInclude Include="Download.hpp" />
     <ClInclude Include="AppListState.hpp" />

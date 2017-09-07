@@ -23,6 +23,9 @@
     <Filter Include="Source Files\Launcher\States\AppList">
       <UniqueIdentifier>{12a224ad-429e-4800-a713-ea9138b7adfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Launcher\States\Home">
+      <UniqueIdentifier>{967f3594-d6e8-4e87-8fd5-bf62cce0831f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -49,9 +52,6 @@
     <ClCompile Include="InitialiseState.cpp">
       <Filter>Source Files\Launcher\States</Filter>
     </ClCompile>
-    <ClCompile Include="HomeState.cpp">
-      <Filter>Source Files\Launcher\States</Filter>
-    </ClCompile>
     <ClCompile Include="Link.cpp">
       <Filter>Source Files\Launcher\States\AppList</Filter>
     </ClCompile>
@@ -60,6 +60,12 @@
     </ClCompile>
     <ClCompile Include="AppListState.cpp">
       <Filter>Source Files\Launcher\States\AppList</Filter>
+    </ClCompile>
+    <ClCompile Include="HomeState.cpp">
+      <Filter>Source Files\Launcher\States\Home</Filter>
+    </ClCompile>
+    <ClCompile Include="Section.cpp">
+      <Filter>Source Files\Launcher\States\Home</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,9 +93,6 @@
     <ClInclude Include="InitialiseState.hpp">
       <Filter>Source Files\Launcher\States</Filter>
     </ClInclude>
-    <ClInclude Include="HomeState.hpp">
-      <Filter>Source Files\Launcher\States</Filter>
-    </ClInclude>
     <ClInclude Include="Link.hpp">
       <Filter>Source Files\Launcher\States\AppList</Filter>
     </ClInclude>
@@ -101,6 +104,12 @@
     </ClInclude>
     <ClInclude Include="Globals.hpp">
       <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="HomeState.hpp">
+      <Filter>Source Files\Launcher\States\Home</Filter>
+    </ClInclude>
+    <ClInclude Include="Section.hpp">
+      <Filter>Source Files\Launcher\States\Home</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
