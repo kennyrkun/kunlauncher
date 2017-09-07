@@ -29,7 +29,7 @@ private:
 	static HomeState IntialiseState_dontfuckwithme;
 	AppEngine* app;
 
-	sf::Font font;
+	sf::Font* font;
 	sf::Text homeText;
 };
 

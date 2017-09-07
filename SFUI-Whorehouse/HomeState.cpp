@@ -24,11 +24,13 @@ void HomeState::Init(AppEngine* app_)
 
 	app = app_;
 
-	if (!font.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::FONT + "\\Product Sans.ttf"))
+	font = new sf::Font();
+
+	if (!font->loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::FONT + "\\Product Sans.ttf"))
 	{
 		std::cout << "failed to load product sans, falling back to Arial!" << std::endl;
 
-		if (!font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
+		if (!font->loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
 		{
 			std::cout << "failed to load a font!" << std::endl;
 
@@ -38,15 +40,17 @@ void HomeState::Init(AppEngine* app_)
 
 	app->window->setTitle("KunLauncher " + CONST::VERSION);
 
-	homeText.setFont(font);
+	homeText.setFont(*font);
 	homeText.setCharacterSize(42);
-	homeText.setString("click for applist");
-	homeText.setOrigin(homeText.getLocalBounds().width / 2, homeText.getLocalBounds().height - 20);
+	homeText.setString("click to view applist\n right click to return");
+	homeText.setOrigin(homeText.getLocalBounds().width / 2, homeText.getLocalBounds().height / 2);
 	homeText.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y)));
 }
 
 void HomeState::Cleanup()
 {
+	delete font;
+
 	std::cout << "Cleaned IntialiseState up." << std::endl;
 }
 
@@ -95,9 +99,12 @@ void HomeState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 		}
-		else if (event.type == sf::Event::EventType::KeyPressed || event.type == sf::Event::EventType::MouseButtonPressed)
+		else if (event.type == sf::Event::EventType::MouseButtonPressed)
 		{
-			app->ChangeState(AppListState::Instance());
+			if (event.key.code == sf::Mouse::Button::Left)
+			{
+				app->ChangeState(AppListState::Instance());
+			}
 		}
 	}
 }
