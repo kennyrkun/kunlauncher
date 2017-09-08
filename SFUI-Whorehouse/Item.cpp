@@ -111,6 +111,8 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 		std::cout << "release was found, installed" << std::endl;
 
 		downloaded = true;
+
+		checkForUpdate();
 	}
 	else // thing is not downloaded
 	{
@@ -234,6 +236,8 @@ bool Item::checkForUpdate()
 
 		updateIsAvailable = true;
 		redownloadButton.setFillColor(sf::Color::Yellow);
+
+		version.setString(lVersion + " (New " + rVersion + "!)");
 	}
 	else
 	{

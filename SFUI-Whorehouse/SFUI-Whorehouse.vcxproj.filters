@@ -64,9 +64,6 @@
     <ClCompile Include="HomeState.cpp">
       <Filter>Source Files\Launcher\States\Home</Filter>
     </ClCompile>
-    <ClCompile Include="Section.cpp">
-      <Filter>Source Files\Launcher\States\Home</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Download.hpp">
@@ -106,9 +103,6 @@
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
     <ClInclude Include="HomeState.hpp">
-      <Filter>Source Files\Launcher\States\Home</Filter>
-    </ClInclude>
-    <ClInclude Include="Section.hpp">
       <Filter>Source Files\Launcher\States\Home</Filter>
     </ClInclude>
   </ItemGroup>
