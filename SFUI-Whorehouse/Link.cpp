@@ -37,6 +37,8 @@ Link::Link(std::string raw, sf::RenderWindow* target_window, float xPos)
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 	followLinkButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 
+	totalHeight = cardShape.getLocalBounds().height;
+
 	std::cout << "card is ready" << std::endl;
 }
 
