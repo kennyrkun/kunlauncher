@@ -4,6 +4,8 @@
 #include <SFML\Graphics.hpp>
 #include "AppState.hpp"
 
+#include <vector>
+
 class HomeState : public AppState
 {
 public:

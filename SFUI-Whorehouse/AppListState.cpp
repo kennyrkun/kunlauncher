@@ -27,8 +27,6 @@ void AppListState::Init(AppEngine* app_)
 
 	bool isReady(false);
 
-	app->window->setTitle("KunLauncher " + CONST::VERSION);
-
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 

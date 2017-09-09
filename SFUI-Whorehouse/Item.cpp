@@ -1,11 +1,11 @@
+#include "Item.hpp"
+#include "Download.hpp"
+#include "Globals.hpp"
+
 #include <fstream>
 #include <iostream>
 #include <experimental\filesystem>
 #include <SFML\Network.hpp>
-
-#include "Item.hpp"
-#include "Download.hpp"
-#include "Globals.hpp"
 
 namespace fs = std::experimental::filesystem;
 

@@ -98,8 +98,8 @@ void InitialiseState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
-			std::cout << "new width: " << event.size.width << "\n";
-			std::cout << "new height: " << event.size.height << "\n";
+			std::cout << "new window width: " << event.size.width << "\n";
+			std::cout << "new window height: " << event.size.height << "\n";
 
 			sf::Vector2u newSize(event.size.width, event.size.height);
 

@@ -38,8 +38,6 @@ void HomeState::Init(AppEngine* app_)
 		}
 	}
 
-	app->window->setTitle("KunLauncher " + CONST::VERSION);
-
 	homeText.setFont(*font);
 	homeText.setCharacterSize(42);
 	homeText.setString("click to view applist\n right click to return");
