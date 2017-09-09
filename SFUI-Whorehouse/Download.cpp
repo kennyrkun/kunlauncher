@@ -15,19 +15,19 @@ Download::Download(bool silent_)
 		silent = false;
 
 	if (!silent)
-		std::cout << "downloader created" << std::endl;
+		std::cout << "downloader created" << "\n";
 }
 
 Download::Download()
 {
 	if (!silent)
-		std::cout << "downloader created" << std::endl;
+		std::cout << "downloader created" << "\n";
 }
 
 Download::~Download()
 {
 	if (!silent)
-		std::cout << "downloader killed" << std::endl;
+		std::cout << "downloader killed" << "\n";
 }
 
 void Download::setOutputDir(std::string dir)
@@ -35,7 +35,7 @@ void Download::setOutputDir(std::string dir)
 	outdir = dir;
 
 	if (!silent)
-		std::cout << "output set to: " << outdir << std::endl;
+		std::cout << "output set to: " << outdir << "\n";
 
 	if (!std::experimental::filesystem::exists(outdir))
 		createDirectory(outdir);
@@ -51,7 +51,7 @@ void Download::setOutputFilename(std::string file)
 	outfile = file;
 
 	if (!silent)
-		std::cout << "output file set to: " << outfile << std::endl;
+		std::cout << "output file set to: " << outfile << "\n";
 }
 
 std::string Download::getOutputFilename()
@@ -80,31 +80,31 @@ int Download::download()
 
 	fileSize = response.getBody().size();
 	if (!silent)
-		std::cout << "downloading remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... " << std::endl;
+		std::cout << "downloading remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... " << "\n";
 	 
 	fileBuffer = response.getBody();
 	if (!silent)
-		std::cout << "done downloading. (took " << elapsedTime << " seconds.)" << std::endl;
+		std::cout << "done downloading. (took " << elapsedTime << " seconds.)" << "\n";
 
 	switch (response.getStatus())
 	{
 	case sf::Http::Response::Ok:
 		if (!silent)
-			std::cout << "successfully connected to file server, and got files" << std::endl;
+			std::cout << "successfully connected to file server, and got files" << "\n";
 
 		return sf::Http::Response::Status::Ok;
 		break;
 
 	case sf::Http::Response::NotFound:
 		if (!silent)
-			std::cout << "file does not exist on remote server (404)" << std::endl;
+			std::cout << "file does not exist on remote server (404)" << "\n";
 
 		return sf::Http::Response::Status::NotFound;
 		break;
 
 	case sf::Http::Response::InternalServerError:
 		if (!silent)
-			std::cout << "internal server error was encountered, aborting..." << std::endl;
+			std::cout << "internal server error was encountered, aborting..." << "\n";
 
 		return sf::Http::Response::Status::InternalServerError;
 		break;
@@ -118,7 +118,7 @@ void Download::save()
 {
 	std::ofstream downloadFile(outdir + outfile, std::ios::out | std::ios::binary);
 	if (!silent)
-		std::cout << "saving file to \"" << outdir << outfile << "\"... " << std::endl;
+		std::cout << "saving file to \"" << outdir << outfile << "\"... " << "\n";
 
 	for (int i = 0; i < fileSize; i++)
 		downloadFile << fileBuffer[i];
@@ -126,10 +126,10 @@ void Download::save()
 
 	if (downloadFile.fail())
 		if (!silent)
-			std::cout << "failed" << std::endl;
+			std::cout << "failed" << "\n";
 	else
 		if (!silent)
-			std::cout << "finished" << std::endl;
+			std::cout << "finished" << "\n";
 }
 
 std::string Download::getAppropriateFileSize(const long long int bytes, const int decimals)
@@ -164,5 +164,5 @@ void Download::createDirectory(std::string dir)
 		last = last.append(subdirectories[i + 1]); // add the next path to this path
 	}
 
-//	std::cout << "done." << std::endl;
+//	std::cout << "done." << "\n";
 }

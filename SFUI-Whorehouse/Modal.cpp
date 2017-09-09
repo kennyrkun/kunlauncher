@@ -27,7 +27,7 @@ Modal::Modal(ModalOptions settings_)
 	}
 	else
 	{
-		std::cerr << "unable to load font" << std::endl;
+		std::cerr << "unable to load font" << "\n";
 		abort();
 
 		//TODO: handle this better
@@ -44,7 +44,7 @@ Modal::Modal(ModalOptions settings_)
 
 		if (i == 0)
 		{
-			std::cout << "first shape x is " << newButton->m_shape.getGlobalBounds().width << std::endl;
+			std::cout << "first shape x is " << newButton->m_shape.getGlobalBounds().width << "\n";
 
 			newButton->setPosition(sf::Vector2f((window.getView().getCenter().x * 2) - (newButton->m_shape.getLocalBounds().width / 2) - 4, static_cast<int>(window.getView().getCenter().y + 22)));
 		}
@@ -52,9 +52,9 @@ Modal::Modal(ModalOptions settings_)
 		{
 			sf::RectangleShape &last = buttons[i - 1]->m_shape;
 
-			std::cout << "shape " << i - 1 << " x is " << last.getSize().x << std::endl;
-			std::cout << "shape " << i - 1 << " y is " << last.getSize().y << std::endl;
-			std::cout << "current is: " << settings.settings[i] << std::endl;
+			std::cout << "shape " << i - 1 << " x is " << last.getSize().x << "\n";
+			std::cout << "shape " << i - 1 << " y is " << last.getSize().y << "\n";
+			std::cout << "current is: " << settings.settings[i] << "\n";
 
 			newButton->setPosition(sf::Vector2f(last.getPosition().x - last.getLocalBounds().width / 2 - newButton->m_shape.getLocalBounds().width / 2 - 4, last.getPosition().y));
 		}

@@ -12,12 +12,12 @@ void AppEngine::Init(std::string title, int width, int height, bool fullscreen)
 	m_fullscreen = fullscreen;
 	m_running = true;
 
-	std::cout << "AppEngine Init" << std::endl;
+	std::cout << "AppEngine Init" << "\n";
 }
 
 void AppEngine::Cleanup()
 {
-	std::cout << "Cleaning up AppEngine." << std::endl;
+	std::cout << "Cleaning up AppEngine." << "\n";
 	
 	// cleanup the all states
 	while (!states.empty())
@@ -28,7 +28,7 @@ void AppEngine::Cleanup()
 
 	window->close();
 
-	std::cout << "AppEngine cleaned up." << std::endl;
+	std::cout << "AppEngine cleaned up." << "\n";
 }
 
 void AppEngine::ChangeState(AppState* state)

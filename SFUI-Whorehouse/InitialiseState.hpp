@@ -14,7 +14,7 @@ struct LaunchOptions
 {
 #ifdef _DEBUG
 	bool updateItemsOnStart = true;
-	bool updateLauncherOnStart = false;
+	bool updateLauncherOnStart = true;
 #else
 	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = true;
@@ -59,6 +59,7 @@ private:
 	void initialisise();
 	bool checkForLauncherUpdates();
 	std::string updateLauncher();
+	int updateResourceFiles();
 
 	sf::Font font;
 	sf::Text homeText;

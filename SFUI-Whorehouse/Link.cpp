@@ -13,7 +13,7 @@ Link::Link(std::string raw, sf::RenderWindow* target_window, float xPos)
 	targetWindow = target_window;
 	getLink(raw);
 
-	std::cout << "creating new card for \"" << linkText.getString().toAnsiString() << "\" linking to \"" << linkRel << "\"" << std::endl;
+	std::cout << "creating new card for \"" << linkText.getString().toAnsiString() << "\" linking to \"" << linkRel << "\"" << "\n";
 
 	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
@@ -39,7 +39,7 @@ Link::Link(std::string raw, sf::RenderWindow* target_window, float xPos)
 
 	totalHeight = cardShape.getLocalBounds().height;
 
-	std::cout << "card is ready" << std::endl;
+	std::cout << "card is ready" << "\n";
 }
 
 Link::~Link()
@@ -49,7 +49,7 @@ Link::~Link()
 
 void Link::follow()
 {
-	std::cout << "\n" << "going to " << linkRel << std::endl;
+	std::cout << "\n" << "going to " << linkRel << "\n";
 
 #if defined (_WIN32) // one day it'll be cross platform... one day.
 	std::string test = "start " + linkRel;

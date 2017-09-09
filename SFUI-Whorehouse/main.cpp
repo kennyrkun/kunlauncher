@@ -6,34 +6,34 @@
 
 int main(int argc, char *argv[])
 {
-	std::cout << "Launching with " << argc << " arguments:" << std::endl;
+	std::cout << "Launching with " << argc << " arguments:" << "\n";
 
 	LaunchOptions settings;
 
 	for (int i = 0; i < argc; i++)
 	{
-		std::cout << i << ": " << argv[i] << std::endl;
+		std::cout << i << ": " << argv[i] << "\n";
 
 		if (std::string(argv[i]) == "-nolauncherupdate")
 		{
-			std::cout << "launcher will not check for updates" << std::endl;
+			std::cout << "launcher will not check for updates" << "\n";
 			settings.updateLauncherOnStart = false;
 		}
 
 		if (std::string(argv[i]) == "-noindexupdate")
 		{
-			std::cout << "will not check for app updates" << std::endl;
+			std::cout << "will not check for app updates" << "\n";
 			settings.updateItemsOnStart = false;
 		}
 
 		if (std::string(argv[i]) == "-width")
 		{
-			std::cout << "launcher width set to " << argv[i + 1] << std::endl;
+			std::cout << "launcher width set to " << argv[i + 1] << "\n";
 			settings.width = std::stoi(argv[i + 1]);
 		}
 	}
 
-	std::cout << std::endl;
+	std::cout << "\n";
 
 	{
 		AppEngine* app = new AppEngine;

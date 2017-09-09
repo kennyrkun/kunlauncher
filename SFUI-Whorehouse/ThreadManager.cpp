@@ -5,10 +5,10 @@
 
 ThreadManager::ThreadManager()
 {
-	std::cout << "threadmanager constructed" << std::endl;
+	std::cout << "threadmanager constructed" << "\n";
 }
 
 ThreadManager::~ThreadManager()
 {
-	std::cout << "threadmanager deconstructed" << std::endl;
+	std::cout << "threadmanager deconstructed" << "\n";
 }

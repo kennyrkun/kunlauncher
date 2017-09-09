@@ -14,7 +14,7 @@ Scrollbar::~Scrollbar()
 
 void Scrollbar::create(sf::RenderWindow* target_window)
 {
-	std::cout << "creating scrollbar" << std::endl;
+	std::cout << "creating scrollbar" << "\n";
 
 	targetWindow = target_window;
 
@@ -28,14 +28,14 @@ void Scrollbar::create(sf::RenderWindow* target_window)
 	scrollThumb.setPosition((targetWindow->getView().getCenter().x * 2) - scrollThumb.getLocalBounds().width / 2, targetWindow->getView().getCenter().y);
 	scrollThumb.setFillColor(sf::Color(110, 110, 110));
 
-	std::cout << "scrollbar thumb is " << scrollThumb.getSize().x << " by " << scrollThumb.getSize().y << std::endl;
+	std::cout << "scrollbar thumb is " << scrollThumb.getSize().x << " by " << scrollThumb.getSize().y << "\n";
 
 	scrollJumpMultiplier = 16;
 }
 
 void Scrollbar::update(float contentHeight_, float viewportHeight)
 {
-	std::cout << "updating scrollbar" << std::endl;
+	std::cout << "updating scrollbar" << "\n";
 
 	scrollbar.setSize(sf::Vector2f(10, targetWindow->getSize().y));
 	scrollbar.setOrigin(sf::Vector2f(scrollbar.getLocalBounds().width / 2, scrollbar.getLocalBounds().height / 2));

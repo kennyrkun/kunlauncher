@@ -21,7 +21,7 @@ std::vector<std::thread> threads;
 
 void AppListState::Init(AppEngine* app_)
 {
-	std::cout << "AppListState Init" << std::endl;
+	std::cout << "AppListState Init" << "\n";
 
 	app = app_;
 
@@ -36,7 +36,7 @@ void AppListState::Init(AppEngine* app_)
 	
 	helperThread = new std::thread(&AppListState::loadApps, this);
 	helperRunning = true;
-	std::cout << "thread launched" << std::endl;
+	std::cout << "thread launched" << "\n";
 }
 
 void AppListState::Cleanup()
@@ -45,7 +45,7 @@ void AppListState::Cleanup()
 
 	if (helperRunning)
 	{
-		std::cout << "waiting on helper thread to finish" << std::endl;
+		std::cout << "waiting on helper thread to finish" << "\n";
 		helperThread->join();
 	}
 
@@ -54,7 +54,7 @@ void AppListState::Cleanup()
 //	delete app; // dont delete app because it's being used by the thing and we need it.
 //	app = nullptr;
 
-	std::cout << "AppListState Cleanup" << std::endl;
+	std::cout << "AppListState Cleanup" << "\n";
 }
 
 void AppListState::Pause()
@@ -64,7 +64,7 @@ void AppListState::Pause()
 
 void AppListState::Resume()
 {
-	std::cout << "AppListState Resume" << std::endl;
+	std::cout << "AppListState Resume" << "\n";
 }
 
 void AppListState::HandleEvents()
@@ -78,8 +78,8 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
-			std::cout << "new width: " << event.size.width << std::endl;
-			std::cout << "new height: " << event.size.height << std::endl;
+			std::cout << "new width: " << event.size.width << "\n";
+			std::cout << "new height: " << event.size.height << "\n";
 
 			sf::Vector2u newSize(event.size.width, event.size.height);
 
@@ -129,10 +129,10 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::MouseWheelMoved) // thanks sfconsole
 		{
-//			std::cout << "center x: " << app->window->getView().getCenter().x << std::endl;
-//			std::cout << "center y: " << app->window->getView().getCenter().y << std::endl;
-//			std::cout << "size x: " << app->window->getView().getSize().x << std::endl;
-//			std::cout << "size y: " << app->window->getView().getSize().y << std::endl;
+//			std::cout << "center x: " << app->window->getView().getCenter().x << "\n";
+//			std::cout << "center y: " << app->window->getView().getCenter().y << "\n";
+//			std::cout << "size x: " << app->window->getView().getSize().x << "\n";
+//			std::cout << "size y: " << app->window->getView().getSize().y << "\n";
 
 			if (event.mouseWheel.delta < 0) // up
 			{
@@ -182,11 +182,11 @@ void AppListState::HandleEvents()
 
 							if (confirmDelete.returnCode == 0)
 							{
-								std::cout << "answer no" << std::endl;
+								std::cout << "answer no" << "\n";
 							}
 							else if (confirmDelete.returnCode == 1)
 							{
-								std::cout << "answer yes" << std::endl;
+								std::cout << "answer yes" << "\n";
 
 								threads.push_back(std::thread(&Item::deleteFiles, items[i]));
 
@@ -265,7 +265,7 @@ void AppListState::HandleEvents()
 			{
 				if (helperRunning)
 				{
-					std::cout << "refreshing applist" << std::endl;
+					std::cout << "refreshing applist" << "\n";
 
 					links.clear();
 					items.clear();
@@ -278,7 +278,7 @@ void AppListState::HandleEvents()
 				}
 				else
 				{
-					std::cout << "helper is running, not reloading." << std::endl;
+					std::cout << "helper is running, not reloading." << "\n";
 				}
 			}
 		}
@@ -289,7 +289,7 @@ void AppListState::Update()
 {
 	if (helperDone && !helperRunning)
 	{
-		std::cout << "helper done, joining" << std::endl;
+		std::cout << "helper done, joining" << "\n";
 		helperThread->join();
 
 		helperDone = false;
@@ -300,7 +300,7 @@ void AppListState::Update()
 	{
 		if (threads[i].joinable())
 		{
-			std::cout << "joining" << std::endl;
+			std::cout << "joining" << "\n";
 
 			threads[i].detach();
 			threads.erase(threads.begin() + i);
@@ -333,19 +333,19 @@ void AppListState::loadApps() // TOOD: this.
 {
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
-	std::cout << std::endl;
+	std::cout << "\n";
 
 	std::ifstream readIndex(".\\" + CONST::DIR::BASE + "\\index.dat", std::ios::in);
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
-		std::cout << loopi << " - " << line << std::endl;
+		std::cout << loopi << " - " << line << "\n";
 
 		if (line[0] == 'l' && line[1] == ':') // is a link
 		{
 			if (comesAfterItem)
 			{
-				std::cout << "(link after item)" << std::endl;
+				std::cout << "(link after item)" << "\n";
 
 				Link* newLink = new Link(line, app->window, items.back()->cardShape.getPosition().y + 65); // we don't check to make sure this isn't empty, because we know there's an item before it.
 				links.push_back(newLink);
@@ -358,17 +358,17 @@ void AppListState::loadApps() // TOOD: this.
 				{
 					newLink = new Link(line, app->window, 28);
 
-					std::cout << "(link not after item, first link)" << std::endl;
+					std::cout << "(link not after item, first link)" << "\n";
 				}
 				else // not the first link
 				{
 					newLink = new Link(line, app->window, links.back()->cardShape.getPosition().y + 48);
 
-					std::cout << "(link after link, not after item)" << std::endl;
+					std::cout << "(link after link, not after item)" << "\n";
 				}
 
 				links.push_back(newLink);
-				std::cout << std::endl;
+				std::cout << "\n";
 			}
 
 			comesAfterItem = false;
@@ -378,15 +378,15 @@ void AppListState::loadApps() // TOOD: this.
 		{
 			if (comesAfterLink)
 			{
-				std::cout << "(item after link)" << std::endl;
+				std::cout << "(item after link)" << "\n";
 
 				Item* newItem = new Item(line, app->window, links.back()->cardShape.getPosition().y + 65);
 				items.push_back(newItem);
-				std::cout << std::endl;
+				std::cout << "\n";
 			}
 			else // not after a link
 			{
-				std::cout << "(item not after link)" << std::endl;
+				std::cout << "(item not after link)" << "\n";
 
 				Item* newItem;
 
@@ -396,7 +396,7 @@ void AppListState::loadApps() // TOOD: this.
 					newItem = new Item(line, app->window, items.back()->cardShape.getPosition().y + items.back()->totalHeight /* PADDING */);
 
 				items.push_back(newItem);
-				std::cout << std::endl;
+				std::cout << "\n";
 			}
 
 			comesAfterItem = true;

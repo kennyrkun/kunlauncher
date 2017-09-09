@@ -6,7 +6,7 @@
 
 namespace CONST
 {
-	const std::string VERSION = "0.11.4";
+	const std::string VERSION = "0.11.5";
 
 	namespace DIR
 	{
@@ -17,6 +17,7 @@ namespace CONST
 		const std::string FONT		   = "fonts";
 		const std::string CONFIG_DIR   = "kunlauncher.cfg";
 		const std::string WEB_DIRETORY = "./";
+//		const std::string WEB_DIRETORY = "./apps/";
 		const std::string WEB_HOSTNAME = "kunlauncher.000webhostapp.com";
 	}
 

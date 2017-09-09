@@ -20,7 +20,7 @@ HomeState HomeState::IntialiseState_dontfuckwithme;
 
 void HomeState::Init(AppEngine* app_)
 {
-	std::cout << "IntialiseState Init" << std::endl;
+	std::cout << "IntialiseState Init" << "\n";
 
 	app = app_;
 
@@ -28,11 +28,11 @@ void HomeState::Init(AppEngine* app_)
 
 	if (!font->loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::FONT + "\\Product Sans.ttf"))
 	{
-		std::cout << "failed to load product sans, falling back to Arial!" << std::endl;
+		std::cout << "failed to load product sans, falling back to Arial!" << "\n";
 
 		if (!font->loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
 		{
-			std::cout << "failed to load a font!" << std::endl;
+			std::cout << "failed to load a font!" << "\n";
 
 			abort();
 		}
@@ -51,7 +51,7 @@ void HomeState::Cleanup()
 {
 	delete font;
 
-	std::cout << "Cleaned IntialiseState up." << std::endl;
+	std::cout << "Cleaned IntialiseState up." << "\n";
 }
 
 void HomeState::Pause()
@@ -61,7 +61,7 @@ void HomeState::Pause()
 
 void HomeState::Resume()
 {
-	std::cout << "IntialiseState Resume" << std::endl;
+	std::cout << "IntialiseState Resume" << "\n";
 }
 
 void HomeState::HandleEvents()
@@ -75,8 +75,8 @@ void HomeState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
-			std::cout << "new width: " << event.size.width << std::endl;
-			std::cout << "new height: " << event.size.height << std::endl;
+			std::cout << "new width: " << event.size.width << "\n";
+			std::cout << "new height: " << event.size.height << "\n";
 
 			sf::Vector2u newSize(event.size.width, event.size.height);
 

@@ -20,17 +20,17 @@ InitialiseState InitialiseState::IntialiseState_dontfuckwithme;
 
 void InitialiseState::Init(AppEngine* app_)
 {
-	std::cout << "IntialiseState Init" << std::endl;
+	std::cout << "IntialiseState Init" << "\n";
 
 	app = app_;
 
 	if (!font.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::FONT + "\\Product Sans.ttf"))
 	{
-		std::cout << "failed to load product sans, falling back to Arial!" << std::endl;
+		std::cout << "failed to load product sans, falling back to Arial!" << "\n";
 
 		if (!font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
 		{
-			std::cout << "failed to load a font!" << std::endl;
+			std::cout << "failed to load a font!" << "\n";
 
 			abort();
 		}
@@ -57,24 +57,24 @@ void InitialiseState::Init(AppEngine* app_)
 	helperRunning = false;
 	isReady = false;
 
-	std::cout << "thread launched" << std::endl;
+	std::cout << "thread launched" << "\n";
 }
 
 void InitialiseState::Cleanup()
 {
-	std::cout << "IntialiseState Cleaningup" << std::endl;
+	std::cout << "IntialiseState Cleaningup" << "\n";
 
-	std::cout << "initialising finished" << std::endl;
-	std::cout << "helperDone: " << helperDone << std::endl;
-	std::cout << "helperRunning: " << helperRunning << std::endl;
+	std::cout << "initialising finished" << "\n";
+	std::cout << "helperDone: " << helperDone << "\n";
+	std::cout << "helperRunning: " << helperRunning << "\n";
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
 	{
-		std::cout << "developer mode activated" << std::endl;
+		std::cout << "developer mode activated" << "\n";
 		developerActivated = true;
 	}
 
-	std::cout << "IntialiseState Cleanedup" << std::endl;
+	std::cout << "IntialiseState Cleanedup" << "\n";
 }
 
 void InitialiseState::Pause()
@@ -84,7 +84,7 @@ void InitialiseState::Pause()
 
 void InitialiseState::Resume()
 {
-	std::cout << "IntialiseState Resume" << std::endl;
+	std::cout << "IntialiseState Resume" << "\n";
 }
 
 void InitialiseState::HandleEvents()
@@ -98,8 +98,8 @@ void InitialiseState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
-			std::cout << "new width: " << event.size.width << std::endl;
-			std::cout << "new height: " << event.size.height << std::endl;
+			std::cout << "new width: " << event.size.width << "\n";
+			std::cout << "new height: " << event.size.height << "\n";
 
 			sf::Vector2u newSize(event.size.width, event.size.height);
 
@@ -134,7 +134,7 @@ void InitialiseState::Draw()
 {
 	if (helperDone)
 	{
-		std::cout << "helper is done, joining" << std::endl;
+		std::cout << "helper is done, joining" << "\n";
 
 		helperThread->join();
 		delete helperThread;
@@ -204,15 +204,15 @@ void InitialiseState::initialisise()
 			std::cout << "index file has been updated (difference of ";
 			if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") > fileSize)
 			{
-				std::cout << std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") - fileSize << " bytes)" << std::endl;
+				std::cout << std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") - fileSize << " bytes)" << "\n";
 			}
 			else
 			{
-				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") << " bytes)" << std::endl;
+				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") << " bytes)" << "\n";
 			}
 
 			setTaskSubtext("updating apps list");
-			std::cout << "updating apps list" << std::endl;
+			std::cout << "updating apps list" << "\n";
 
 			std::string fileContainer = response.getBody();
 			std::ofstream downloadFile(".\\" + CONST::DIR::BASE + "\\index.dat", std::ios::out | std::ios::binary);
@@ -223,11 +223,11 @@ void InitialiseState::initialisise()
 			downloadFile.close();
 
 			if (downloadFile.fail())
-				std::cout << "failed" << std::endl;
+				std::cout << "failed" << "\n";
 			else
-				std::cout << "finished" << std::endl;
+				std::cout << "finished" << "\n";
 
-			std::cout << "index file is ready." << std::endl;
+			std::cout << "index file is ready." << "\n";
 		}
 	}
 
@@ -267,12 +267,12 @@ void InitialiseState::initialisise()
 				switch (doYouWannaUpdate.returnCode)
 				{
 				case 0:
-					std::cout << "yes, update now." << std::endl;
+					std::cout << "yes, update now." << "\n";
 					doUpdate = true;
 					break;
 
 				case 1:
-					std::cout << "don't update now" << std::endl;
+					std::cout << "don't update now" << "\n";
 					doUpdate = false;
 					break;
 
@@ -304,18 +304,18 @@ void InitialiseState::initialisise()
 				switch (updateSuccessfulModal.returnCode)
 				{
 				case 0:
-					std::cout << "restarting now" << std::endl;
+					std::cout << "restarting now" << "\n";
 					exit(0); // TODO: shutdown properly
 					break;
 
 				case 1:
-					std::cout << "restarting later" << std::endl;
+					std::cout << "restarting later" << "\n";
 					updateSuccessfulModal.close();
 					break;
 
 				case 2:
 				{
-					std::cout << "opening changelog" << std::endl;
+					std::cout << "opening changelog" << "\n";
 					std::string command("start " + CONST::DIR::BASE + "\\change.log");
 					system(command.c_str());
 					break;
@@ -327,17 +327,17 @@ void InitialiseState::initialisise()
 			}
 			else
 			{
-				std::cout << "updating skipped" << std::endl;
+				std::cout << "updating skipped" << "\n";
 			}
 		}
 		else
 		{
-			std::cout << "no updates were found" << std::endl;
+			std::cout << "no updates were found" << "\n";
 		}
 	}
 	else
 	{
-		std::cout << "skipping check for updates" << std::endl;
+		std::cout << "skipping check for updates" << "\n";
 	}
 
 	setTaskText("ready");
@@ -347,92 +347,100 @@ void InitialiseState::initialisise()
 
 bool InitialiseState::checkForLauncherUpdates()
 {
-	setTaskText("checking for updates...");
+	setTaskText("checking for launcher updates...");
 
+	setTaskSubtext("checking for old launcher executable");
 	if (std::experimental::filesystem::exists("kunlauncher.exe.old"))
 	{
 		try
 		{
+			setTaskSubtext("removing old executable");
 			std::experimental::filesystem::remove("kunlauncher.exe.old");
 		}
 		catch (const std::exception& e)
 		{
-			std::cout << e.what() << std::endl;
+			std::cout << e.what() << "\n";
 		}
 	}
 
+	setTaskSubtext("retrieving public launcher version");
 	Download getHoHouse;
 	getHoHouse.setInputPath("version.info");
 	getHoHouse.download();
 
 	std::string remoteVersion = getHoHouse.fileBuffer;
 
-	std::cout << "r" << remoteVersion << " : " << "l" << CONST::VERSION << std::endl;
+	std::cout << "r" << remoteVersion << " : " << "l" << CONST::VERSION << "\n";
 
 	if (remoteVersion != CONST::VERSION)
+	{
+		std::cout << "launcher is out of date" << "\n";
 		return true;
+	}
 	else
+	{
+		std::cout << "launcher is up to date" << "\n";
 		return false;
+	}
 }
 
 std::string InitialiseState::updateLauncher()
 {
+	setTaskText("updating launcher");
 	Download getHoHouse;
 	getHoHouse.setInputPath("version.info");
 	getHoHouse.download();
+	std::string newVersion = getHoHouse.fileBuffer;
 
-	std::string remoteVersion = getHoHouse.fileBuffer;
+	setTaskText("updating launcher (" + newVersion + ")");
 
-	std::cout << "r" << remoteVersion << " : " << "l" << CONST::VERSION << std::endl;
+	Download getNewWhorehouse;
+	getNewWhorehouse.setInputPath("latest.noexe");
+	getNewWhorehouse.setOutputDir(".\\");
+	getNewWhorehouse.setOutputFilename("kunlauncher.exe");
+	setTaskSubtext("downloading updated launcher");
+	getNewWhorehouse.download();
 
-	if (remoteVersion != CONST::VERSION)
+	try
 	{
-		setTaskText("updating launcher");
+		setTaskSubtext("removing old changelog");
+		std::experimental::filesystem::remove(CONST::DIR::BASE + "\\change.log");
 
-		std::cout << "launcher is out of date (current: " << CONST::VERSION << "; remote: " << remoteVersion << ")" << std::endl;
-		setTaskSubtext("downloading updated launcher");
+		Download getChangelog;
+		getChangelog.setInputPath(CONST::DIR::BASE + "\\change.log");
+		getChangelog.setOutputDir(".\\");
+		getChangelog.setOutputFilename(CONST::DIR::BASE + "\\change.log");
+		setTaskSubtext("downloading new changelog");
+		getChangelog.download();
+		setTaskSubtext("saving new changelog");
+		getChangelog.save();
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "unable to download new changelog :" << "\n";
+		std::cout << e.what() << "\n";
+	}
 
-		Download getNewWhorehouse;
-		getNewWhorehouse.setInputPath("latest.noexe");
-		getNewWhorehouse.setOutputDir(".\\");
-		getNewWhorehouse.setOutputFilename("kunlauncher.exe");
-		getNewWhorehouse.download();
-
-		try
-		{
-			std::experimental::filesystem::remove(CONST::DIR::BASE + "\\change.log");
-
-			Download getChangelog;
-			getNewWhorehouse.setInputPath(CONST::DIR::BASE + "\\change.log");
-			getNewWhorehouse.setOutputDir(".\\");
-			getNewWhorehouse.setOutputFilename(CONST::DIR::BASE + "\\change.log");
-			getNewWhorehouse.download();
-		}
-		catch (const std::exception& e)
-		{
-			std::cout << "unable to download new changelog :" << std::endl;
-			std::cout << e.what() << std::endl;
-		}
+	try
+	{
+		setTaskSubtext("replacing old launcher");
+		std::experimental::filesystem::rename("kunlauncher.exe", "kunlauncher.exe.old");
 
 		setTaskSubtext("saving updated launcher");
-
-		try
-		{
-			std::experimental::filesystem::rename("kunlauncher.exe", "kunlauncher.exe.old");
-		}
-		catch (const std::exception& e)
-		{
-			std::cout << e.what() << std::endl;
-		}
-
 		getNewWhorehouse.save();
-
-		return remoteVersion;
 	}
-	else
+	catch (const std::exception& e)
 	{
-		return CONST::VERSION;
+		std::cout << e.what() << "\n";
+		abort();
 	}
+
+	return newVersion;
+}
+
+int InitialiseState::updateResourceFiles()
+{
+	return 0;
 }
 
 void InitialiseState::setTaskText(std::string text)
