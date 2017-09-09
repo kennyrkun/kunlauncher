@@ -65,7 +65,7 @@
       <Filter>Source Files\Launcher\States\Home</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +108,8 @@
     <ClInclude Include="HomeState.hpp">
       <Filter>Source Files\Launcher\States\Home</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.hpp" />
+    <ClInclude Include="ResourceManager.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
