@@ -13,7 +13,7 @@ class Item;
 struct LaunchOptions
 {
 #ifdef _DEBUG
-	bool updateItemsOnStart = false;
+	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = false;
 #else
 	bool updateItemsOnStart = true;

@@ -136,6 +136,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Modal.cpp" />
     <ClCompile Include="AppEngine.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scrollbar.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
@@ -151,6 +152,7 @@
     <ClInclude Include="Modal.hpp" />
     <ClInclude Include="AppEngine.hpp" />
     <ClInclude Include="AppState.hpp" />
+    <ClInclude Include="ResourceManager.hpp" />
     <ClInclude Include="Scrollbar.hpp" />
     <ClInclude Include="ThreadManager.hpp" />
   </ItemGroup>

@@ -11,7 +11,6 @@ namespace fs = std::experimental::filesystem;
 
 Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 {
-	std::cout << "-----------------------------" << std::endl;
 	std::cout << "creating new card for \"" + itemName_ + "\"" << std::endl;
 
 	targetWindow = target_window;
@@ -187,7 +186,6 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
 
 	std::cout << "card is ready" << std::endl;
-	std::cout << "-----------------------------" << std::endl;
 }
 
 Item::~Item()
