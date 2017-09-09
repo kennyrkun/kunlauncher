@@ -440,6 +440,19 @@ std::string InitialiseState::updateLauncher()
 
 int InitialiseState::updateResourceFiles()
 {
+	// retrieve resource list
+	// load it into a string
+
+	// find keyword
+		// find open bracket
+			// parse the things inside there
+				// from first " to last " (or maybe ;?)
+					// load the filename into a vector
+		// find closing bracket
+
+	// go through vectors and make sure we have the files
+		// if not download them
+
 	return 0;
 }
 
