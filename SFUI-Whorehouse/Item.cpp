@@ -260,6 +260,13 @@ void Item::download()
 
 	if (fs::exists(installDir + "/release.zip"))
 	{
+		std::cout << "updating " << itemName << std::endl;
+
+		downloadIcon();
+		downloadInfo();
+		downloadFiles();
+
+		std::cout << "\n" << "finished updating " << itemName << std::endl;
 	}
 	else
 	{
