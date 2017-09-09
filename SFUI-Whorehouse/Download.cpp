@@ -62,6 +62,9 @@ std::string Download::getOutputFilename()
 void Download::setInputPath(std::string path)
 {
 	inpath = path;
+
+	if (!silent)
+		std::cout << "input uri set to: " << inpath << "\n";
 }
 
 std::string Download::getInputPath()
@@ -72,7 +75,7 @@ std::string Download::getInputPath()
 int Download::download()
 {
 	sf::Http http(CONST::DIR::WEB_HOSTNAME);
-	sf::Http::Request request("/" + inpath, sf::Http::Request::Get);
+	sf::Http::Request request(inpath, sf::Http::Request::Get);
 
 	sf::Clock timer;
 	sf::Http::Response response = http.sendRequest(request, sf::seconds(10));
@@ -90,7 +93,7 @@ int Download::download()
 	{
 	case sf::Http::Response::Ok:
 		if (!silent)
-			std::cout << "successfully connected to file server, and got files" << "\n";
+			std::cout << "successfully connected to file server, and got files (200)" << "\n";
 
 		return sf::Http::Response::Status::Ok;
 		break;
@@ -135,7 +138,7 @@ void Download::save()
 std::string Download::getAppropriateFileSize(const long long int bytes, const int decimals)
 {
 	int bytesPerUnit = 1024;
-	std::string sizes[] = { "Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "UNDEFINED" };
+	std::string sizes[] = { "Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "REALLY FUCKIN BIG" };
 	int i = std::floor(std::log(bytes) / std::log(bytesPerUnit));
 
 	std::string number = std::to_string(bytes / std::pow(bytesPerUnit, i));

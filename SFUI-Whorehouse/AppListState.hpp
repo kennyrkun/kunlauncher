@@ -52,6 +52,7 @@ private:
 	void updateScrollThumb();
 
 	bool mouseIsOver(sf::Shape &object);
+	bool mouseIsOver(sf::Shape &object, sf::View* view);
 	bool mouseIsOver(sf::Text &object);
 };
 

@@ -111,11 +111,11 @@ void AppListState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 		}
-		else if (event.type == sf::Event::EventType::MouseMoved)
+		/*else if (event.type == sf::Event::EventType::MouseMoved)
 		{
 			if (!scrollbar.thumbDragging)
 			{
-				if (mouseIsOver(scrollbar.scrollThumb))
+				if (mouseIsOver(scrollbar.scrollThumb), mainView)
 				{
 					scrollbar.scrollThumb.setFillColor(sf::Color(158, 158, 158));
 				}
@@ -124,7 +124,7 @@ void AppListState::HandleEvents()
 					scrollbar.scrollThumb.setFillColor(sf::Color(110, 110, 110));
 				}
 			}
-		}
+		}*/
 		else if (event.type == sf::Event::EventType::MouseWheelMoved) // thanks sfconsole
 		{
 //			std::cout << "center x: " << app->window->getView().getCenter().x << "\n";
@@ -467,6 +467,14 @@ void AppListState::updateScrollThumb()
 bool AppListState::mouseIsOver(sf::Shape &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *cardScroller)))
+		return true;
+	else
+		return false;
+}
+
+bool AppListState::mouseIsOver(sf::Shape &object, sf::View* view)
+{
+	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *view)))
 		return true;
 	else
 		return false;

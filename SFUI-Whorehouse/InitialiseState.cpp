@@ -328,7 +328,7 @@ void InitialiseState::initialisise()
 				{
 #if defined (_WIN32) // one day it'll be cross platform... one day.
 					std::cout << "opening changelog" << "\n";
-					std::string command("start " + CONST::DIR::BASE + "\\change.log");
+					std::string command("start .\\" + CONST::DIR::BASE + "\\change.log");
 					system(command.c_str());
 #else
 					std::cout << "This function is not supported on your platform!" << "\n";
@@ -421,14 +421,21 @@ std::string InitialiseState::updateLauncher()
 		setTaskSubtext("removing old changelog");
 		std::experimental::filesystem::remove(CONST::DIR::BASE + "\\change.log");
 
-		Download getChangelog;
-		getChangelog.setInputPath(CONST::DIR::BASE + "\\change.log");
-		getChangelog.setOutputDir(".\\");
-		getChangelog.setOutputFilename(CONST::DIR::BASE + "\\change.log");
-		setTaskSubtext("downloading new changelog");
-		getChangelog.download();
-		setTaskSubtext("saving new changelog");
-		getChangelog.save();
+		try
+		{
+			Download getChangelog;
+			getChangelog.setInputPath(".\\change.log");
+			getChangelog.setOutputDir(".\\" + CONST::DIR::BASE);
+			getChangelog.setOutputFilename("change.log");
+			setTaskSubtext("downloading new changelog");
+			getChangelog.download();
+			setTaskSubtext("saving new changelog");
+			getChangelog.save();
+		}
+		catch (const std::exception& e)
+		{
+			std::cout << e.what() << "\n";
+		}
 	}
 	catch (const std::exception& e)
 	{

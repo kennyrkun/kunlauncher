@@ -14,7 +14,7 @@ struct LaunchOptions
 {
 #ifdef _DEBUG
 	bool updateItemsOnStart = true;
-	bool updateLauncherOnStart = false;
+	bool updateLauncherOnStart = true;
 #else
 	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = true;
