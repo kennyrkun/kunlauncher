@@ -333,47 +333,26 @@ void AppListState::loadApps() // TOOD: this.
 	std::string line; // each line of index.dat;
 	std::cout << "\n";
 
-	std::ifstream readIndex(".\\" + CONST::DIR::BASE + "\\index.dat", std::ios::in);
+	std::ifstream readIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat", std::ios::in);
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
 		std::cout << loopi << " - " << line << "\n";
 
-		if (line[0] == 'l' && line[1] == ':') // is a link
+		// syntax should look like this: APP:"appname"
+		// or for links, LINK:"text"TO"link.com"
+		if (line[0] == 'A' && line[1] == 'P' && line[2] == 'P') // it's an app
 		{
-			if (comesAfterItem)
-			{
-				std::cout << "(link after item)" << "\n";
+			std::cout << "it's an app" << std::endl;
+			line.erase(0, 3); // remove APP
+			std::cout << line << std::endl;
+			line.erase(0, 1); // remove :
+			std::cout << line << std::endl;
+			line.erase(0, 1); // remove first "
+			std::cout << line << std::endl;
+			line.erase(line.length() - 1, line.length()); // remove last "
+			std::cout << line << std::endl;
 
-				Link* newLink = new Link(line, app->window, items.back()->cardShape.getPosition().y + 65); // we don't check to make sure this isn't empty, because we know there's an item before it.
-				links.push_back(newLink);
-			}
-			else // after a link or first of  either
-			{
-				Link* newLink;
-
-				if (links.empty())
-				{
-					newLink = new Link(line, app->window, 28);
-
-					std::cout << "(link not after item, first link)" << "\n";
-				}
-				else // not the first link
-				{
-					newLink = new Link(line, app->window, links.back()->cardShape.getPosition().y + 48);
-
-					std::cout << "(link after link, not after item)" << "\n";
-				}
-
-				links.push_back(newLink);
-				std::cout << "\n";
-			}
-
-			comesAfterItem = false;
-			comesAfterLink = true;
-		}
-		else // is not a link
-		{
 			if (comesAfterLink)
 			{
 				std::cout << "(item after link)" << "\n";
@@ -400,11 +379,71 @@ void AppListState::loadApps() // TOOD: this.
 			comesAfterItem = true;
 			comesAfterLink = false;
 		}
+		else if (line[0] == 'L' && line[1] == 'I' && line[2] == 'N' && line[3] == 'K')
+		{
+			std::cout << "it's a link" << std::endl;
+
+			std::string linkText, linkRel, linkFull(line);
+
+			line.erase(0, 4); // remove LINK
+			line.erase(0, 1); // remove :
+			line.erase(0, 1); // remove first "
+			line.erase(line.find('"'), line.length()); // remove everything after last " in link text
+			linkText = line;
+
+			line = linkFull;
+			line.erase(0, 4); // remove LINK
+			line.erase(0, 1); // remove :
+			line.erase(0, 1); // remove first " in like name
+			line.erase(0, line.find('"') + 1); // remove last " in link name and everything before
+			line.erase(0, 2); // remove TO
+			line.erase(0, 1); // remove first "
+			line.erase(line.length() - 1, line.length()); // remove last "
+			linkRel = line;
+
+			if (comesAfterItem)
+			{
+				std::cout << "(link after item)" << "\n";
+
+				Link* newLink = new Link(linkText, linkRel, app->window, items.back()->cardShape.getPosition().y + 65); // we don't check to make sure this isn't empty, because we know there's an item before it.
+				links.push_back(newLink);
+			}
+			else // after a link or first of  either
+			{
+				Link* newLink;
+
+				if (links.empty())
+				{
+					newLink = new Link(linkText, linkRel, app->window, 28);
+
+					std::cout << "(link not after item, first link)" << "\n";
+				}
+				else // not the first link
+				{
+					newLink = new Link(linkText, linkRel, app->window, links.back()->cardShape.getPosition().y + 48);
+
+					std::cout << "(link after link, not after item)" << "\n";
+				}
+
+				links.push_back(newLink);
+				std::cout << "\n";
+			}
+
+			comesAfterItem = false;
+			comesAfterLink = true;
+		}
+		else
+		{
+			std::cout << "String is malformed! Skipping!" << std::endl;
+			loopi += 1;
+			continue;
+		}
 
 		updateScrollThumb();
 		loopi += 1;
 	}
 
+	std::cout << "finished loading apps" << "\n";
 	helperDone = true;
 }
 

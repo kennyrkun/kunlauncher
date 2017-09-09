@@ -8,10 +8,12 @@
 #include "Link.hpp"
 #include "Download.hpp"
 
-Link::Link(std::string raw, sf::RenderWindow* target_window, float xPos)
+Link::Link(std::string text, std::string uri, sf::RenderWindow* target_window, float xPos)
 {
 	targetWindow = target_window;
-	getLink(raw);
+
+	linkText.setString(text);
+	linkRel = uri;
 
 	std::cout << "creating new card for \"" << linkText.getString().toAnsiString() << "\" linking to \"" << linkRel << "\"" << "\n";
 
@@ -54,6 +56,8 @@ void Link::follow()
 #if defined (_WIN32) // one day it'll be cross platform... one day.
 	std::string test = "start " + linkRel;
 	system((test).c_str());
+#else
+	std::cout << "This function is not supported on your platform!" << "\n";
 #endif
 }
 

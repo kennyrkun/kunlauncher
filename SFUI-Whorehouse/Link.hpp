@@ -6,7 +6,7 @@
 class Link 
 {
 public:
-	Link(std::string raw, sf::RenderWindow* target_window, float xPos);
+	Link(std::string text, std::string uri, sf::RenderWindow* target_window, float xPos);
 	~Link();
 
 	sf::RectangleShape cardShape;

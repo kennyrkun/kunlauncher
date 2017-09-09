@@ -14,14 +14,13 @@ struct LaunchOptions
 {
 #ifdef _DEBUG
 	bool updateItemsOnStart = true;
-	bool updateLauncherOnStart = true;
+	bool updateLauncherOnStart = false;
 #else
 	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = true;
 #endif
 	int width = 525;
 };
-
 
 class InitialiseState : public AppState
 {

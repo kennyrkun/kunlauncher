@@ -3,6 +3,7 @@
 #include "InitialiseState.hpp"
 #include "HomeState.hpp"
 
+#include "json.hpp"
 #include "Download.hpp"
 #include "Modal.hpp"
 #include "Item.hpp"
@@ -167,7 +168,7 @@ void InitialiseState::initialisise()
 	}
 	else
 	{
-		if (std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::TEXTURE + "\\icon.png"))
+		if (std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "icon.png"))
 		{
 			//	sf::Image icon;
 			//	icon.loadFromFile(".\\" + BASE_FOLDER + "\\res\\tex\\icon.png");
@@ -175,11 +176,21 @@ void InitialiseState::initialisise()
 		}
 	}
 
+	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS))
+	{
+		setTaskSubtext("checking if apps folder exists");
+
+		setTaskSubtext("creating apps folder");
+		std::experimental::filesystem::create_directory(".\\" + CONST::DIR::BASE + "apps");
+
+		settings.updateItemsOnStart = true;
+	}
+
 	setTaskSubtext("checking if index file exists");
-	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + "\\index.dat"))
+	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat"))
 	{
 		setTaskSubtext("creating empty index files");
-		std::ofstream createIndex(".\\" + CONST::DIR::BASE + "\\index.dat");
+		std::ofstream createIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat");
 		createIndex.close();
 
 		settings.updateItemsOnStart = true;
@@ -192,31 +203,31 @@ void InitialiseState::initialisise()
 
 		// download the index file (or at least store it)
 		sf::Http http(CONST::DIR::WEB_HOSTNAME);
-		sf::Http::Request request("/index.dat", sf::Http::Request::Get);
+		sf::Http::Request request("./" + CONST::DIR::WEB_APP_DIRECTORY + "/index.dat", sf::Http::Request::Get);
 		sf::Http::Response response = http.sendRequest(request);
 
 		int fileSize = response.getBody().size();
 
 		// if the index file on the server has a different filesize than the one we've got, download it
 		setTaskSubtext("gathering apps list");
-		if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") != fileSize)
+		if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") != fileSize)
 		{
 			std::cout << "index file has been updated (difference of ";
-			if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") > fileSize)
+			if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") > fileSize)
 			{
-				std::cout << std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") - fileSize << " bytes)" << "\n";
+				std::cout << std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") - fileSize << " bytes)" << "\n";
 			}
 			else
 			{
-				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + "\\index.dat") << " bytes)" << "\n";
+				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") << " bytes)" << "\n";
 			}
 
 			setTaskSubtext("updating apps list");
 			std::cout << "updating apps list" << "\n";
 
 			std::string fileContainer = response.getBody();
-			std::ofstream downloadFile(".\\" + CONST::DIR::BASE + "\\index.dat", std::ios::out | std::ios::binary);
-			std::cout << "saving file to \"" + CONST::DIR::BASE + "\\index.dat\"... ";
+			std::ofstream downloadFile(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat", std::ios::out | std::ios::binary);
+			std::cout << "saving file to \"" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat\"... ";
 
 			for (int i = 0; i < fileSize; i++)
 				downloadFile << fileContainer[i];
@@ -315,9 +326,13 @@ void InitialiseState::initialisise()
 
 				case 2:
 				{
+#if defined (_WIN32) // one day it'll be cross platform... one day.
 					std::cout << "opening changelog" << "\n";
 					std::string command("start " + CONST::DIR::BASE + "\\change.log");
 					system(command.c_str());
+#else
+					std::cout << "This function is not supported on your platform!" << "\n";
+#endif
 					break;
 				}
 
@@ -453,6 +468,11 @@ int InitialiseState::updateResourceFiles()
 	// go through vectors and make sure we have the files
 		// if not download them
 
+	return 0;
+}
+
+int generateDefaultResources()
+{
 	return 0;
 }
 

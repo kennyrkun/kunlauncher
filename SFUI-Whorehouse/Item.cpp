@@ -15,11 +15,11 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 
 	targetWindow = target_window;
 	itemName = itemName_;
-	installDir = ".\\" + CONST::DIR::BASE + "\\apps\\" + itemName + "\\"; /// .\\bin\\apps\\itemName\\
+	installDir = ".\\" + CONST::DIR::BASE + CONST::DIR::APPS + itemName + "\\"; // .\\bin\\apps\\itemName\\
 
 	if (!fs::exists(installDir))
 	{
-		std::cout << "app directory does not already exist, creating...";
+		std::cout << "app directory does not already exist, creating..." << "\n";
 
 		try
 		{
@@ -46,7 +46,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 		std::cout << "info was not found, downloading" << "\n";
 
 		Download downloadInfo;
-		downloadInfo.setInputPath(itemName + "/info.dat");
+		downloadInfo.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
 		downloadInfo.setOutputDir(installDir);
 		downloadInfo.setOutputFilename("info.dat");
 
@@ -81,7 +81,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 		std::cout << "icon was not found, downloading" << "\n";
 
 		Download downloadIcon;
-		downloadIcon.setInputPath(itemName + "/icon.png");
+		downloadIcon.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
 		downloadIcon.setOutputDir(installDir);
 		downloadIcon.setOutputFilename("icon.png");
 
@@ -153,7 +153,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 
-	if (!downloadButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::TEXTURE + "\\get_app_1x.png"))
+	if (!downloadButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "get_app_1x.png"))
 		downloadButton.setFillColor(sf::Color::Green);
 	downloadButtonTexture.setSmooth(true);
 	downloadButton.setTexture(&downloadButtonTexture);
@@ -161,7 +161,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	downloadButton.setOrigin(sf::Vector2f(downloadButton.getLocalBounds().width / 2, downloadButton.getLocalBounds().height / 2));
 	downloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 
-	redownloadButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::TEXTURE + "\\auto_renew_1x.png");
+	redownloadButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "auto_renew_1x.png");
 	redownloadButtonTexture.setSmooth(true);
 	redownloadButton.setTexture(&redownloadButtonTexture);
 	redownloadButton.setRadius(10);
@@ -169,7 +169,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
 
-	if (!removeButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::TEXTURE + "\\delete_forever_1x.png"))
+	if (!removeButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "delete_forever_1x.png"))
 		removeButton.setFillColor(sf::Color::Red);
 	removeButtonTexture.setSmooth(true);
 	removeButton.setTexture(&removeButtonTexture);
@@ -177,7 +177,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 	removeButton.setOrigin(sf::Vector2f(removeButton.getLocalBounds().width / 2, removeButton.getLocalBounds().height / 2));
 	removeButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 15));
 
-	if (!launchButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::TEXTURE + "\\launch_1x.png"))
+	if (!launchButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "launch_1x.png"))
 		launchButton.setFillColor(sf::Color::Green);
 	launchButtonTexture.setSmooth(true);
 	launchButton.setTexture(&launchButtonTexture);
@@ -216,7 +216,7 @@ bool Item::checkForUpdate()
 	std::cout << "checking for updates" << "\n";
 
 	Download getNewVersion;
-	getNewVersion.setInputPath(itemName + "/info.dat");
+	getNewVersion.setInputPath(CONST::DIR::APPS + itemName + "/info.dat");
 	getNewVersion.download();
 
 	getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find('\n') + 1);
@@ -304,6 +304,8 @@ void Item::openItem()
 #if defined (_WIN32)
 	std::string launch = "start " + installDir + "release.zip";
 	system((launch).c_str());
+#else
+	std::cout << "Your system does not support this function!" << "\n";
 #endif
 }
 
@@ -385,7 +387,9 @@ std::ifstream& Item::GotoLine(std::ifstream& file, unsigned int line)
 
 void Item::parseInfo(std::string dir) // a lot easier than I thought it would be.
 {
-	//TODO: add checks here to make sure we don't try to parse a file that ended up being a 500
+	//TODO: add checks here to make sure we don't try to parse a file that ended up being a 500 or 404
+
+	std::cout << "parsing info for " << dir  << std::endl;
 
 	std::ifstream getit(dir + "info.dat", std::ios::in);
 
@@ -418,7 +422,7 @@ int Item::downloadIcon()
 	std::cout << "\n" << "downloading icon" << "\n";
 
 	Download getIcon;
-	getIcon.setInputPath(itemName + "/icon.png");
+	getIcon.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
 	getIcon.setOutputDir(installDir);
 	getIcon.setOutputFilename("icon.png");
 
@@ -439,7 +443,7 @@ int Item::downloadInfo()
 	std::cout << "\n" << "downloading info" << "\n";
 
 	Download getInfo;
-	getInfo.setInputPath(itemName + "/info.dat");
+	getInfo.setInputPath(CONST::DIR::WEB_APP_DIRECTORY+ itemName + "/info.dat");
 	getInfo.setOutputDir(installDir);
 	getInfo.setOutputFilename("info.dat");
 	getInfo.download();
@@ -453,7 +457,7 @@ int Item::downloadFiles()
 	std::cout << "\n" << "downloading files" << "\n";
 
 	Download getInfo;
-	getInfo.setInputPath(itemName + "/release.zip");
+	getInfo.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/release.zip");
 	getInfo.setOutputDir(installDir);
 	getInfo.setOutputFilename("release.zip");
 	getInfo.download();
