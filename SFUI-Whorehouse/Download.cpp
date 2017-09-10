@@ -120,19 +120,29 @@ int Download::download()
 void Download::save()
 {
 	std::ofstream downloadFile(outdir + outfile, std::ios::out | std::ios::binary);
-	if (!silent)
-		std::cout << "saving file to \"" << outdir << outfile << "\"... " << "\n";
-
-	for (int i = 0; i < fileSize; i++)
-		downloadFile << fileBuffer[i];
-	downloadFile.close();
-
-	if (downloadFile.fail())
+	
+	if (downloadFile.is_open())
+	{
 		if (!silent)
-			std::cout << "failed" << "\n";
+			std::cout << "saving file to \"" << outdir << outfile << "\"... " << "\n";
+
+		for (int i = 0; i < fileSize; i++)
+			downloadFile << fileBuffer[i];
+		downloadFile.close();
+
+		if (downloadFile.fail())
+			if (!silent)
+				std::cout << "failed" << "\n";
+			else
+				if (!silent)
+					std::cout << "finished" << "\n";
+	}
 	else
-		if (!silent)
-			std::cout << "finished" << "\n";
+	{
+		std::cout << "failed to open file for saving" << std::endl;
+
+		return;
+	}
 }
 
 std::string Download::getAppropriateFileSize(const long long int bytes, const int decimals)
