@@ -40,6 +40,7 @@ private:
 	sf::View *cardScroller;
 	Scrollbar scrollbar;
 
+	std::vector<std::thread> threads;
 	std::vector<Item*> items;
 	std::vector<Link*> links;
 

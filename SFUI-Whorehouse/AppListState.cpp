@@ -17,8 +17,6 @@
 
 AppListState AppListState::AppListState_dontfuckwithme;
 
-std::vector<std::thread> threads;
-
 void AppListState::Init(AppEngine* app_)
 {
 	std::cout << "AppListState Init" << "\n";
