@@ -47,8 +47,9 @@ namespace CONST
 
 		namespace LINK
 		{
-			const sf::Color LINK_CARD = sf::Color(255, 255, 255);
-			const sf::Color LINK_FOLLOW = sf::Color(255, 255, 255);
+			const sf::Color CARD = sf::Color(100, 100, 100);
+			const sf::Color FOLLOW = sf::Color(255, 255, 255);
+			const sf::Color TEXT = sf::Color(0, 170, 232);
 		}
 	}
 }
