@@ -81,14 +81,15 @@ int Download::download()
 	sf::Http::Response response = http.sendRequest(request, sf::seconds(10));
 	float elapsedTime = timer.getElapsedTime().asSeconds();
 
-	fileSize = response.getBody().size();
-	if (!silent)
-		std::cout << "downloading remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... " << "\n";
-	 
 	fileBuffer = response.getBody();
-	if (!silent)
-		std::cout << "done downloading. (took " << elapsedTime << " seconds.)" << "\n";
+	fileSize = response.getBody().size();
 
+	if (!silent)
+	{
+		std::cout << "downloaded remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... " << "\n";
+		std::cout << "download took " << timer.getElapsedTime().asSeconds() << " seconds" << "\n";
+	}
+	 
 	switch (response.getStatus())
 	{
 	case sf::Http::Response::Ok:
@@ -107,7 +108,7 @@ int Download::download()
 
 	case sf::Http::Response::InternalServerError:
 		if (!silent)
-			std::cout << "internal server error was encountered, aborting..." << "\n";
+			std::cout << "encountered Internal Server Error (500)" << "\n";
 
 		return sf::Http::Response::Status::InternalServerError;
 		break;
@@ -158,7 +159,7 @@ std::string Download::getAppropriateFileSize(const long long int bytes, const in
 
 // private:
 
-void Download::createDirectory(std::string dir)
+void Download::createDirectory(std::string dir) // recursively
 {
 //	std::cout << "creating " << dir << "... ";
 
