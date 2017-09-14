@@ -14,11 +14,13 @@ public:
 	void loadTexture(std::string resourceName, std::string fileLocation);
 	void freeTexture(std::string filename);
 	void freeAllTextures();
-	bool textureLoaded(std::string filename);
+	bool isTextureLoaded(std::string filename);
 	sf::Texture* getTexture(std::string filename);
 
+	void freeAll();
+
 private:
-	std::map<std::string, sf::Texture*> loaded_textures;
+	std::map<std::string, sf::Texture*> loadedTextures;
 };
 
 #endif
