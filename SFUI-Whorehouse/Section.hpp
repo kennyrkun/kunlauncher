@@ -1,19 +1,19 @@
-#ifndef LINK_HPP
-#define LINK_HPP
+#ifndef SECTION_HPP
+#define SECTION_HPP
 
 #include <SFML\Graphics.hpp>
 
-class Link
+class Section
 {
 public:
-	Link(std::string raw, sf::RenderWindow* target_window, float xPos);
-	~Link();
+	Section(std::string text, std::string uri, sf::RenderWindow* target_window, float xPos, bool usable_);
+	~Section();
 
 	sf::RectangleShape cardShape;
-	sf::RectangleShape followLinkButton;
-	std::string linkRel;
-	sf::Text linkText;
-	int cardNumber; // used to store depth
+	sf::RectangleShape followSectionButton;
+	std::string forwardStateName;
+	sf::Text title;
+	bool usable;
 	int totalHeight;
 
 	void follow();
@@ -23,12 +23,12 @@ public:
 private:
 	sf::RenderWindow* targetWindow;
 
-	sf::Texture followLinkTexture;
+	sf::Texture followSectionTexture;
 
 	sf::Font font;
 
 	std::ifstream& GotoLine(std::ifstream& file, unsigned int num);
-	void getLink(std::string from_string);
+	void getSection(std::string from_string);
 };
 
-#endif
+#endif // !SECTION_HPP

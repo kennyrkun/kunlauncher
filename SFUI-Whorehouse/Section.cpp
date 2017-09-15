@@ -1,19 +1,18 @@
+#include "Globals.hpp"
+#include "Section.hpp"
+#include "Download.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <experimental\filesystem>
 
-#include "Globals.hpp"
-
-#include "Link.hpp"
-#include "Download.hpp"
-
-Link::Link(std::string raw, sf::RenderWindow* target_window, float xPos)
+Section::Section(std::string text, std::string uri, sf::RenderWindow* target_window, float xPos, bool usable_ = false)
 {
 	targetWindow = target_window;
-	getLink(raw);
+	title.setString(text);
+	forwardStateName = uri;
 
-	std::cout << "creating new card for \"" << linkText.getString().toAnsiString() << "\" linking to \"" << linkRel << "\"" << std::endl;
+	std::cout << "creating new card for \"" << title.getString().toAnsiString() << "\" Sectioning to \"" << forwardStateName << "\"" << "\n";
 
 	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
@@ -21,67 +20,66 @@ Link::Link(std::string raw, sf::RenderWindow* target_window, float xPos)
 	cardShape.setFillColor(sf::Color(100, 100, 100));
 
 	font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
-	linkText.setFont(font);
-	//	linkText.setPosition(sf::Vector2f(cardShape.getPosition().x - 240, cardShape.getPoint(0).y + 5));
-	linkText.setPosition(sf::Vector2f(cardShape.getPosition().x - 242, cardShape.getPosition().y - 22));
-	linkText.setStyle(sf::Text::Underlined);
-	linkText.setFillColor(sf::Color(0, 170, 232));
+	title.setFont(font);
+	title.setPosition(static_cast<int>((cardShape.getPosition().x - cardShape.getLocalBounds().width / 2) + 15), static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 
-	// don't center them because they may get longer or shorter, but they need to be left aligned
-	followLinkTexture.loadFromFile(".\\" + CONST::DIR::BASE + "\\" + CONST::DIR::RESOURCE + "\\" + CONST::DIR::TEXTURE + "\\input_1x.png");
-	followLinkTexture.setSmooth(true);
-	followLinkButton.setTexture(&followLinkTexture);
-	followLinkButton.setSize(sf::Vector2f(24, 24));
-	followLinkButton.setOrigin(sf::Vector2f(followLinkButton.getLocalBounds().width / 2, followLinkButton.getLocalBounds().height / 2));
+	followSectionTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "input_1x.png");
+	followSectionTexture.setSmooth(true);
+	followSectionButton.setTexture(&followSectionTexture);
+	followSectionButton.setSize(sf::Vector2f(24, 24));
+	followSectionButton.setOrigin(sf::Vector2f(followSectionButton.getLocalBounds().width / 2, followSectionButton.getLocalBounds().height / 2));
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
-	followLinkButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
+	followSectionButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 
-	std::cout << "card is ready" << std::endl;
+	totalHeight = cardShape.getLocalBounds().height;
+
+	std::cout << "card is ready" << "\n";
 }
 
-Link::~Link()
+Section::~Section()
 {
 	delete targetWindow;
 }
 
-void Link::follow()
+void Section::follow()
 {
-	std::cout << "\n" << "going to " << linkRel << std::endl;
+	std::cout << "\n" << "going to " << forwardStateName << "\n";
 
 #if defined (_WIN32) // one day it'll be cross platform... one day.
-	std::string test = "start " + linkRel;
+	std::string test = "start " + forwardStateName;
 	system((test).c_str());
+#else
+	std::cout << "This function is not supported on your platform!" << "\n";
 #endif
 }
 
-void Link::update()
+void Section::update()
 {
 	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
 	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, cardShape.getPosition().x)); // probably not the best
-
 	totalHeight = cardShape.getLocalBounds().height;
 
-	linkText.setPosition(sf::Vector2f(cardShape.getPosition().x - 242, cardShape.getPosition().y - 22));
+	title.setPosition(static_cast<int>((cardShape.getPosition().x - cardShape.getLocalBounds().width / 2) + 15), static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 
-	followLinkButton.setSize(sf::Vector2f(24, 24));
-	followLinkButton.setOrigin(sf::Vector2f(followLinkButton.getLocalBounds().width / 2, followLinkButton.getLocalBounds().height / 2));
+	followSectionButton.setSize(sf::Vector2f(24, 24));
+	followSectionButton.setOrigin(sf::Vector2f(followSectionButton.getLocalBounds().width / 2, followSectionButton.getLocalBounds().height / 2));
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
-	followLinkButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
+	followSectionButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 }
 
-void Link::draw()
+void Section::draw()
 {
 	targetWindow->draw(cardShape);
-	targetWindow->draw(linkText);
-	targetWindow->draw(followLinkButton);
+	targetWindow->draw(title);
+	targetWindow->draw(followSectionButton);
 }
 
 // private
 
-std::ifstream& Link::GotoLine(std::ifstream& file, unsigned int num)
+std::ifstream& Section::GotoLine(std::ifstream& file, unsigned int num)
 {
 	file.seekg(std::ios::beg); // go to top
 
@@ -91,17 +89,4 @@ std::ifstream& Link::GotoLine(std::ifstream& file, unsigned int num)
 	}
 
 	return file; // return line
-}
-
-void Link::getLink(std::string from_string)
-{
-	std::string temp = from_string;
-	temp.erase(0, temp.find_first_of('"') + 1);
-	temp.erase(temp.find_first_of('"'), temp.length());
-	linkText.setString(temp);
-
-	temp = from_string;
-	temp.erase(0, temp.find_first_of("=") + 2);
-	temp.erase(temp.find_last_of('"'), temp.length());
-	linkRel = temp;
 }
