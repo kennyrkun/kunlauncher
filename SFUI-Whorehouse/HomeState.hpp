@@ -3,8 +3,12 @@
 
 #include <SFML\Graphics.hpp>
 #include "AppState.hpp"
+#include "Scrollbar.hpp"
 
+#include <thread>
 #include <vector>
+
+class Section;
 
 class HomeState : public AppState
 {
@@ -21,18 +25,34 @@ public:
 
 	static HomeState* Instance()
 	{
-		return &IntialiseState_dontfuckwithme;
+		return &HomeState_dontfuckwithme;
 	}
 
 protected:
 	HomeState() { }
 
 private:
-	static HomeState IntialiseState_dontfuckwithme;
+	static HomeState HomeState_dontfuckwithme;
 	AppEngine* app;
 
-	sf::Font* font;
-	sf::Text homeText;
+	sf::View *mainView;
+	sf::View *cardScroller;
+	Scrollbar scrollbar;
+
+	std::vector<std::thread> threads;
+	std::vector<Section*> sections;
+
+	std::thread *helperThread;
+	bool helperRunning = false;
+	bool helperDone = false;
+
+	void loadApps();
+
+	void updateScrollThumb();
+
+	bool mouseIsOver(sf::Shape &object);
+	bool mouseIsOver(sf::Shape &object, sf::View* view);
+	bool mouseIsOver(sf::Text &object);
 };
 
 #endif // !HOME_STATE_HPP
