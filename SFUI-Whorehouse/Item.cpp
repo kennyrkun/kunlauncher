@@ -53,17 +53,21 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 		switch (downloadInfo.download())
 		{
 		case sf::Http::Response::Status::Ok:
+		{
 			std::cout << "saving info" << "\n";
 
 			downloadInfo.save();
 			parseInfo(installDir);
 			break;
+		}
 
 		case sf::Http::Response::Status::InternalServerError:
+		{
 			std::cout << "failed to download info, aborting" << "\n";
 			name.setString("Failed to load app!");
 			description.setString("Encountered 500 Internal Server Error during download");
 			break;
+		}
 
 		default:
 			break;
@@ -88,17 +92,21 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 		switch (downloadIcon.download())
 		{
 		case sf::Http::Response::Status::Ok:
+		{
 			std::cout << "saving icon" << "\n";
 
 			downloadIcon.save();
 			iconTexture.loadFromFile(installDir + "icon.png");
 			break;
+		}
 
 		case sf::Http::Response::Status::InternalServerError:
+		{
 			std::cout << "failed to download icon, aborting" << "\n";
 			name.setString("Failed to download icon");
 			description.setString("Encountered 500 Internal Server Error during download");
 			break;
+		}
 
 		default:
 			break;
