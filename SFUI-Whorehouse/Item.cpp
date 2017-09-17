@@ -224,33 +224,42 @@ bool Item::checkForUpdate()
 	std::cout << "checking for updates" << "\n";
 
 	Download getNewVersion;
-	getNewVersion.setInputPath(CONST::DIR::APPS + itemName + "/info.dat");
+	getNewVersion.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
 	getNewVersion.download();
 
-	getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find('\n') + 1);
-	getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find('\n') + 1);
-	getNewVersion.fileBuffer.erase(getNewVersion.fileBuffer.find('\n'), getNewVersion.fileBuffer.length());
-
-	getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find_first_of('"') + 1);
-	getNewVersion.fileBuffer.erase(getNewVersion.fileBuffer.find_last_of('"'), getNewVersion.fileBuffer.length());
-	std::string rVersion = getNewVersion.fileBuffer;
-	std::string lVersion = version.getString();
-
-	if (lVersion != rVersion)
+	if (getNewVersion.htmlReturnCode == sf::Http::Response::NotFound)
 	{
-		std::cout << "item is out of date! (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
-
-		updateIsAvailable = true;
-		redownloadButton.setFillColor(sf::Color::Yellow);
-
-		version.setString(lVersion + " (New " + rVersion + "!)");
+		return false;
 	}
 	else
 	{
-		std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
-	}
+		getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find('\n') + 1);
+		getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find('\n') + 1);
+		getNewVersion.fileBuffer.erase(getNewVersion.fileBuffer.find('\n'), getNewVersion.fileBuffer.length());
 
-	return false;
+		getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find_first_of('"') + 1);
+		getNewVersion.fileBuffer.erase(getNewVersion.fileBuffer.find_last_of('"'), getNewVersion.fileBuffer.length());
+		std::string rVersion = getNewVersion.fileBuffer;
+		std::string lVersion = version.getString();
+
+		if (lVersion != rVersion)
+		{
+			std::cout << "item is out of date! (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
+
+			updateIsAvailable = true;
+			redownloadButton.setFillColor(sf::Color::Yellow);
+
+			version.setString(lVersion + " (New " + rVersion + "!)");
+
+			return true;
+		}
+		else
+		{
+			std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
+			
+			return false;
+		}
+	}
 }
 
 void Item::updateItem()
@@ -451,7 +460,7 @@ int Item::downloadInfo()
 	std::cout << "\n" << "downloading info" << "\n";
 
 	Download getInfo;
-	getInfo.setInputPath(CONST::DIR::WEB_APP_DIRECTORY+ itemName + "/info.dat");
+	getInfo.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
 	getInfo.setOutputDir(installDir);
 	getInfo.setOutputFilename("info.dat");
 	getInfo.download();
