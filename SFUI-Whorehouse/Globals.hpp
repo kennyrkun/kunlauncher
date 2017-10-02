@@ -56,19 +56,6 @@ namespace CONST
 			const sf::Color TEXT = sf::Color(0, 170, 232);
 		}
 	}
-
-	namespace STRING
-	{
-		namespace EN
-		{
-
-		}
-
-		namespace GR
-		{
-
-		}
-	}
 }
 
 #endif
