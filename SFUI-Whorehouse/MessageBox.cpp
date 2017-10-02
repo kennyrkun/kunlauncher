@@ -38,7 +38,7 @@ MessageBox::MessageBox(MessageBoxOptions settings_)
 
 	for (size_t i = 0; i < settings.settings.size(); i++)
 	{
-		std::cout << "adding button for option \"" << settings.settings[i] << "\"" << std::endl;
+		std::cout << "adding button for option \"" << settings.settings[i] << "\"" << "\n";
 
 		SFUI::Button *newButton = new SFUI::Button(settings.settings[i]);
 		// we will set their positions later, because if we do it now they won't know where to go because the window hasn't been created
@@ -57,7 +57,7 @@ MessageBox::MessageBox(MessageBoxOptions settings_)
 			// it's the new largest
 			largest = combinedWidths[i];
 		else
-			std::cout << i << " not the largest" << std::endl;
+			std::cout << i << " not the largest" << "\n";
 
 	if (largest < 900)
 	{
@@ -65,7 +65,7 @@ MessageBox::MessageBox(MessageBoxOptions settings_)
 	}
 	else
 	{
-		std::cout << "modal is too wide, setting it to 900" << std::endl;
+		std::cout << "modal is too wide, setting it to 900" << "\n";
 		settings.width = 900;
 	}
 
@@ -75,11 +75,11 @@ MessageBox::MessageBox(MessageBoxOptions settings_)
 	}
 	else
 	{
-		std::cout << "modal is too tall, setting it to 600" << std::endl;
+		std::cout << "modal is too tall, setting it to 600" << "\n";
 		settings.height = 600;
 	}
 
-	std::cout << "largest number is " << largest << std::endl;
+	std::cout << "largest number is " << largest << "\n";
 }
 
 MessageBox::~MessageBox()

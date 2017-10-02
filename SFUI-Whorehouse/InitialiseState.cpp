@@ -177,7 +177,7 @@ void InitialiseState::initialisise()
 
 	if (!fs::exists(".\\" + CONST::DIR::BASE))
 	{
-		std::cout << "bin folder does not exist, creating it" << std::endl;
+		std::cout << "bin folder does not exist, creating it" << "\n";
 
 		fs::create_directory(".\\" + CONST::DIR::BASE);
 
@@ -196,7 +196,7 @@ void InitialiseState::initialisise()
 
 	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS))
 	{
-		std::cout << "apps folder does not exist, creating it" << std::endl;
+		std::cout << "apps folder does not exist, creating it" << "\n";
 
 		fs::create_directory(".\\" + CONST::DIR::BASE + "apps");
 
@@ -206,7 +206,7 @@ void InitialiseState::initialisise()
 
 	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat"))
 	{
-		std::cout << "app index file does not exist, creating one" << std::endl;
+		std::cout << "app index file does not exist, creating one" << "\n";
 
 		std::ofstream createIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat");
 		createIndex.close();
@@ -312,14 +312,14 @@ void InitialiseState::initialisise()
 			{
 				std::string remoteVersion = updateLauncher(); // feels kinda hacky
 
-				std::cout << "launcher updated" << std::endl;
+				std::cout << "launcher updated" << "\n";
 
 				MessageBoxOptions modOptions;
 				modOptions.text = "Launcher updated";
 
 //				if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
 //				{
-//					std::cout << "broken" << std::endl;
+//					std::cout << "broken" << "\n";
 
 //					modOptions.title = "BRKOEN AGAIN!";
 //					modOptions.text = "server fucked up, try again.";

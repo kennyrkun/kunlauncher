@@ -33,7 +33,7 @@ void ProgressBar::setValue(float thingsDone_)
 	bar[1].position.x = percentDone * 4;
 	bar[2].position.x = percentDone * 4;
 
-	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << std::endl;
+	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << "\n";
 }
 
 void ProgressBar::setValue(float thingsDone_, float thingsToDo_)
@@ -45,7 +45,7 @@ void ProgressBar::setValue(float thingsDone_, float thingsToDo_)
 	bar[1].position.x = percentDone * 4;
 	bar[2].position.x = percentDone * 4;
 	
-	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << std::endl;
+	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << "\n";
 }
 
 float ProgressBar::getValue() const

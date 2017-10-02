@@ -58,7 +58,7 @@ void HomeState::Cleanup()
 
 void HomeState::Pause()
 {
-	printf("HomeState Pause\n");
+	std::cout << "HomeState Pause" << "\n";
 }
 
 void HomeState::Resume()
@@ -121,14 +121,14 @@ void HomeState::HandleEvents(sf::Event& event)
 
 					if (scrollerBottomPosition > scrollerMaxPosition) // clamp
 					{
-						std::cout << "cardScroller went too far down (" << scrollerBottomPosition << ":" << scrollerMaxPosition << "), clamping..." << std::endl;
+						std::cout << "cardScroller went too far down (" << scrollerBottomPosition << ":" << scrollerMaxPosition << "), clamping..." << "\n";
 						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
 						updateScrollLimits();
 					}
 				}
 				else
 				{
-					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << "\n";
 				}
 			}
 			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
@@ -146,14 +146,14 @@ void HomeState::HandleEvents(sf::Event& event)
 
 					if (scrollerTopPosition < scrollerMinPosition) // clamp
 					{
-						std::cout << "cardScroller went too far up (" << scrollerTopPosition << ":" << scrollerMaxPosition << "), clamping..." << std::endl;
+						std::cout << "cardScroller went too far up (" << scrollerTopPosition << ":" << scrollerMaxPosition << "), clamping..." << "\n";
 						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
 						updateScrollLimits();
 					}
 				}
 				else
 				{
-					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << "\n";
 				}
 			}
 		}
@@ -166,7 +166,7 @@ void HomeState::HandleEvents(sf::Event& event)
 				{
 					if (mouseIsOver(sections[i]->cardShape))
 					{
-						std::cout << "over shape of " << sections[i]->forwardStateName << std::endl;
+						std::cout << "over shape of " << sections[i]->forwardStateName << "\n";
 
 						if (sections[i]->forwardStateName == "appListState")
 							app->ChangeState(AppListState::Instance());
@@ -174,7 +174,7 @@ void HomeState::HandleEvents(sf::Event& event)
 							// do nothing
 							continue;
 						else
-							std::cout << "over nothing" << std::endl;
+							std::cout << "over nothing" << "\n";
 					}
 				}
 			}

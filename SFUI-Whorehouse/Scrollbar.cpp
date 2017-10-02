@@ -70,12 +70,12 @@ void Scrollbar::update(float contentHeight_, float viewportHeight)
 	{
 		isEnabled = false;
 		scrollbar.setSize(sf::Vector2f(0, 0));
-		std::cout << "scrollbar disabled" << std::endl;
+		std::cout << "scrollbar disabled" << "\n";
 	}
 	else
 	{
 		isEnabled = true;
-		std::cout << "scrollbar enabled" << std::endl;
+		std::cout << "scrollbar enabled" << "\n";
 	}
 }
 
@@ -94,14 +94,14 @@ void Scrollbar::moveThumbDown()
 
 		if (scrollThumbBottomPosition > scrollbarBottomPosition) // clamp
 		{
-			std::cout << "scrollbar went too far down (" << scrollThumbBottomPosition << ":" << scrollbarBottomPosition << "), clamping..." << std::endl;
+			std::cout << "scrollbar went too far down (" << scrollThumbBottomPosition << ":" << scrollbarBottomPosition << "), clamping..." << "\n";
 			scrollThumb.setPosition(scrollThumb.getPosition().x, scrollbarBottomPosition - scrollThumb.getLocalBounds().height);
 			updateLimits();
 		}
 	}
 	else
 	{
-		std::cout << "cannot scroll down (" << scrollThumbBottomPosition << " < " << scrollbarBottomPosition << ")" << std::endl;
+		std::cout << "cannot scroll down (" << scrollThumbBottomPosition << " < " << scrollbarBottomPosition << ")" << "\n";
 	}
 }
 
@@ -120,14 +120,14 @@ void Scrollbar::moveThumbUp()
 
 		if (scrollThumbTopPosition < scrollbarTopPosition) // clamp
 		{
-			std::cout << "scrollbar went too far up (" << scrollThumbTopPosition << ":" << scrollbarTopPosition << "), clamping..." << std::endl;
+			std::cout << "scrollbar went too far up (" << scrollThumbTopPosition << ":" << scrollbarTopPosition << "), clamping..." << "\n";
 			scrollThumb.setPosition(scrollThumb.getPosition().x, scrollbarTopPosition);
 			updateLimits();
 		}
 	}
 	else
 	{
-		std::cout << "cannot scroll up (" << scrollThumbTopPosition << " < " << scrollbarTopPosition << ")" << std::endl;
+		std::cout << "cannot scroll up (" << scrollThumbTopPosition << " < " << scrollbarTopPosition << ")" << "\n";
 	}
 }
 

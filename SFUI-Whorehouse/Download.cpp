@@ -140,7 +140,7 @@ void Download::save()
 	}
 	else
 	{
-		std::cout << "failed to open file for saving" << std::endl;
+		std::cout << "failed to open file for saving" << "\n";
 
 		return;
 	}

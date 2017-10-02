@@ -407,7 +407,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 {
 	//TODO: add checks here to make sure we don't try to parse a file that ended up being a 500 or 404
 
-	std::cout << "parsing info for " << dir  << std::endl;
+	std::cout << "parsing info for " << dir  << "\n";
 
 	std::ifstream getit(dir + "info.dat", std::ios::in);
 

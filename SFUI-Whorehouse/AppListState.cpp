@@ -129,14 +129,14 @@ void AppListState::HandleEvents(sf::Event& event)
 
 					if (scrollerBottomPosition > scrollerMaxPosition) // clamp
 					{
-						std::cout << "cardScroller went too far down (" << scrollerBottomPosition << ":" << scrollerMaxPosition << "), clamping..." << std::endl;
+						std::cout << "cardScroller went too far down (" << scrollerBottomPosition << ":" << scrollerMaxPosition << "), clamping..." << "\n";
 						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
 						updateScrollLimits();
 					}
 				}
 				else
 				{
-					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << "\n";
 				}
 			}
 			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
@@ -154,14 +154,14 @@ void AppListState::HandleEvents(sf::Event& event)
 
 					if (scrollerTopPosition < scrollerMinPosition) // clamp
 					{
-						std::cout << "cardScroller went too far up (" << scrollerTopPosition  << ":" << scrollerMaxPosition << "), clamping..." << std::endl;
+						std::cout << "cardScroller went too far up (" << scrollerTopPosition  << ":" << scrollerMaxPosition << "), clamping..." << "\n";
 						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
 						updateScrollLimits();
 					}
 				}
 				else
 				{
-					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << "\n";
 				}
 			}
 		}
@@ -369,15 +369,15 @@ void AppListState::loadApps() // TOOD: this.
 		// or for links, LINK:"text"TO"link.com"
 		if (line[0] == 'A' && line[1] == 'P' && line[2] == 'P') // it's an app
 		{
-			std::cout << "it's an app" << std::endl;
+			std::cout << "it's an app" << "\n";
 			line.erase(0, 3); // remove APP
-			std::cout << line << std::endl;
+			std::cout << line << "\n";
 			line.erase(0, 1); // remove :
-			std::cout << line << std::endl;
+			std::cout << line << "\n";
 			line.erase(0, 1); // remove first "
-			std::cout << line << std::endl;
+			std::cout << line << "\n";
 			line.erase(line.length() - 1, line.length()); // remove last "
-			std::cout << line << std::endl;
+			std::cout << line << "\n";
 
 			if (comesAfterLink)
 			{
@@ -420,7 +420,7 @@ void AppListState::loadApps() // TOOD: this.
 		}
 		else if (line[0] == 'L' && line[1] == 'I' && line[2] == 'N' && line[3] == 'K')
 		{
-			std::cout << "it's a link" << std::endl;
+			std::cout << "it's a link" << "\n";
 
 			std::string linkText, linkRel, linkFull(line);
 
@@ -473,7 +473,7 @@ void AppListState::loadApps() // TOOD: this.
 		}
 		else
 		{
-			std::cout << "String is malformed! Skipping!" << std::endl;
+			std::cout << "String is malformed! Skipping!" << "\n";
 			loopi += 1;
 			continue;
 		}
@@ -482,7 +482,7 @@ void AppListState::loadApps() // TOOD: this.
 		loopi += 1;
 	}
 
-	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded)" << std::endl;
+	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded)" << "\n";
 	helperDone = true;
 }
 
