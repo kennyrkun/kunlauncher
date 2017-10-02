@@ -41,11 +41,12 @@ private:
 	bool helperDone = false;
 
 	bool isReady = false;
-	bool restartNow = false;
 
 	void initialisise();
+
 	bool checkForLauncherUpdates();
 	bool launcherUpdateAvailabe = false;
+	bool restartNow = false;
 	std::string updateLauncher();
 
 	int validateFileStructure();

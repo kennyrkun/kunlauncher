@@ -132,6 +132,7 @@
     <ClCompile Include="InitialiseState.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Launcher.cpp" />
+    <ClCompile Include="LauncherUpdater.cpp" />
     <ClCompile Include="Link.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageBox.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="InitialiseState.hpp" />
     <ClInclude Include="Item.hpp" />
     <ClInclude Include="Launcher.hpp" />
+    <ClInclude Include="LauncherUpdater.hpp" />
     <ClInclude Include="Link.hpp" />
     <ClInclude Include="MessageBox.hpp" />
     <ClInclude Include="AppEngine.hpp" />

@@ -26,6 +26,9 @@
     <Filter Include="Source Files\Launcher\States\Home">
       <UniqueIdentifier>{967f3594-d6e8-4e87-8fd5-bf62cce0831f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Launcher\States\Init">
+      <UniqueIdentifier>{7fb316ba-a8c9-4dad-8643-ffe261ae48ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,9 +48,6 @@
     </ClCompile>
     <ClCompile Include="Launcher.cpp">
       <Filter>Source Files\Launcher</Filter>
-    </ClCompile>
-    <ClCompile Include="InitialiseState.cpp">
-      <Filter>Source Files\Launcher\States</Filter>
     </ClCompile>
     <ClCompile Include="Link.cpp">
       <Filter>Source Files\Launcher\States\AppList</Filter>
@@ -73,6 +73,12 @@
     <ClCompile Include="MessageBox.cpp">
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="InitialiseState.cpp">
+      <Filter>Source Files\Launcher\States\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="LauncherUpdater.cpp">
+      <Filter>Source Files\Launcher\States\Init</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Download.hpp">
@@ -92,9 +98,6 @@
     </ClInclude>
     <ClInclude Include="Launcher.hpp">
       <Filter>Source Files\Launcher</Filter>
-    </ClInclude>
-    <ClInclude Include="InitialiseState.hpp">
-      <Filter>Source Files\Launcher\States</Filter>
     </ClInclude>
     <ClInclude Include="Link.hpp">
       <Filter>Source Files\Launcher\States\AppList</Filter>
@@ -122,6 +125,12 @@
     </ClInclude>
     <ClInclude Include="MessageBox.hpp">
       <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="InitialiseState.hpp">
+      <Filter>Source Files\Launcher\States\Init</Filter>
+    </ClInclude>
+    <ClInclude Include="LauncherUpdater.hpp">
+      <Filter>Source Files\Launcher\States\Init</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
