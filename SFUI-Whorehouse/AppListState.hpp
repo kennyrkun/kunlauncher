@@ -20,7 +20,7 @@ public:
 	void Pause();
 	void Resume();
 
-	void HandleEvents();
+	void HandleEvents(sf::Event& event);
 	void Update();
 	void Draw();
 
@@ -40,6 +40,10 @@ private:
 	sf::View *cardScroller;
 	Scrollbar scrollbar;
 
+	sf::RectangleShape tracker1;
+	sf::RectangleShape tracker2;
+	sf::RectangleShape tracker3;
+
 	std::vector<std::thread> threads;
 	std::vector<Item*> items;
 	std::vector<Link*> links;
@@ -50,11 +54,17 @@ private:
 
 	void loadApps();
 
-	void updateScrollThumb();
+	void updateScrollThumbSize();
+	// TODO: viewable arae class
+	float scrollerTopPosition;
+	float scrollerBottomPosition;
+	float scrollerMinPosition;
+	float scrollerMaxPosition;
+	void updateScrollLimits();
 
-	bool mouseIsOver(sf::Shape &object);
-	bool mouseIsOver(sf::Shape &object, sf::View* view);
-	bool mouseIsOver(sf::Text &object);
+	bool mouseIsOver(const sf::Shape &object);
+	bool mouseIsOver(const sf::Shape &object, const sf::View* view);
+	bool mouseIsOver(const sf::Text &object);
 };
 
 #endif // !APPLIST_STATE_HPP

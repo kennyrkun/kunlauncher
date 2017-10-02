@@ -19,7 +19,7 @@ public:
 	void Pause();
 	void Resume();
 
-	void HandleEvents();
+	void HandleEvents(sf::Event& event);
 	void Update();
 	void Draw();
 
@@ -48,7 +48,13 @@ private:
 
 	void loadApps();
 
-	void updateScrollThumb();
+	void updateScrollThumbSize();
+	// TODO: viewable arae class
+	float scrollerTopPosition;
+	float scrollerBottomPosition;
+	float scrollerMinPosition;
+	float scrollerMaxPosition;
+	void updateScrollLimits();
 
 	bool mouseIsOver(sf::Shape &object);
 	bool mouseIsOver(sf::Shape &object, sf::View* view);

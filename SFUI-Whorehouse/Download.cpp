@@ -9,10 +9,7 @@
 
 Download::Download(bool silent_)
 {
-	if (silent_)
-		silent = true;
-	else
-		silent = false;
+	silent = silent_;
 
 	if (!silent)
 		std::cout << "downloader created" << "\n";
@@ -87,9 +84,11 @@ int Download::download()
 	if (!silent)
 	{
 		std::cout << "downloaded remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... " << "\n";
-		std::cout << "download took " << timer.getElapsedTime().asSeconds() << " seconds" << "\n";
+		std::cout << "download took " << elapsedTime << " seconds" << "\n";
 	}
-	 
+
+	htmlReturnCode = response.getStatus();
+
 	switch (response.getStatus())
 	{
 	case sf::Http::Response::Ok:
@@ -114,6 +113,7 @@ int Download::download()
 		break;
 
 	default:
+		return sf::Http::Response::Status::ResetContent;
 		break;
 	}
 }
@@ -134,9 +134,9 @@ void Download::save()
 		if (downloadFile.fail())
 			if (!silent)
 				std::cout << "failed" << "\n";
-			else
-				if (!silent)
-					std::cout << "finished" << "\n";
+		else
+			if (!silent)
+				std::cout << "finished" << "\n";
 	}
 	else
 	{
@@ -161,8 +161,6 @@ std::string Download::getAppropriateFileSize(const long long int bytes, const in
 
 void Download::createDirectory(std::string dir) // recursively
 {
-//	std::cout << "creating " << dir << "... ";
-
 	std::vector<std::experimental::filesystem::path> subdirectories;
 	dir.erase(0, 2); // .\\
 
@@ -177,6 +175,4 @@ void Download::createDirectory(std::string dir) // recursively
 		std::experimental::filesystem::create_directory(last);
 		last = last.append(subdirectories[i + 1]); // add the next path to this path
 	}
-
-//	std::cout << "done." << "\n";
 }

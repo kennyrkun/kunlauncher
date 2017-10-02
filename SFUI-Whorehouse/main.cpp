@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
 	std::cout << "Launching with " << argc << " arguments:" << "\n";
 
-	LaunchOptions settings;
+	AppSettings settings;
 
 	for (int i = 0; i < argc; i++)
 	{
@@ -31,15 +31,20 @@ int main(int argc, char *argv[])
 			std::cout << "launcher width set to " << argv[i + 1] << "\n";
 			settings.width = std::stoi(argv[i + 1]);
 		}
+
+		if (std::string(argv[i]) == "-height")
+		{
+			std::cout << "launcher height set to " << argv[i + 1] << "\n";
+			settings.height = std::stoi(argv[i + 1]);
+		}
 	}
 
 	std::cout << "\n";
 
 	{
 		AppEngine* app = new AppEngine;
-		app->Init("waiting");
+		app->Init("KunLauncher", settings);
 
-//		app->ChangeState(AppListState::Instance());
 		app->ChangeState(InitialiseState::Instance());
 
 		while (app->Running())

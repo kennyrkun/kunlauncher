@@ -134,10 +134,12 @@
     <ClCompile Include="Launcher.cpp" />
     <ClCompile Include="Link.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Modal.cpp" />
+    <ClCompile Include="MessageBox.cpp" />
     <ClCompile Include="AppEngine.cpp" />
+    <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scrollbar.cpp" />
+    <ClCompile Include="Section.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -149,11 +151,13 @@
     <ClInclude Include="Item.hpp" />
     <ClInclude Include="Launcher.hpp" />
     <ClInclude Include="Link.hpp" />
-    <ClInclude Include="Modal.hpp" />
+    <ClInclude Include="MessageBox.hpp" />
     <ClInclude Include="AppEngine.hpp" />
     <ClInclude Include="AppState.hpp" />
+    <ClInclude Include="ProgressBar.hpp" />
     <ClInclude Include="ResourceManager.hpp" />
     <ClInclude Include="Scrollbar.hpp" />
+    <ClInclude Include="Section.hpp" />
     <ClInclude Include="ThreadManager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

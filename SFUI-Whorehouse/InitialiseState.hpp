@@ -7,20 +7,9 @@
 
 #include <thread>
 
+class ProgressBar;
 class Link;
 class Item;
-
-struct LaunchOptions
-{
-#ifdef _DEBUG
-	bool updateItemsOnStart = true;
-	bool updateLauncherOnStart = true;
-#else
-	bool updateItemsOnStart = true;
-	bool updateLauncherOnStart = true;
-#endif
-	int width = 525;
-};
 
 class InitialiseState : public AppState
 {
@@ -31,7 +20,7 @@ public:
 	void Pause();
 	void Resume();
 
-	void HandleEvents();
+	void HandleEvents(sf::Event& event);
 	void Update();
 	void Draw();
 
@@ -47,25 +36,31 @@ private:
 	static InitialiseState IntialiseState_dontfuckwithme;
 	AppEngine* app;
 
-	LaunchOptions settings;
-	bool developerActivated = 0;
-
 	std::thread *helperThread;
 	bool helperRunning = false;
 	bool helperDone = false;
+
 	bool isReady = false;
+	bool restartNow = false;
 
 	void initialisise();
 	bool checkForLauncherUpdates();
+	bool launcherUpdateAvailabe = false;
 	std::string updateLauncher();
+
+	int validateFileStructure();
+	int updateFileStructure();
+
+	int validateResourceFiles();
 	int updateResourceFiles();
 
 	sf::Font font;
-	sf::Text homeText;
+	sf::Text initialiseText;
+	sf::RectangleShape thingthatdoesntripoffvisualstudio;
+	ProgressBar* progressBar;
+
 	sf::Text currentLauncherTask;
 	void setTaskText(std::string text);
-	sf::Text currentLauncherSubtask;
-	void setTaskSubtext(std::string text);
 };
 
 #endif // !INITALISE_STATE_HPP

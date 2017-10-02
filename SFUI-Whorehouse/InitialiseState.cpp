@@ -5,9 +5,10 @@
 
 #include "json.hpp"
 #include "Download.hpp"
-#include "Modal.hpp"
+#include "MessageBox.hpp"
 #include "Item.hpp"
 #include "Link.hpp"
+#include "ProgressBar.hpp"
 #include "Globals.hpp"
 
 #include <SFML\Graphics.hpp>
@@ -15,9 +16,10 @@
 #include <iostream>
 #include <fstream>
 #include <experimental\filesystem>
-#include <mutex>
 
 InitialiseState InitialiseState::IntialiseState_dontfuckwithme;
+
+namespace fs = std::experimental::filesystem;
 
 void InitialiseState::Init(AppEngine* app_)
 {
@@ -37,21 +39,27 @@ void InitialiseState::Init(AppEngine* app_)
 		}
 	}
 
+	app->window->create(sf::VideoMode(400, 150), app->title, sf::Style::None);
+	app->window->setVerticalSyncEnabled(app->settings.verticalSync);
 	app->window->setTitle("KunLauncher " + CONST::VERSION);
 
-	homeText.setFont(font);
-	homeText.setCharacterSize(72);
-	homeText.setString("initialising");
-	homeText.setOrigin(homeText.getLocalBounds().width / 2, homeText.getLocalBounds().height - 20);
-	homeText.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y)));
+	initialiseText.setFont(font);
+	initialiseText.setCharacterSize(56);
+	initialiseText.setString("KunLauncher");
+	initialiseText.setOrigin(initialiseText.getLocalBounds().width / 2, initialiseText.getLocalBounds().height - 20);
+	initialiseText.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y / 2)));
+
+	thingthatdoesntripoffvisualstudio.setSize(sf::Vector2f(app->window->getSize().x, 20));
+	thingthatdoesntripoffvisualstudio.setFillColor(sf::Color(100, 100, 100));
+	thingthatdoesntripoffvisualstudio.setPosition(0, (app->window->getSize().y - 20));
+
+	progressBar = new ProgressBar(sf::Vector2f(0, (app->window->getSize().y - 20)), thingthatdoesntripoffvisualstudio.getSize().x, thingthatdoesntripoffvisualstudio.getSize().y);
+	progressBar->thingsToDo = 5;
+	progressBar->thingsDone = 0;
 
 	currentLauncherTask.setFont(font);
-	currentLauncherTask.setCharacterSize(26);
-	setTaskText("waiting");
-
-	currentLauncherSubtask.setFont(font);
-	currentLauncherSubtask.setCharacterSize(15);
-	setTaskSubtext("waiting");
+	currentLauncherTask.setCharacterSize(20);
+	setTaskText("initialising");
 
 	helperThread = new std::thread(&InitialiseState::initialisise, this);
 	helperRunning = true;
@@ -72,8 +80,10 @@ void InitialiseState::Cleanup()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
 	{
 		std::cout << "developer mode activated" << "\n";
-		developerActivated = true;
+		app->developerModeActive = true;
 	}
+
+	app->window->close();
 
 	std::cout << "IntialiseState Cleanedup" << "\n";
 }
@@ -88,10 +98,10 @@ void InitialiseState::Resume()
 	std::cout << "IntialiseState Resume" << "\n";
 }
 
-void InitialiseState::HandleEvents()
+void InitialiseState::HandleEvents(sf::Event& event)
 {
-	sf::Event event;
-	while (app->window->pollEvent(event))
+//	sf::Event event;
+//	while (app->window->pollEvent(event))
 	{
 		if (event.type == sf::Event::EventType::Closed)
 		{
@@ -143,64 +153,71 @@ void InitialiseState::Draw()
 		helperRunning = false;
 		isReady = true;
 
-		app->ChangeState(HomeState::Instance());
+		if (restartNow)
+			exit(0);
+		else
+			app->ChangeState(HomeState::Instance());
 
 		return;
 	}
 
 	app->window->clear(CONST::COLOR::BACKGROUND);
 
-	app->window->draw(homeText);
+	app->window->draw(initialiseText);
 	app->window->draw(currentLauncherTask);
-	app->window->draw(currentLauncherSubtask);
+	app->window->draw(thingthatdoesntripoffvisualstudio);
+	app->window->draw(*progressBar);
 
 	app->window->display();
 }
 
 void InitialiseState::initialisise()
 {
-	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE))
-	{
-		setTaskSubtext("creating bin folder");
-		std::experimental::filesystem::create_directory(".\\" + CONST::DIR::BASE);
+	setTaskText("validating files");
 
-		settings.updateItemsOnStart = true;
+	if (!fs::exists(".\\" + CONST::DIR::BASE))
+	{
+		std::cout << "bin folder does not exist, creating it" << std::endl;
+
+		fs::create_directory(".\\" + CONST::DIR::BASE);
+
+		app->settings.updateItemsOnStart = true;
 	}
 	else
 	{
-		if (std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "icon.png"))
+		if (fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "icon.png"))
 		{
 			//	sf::Image icon;
 			//	icon.loadFromFile(".\\" + BASE_FOLDER + "\\res\\tex\\icon.png");
 			//	window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 		}
 	}
+	progressBar->oneThingDone(); // task 1
 
-	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS))
+	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS))
 	{
-		setTaskSubtext("checking if apps folder exists");
+		std::cout << "apps folder does not exist, creating it" << std::endl;
 
-		setTaskSubtext("creating apps folder");
-		std::experimental::filesystem::create_directory(".\\" + CONST::DIR::BASE + "apps");
+		fs::create_directory(".\\" + CONST::DIR::BASE + "apps");
 
-		settings.updateItemsOnStart = true;
+		app->settings.updateItemsOnStart = true;
 	}
+	progressBar->oneThingDone(); // task 2
 
-	setTaskSubtext("checking if index file exists");
-	if (!std::experimental::filesystem::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat"))
+	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat"))
 	{
-		setTaskSubtext("creating empty index files");
+		std::cout << "app index file does not exist, creating one" << std::endl;
+
 		std::ofstream createIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat");
 		createIndex.close();
 
-		settings.updateItemsOnStart = true;
+		app->settings.updateItemsOnStart = true;
 	}
+	progressBar->oneThingDone(); // task 3
 
 	//TODO: this will stop items from updating if it's disabled
-	if (settings.updateItemsOnStart)
+	if (app->settings.updateItemsOnStart)
 	{
-		setTaskSubtext("checking for item updates");
-
 		// download the index file (or at least store it)
 		sf::Http http(CONST::DIR::WEB_HOSTNAME);
 		sf::Http::Request request("./" + CONST::DIR::WEB_APP_DIRECTORY + "/index.dat", sf::Http::Request::Get);
@@ -209,23 +226,22 @@ void InitialiseState::initialisise()
 		int fileSize = response.getBody().size();
 
 		// if the index file on the server has a different filesize than the one we've got, download it
-		setTaskSubtext("gathering apps list");
-		if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") != fileSize)
+		if (fs::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") != fileSize)
 		{
-			std::cout << "index file has been updated (difference of ";
-			if (std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") > fileSize)
+			std::cout << "remote index file is different (difference of ";
+			if (fs::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") > fileSize)
 			{
-				std::cout << std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") - fileSize << " bytes)" << "\n";
+				std::cout << fs::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") - fileSize << " bytes)" << "\n";
 			}
 			else
 			{
-				std::cout << fileSize - std::experimental::filesystem::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") << " bytes)" << "\n";
+				std::cout << fileSize - fs::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") << " bytes)" << "\n";
 			}
 
-			setTaskSubtext("updating apps list");
 			std::cout << "updating apps list" << "\n";
 
 			std::string fileContainer = response.getBody();
+
 			std::ofstream downloadFile(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat", std::ios::out | std::ios::binary);
 			std::cout << "saving file to \"" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat\"... ";
 
@@ -241,10 +257,11 @@ void InitialiseState::initialisise()
 			std::cout << "index file is ready." << "\n";
 		}
 	}
+	progressBar->oneThingDone(); // task 4
 
-	if (settings.updateLauncherOnStart)
+	if (app->settings.updateLauncherOnStart)
 	{
-		setTaskText("checking for item updates...");
+		setTaskText("checking for launcher updates");
 
 		if (checkForLauncherUpdates())
 		{
@@ -254,9 +271,9 @@ void InitialiseState::initialisise()
 			getHoHouse.setInputPath("version.info");
 			getHoHouse.download();
 
-			if (getHoHouse.fileBuffer != CONST::VERSION)
+			if (getHoHouse.fileBuffer != CONST::VERSION) // not the proper version
 			{
-				ModalOptions modOptions;
+				MessageBoxOptions modOptions;
 
 				if (getHoHouse.fileBuffer.find("500 Internal Server Error") != std::string::npos)
 				{
@@ -271,9 +288,8 @@ void InitialiseState::initialisise()
 					modOptions.settings = { "Yes", "No" };
 				}
 
-				setTaskText("waiting on user confirmation");
-				setTaskSubtext("you want it sHI-NEY like the treasure from a sunken pirate wreck??");
-				Modal doYouWannaUpdate(modOptions);
+				MessageBox doYouWannaUpdate(modOptions);
+				doYouWannaUpdate.runBlocking();
 
 				switch (doYouWannaUpdate.returnCode)
 				{
@@ -296,43 +312,40 @@ void InitialiseState::initialisise()
 			{
 				std::string remoteVersion = updateLauncher(); // feels kinda hacky
 
-				ModalOptions modOptions;
+				std::cout << "launcher updated" << std::endl;
+
+				MessageBoxOptions modOptions;
 				modOptions.text = "Launcher updated";
 
-				if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
-				{
-					modOptions.title = "BRKOEN AGAIN!";
-					modOptions.text = "server fucked up, try again.";
-				}
-				else
+//				if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
+//				{
+//					std::cout << "broken" << std::endl;
+
+//					modOptions.title = "BRKOEN AGAIN!";
+//					modOptions.text = "server fucked up, try again.";
+//				}
+				//else
 				{
 					modOptions.text = "Launcher updated to v" + remoteVersion + "! Restart it!";
 					modOptions.settings = { "Restart Now", "Restart Later", "View Changelog" };
 				}
 
-				Modal updateSuccessfulModal(modOptions);
+				MessageBox updateSuccessfulModal(modOptions);
+				updateSuccessfulModal.runBlocking();
 
 				switch (updateSuccessfulModal.returnCode)
 				{
 				case 0:
+				{
 					std::cout << "restarting now" << "\n";
-					exit(0); // TODO: shutdown properly
+					restartNow = true;
 					break;
+				}
 
 				case 1:
+				{
 					std::cout << "restarting later" << "\n";
 					updateSuccessfulModal.close();
-					break;
-
-				case 2:
-				{
-#if defined (_WIN32) // one day it'll be cross platform... one day.
-					std::cout << "opening changelog" << "\n";
-					std::string command("start .\\" + CONST::DIR::BASE + "\\change.log");
-					system(command.c_str());
-#else
-					std::cout << "This function is not supported on your platform!" << "\n";
-#endif
 					break;
 				}
 
@@ -344,7 +357,7 @@ void InitialiseState::initialisise()
 			{
 				std::cout << "updating skipped" << "\n";
 			}
-		}
+				}
 		else
 		{
 			std::cout << "no updates were found" << "\n";
@@ -354,6 +367,7 @@ void InitialiseState::initialisise()
 	{
 		std::cout << "skipping check for updates" << "\n";
 	}
+	progressBar->oneThingDone(); // task 5
 
 	setTaskText("ready");
 
@@ -364,12 +378,10 @@ bool InitialiseState::checkForLauncherUpdates()
 {
 	setTaskText("checking for launcher updates...");
 
-	setTaskSubtext("checking for old launcher executable");
 	if (std::experimental::filesystem::exists("kunlauncher.exe.old"))
 	{
 		try
 		{
-			setTaskSubtext("removing old executable");
 			std::experimental::filesystem::remove("kunlauncher.exe.old");
 		}
 		catch (const std::exception& e)
@@ -378,7 +390,6 @@ bool InitialiseState::checkForLauncherUpdates()
 		}
 	}
 
-	setTaskSubtext("retrieving public launcher version");
 	Download getHoHouse;
 	getHoHouse.setInputPath("version.info");
 	getHoHouse.download();
@@ -390,7 +401,8 @@ bool InitialiseState::checkForLauncherUpdates()
 	if (remoteVersion != CONST::VERSION)
 	{
 		std::cout << "launcher is out of date" << "\n";
-		return true;
+//		return true;
+		return false;
 	}
 	else
 	{
@@ -413,51 +425,75 @@ std::string InitialiseState::updateLauncher()
 	getNewWhorehouse.setInputPath("latest.noexe");
 	getNewWhorehouse.setOutputDir(".\\");
 	getNewWhorehouse.setOutputFilename("kunlauncher.exe");
-	setTaskSubtext("downloading updated launcher");
 	getNewWhorehouse.download();
 
 	try
 	{
-		setTaskSubtext("removing old changelog");
-		std::experimental::filesystem::remove(CONST::DIR::BASE + "\\change.log");
+		fs::rename("kunlauncher.exe", "kunlauncher.exe.old");
 
-		try
-		{
-			Download getChangelog;
-			getChangelog.setInputPath(".\\change.log");
-			getChangelog.setOutputDir(".\\" + CONST::DIR::BASE);
-			getChangelog.setOutputFilename("change.log");
-			setTaskSubtext("downloading new changelog");
-			getChangelog.download();
-			setTaskSubtext("saving new changelog");
-			getChangelog.save();
-		}
-		catch (const std::exception& e)
-		{
-			std::cout << e.what() << "\n";
-		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << "unable to download new changelog :" << "\n";
-		std::cout << e.what() << "\n";
-	}
-
-	try
-	{
-		setTaskSubtext("replacing old launcher");
-		std::experimental::filesystem::rename("kunlauncher.exe", "kunlauncher.exe.old");
-
-		setTaskSubtext("saving updated launcher");
 		getNewWhorehouse.save();
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << "\n";
 		abort();
+
+		// TODO: handle this better;
 	}
 
-	return newVersion;
+	return getHoHouse.fileBuffer;
+}
+
+int InitialiseState::validateFileStructure()
+{
+	// check for bin
+		// create bin
+			// check for configuration file
+				// create configuration file
+	
+	// check for resources
+		// create resources
+			// create resource manifest
+				// download resources
+			// check for textures
+				// create textures
+					// download textures
+			// check for fonts
+				// create fonts
+					// download fonts
+			// check for binaries
+				//create binaries
+					// download binaries
+			// check for theme file
+	
+	// check for apps
+		// create apps
+			// create app manifest
+
+	return 0;
+}
+
+int InitialiseState::updateFileStructure()
+{
+	return 0;
+}
+
+int InitialiseState::validateResourceFiles()
+{
+	// retrieve resource list
+	// load it into a string
+
+	// find keyword
+		// find open bracket
+			// parse the things inside there
+				// from first " to last " (or maybe ;?)
+					// load the filename into a vector
+	// find closing bracket
+
+	// go through vectors and make sure we have the files
+		// if not download them
+
+	return 0;
 }
 
 int InitialiseState::updateResourceFiles()
@@ -488,13 +524,5 @@ void InitialiseState::setTaskText(std::string text)
 	std::cout << text << "\n";
 	currentLauncherTask.setString(text);
 	currentLauncherTask.setOrigin(currentLauncherTask.getLocalBounds().width / 2, currentLauncherTask.getLocalBounds().height - 20);
-	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y + 70)));
-}
-
-void InitialiseState::setTaskSubtext(std::string text)
-{
-	std::cout << text << "\n";
-	currentLauncherSubtask.setString(text);
-	currentLauncherSubtask.setOrigin(currentLauncherSubtask.getLocalBounds().width / 2.0f, currentLauncherSubtask.getLocalBounds().height - 20.0f);
-	currentLauncherSubtask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(app->window->getView().getCenter().y + 96)));
+	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(initialiseText.getPosition().y + 50)));
 }

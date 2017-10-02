@@ -17,7 +17,7 @@ public:
 	int totalHeight;
 
 	void follow();
-	void update();
+	void updateSize(float xSize, float ySize, float xPos, float yPos);
 	void draw();
 
 private:

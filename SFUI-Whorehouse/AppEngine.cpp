@@ -3,13 +3,13 @@
 
 #include <iostream>
 
-void AppEngine::Init(std::string title, int width, int height, bool fullscreen)
+void AppEngine::Init(std::string title_, AppSettings settings_)
 {
-	// initialize SDL
-	window = new sf::RenderWindow(sf::VideoMode(width, height), "AppEngineWindow");
-	window->setVerticalSyncEnabled(true);
+	settings = settings_;
+	title = title_;
 
-	m_fullscreen = fullscreen;
+	window = new sf::RenderWindow;
+	window->setVerticalSyncEnabled(settings.verticalSync);
 	m_running = true;
 
 	std::cout << "AppEngine Init" << "\n";
@@ -27,6 +27,7 @@ void AppEngine::Cleanup()
 	}
 
 	window->close();
+	delete window;
 
 	std::cout << "AppEngine cleaned up." << "\n";
 }
@@ -73,7 +74,10 @@ void AppEngine::PopState()
 
 void AppEngine::HandleEvents()
 {
-	states.back()->HandleEvents();
+	sf::Event event;
+	window->pollEvent(event);
+
+	states.back()->HandleEvents(event);
 }
 
 void AppEngine::Update()

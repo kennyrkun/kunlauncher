@@ -3,10 +3,10 @@
 
 #include <SFML\Graphics.hpp>
 
-class Section
+class Section : public sf::Drawable
 {
 public:
-	Section(std::string text, std::string uri, sf::RenderWindow* target_window, float xPos, bool usable_);
+	Section(std::string text, std::string forwardSection, float xSize, float ySize, float xPos, float yPos);
 	~Section();
 
 	sf::RectangleShape cardShape;
@@ -17,12 +17,10 @@ public:
 	int totalHeight;
 
 	void follow();
-	void update();
-	void draw();
+	void update(float xSize, float ySize, float xPos, float yPos);
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 private:
-	sf::RenderWindow* targetWindow;
-
 	sf::Texture followSectionTexture;
 
 	sf::Font font;

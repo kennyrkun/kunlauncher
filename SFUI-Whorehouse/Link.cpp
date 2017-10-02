@@ -57,18 +57,32 @@ void Link::follow()
 #endif
 }
 
+/*
 void Link::update()
 {
 	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
 	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, cardShape.getPosition().x)); // probably not the best
-
 	totalHeight = cardShape.getLocalBounds().height;
 
 	linkText.setPosition(static_cast<int>((cardShape.getPosition().x - cardShape.getLocalBounds().width / 2) + 15), static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 
 	followLinkButton.setSize(sf::Vector2f(24, 24));
 	followLinkButton.setOrigin(sf::Vector2f(followLinkButton.getLocalBounds().width / 2, followLinkButton.getLocalBounds().height / 2));
+
+	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
+	followLinkButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
+}
+*/
+
+void Link::updateSize(float xSize, float ySize, float xPos, float yPos)
+{
+	cardShape.setSize(sf::Vector2f(xSize, 40));
+	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
+	cardShape.setPosition(sf::Vector2f(xPos, cardShape.getPosition().y)); // probably not the best
+	totalHeight = cardShape.getLocalBounds().height;
+
+	linkText.setPosition(cardShape.getPosition().x - (cardShape.getLocalBounds().width / 2) + 10, static_cast<int>(cardShape.getPosition().y - 40));
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 	followLinkButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));

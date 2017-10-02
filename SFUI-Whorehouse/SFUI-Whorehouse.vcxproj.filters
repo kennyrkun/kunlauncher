@@ -37,9 +37,6 @@
     <ClCompile Include="ThreadManager.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
-    <ClCompile Include="Modal.cpp">
-      <Filter>Source Files\Backend\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Scrollbar.cpp">
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClCompile>
@@ -67,6 +64,15 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
+    <ClCompile Include="Section.cpp">
+      <Filter>Source Files\Launcher\States\Home</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressBar.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageBox.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Download.hpp">
@@ -74,9 +80,6 @@
     </ClInclude>
     <ClInclude Include="ThreadManager.hpp">
       <Filter>Source Files\Backend</Filter>
-    </ClInclude>
-    <ClInclude Include="Modal.hpp">
-      <Filter>Source Files\Backend\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Scrollbar.hpp">
       <Filter>Source Files\Backend\Graphics</Filter>
@@ -110,6 +113,15 @@
     </ClInclude>
     <ClInclude Include="ResourceManager.hpp">
       <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Section.hpp">
+      <Filter>Source Files\Launcher\States\Home</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressBar.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageBox.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

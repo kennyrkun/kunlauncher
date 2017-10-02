@@ -24,13 +24,14 @@ public:
 
 	std::string getAppropriateFileSize(const long long int bytes, const int decimals);
 
+	int htmlReturnCode;
 	std::string fileBuffer;
 	uintmax_t fileSize;
 
 private:
-	std::string outdir;
-	std::string outfile;
-	std::string inpath;
+	std::string outdir = ".\\";
+	std::string outfile = "file.file";
+	std::string inpath = "./";
 
 	bool silent = false;
 

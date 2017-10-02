@@ -4,7 +4,7 @@
 #include "HomeState.hpp"
 
 #include "Download.hpp"
-#include "Modal.hpp"
+#include "MessageBox.hpp"
 #include "Item.hpp"
 #include "Link.hpp"
 #include "Globals.hpp"
@@ -23,12 +23,22 @@ void AppListState::Init(AppEngine* app_)
 
 	app = app_;
 
-	bool isReady(false);
-
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
-
+//	scrollbar.create();
 	scrollbar.create(app->window);
+
+	tracker1.setSize(sf::Vector2f(5, 5));
+	tracker2.setSize(sf::Vector2f(5, 5));
+	tracker3.setSize(sf::Vector2f(5, 5));
+
+	tracker1.setOrigin(tracker1.getLocalBounds().width / 2, tracker1.getLocalBounds().height / 2);
+	tracker2.setOrigin(tracker2.getLocalBounds().width / 2, tracker2.getLocalBounds().height / 2);
+	tracker3.setOrigin(tracker3.getLocalBounds().width / 2, tracker3.getLocalBounds().height / 2);
+
+	tracker1.setFillColor(sf::Color::Green);
+	tracker2.setFillColor(sf::Color::Blue);
+	tracker3.setFillColor(sf::Color::Red);
 	
 	helperThread = new std::thread(&AppListState::loadApps, this);
 	helperRunning = true;
@@ -55,7 +65,7 @@ void AppListState::Cleanup()
 
 void AppListState::Pause()
 {
-	printf("AppListState Pause\n");
+	std::cout << "AppListState Pause" << "\n";
 }
 
 void AppListState::Resume()
@@ -63,10 +73,10 @@ void AppListState::Resume()
 	std::cout << "AppListState Resume" << "\n";
 }
 
-void AppListState::HandleEvents()
+void AppListState::HandleEvents(sf::Event& event)
 {
-	sf::Event event;
-	while (app->window->pollEvent(event))
+//	sf::Event event;
+//	while (app->window->pollEvent(event))
 	{
 		if (event.type == sf::Event::EventType::Closed)
 		{
@@ -89,17 +99,10 @@ void AppListState::HandleEvents()
 				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
 
 				// set the scrollbar size
-				updateScrollThumb();
-
-				for (size_t i = 0; i < items.size(); i++)
-					items[i]->update(items[i]->cardShape.getPosition().y);
-
-				for (size_t i = 0; i < links.size(); i++)
-					links[i]->update();
+				updateScrollThumbSize();
 			}
 			else
 			{
-
 				if (event.size.width <= 525)
 					newSize.x = 525;
 
@@ -109,41 +112,56 @@ void AppListState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 		}
-		/*else if (event.type == sf::Event::EventType::MouseMoved)
+		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled)
 		{
-			if (!scrollbar.thumbDragging)
+			if (event.mouseWheel.delta < 0) // down, or move items up
 			{
-				if (mouseIsOver(scrollbar.scrollThumb), mainView)
+//				if (scrollbar.canScrollDown())
+//					cardScroller->move(0, scrollbar.scrollJump);
+
+				scrollbar.moveThumbDown();
+
+				if (scrollerBottomPosition < scrollerMaxPosition)
 				{
-					scrollbar.scrollThumb.setFillColor(sf::Color(158, 158, 158));
+					cardScroller->move(0, scrollbar.scrollJump);
+
+					updateScrollLimits();
+
+					if (scrollerBottomPosition > scrollerMaxPosition) // clamp
+					{
+						std::cout << "cardScroller went too far down (" << scrollerBottomPosition << ":" << scrollerMaxPosition << "), clamping..." << std::endl;
+						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
+						updateScrollLimits();
+					}
 				}
 				else
 				{
-					scrollbar.scrollThumb.setFillColor(sf::Color(110, 110, 110));
+					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
 				}
 			}
-		}*/
-		else if (event.type == sf::Event::EventType::MouseWheelMoved) // thanks sfconsole
-		{
-//			std::cout << "center x: " << app->window->getView().getCenter().x << "\n";
-//			std::cout << "center y: " << app->window->getView().getCenter().y << "\n";
-//			std::cout << "size x: " << app->window->getView().getSize().x << "\n";
-//			std::cout << "size y: " << app->window->getView().getSize().y << "\n";
+			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
+			{
+//				if (scrollbar.canScrollUp())
+//					cardScroller->move(0, -scrollbar.scrollJump);
 
-			if (event.mouseWheel.delta < 0) // up
-			{
-//				if ((cardScroller->getCenter().y - cardScroller->getSize().y) < scrollbar.scrollJumpMultiplier) // bottom of the thing
-//				{
-					cardScroller->move(0, scrollbar.scrollJump);
-					scrollbar.moveThumbUp();
-//				}
-			}
-			else if (event.mouseWheel.delta > 0) // scroll down
-			{
-				if ((cardScroller->getCenter().y - cardScroller->getSize().y / 2) > scrollbar.scrollJumpMultiplier) // top of the thing
+				scrollbar.moveThumbUp();
+
+				if (scrollerTopPosition > scrollerMinPosition)
 				{
 					cardScroller->move(0, -scrollbar.scrollJump);
-					scrollbar.moveThumbDown();
+
+					updateScrollLimits();
+
+					if (scrollerTopPosition < scrollerMinPosition) // clamp
+					{
+						std::cout << "cardScroller went too far up (" << scrollerTopPosition  << ":" << scrollerMaxPosition << "), clamping..." << std::endl;
+						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
+						updateScrollLimits();
+					}
+				}
+				else
+				{
+					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
 				}
 			}
 		}
@@ -153,12 +171,6 @@ void AppListState::HandleEvents()
 			{
 				bool clicked;
 
-				if (mouseIsOver(scrollbar.scrollThumb))
-				{
-					scrollbar.thumbDragging = true;
-					scrollbar.scrollThumb.setFillColor(CONST::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD);
-				}
-
 				//links
 				for (size_t i = 0; i < items.size(); i++)
 				{
@@ -166,7 +178,7 @@ void AppListState::HandleEvents()
 					{
 						if (mouseIsOver(items[i]->removeButton))
 						{
-							ModalOptions modOptions;
+							MessageBoxOptions modOptions;
 							modOptions.title = "Confirm Deletion";
 							modOptions.text = "Delete \"" + items[i]->itemName + "\"?";
 							std::vector<std::string> modaloptions;
@@ -174,7 +186,8 @@ void AppListState::HandleEvents()
 							modaloptions.push_back("Yes");
 							modOptions.settings = modaloptions;
 
-							Modal confirmDelete(modOptions);
+							MessageBox confirmDelete(modOptions);
+							confirmDelete.runBlocking();
 
 							if (confirmDelete.returnCode == 0)
 							{
@@ -277,6 +290,17 @@ void AppListState::HandleEvents()
 					std::cout << "helper is running, not reloading." << "\n";
 				}
 			}
+			else if (event.key.code == sf::Keyboard::Key::Escape)
+			{
+				if (helperRunning)
+				{
+					app->ChangeState(HomeState::Instance());
+				}
+				else
+				{
+					std::cout << "helper is running, not switching states" << "\n";
+				}
+			}
 		}
 	}
 }
@@ -317,16 +341,20 @@ void AppListState::Draw()
 		links[i]->draw();
 
 	//anchored
-//	app->window->setView(app->window->getDefaultView());
-	// HACK: don't do this over and over. why does it even change when we scroll? I don't understand!
 	app->window->setView(*mainView);
-	scrollbar.draw();
+
+	if (scrollbar.isEnabled)
+		app->window->draw(scrollbar);
 
 	app->window->display();
 }
 
 void AppListState::loadApps() // TOOD: this.
 {
+	items.clear();
+	links.clear();
+	updateScrollThumbSize();
+
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
 	std::cout << "\n";
@@ -355,7 +383,12 @@ void AppListState::loadApps() // TOOD: this.
 			{
 				std::cout << "(item after link)" << "\n";
 
-				Item* newItem = new Item(line, app->window, links.back()->cardShape.getPosition().y + 65);
+				Item* newItem = new Item(line, app->window,
+					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
+					app->window->getSize().y,
+					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
+					items.back()->cardShape.getPosition().y + items.back()->totalHeight /* PADDING */);
+
 				items.push_back(newItem);
 				std::cout << "\n";
 			}
@@ -366,9 +399,17 @@ void AppListState::loadApps() // TOOD: this.
 				Item* newItem;
 
 				if (items.empty())
-					newItem = new Item(line, app->window, 46);
+					newItem = new Item(line, app->window,
+					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
+					app->window->getSize().y,
+					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
+					(75 / 2) + 10);
 				else
-					newItem = new Item(line, app->window, items.back()->cardShape.getPosition().y + items.back()->totalHeight /* PADDING */);
+					newItem = new Item(line, app->window,
+					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
+					app->window->getSize().y,
+					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
+					items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
 
 				items.push_back(newItem);
 				std::cout << "\n";
@@ -403,7 +444,7 @@ void AppListState::loadApps() // TOOD: this.
 			{
 				std::cout << "(link after item)" << "\n";
 
-				Link* newLink = new Link(linkText, linkRel, app->window, items.back()->cardShape.getPosition().y + 65); // we don't check to make sure this isn't empty, because we know there's an item before it.
+				Link* newLink = new Link(linkText, linkRel, app->window, items.back()->cardShape.getPosition().y + 66); // we don't check to make sure this isn't empty, because we know there's an item before it.
 				links.push_back(newLink);
 			}
 			else // after a link or first of  either
@@ -437,32 +478,45 @@ void AppListState::loadApps() // TOOD: this.
 			continue;
 		}
 
-		updateScrollThumb();
+		updateScrollThumbSize();
 		loopi += 1;
 	}
 
-	std::cout << "finished loading apps" << "\n";
+	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded)" << std::endl;
 	helperDone = true;
 }
 
-void AppListState::updateScrollThumb()
+void AppListState::updateScrollThumbSize()
 {
 	// set the scrollbar size
+
 	float contentHeight(0);
 	for (size_t i = 0; i < items.size(); i++)
-	{
-		contentHeight += items[i]->totalHeight;
-	}
+		contentHeight += items[i]->totalHeight + 10;
 
 	for (size_t i = 0; i < links.size(); i++)
-	{
-		contentHeight += links[i]->totalHeight;
-	}
+		contentHeight += links[i]->totalHeight + 10;
 
 	scrollbar.update(contentHeight, cardScroller->getSize().y);
+
+	for (size_t i = 0; i < items.size(); i++)
+		items[i]->updateSize(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16, app->window->getSize().y, (app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), items[i]->cardShape.getPosition().y + 43);
+
+	for (size_t i = 0; i < links.size(); i++)
+		links[i]->updateSize(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16, app->window->getSize().y, (app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), links[i]->cardShape.getPosition().y + links[i]->cardShape.getLocalBounds().height + 8);
+
+	updateScrollLimits();
 }
 
-bool AppListState::mouseIsOver(sf::Shape &object)
+void AppListState::updateScrollLimits()
+{
+	scrollerTopPosition = cardScroller->getCenter().y - cardScroller->getSize().y / 2;
+	scrollerBottomPosition = cardScroller->getCenter().y + cardScroller->getSize().y / 2;
+	scrollerMinPosition = 0;
+	scrollerMaxPosition = scrollbar.contentHeight;
+}
+
+bool AppListState::mouseIsOver(const sf::Shape &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *cardScroller)))
 		return true;
@@ -470,7 +524,7 @@ bool AppListState::mouseIsOver(sf::Shape &object)
 		return false;
 }
 
-bool AppListState::mouseIsOver(sf::Shape &object, sf::View* view)
+bool AppListState::mouseIsOver(const sf::Shape &object, const sf::View* view)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *view)))
 		return true;
@@ -478,7 +532,7 @@ bool AppListState::mouseIsOver(sf::Shape &object, sf::View* view)
 		return false;
 }
 
-bool AppListState::mouseIsOver(sf::Text &object)
+bool AppListState::mouseIsOver(const sf::Text &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *cardScroller)))
 		return true;

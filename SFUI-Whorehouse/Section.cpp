@@ -6,17 +6,16 @@
 #include <iostream>
 #include <experimental\filesystem>
 
-Section::Section(std::string text, std::string uri, sf::RenderWindow* target_window, float xPos, bool usable_ = false)
+Section::Section(std::string text, std::string forwardSection, float xSize, float ySize, float xPos, float yPos)
 {
-	targetWindow = target_window;
 	title.setString(text);
-	forwardStateName = uri;
+	forwardStateName = forwardSection;
 
-	std::cout << "creating new card for \"" << title.getString().toAnsiString() << "\" Sectioning to \"" << forwardStateName << "\"" << "\n";
+	std::cout << "creating new section card for \"" << title.getString().toAnsiString() << "\" for \"" << forwardStateName << "\"" << "\n";
 
-	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
+	cardShape.setSize(sf::Vector2f(xSize, 40));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
-	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, xPos)); // probably not the best
+	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
 	cardShape.setFillColor(sf::Color(100, 100, 100));
 
 	font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
@@ -39,7 +38,7 @@ Section::Section(std::string text, std::string uri, sf::RenderWindow* target_win
 
 Section::~Section()
 {
-	delete targetWindow;
+//	nothing
 }
 
 void Section::follow()
@@ -54,27 +53,26 @@ void Section::follow()
 #endif
 }
 
-void Section::update()
+void Section::update(float xSize, float ySize, float xPos, float yPos)
 {
-	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
+	cardShape.setSize(sf::Vector2f(xSize, 40));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
-	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, cardShape.getPosition().x)); // probably not the best
+	cardShape.setPosition(sf::Vector2f(xPos, cardShape.getPosition().y)); // probably not the best
 	totalHeight = cardShape.getLocalBounds().height;
 
 	title.setPosition(static_cast<int>((cardShape.getPosition().x - cardShape.getLocalBounds().width / 2) + 15), static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 
-	followSectionButton.setSize(sf::Vector2f(24, 24));
 	followSectionButton.setOrigin(sf::Vector2f(followSectionButton.getLocalBounds().width / 2, followSectionButton.getLocalBounds().height / 2));
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 	followSectionButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 }
 
-void Section::draw()
+void Section::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	targetWindow->draw(cardShape);
-	targetWindow->draw(title);
-	targetWindow->draw(followSectionButton);
+	target.draw(cardShape);
+	target.draw(title);
+	target.draw(followSectionButton);
 }
 
 // private

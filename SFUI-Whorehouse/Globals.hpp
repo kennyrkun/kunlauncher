@@ -4,9 +4,13 @@
 #include <SFML\Graphics\Color.hpp>
 #include <string>
 
+class ResourceManager;
+
+// TODO: redo this system
+
 namespace CONST
 {
-	const std::string VERSION = "0.12.4";
+	const std::string VERSION = "0.13.0";
 
 	namespace DIR
 	{
@@ -50,6 +54,19 @@ namespace CONST
 			const sf::Color CARD = sf::Color(100, 100, 100);
 			const sf::Color FOLLOW = sf::Color(255, 255, 255);
 			const sf::Color TEXT = sf::Color(0, 170, 232);
+		}
+	}
+
+	namespace STRING
+	{
+		namespace EN
+		{
+
+		}
+
+		namespace GR
+		{
+
 		}
 	}
 }

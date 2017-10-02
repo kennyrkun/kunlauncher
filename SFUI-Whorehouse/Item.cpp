@@ -9,7 +9,7 @@
 
 namespace fs = std::experimental::filesystem;
 
-Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
+Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos)
 {
 	std::cout << "creating new card for \"" + itemName_ + "\"" << "\n";
 
@@ -102,9 +102,10 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 
 		case sf::Http::Response::Status::InternalServerError:
 		{
-			std::cout << "failed to download icon, aborting" << "\n";
-			name.setString("Failed to download icon");
-			description.setString("Encountered 500 Internal Server Error during download");
+//			std::cout << "failed to download icon, aborting" << "\n";
+//			name.setString("Failed to download icon");
+//			description.setString("Encountered 500 Internal Server Error during download");
+			iconTexture.loadFromFile(CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "error_1x.png");
 			break;
 		}
 
@@ -128,12 +129,14 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float yPos)
 		downloaded = false;
 	}
 
-	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 75));
+//	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5.0f, yPos)); // probably not the best
+
+	cardShape.setSize(sf::Vector2f(xSize, 75));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
-	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5.0f, yPos)); // probably not the best
+	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
 	cardShape.setFillColor(CONST::COLOR::ITEM::CARD);
 
-	totalHeight = cardShape.getLocalBounds().height + 10;
+	totalHeight = cardShape.getSize().y;
 
 	icon.setSize(sf::Vector2f(cardShape.getSize().y, cardShape.getSize().y)); // a square
 	icon.setOrigin(sf::Vector2f(icon.getLocalBounds().width / 2, icon.getLocalBounds().height / 2));
@@ -205,7 +208,7 @@ Item::~Item()
 
 void Item::deleteFiles()
 {
-	std::cout << "using deprecated removal method" << "\n";
+	std::cout << "using deprecated file deletion method" << "\n";
 
 	try
 	{
@@ -326,13 +329,12 @@ void Item::openItem()
 #endif
 }
 
-void Item::update(float yPos)
+void Item::updateSize(float xSize, float ySize, float xPos, float yPos)
 {
-	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 75));
+	cardShape.setSize(sf::Vector2f(xSize, 75));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
-	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5.0f, yPos)); // probably not the best
-
-	totalHeight = cardShape.getLocalBounds().height + 10;
+	cardShape.setPosition(sf::Vector2f(xPos, cardShape.getPosition().y)); // probably not the best
+	totalHeight = cardShape.getLocalBounds().height;
 
 	icon.setOrigin(sf::Vector2f(icon.getLocalBounds().width / 2, icon.getLocalBounds().height / 2));
 	icon.setPosition(sf::Vector2f(cardShape.getPosition().x - (cardShape.getSize().x / 2) + icon.getLocalBounds().width / 2, cardShape.getPosition().y));
@@ -383,7 +385,6 @@ void Item::draw()
 		else
 		{
 			targetWindow->draw(downloadButton);
-			//		button.draw(*targetWindow);
 		}
 	}
 }

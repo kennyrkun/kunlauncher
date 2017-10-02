@@ -7,7 +7,8 @@
 class Item
 {
 public:
-	Item(std::string itemName_, sf::RenderWindow* target_window, float xPos);
+	//Item(std::string itemName_, sf::RenderWindow* target_window, float xPos);
+	Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos);
 	~Item();
 
 	sf::RectangleShape cardShape;
@@ -33,7 +34,7 @@ public:
 	void download();
 	void openItem();
 
-	void update(float yPos);
+	void updateSize(float xSize, float ySize, float xPos, float yPos);
 	void draw();
 
 private:

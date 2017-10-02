@@ -6,11 +6,29 @@
 #include <string>
 
 class AppState;
+
+struct AppSettings
+{
+#ifdef _DEBUG
+	bool updateItemsOnStart = false;
+	bool updateLauncherOnStart = false;
+	bool updateItemsDuringRun = false;
+#else
+	bool updateItemsOnStart = true;
+	bool updateLauncherOnStart = true;
+	bool updateItemsDuringRun = true;
+#endif
+	bool fullscreen = false;
+	bool verticalSync = true;
+
+	int width = 525;
+	int height = 400;
+};
+
 class AppEngine
 {
 public:
-
-	void Init(std::string title, int width = 525, int height = 325, bool fullscreen = false);
+	void Init(std::string title, AppSettings settings_);
 	void Cleanup();
 
 	void ChangeState(AppState* state);
@@ -25,13 +43,15 @@ public:
 	void Quit() { m_running = false; }
 
 	sf::RenderWindow* window;
+	AppSettings settings;
+	bool developerModeActive = false;
+	std::string title;
 
 private:
 	// the stack of states
 	std::vector<AppState*> states;
 
 	bool m_running;
-	bool m_fullscreen;
 };
 
 #endif // !PROGRAM_ENGINE_HPP
