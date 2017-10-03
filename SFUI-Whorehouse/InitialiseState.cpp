@@ -3,13 +3,13 @@
 #include "InitialiseState.hpp"
 #include "HomeState.hpp"
 
-#include "json.hpp"
+#include "Globals.hpp"
 #include "Download.hpp"
+#include "LauncherUpdater.hpp"
 #include "MessageBox.hpp"
 #include "Item.hpp"
 #include "Link.hpp"
 #include "ProgressBar.hpp"
-#include "Globals.hpp"
 
 #include <SFML\Graphics.hpp>
 #include <SFML\Network.hpp>

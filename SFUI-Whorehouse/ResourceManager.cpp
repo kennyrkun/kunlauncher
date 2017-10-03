@@ -1,9 +1,8 @@
-#include <SFML/Graphics.hpp>
+#include "ResourceManager.hpp"
+
 #include <map>
 #include <string>
 #include <iostream>
-
-#include "ResourceManager.hpp"
 
 ResourceManager::ResourceManager()
 {

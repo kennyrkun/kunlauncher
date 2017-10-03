@@ -3,11 +3,11 @@
 #include "AppListState.hpp"
 #include "HomeState.hpp"
 
+#include "Globals.hpp"
 #include "Download.hpp"
 #include "MessageBox.hpp"
 #include "Item.hpp"
 #include "Link.hpp"
-#include "Globals.hpp"
 
 #include <SFML\Graphics.hpp>
 #include <SFML\Network.hpp>
