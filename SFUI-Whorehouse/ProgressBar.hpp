@@ -8,14 +8,15 @@ class ProgressBar : public sf::Drawable
 public:
 	ProgressBar(sf::Vector2f position, float width = 200.f, float height = 20.0f);
 
-	void oneThingDone();
-	void setValue(float thingsDone_);
-	void setValue(float thingsDone_, float thingsToDo_);
+	void addThingToDo();
+	void addThingsToDo(int things);
+	void oneThingIsDone();
+	void setValue(int thingsDone_);
+	void setValue(int thingsDone_, int thingsToDo_);
 	float getValue() const;
 
-	float thingsToDo;
-	float thingsDone;
-	float percentDone;
+	int thingsToDo;
+	int thingsDone;
 
 private:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -28,7 +29,9 @@ private:
 	const float textSize = 12.0f;
 	const float PADDING = 1.f;
 
-	float getPercent(float x, float y);
+	float percentDone;
+
+	float calculatePercent(float x, float y);
 };
 
 #endif

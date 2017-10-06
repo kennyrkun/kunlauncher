@@ -5,7 +5,6 @@
 ProgressBar::ProgressBar(sf::Vector2f position, float width, float height)
 {
 	box.setPosition(position);
-//	box.setSize(sf::Vector2f(width, height));
 
 	bar[0].position = sf::Vector2f(position.x + 0, position.y + 0);
 	bar[1].position = sf::Vector2f(position.x + width, position.y + 0);
@@ -14,18 +13,26 @@ ProgressBar::ProgressBar(sf::Vector2f position, float width, float height)
 
 	for (int i = 0; i < 4; ++i)
 		bar[i].color = barColor;
-
-	setValue(0, 100);
-
-//	setSelectable(false);
 }
 
-void ProgressBar::oneThingDone()
+void ProgressBar::addThingToDo()
+{
+	thingsDone += 1;
+	setValue(thingsDone, thingsToDo);
+}
+
+void ProgressBar::addThingsToDo(int things)
+{
+	thingsDone += things;
+	setValue(thingsDone, thingsToDo);
+}
+
+void ProgressBar::oneThingIsDone()
 {
 	setValue(thingsDone + 1, thingsToDo);
 }
 
-void ProgressBar::setValue(float thingsDone_)
+void ProgressBar::setValue(int thingsDone_)
 {
 	thingsDone = thingsDone_;
 	percentDone = getPercent(thingsDone, thingsToDo);
@@ -36,7 +43,7 @@ void ProgressBar::setValue(float thingsDone_)
 	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << "\n";
 }
 
-void ProgressBar::setValue(float thingsDone_, float thingsToDo_)
+void ProgressBar::setValue(int thingsDone_, int thingsToDo_)
 {
 	thingsDone = thingsDone_;
 	thingsToDo = thingsToDo_;
@@ -58,7 +65,7 @@ void ProgressBar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(bar, 4, sf::Quads, states);
 }
 
-float ProgressBar::getPercent(float x, float y)
+float ProgressBar::calculatePercent(float x, float y)
 {
 	return x / y * 100;
 }
