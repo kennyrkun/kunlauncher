@@ -226,23 +226,23 @@ bool Item::checkForUpdate()
 {
 	std::cout << "checking for updates" << "\n";
 
-	Download getNewVersion;
-	getNewVersion.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
-	getNewVersion.download();
+	Download getRemoteVersion;
+	getRemoteVersion.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
+	getRemoteVersion.download();
 
-	if (getNewVersion.htmlReturnCode == sf::Http::Response::NotFound)
+	if (getRemoteVersion.htmlReturnCode == sf::Http::Response::NotFound)
 	{
 		return false;
 	}
 	else
 	{
-		getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find('\n') + 1);
-		getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find('\n') + 1);
-		getNewVersion.fileBuffer.erase(getNewVersion.fileBuffer.find('\n'), getNewVersion.fileBuffer.length());
+		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
+		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
+		getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find('\n'), getRemoteVersion.fileBuffer.length());
 
-		getNewVersion.fileBuffer.erase(0, getNewVersion.fileBuffer.find_first_of('"') + 1);
-		getNewVersion.fileBuffer.erase(getNewVersion.fileBuffer.find_last_of('"'), getNewVersion.fileBuffer.length());
-		std::string rVersion = getNewVersion.fileBuffer;
+		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find_first_of('"') + 1);
+		getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find_last_of('"'), getRemoteVersion.fileBuffer.length());
+		std::string rVersion = getRemoteVersion.fileBuffer;
 		std::string lVersion = version.getString();
 
 		if (lVersion != rVersion)
