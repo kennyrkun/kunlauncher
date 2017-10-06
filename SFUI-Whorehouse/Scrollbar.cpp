@@ -22,13 +22,9 @@ void Scrollbar::create(sf::RenderWindow* target_window)
 	scrollbar.setOrigin(sf::Vector2f(scrollbar.getLocalBounds().width / 2, 0));
 	scrollbar.setPosition((targetWindow->getView().getCenter().x * 2) - scrollbar.getLocalBounds().width / 2, targetWindow->getView().getCenter().y);
 	scrollbar.setFillColor(sf::Color(80, 80, 80));
-		
-	scrollThumb.setSize(sf::Vector2f(scrollbar.getSize().x, targetWindow->getSize().y));
-	scrollThumb.setOrigin(sf::Vector2f(scrollThumb.getLocalBounds().width / 2, 0));
-	scrollThumb.setPosition((targetWindow->getView().getCenter().x * 2) - scrollThumb.getLocalBounds().width / 2, targetWindow->getView().getCenter().y);
+	
+	scrollThumb.setSize(sf::Vector2f(0, 0));
 	scrollThumb.setFillColor(sf::Color(110, 110, 110));
-
-	std::cout << "scrollbar thumb is " << scrollThumb.getSize().x << " by " << scrollThumb.getSize().y << "\n";
 
 	scrollJumpMultiplier = 16;
 }
@@ -95,7 +91,7 @@ void Scrollbar::moveThumbDown()
 		if (scrollThumbBottomPosition > scrollbarBottomPosition) // clamp
 		{
 			std::cout << "scrollbar went too far down (" << scrollThumbBottomPosition - scrollbarBottomPosition << "), clamping..." << "\n";
-			scrollThumb.setPosition(scrollThumb.getPosition().x, scrollbarBottomPosition - scrollThumb.getLocalBounds().height);
+			moveToBottom();
 			updateLimits();
 		}
 	}
@@ -121,7 +117,7 @@ void Scrollbar::moveThumbUp()
 		if (scrollThumbTopPosition < scrollbarTopPosition) // clamp
 		{
 			std::cout << "scrollbar went too far up (" << scrollbarTopPosition - scrollThumbTopPosition << "), clamping..." << "\n";
-			scrollThumb.setPosition(scrollThumb.getPosition().x, scrollbarTopPosition);
+			moveToTop();
 			updateLimits();
 		}
 	}
@@ -133,10 +129,12 @@ void Scrollbar::moveThumbUp()
 
 void Scrollbar::moveToTop()
 {
+	scrollThumb.setPosition(scrollThumb.getPosition().x, scrollbarTopPosition);
 }
 
 void Scrollbar::moveToBottom()
 {
+	scrollThumb.setPosition(scrollThumb.getPosition().x, scrollbarBottomPosition - scrollThumb.getLocalBounds().height);
 }
 
 void Scrollbar::draw(sf::RenderTarget& target, sf::RenderStates states) const
