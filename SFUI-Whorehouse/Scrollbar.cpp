@@ -94,7 +94,7 @@ void Scrollbar::moveThumbDown()
 
 		if (scrollThumbBottomPosition > scrollbarBottomPosition) // clamp
 		{
-			std::cout << "scrollbar went too far down (" << scrollThumbBottomPosition << ":" << scrollbarBottomPosition << "), clamping..." << "\n";
+			std::cout << "scrollbar went too far down (" << scrollThumbBottomPosition - scrollbarBottomPosition << "), clamping..." << "\n";
 			scrollThumb.setPosition(scrollThumb.getPosition().x, scrollbarBottomPosition - scrollThumb.getLocalBounds().height);
 			updateLimits();
 		}
@@ -120,7 +120,7 @@ void Scrollbar::moveThumbUp()
 
 		if (scrollThumbTopPosition < scrollbarTopPosition) // clamp
 		{
-			std::cout << "scrollbar went too far up (" << scrollThumbTopPosition << ":" << scrollbarTopPosition << "), clamping..." << "\n";
+			std::cout << "scrollbar went too far up (" << scrollbarTopPosition - scrollThumbTopPosition << "), clamping..." << "\n";
 			scrollThumb.setPosition(scrollThumb.getPosition().x, scrollbarTopPosition);
 			updateLimits();
 		}

@@ -129,7 +129,7 @@ void AppListState::HandleEvents(sf::Event& event)
 
 					if (scrollerBottomPosition > scrollerMaxPosition) // clamp
 					{
-						std::cout << "cardScroller went too far down (" << scrollerBottomPosition << ":" << scrollerMaxPosition << "), clamping..." << "\n";
+						std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << "\n";
 						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
 						updateScrollLimits();
 					}
@@ -154,7 +154,7 @@ void AppListState::HandleEvents(sf::Event& event)
 
 					if (scrollerTopPosition < scrollerMinPosition) // clamp
 					{
-						std::cout << "cardScroller went too far up (" << scrollerTopPosition  << ":" << scrollerMaxPosition << "), clamping..." << "\n";
+						std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << "\n";
 						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
 						updateScrollLimits();
 					}
