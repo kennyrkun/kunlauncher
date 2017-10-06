@@ -7,6 +7,8 @@
 #include <fstream>
 #include <cmath>
 
+namespace fs = std::experimental::filesystem;
+
 Download::Download(bool silent_)
 {
 	silent = silent_;
@@ -34,7 +36,7 @@ void Download::setOutputDir(std::string dir)
 	if (!silent)
 		std::cout << "output set to: " << outdir << "\n";
 
-	if (!std::experimental::filesystem::exists(outdir))
+	if (!fs::exists(outdir))
 		createDirectory(outdir);
 }
 
@@ -89,7 +91,7 @@ int Download::download()
 
 	htmlReturnCode = response.getStatus();
 
-	switch (response.getStatus())
+	switch (htmlReturnCode)
 	{
 	case sf::Http::Response::Ok:
 		if (!silent)
@@ -161,18 +163,18 @@ std::string Download::getAppropriateFileSize(const long long int bytes, const in
 
 void Download::createDirectory(std::string dir) // recursively
 {
-	std::vector<std::experimental::filesystem::path> subdirectories;
+	std::vector<fs::path> subdirectories;
 	dir.erase(0, 2); // .\\
 
-	for (auto& part : std::experimental::filesystem::path(dir))
+	for (auto& part : fs::path(dir))
 	{
 		subdirectories.push_back(part);
 	}
 
-	std::experimental::filesystem::path last = subdirectories.front(); // first path
+	fs::path last = subdirectories.front(); // first path
 	for (size_t i = 0; i < subdirectories.size() - 1; i++)
 	{
-		std::experimental::filesystem::create_directory(last);
+		fs::create_directory(last);
 		last = last.append(subdirectories[i + 1]); // add the next path to this path
 	}
 }
