@@ -17,19 +17,33 @@ ProgressBar::ProgressBar(sf::Vector2f position, float width, float height)
 
 void ProgressBar::addThingToDo()
 {
-	thingsDone += 1;
+	thingsToDo += 1;
 	setValue(thingsDone, thingsToDo);
 }
 
 void ProgressBar::addThingsToDo(int things)
 {
-	thingsDone += things;
+	thingsToDo += things;
 	setValue(thingsDone, thingsToDo);
 }
 
-void ProgressBar::oneThingIsDone()
+void ProgressBar::oneThingDone()
 {
 	setValue(thingsDone + 1, thingsToDo);
+}
+
+void ProgressBar::setColor(const sf::Color & color)
+{
+	for (int i = 0; i < 4; ++i)
+		bar[i].color = barColor;
+}
+
+void ProgressBar::setColor(const sf::Color & topLeft, const sf::Color & topRight, const sf::Color & bottomLeft, const sf::Color & bottomRight)
+{
+	bar[0].color = topLeft;
+	bar[1].color = topRight;
+	bar[2].color = bottomLeft;
+	bar[3].color = bottomLeft;
 }
 
 void ProgressBar::setValue(int thingsDone_)

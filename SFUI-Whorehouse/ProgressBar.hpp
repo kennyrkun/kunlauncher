@@ -9,14 +9,18 @@ public:
 	ProgressBar(sf::Vector2f position, float width = 200.f, float height = 20.0f);
 
 	void addThingToDo();
-	void addThingsToDo(int things);
-	void oneThingIsDone();
-	void setValue(int thingsDone_);
-	void setValue(int thingsDone_, int thingsToDo_);
+	void addThingsToDo(signed int things);
+	void oneThingDone();
+
+	void setColor(const sf::Color& color);
+	void setColor(const sf::Color& topLeft, const sf::Color& topRight, const sf::Color& bottomLeft, const sf::Color& bottomRight);
+
+	void setValue(signed int thingsDone_);
+	void setValue(signed int thingsDone_, signed int thingsToDo_);
 	float getValue() const;
 
-	int thingsToDo;
-	int thingsDone;
+	signed int thingsToDo;
+	signed int thingsDone;
 
 private:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
