@@ -43,7 +43,7 @@ void ProgressBar::setColor(const sf::Color & topLeft, const sf::Color & topRight
 	bar[0].color = topLeft;
 	bar[1].color = topRight;
 	bar[2].color = bottomLeft;
-	bar[3].color = bottomLeft;
+	bar[3].color = bottomRight;
 }
 
 void ProgressBar::setValue(int thingsDone_)
