@@ -35,7 +35,7 @@ void ProgressBar::oneThingIsDone()
 void ProgressBar::setValue(int thingsDone_)
 {
 	thingsDone = thingsDone_;
-	percentDone = getPercent(thingsDone, thingsToDo);
+	percentDone = calculatePercent(thingsDone, thingsToDo);
 
 	bar[1].position.x = percentDone * 4;
 	bar[2].position.x = percentDone * 4;
@@ -47,7 +47,7 @@ void ProgressBar::setValue(int thingsDone_, int thingsToDo_)
 {
 	thingsDone = thingsDone_;
 	thingsToDo = thingsToDo_;
-	percentDone = getPercent(thingsDone, thingsToDo);
+	percentDone = calculatePercent(thingsDone, thingsToDo);
 
 	bar[1].position.x = percentDone * 4;
 	bar[2].position.x = percentDone * 4;
