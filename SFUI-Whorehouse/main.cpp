@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 		if (std::string(argv[i]) == "-noindexupdate")
 		{
 			std::cout << "will not check for app updates" << "\n";
-			settings.updateItemsOnStart = false;
+			settings.updateItemIndexOnStart = false;
 		}
 
 		if (std::string(argv[i]) == "-width")

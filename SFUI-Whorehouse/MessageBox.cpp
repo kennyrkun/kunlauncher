@@ -150,7 +150,8 @@ void MessageBox::runBlocking()
 		window.draw(message);
 
 		for (size_t i = 0; i < buttons.size(); i++)
-			buttons[i]->draw(window);
+			window.draw(*buttons[i]);
+//			buttons[i]->draw(window);
 
 		window.display();
 	}

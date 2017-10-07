@@ -10,12 +10,12 @@ class AppState;
 struct AppSettings
 {
 #ifdef _DEBUG
-	bool updateItemsOnStart = false;
-	bool updateLauncherOnStart = false;
+	bool updateLauncherOnStart = true;
+	bool updateItemIndexOnStart = false;
 	bool updateItemsDuringRun = false;
 #else
-	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = true;
+	bool updateItemsOnStart = true;
 	bool updateItemsDuringRun = true;
 #endif
 	bool fullscreen = false;

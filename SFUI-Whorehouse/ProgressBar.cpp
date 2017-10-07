@@ -17,12 +17,16 @@ ProgressBar::ProgressBar(sf::Vector2f position, float width, float height)
 
 void ProgressBar::addThingToDo()
 {
+	std::cout << "Mr. ProgressBar: Added one more task." << std::endl;
+
 	thingsToDo += 1;
 	setValue(thingsDone, thingsToDo);
 }
 
 void ProgressBar::addThingsToDo(int things)
 {
+	std::cout << "Mr. Progressbar: Added " << things << " more tasks" << std::endl;
+
 	thingsToDo += things;
 	setValue(thingsDone, thingsToDo);
 }
@@ -42,8 +46,8 @@ void ProgressBar::setColor(const sf::Color & topLeft, const sf::Color & topRight
 {
 	bar[0].color = topLeft;
 	bar[1].color = topRight;
-	bar[2].color = bottomLeft;
-	bar[3].color = bottomRight;
+	bar[3].color = bottomLeft;
+	bar[2].color = bottomRight;
 }
 
 void ProgressBar::setValue(int thingsDone_)

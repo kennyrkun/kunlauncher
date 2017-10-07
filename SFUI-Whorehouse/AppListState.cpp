@@ -17,6 +17,8 @@
 
 AppListState AppListState::AppListState_dontfuckwithme;
 
+namespace fs = std::experimental::filesystem;
+
 void AppListState::Init(AppEngine* app_)
 {
 	std::cout << "AppListState Init" << "\n";
@@ -274,6 +276,20 @@ void AppListState::HandleEvents(sf::Event& event)
 			{
 				if (helperRunning)
 				{
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
+					{
+						fs::remove(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "\\index.dat");
+
+						Download getItemIndex;
+						getItemIndex.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + "/index.dat");
+						getItemIndex.setOutputDir(CONST::DIR::BASE + CONST::DIR::APPS);
+						getItemIndex.setOutputFilename("\\index.dat");
+						getItemIndex.download();
+						getItemIndex.save();
+
+						// redownload items list
+					}
+
 					std::cout << "refreshing applist" << "\n";
 
 					links.clear();

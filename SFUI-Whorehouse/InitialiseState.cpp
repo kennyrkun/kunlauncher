@@ -5,10 +5,8 @@
 
 #include "Globals.hpp"
 #include "Download.hpp"
-#include "LauncherUpdater.hpp"
 #include "MessageBox.hpp"
-#include "Item.hpp"
-#include "Link.hpp"
+#include "LauncherUpdater.hpp"
 #include "ProgressBar.hpp"
 
 #include <SFML\Graphics.hpp>
@@ -40,6 +38,7 @@ void InitialiseState::Init(AppEngine* app_)
 	}
 
 	app->window->create(sf::VideoMode(400, 150), app->title, sf::Style::None);
+
 	app->window->setVerticalSyncEnabled(app->settings.verticalSync);
 	app->window->setTitle("KunLauncher " + CONST::VERSION);
 
@@ -54,8 +53,6 @@ void InitialiseState::Init(AppEngine* app_)
 	thingthatdoesntripoffvisualstudio.setPosition(0, (app->window->getSize().y - 20));
 
 	progressBar = new ProgressBar(sf::Vector2f(0, (app->window->getSize().y - 20)), thingthatdoesntripoffvisualstudio.getSize().x, thingthatdoesntripoffvisualstudio.getSize().y);
-	progressBar->thingsToDo = 5;
-	progressBar->thingsDone = 0;
 
 	currentLauncherTask.setFont(font);
 	currentLauncherTask.setCharacterSize(20);
@@ -100,38 +97,18 @@ void InitialiseState::Resume()
 
 void InitialiseState::HandleEvents(sf::Event& event)
 {
-//	sf::Event event;
-//	while (app->window->pollEvent(event))
+	if (event.type == sf::Event::EventType::Closed)
 	{
-		if (event.type == sf::Event::EventType::Closed)
+		app->Quit();
+	}
+	else if (event.type == sf::Event::EventType::KeyPressed)
+	{
+		if (event.key.code == sf::Keyboard::Key::LShift)
 		{
-			app->Quit();
-		}
-		else if (event.type == sf::Event::EventType::Resized)
-		{
-			std::cout << "new window width: " << event.size.width << "\n";
-			std::cout << "new window height: " << event.size.height << "\n";
+			app->developerModeActive = !app->developerModeActive; // flip
+			progressBar->setColor(sf::Color::Red, sf::Color::Green, sf::Color::Magenta, sf::Color::Blue);
 
-			sf::Vector2u newSize(event.size.width, event.size.height);
-
-			if (newSize.x >= 525 && newSize.y >= 325)
-			{
-				sf::View newView = sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height));
-				app->window->setView(newView);
-
-				newView.setSize(event.size.width, event.size.height);
-				newView.setCenter(newView.getSize().x / 2, newView.getSize().y / 2);
-			}
-			else
-			{
-				if (event.size.width <= 525)
-					newSize.x = 525;
-
-				if (event.size.height <= 325)
-					newSize.y = 325;
-
-				app->window->setSize(newSize);
-			}
+			std::cout << "developer mode toggled" << std::endl;
 		}
 	}
 }
@@ -154,8 +131,18 @@ void InitialiseState::Draw()
 		isReady = true;
 
 		if (restartNow)
+		{
+			app->Quit();
+
+			// FIXME: cross platform support that is not shit :D
+			#ifdef _WIN32
+			std::string thingtodo("start kunlauncher.exe");
+			system(thingtodo.c_str());
+			#endif // _WIN32
+
 			exit(0);
-		else
+		}
+		else 
 			app->ChangeState(HomeState::Instance());
 
 		return;
@@ -173,15 +160,16 @@ void InitialiseState::Draw()
 
 void InitialiseState::initialisise()
 {
-	setTaskText("validating files");
+	validateFileStructure();
 
+	/*
 	if (!fs::exists(".\\" + CONST::DIR::BASE))
 	{
 		std::cout << "bin folder does not exist, creating it" << "\n";
 
 		fs::create_directory(".\\" + CONST::DIR::BASE);
 
-		app->settings.updateItemsOnStart = true;
+		app->settings.updateItemIndexOnStart = true;
 	}
 	else
 	{
@@ -192,7 +180,7 @@ void InitialiseState::initialisise()
 			//	window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 		}
 	}
-	progressBar->oneThingDone(); // task 1
+	progressBar->oneThingDone(); // check for bine folder
 
 	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS))
 	{
@@ -200,9 +188,9 @@ void InitialiseState::initialisise()
 
 		fs::create_directory(".\\" + CONST::DIR::BASE + "apps");
 
-		app->settings.updateItemsOnStart = true;
+		app->settings.updateItemIndexOnStart = true;
 	}
-	progressBar->oneThingDone(); // task 2
+	progressBar->oneThingDone(); // check for apps folder
 
 	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat"))
 	{
@@ -211,17 +199,32 @@ void InitialiseState::initialisise()
 		std::ofstream createIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat");
 		createIndex.close();
 
-		app->settings.updateItemsOnStart = true;
+		app->settings.updateItemIndexOnStart = true;
 	}
-	progressBar->oneThingDone(); // task 3
+	progressBar->oneThingDone(); // check for app index in apps
+	*/
 
 	//TODO: this will stop items from updating if it's disabled
-	if (app->settings.updateItemsOnStart)
+	if (app->settings.updateItemIndexOnStart)
 	{
+		progressBar->addThingsToDo(2);
+
+		Download getItemIndex;
+		getItemIndex.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + "/index.dat");
+		getItemIndex.setOutputDir(CONST::DIR::BASE + CONST::DIR::APPS + "/index.dat");
+
+		getItemIndex.download();
+		progressBar->oneThingDone();
+		getItemIndex.save();
+		progressBar->oneThingDone();
+
+		/*
 		// download the index file (or at least store it)
 		sf::Http http(CONST::DIR::WEB_HOSTNAME);
 		sf::Http::Request request("./" + CONST::DIR::WEB_APP_DIRECTORY + "/index.dat", sf::Http::Request::Get);
+
 		sf::Http::Response response = http.sendRequest(request);
+		progressBar->oneThingDone(); // download
 
 		int fileSize = response.getBody().size();
 
@@ -255,80 +258,54 @@ void InitialiseState::initialisise()
 				std::cout << "finished" << "\n";
 
 			std::cout << "index file is ready." << "\n";
+
+			progressBar->oneThingDone(); // save
 		}
+		*/
 	}
-	progressBar->oneThingDone(); // task 4
 
 	if (app->settings.updateLauncherOnStart)
 	{
-		setTaskText("checking for launcher updates");
+		progressBar->addThingToDo(); // check for updates
 
-		if (checkForLauncherUpdates())
+		setTaskText("checking for updates");
+
+		updater = new LauncherUpdater;
+		if (updater->checkForUpdates())
 		{
-			bool doUpdate = false;
+			progressBar->oneThingDone(); // check for update
 
-			Download getHoHouse;
-			getHoHouse.setInputPath("version.info");
-			getHoHouse.download();
+			MessageBoxOptions modOptions;
 
-			if (getHoHouse.fileBuffer != CONST::VERSION) // not the proper version
+			//TODO: add erorr handling
+			modOptions.title = "Update Available";
+			modOptions.text = "Version " + updater->remoteVersion + " is available, would you like to update?";
+			modOptions.settings = { "Yes", "No" };
+
+			MessageBox doYouWannaUpdate(modOptions);
+			doYouWannaUpdate.runBlocking();
+			doYouWannaUpdate.close(); // right after it's done
+
+			switch (doYouWannaUpdate.returnCode)
 			{
-				MessageBoxOptions modOptions;
-
-				if (getHoHouse.fileBuffer.find("500 Internal Server Error") != std::string::npos)
-				{
-					modOptions.title = "BRKOEN AGAIN!";
-					modOptions.text = "server fucked up, try again.";
-					modOptions.settings = { "reopen the launcher and hope to god it doesn't break again" };
-				}
-				else
-				{
-					modOptions.title = "Update Available";
-					modOptions.text = "Version " + getHoHouse.fileBuffer + " is available, would you like to update?";
-					modOptions.settings = { "Yes", "No" };
-				}
-
-				MessageBox doYouWannaUpdate(modOptions);
-				doYouWannaUpdate.runBlocking();
-
-				switch (doYouWannaUpdate.returnCode)
-				{
-				case 0:
-					std::cout << "yes, update now." << "\n";
-					doUpdate = true;
-					break;
-
-				case 1:
-					std::cout << "don't update now" << "\n";
-					doUpdate = false;
-					break;
-
-				default:
-					break;
-				}
-			}
-
-			if (doUpdate)
+			case 0:
 			{
-				std::string remoteVersion = updateLauncher(); // feels kinda hacky
+				std::cout << "yes, update now." << "\n";
+				progressBar->addThingsToDo(2); // update and replace exe
 
-				std::cout << "launcher updated" << "\n";
+				setTaskText("downloading update");
+				updater->downloadUpdate();
+				progressBar->oneThingDone(); // update
+
+				setTaskText("replacing old executable");
+				updater->replaceOldExecutable();
+				progressBar->oneThingDone(); // replace exe
 
 				MessageBoxOptions modOptions;
 				modOptions.text = "Launcher updated";
 
-//				if (remoteVersion.find("500 Internal Server Error") != std::string::npos)
-//				{
-//					std::cout << "broken" << "\n";
-
-//					modOptions.title = "BRKOEN AGAIN!";
-//					modOptions.text = "server fucked up, try again.";
-//				}
-				//else
-				{
-					modOptions.text = "Launcher updated to v" + remoteVersion + "! Restart it!";
-					modOptions.settings = { "Restart Now", "Restart Later", "View Changelog" };
-				}
+				modOptions.text = "Launcher updated to v" + updater->remoteVersion + "! Restart it!";
+				modOptions.settings = { "Restart Now", "Restart Later" };
 
 				MessageBox updateSuccessfulModal(modOptions);
 				updateSuccessfulModal.runBlocking();
@@ -352,123 +329,107 @@ void InitialiseState::initialisise()
 				default:
 					break;
 				}
+
+				break;
 			}
-			else
+
+			case 1:
 			{
-				std::cout << "updating skipped" << "\n";
+				std::cout << "don't update now" << "\n";
+				break;
 			}
-				}
-		else
-		{
-			std::cout << "no updates were found" << "\n";
+
+			default:
+				break;
+			}
 		}
 	}
 	else
 	{
 		std::cout << "skipping check for updates" << "\n";
 	}
-	progressBar->oneThingDone(); // task 5
 
 	setTaskText("ready");
 
 	helperDone = true;
 }
 
-bool InitialiseState::checkForLauncherUpdates()
+int InitialiseState::validateFileStructure()
 {
-	setTaskText("checking for launcher updates...");
+	setTaskText("validating files");
 
-	if (std::experimental::filesystem::exists("kunlauncher.exe.old"))
+	progressBar->addThingsToDo(5);
+
+	std::cout << "checking for bin" << std::endl;
+	if (!fs::exists(".\\" + CONST::DIR::BASE)) // 1
 	{
-		try
-		{
-			std::experimental::filesystem::remove("kunlauncher.exe.old");
-		}
-		catch (const std::exception& e)
-		{
-			std::cout << e.what() << "\n";
-		}
+		std::cout << "bin folder missing, creating" << std::endl;
+		progressBar->addThingToDo();
+
+		fs::create_directory(".\\" + CONST::DIR::BASE);
+
+		progressBar->oneThingDone();
 	}
+	progressBar->oneThingDone(); // 1
 
-	Download getHoHouse;
-	getHoHouse.setInputPath("version.info");
-	getHoHouse.download();
-
-	std::string remoteVersion = getHoHouse.fileBuffer;
-
-	std::cout << "r" << remoteVersion << " : " << "l" << CONST::VERSION << "\n";
-
-	if (remoteVersion != CONST::VERSION)
+	std::cout << "checking for config" << std::endl;
+	if (!fs::exists(".\\" + CONST::DIR::BASE + "kunluncher.cfg")) // 2
 	{
-		std::cout << "launcher is out of date" << "\n";
-//		return true;
-		return false;
+		std::cout << "config file missing, creating" << std::endl;
+		progressBar->addThingToDo();
+
+		std::ofstream createConfigurationFile(".\\" + CONST::DIR::BASE + "kunlaucher.cfg");
+		createConfigurationFile.close();
+
+		progressBar->oneThingDone();
+	}
+	progressBar->oneThingDone(); // 2
+
+	std::cout << "checking for apps" << std::endl;
+	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS)) // 3
+	{
+		std::cout << CONST::DIR::BASE + CONST::DIR::APPS << std::endl;
+
+		std::cout << "apps folder missing, creating" << std::endl;
+		progressBar->addThingToDo();
+
+		fs::create_directory(".\\" + CONST::DIR::BASE + CONST::DIR::APPS);
+
+		progressBar->oneThingDone();
+	}
+	progressBar->oneThingDone(); // 3
+
+	std::cout << "checking for apps+index" << std::endl;
+	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat")) // 4
+	{
+		std::cout << "app index missing, creating" << std::endl;
+		progressBar->addThingToDo();
+
+		std::ofstream createAppIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat");
+		createAppIndex.close();
+
+		progressBar->oneThingDone();
+	}
+	progressBar->oneThingDone(); // 4
+
+	std::cout << "checking for resources" << std::endl;
+	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE)) // 5
+	{
+		progressBar->addThingsToDo(2);
+		std::cout << "resources missing, creating" << std::endl;
+
+		fs::create_directory(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE);
+		progressBar->oneThingDone();
+
+		getResourceFiles();
+		progressBar->oneThingDone();
 	}
 	else
 	{
-		std::cout << "launcher is up to date" << "\n";
-		return false;
+		if (!validateResourceFiles())
+			getResourceFiles();
 	}
-}
-
-std::string InitialiseState::updateLauncher()
-{
-	setTaskText("updating launcher");
-	Download getHoHouse;
-	getHoHouse.setInputPath("version.info");
-	getHoHouse.download();
-	std::string newVersion = getHoHouse.fileBuffer;
-
-	setTaskText("updating launcher (" + newVersion + ")");
-
-	Download getNewWhorehouse;
-	getNewWhorehouse.setInputPath("latest.noexe");
-	getNewWhorehouse.setOutputDir(".\\");
-	getNewWhorehouse.setOutputFilename("kunlauncher.exe");
-	getNewWhorehouse.download();
-
-	try
-	{
-		fs::rename("kunlauncher.exe", "kunlauncher.exe.old");
-
-		getNewWhorehouse.save();
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << "\n";
-		abort();
-
-		// TODO: handle this better;
-	}
-
-	return getHoHouse.fileBuffer;
-}
-
-int InitialiseState::validateFileStructure()
-{
-	// check for bin
-		// create bin
-			// check for configuration file
-				// create configuration file
-	
-	// check for resources
-		// create resources
-			// create resource manifest
-				// download resources
-			// check for textures
-				// create textures
-					// download textures
-			// check for fonts
-				// create fonts
-					// download fonts
-			// check for binaries
-				//create binaries
-					// download binaries
-			// check for theme file
-	
-	// check for apps
-		// create apps
-			// create app manifest
+	progressBar->oneThingDone(); // 5
 
 	return 0;
 }
@@ -496,7 +457,7 @@ int InitialiseState::validateResourceFiles()
 	return 0;
 }
 
-int InitialiseState::updateResourceFiles()
+int InitialiseState::getResourceFiles()
 {
 	// retrieve resource list
 	// load it into a string
@@ -514,14 +475,9 @@ int InitialiseState::updateResourceFiles()
 	return 0;
 }
 
-int generateDefaultResources()
-{
-	return 0;
-}
-
 void InitialiseState::setTaskText(std::string text)
 {
-	std::cout << text << "\n";
+	std::cout << "TASK: " << text << "\n";
 	currentLauncherTask.setString(text);
 	currentLauncherTask.setOrigin(currentLauncherTask.getLocalBounds().width / 2, currentLauncherTask.getLocalBounds().height - 20);
 	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(initialiseText.getPosition().y + 50)));

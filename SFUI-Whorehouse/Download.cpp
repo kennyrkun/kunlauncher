@@ -142,7 +142,7 @@ void Download::save()
 	}
 	else
 	{
-		std::cout << "failed to open file for saving" << "\n";
+		std::cout << "failed to open " << outdir + outfile << " for saving" << "\n";
 
 		return;
 	}

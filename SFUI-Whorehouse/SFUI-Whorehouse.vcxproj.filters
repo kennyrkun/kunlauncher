@@ -77,7 +77,10 @@
       <Filter>Source Files\Launcher\States\Init</Filter>
     </ClCompile>
     <ClCompile Include="LauncherUpdater.cpp">
-      <Filter>Source Files\Launcher\States\Init</Filter>
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicFileParser.cpp">
+      <Filter>Source Files\Backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,7 +133,10 @@
       <Filter>Source Files\Launcher\States\Init</Filter>
     </ClInclude>
     <ClInclude Include="LauncherUpdater.hpp">
-      <Filter>Source Files\Launcher\States\Init</Filter>
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicFileParser.hpp">
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -103,6 +103,7 @@
       <AdditionalIncludeDirectories>..\\SFML\\include;..\\SFUI\\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -126,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicFileParser.cpp" />
     <ClCompile Include="Download.cpp" />
     <ClCompile Include="AppListState.cpp" />
     <ClCompile Include="HomeState.cpp" />
@@ -144,6 +146,7 @@
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicFileParser.hpp" />
     <ClInclude Include="Globals.hpp" />
     <ClInclude Include="Download.hpp" />
     <ClInclude Include="AppListState.hpp" />
