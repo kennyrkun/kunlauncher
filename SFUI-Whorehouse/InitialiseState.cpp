@@ -210,58 +210,14 @@ void InitialiseState::initialisise()
 		progressBar->addThingsToDo(2);
 
 		Download getItemIndex;
-		getItemIndex.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + "/index.dat");
-		getItemIndex.setOutputDir(CONST::DIR::BASE + CONST::DIR::APPS + "/index.dat");
+		getItemIndex.setInputPath("./" + CONST::DIR::WEB_APP_DIRECTORY + "/index.dat");
+		getItemIndex.setOutputDir(".\\" + CONST::DIR::BASE + CONST::DIR::APPS);
+		getItemIndex.setOutputFilename("\\index.dat");
 
 		getItemIndex.download();
 		progressBar->oneThingDone();
 		getItemIndex.save();
 		progressBar->oneThingDone();
-
-		/*
-		// download the index file (or at least store it)
-		sf::Http http(CONST::DIR::WEB_HOSTNAME);
-		sf::Http::Request request("./" + CONST::DIR::WEB_APP_DIRECTORY + "/index.dat", sf::Http::Request::Get);
-
-		sf::Http::Response response = http.sendRequest(request);
-		progressBar->oneThingDone(); // download
-
-		int fileSize = response.getBody().size();
-
-		// if the index file on the server has a different filesize than the one we've got, download it
-		if (fs::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") != fileSize)
-		{
-			std::cout << "remote index file is different (difference of ";
-			if (fs::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") > fileSize)
-			{
-				std::cout << fs::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") - fileSize << " bytes)" << "\n";
-			}
-			else
-			{
-				std::cout << fileSize - fs::file_size(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat") << " bytes)" << "\n";
-			}
-
-			std::cout << "updating apps list" << "\n";
-
-			std::string fileContainer = response.getBody();
-
-			std::ofstream downloadFile(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat", std::ios::out | std::ios::binary);
-			std::cout << "saving file to \"" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat\"... ";
-
-			for (int i = 0; i < fileSize; i++)
-				downloadFile << fileContainer[i];
-			downloadFile.close();
-
-			if (downloadFile.fail())
-				std::cout << "failed" << "\n";
-			else
-				std::cout << "finished" << "\n";
-
-			std::cout << "index file is ready." << "\n";
-
-			progressBar->oneThingDone(); // save
-		}
-		*/
 	}
 
 	if (app->settings.updateLauncherOnStart)
@@ -358,7 +314,7 @@ int InitialiseState::validateFileStructure()
 {
 	setTaskText("validating files");
 
-	progressBar->addThingsToDo(5);
+	progressBar->addThingsToDo(5); // bin, config, apps, app index, resources
 
 	std::cout << "checking for bin" << std::endl;
 	if (!fs::exists(".\\" + CONST::DIR::BASE)) // 1

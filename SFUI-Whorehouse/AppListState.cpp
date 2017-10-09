@@ -201,21 +201,12 @@ void AppListState::HandleEvents(sf::Event& event)
 
 								threads.push_back(std::thread(&Item::deleteFiles, items[i]));
 
-//								std::thread *newThread = new std::thread(&Item::deleteFiles, items[i]);
-//								threads.push_back(newThread);
-
 								clicked = true;
 								break;
 							}
 						}
 						else if (mouseIsOver(items[i]->redownloadButton))
 						{
-							// update files
-//							helperThread = new std::thread(&Item::updateItem, items[i]);
-
-//							std::thread *newThread = new std::thread(&Item::updateItem, items[i]);
-//							threads.push_back(new std::thread(&Item::updateItem, items[i]));
-
 							threads.push_back(std::thread(&Item::updateItem, items[i]));
 
 							clicked = true;
@@ -233,9 +224,6 @@ void AppListState::HandleEvents(sf::Event& event)
 					{
 						if (mouseIsOver(items[i]->downloadButton))
 						{
-							// download files
-							//helperThread = new std::thread(&Item::download, items[i]);
-
 							threads.push_back(std::thread(&Item::download, items[i]));
 
 //							std::thread *newThread = new std::thread(&Item::updateItem, items[i]);
@@ -276,18 +264,16 @@ void AppListState::HandleEvents(sf::Event& event)
 			{
 				if (helperRunning)
 				{
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
 					{
 						fs::remove(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "\\index.dat");
 
 						Download getItemIndex;
-						getItemIndex.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + "/index.dat");
-						getItemIndex.setOutputDir(CONST::DIR::BASE + CONST::DIR::APPS);
+						getItemIndex.setInputPath("./" + CONST::DIR::WEB_APP_DIRECTORY + "/index.dat");
+						getItemIndex.setOutputDir(".\\" + CONST::DIR::BASE + CONST::DIR::APPS);
 						getItemIndex.setOutputFilename("\\index.dat");
 						getItemIndex.download();
 						getItemIndex.save();
-
-						// redownload items list
 					}
 
 					std::cout << "refreshing applist" << "\n";

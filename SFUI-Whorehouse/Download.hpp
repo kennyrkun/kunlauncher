@@ -30,7 +30,7 @@ public:
 
 private:
 	std::string outdir = ".\\";
-	std::string outfile = "file.file";
+	std::string outfile = "";
 	std::string inpath = "./";
 
 	bool silent = false;

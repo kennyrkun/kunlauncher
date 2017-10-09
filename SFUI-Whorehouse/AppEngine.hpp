@@ -11,12 +11,10 @@ struct AppSettings
 {
 #ifdef _DEBUG
 	bool updateLauncherOnStart = true;
-	bool updateItemIndexOnStart = false;
-	bool updateItemsDuringRun = false;
+	bool updateItemIndexOnStart = true;
 #else
 	bool updateLauncherOnStart = true;
 	bool updateItemsOnStart = true;
-	bool updateItemsDuringRun = true;
 #endif
 	bool fullscreen = false;
 	bool verticalSync = true;

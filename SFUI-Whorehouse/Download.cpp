@@ -95,7 +95,7 @@ int Download::download()
 	{
 	case sf::Http::Response::Ok:
 		if (!silent)
-			std::cout << "successfully connected to file server, and got files (200)" << "\n";
+			std::cout << "file server reports all is well (200)" << "\n";
 
 		return sf::Http::Response::Status::Ok;
 		break;
@@ -115,6 +115,9 @@ int Download::download()
 		break;
 
 	default:
+		if (!silent)
+			std::cout << "something fucking broke" << std::endl;
+
 		return sf::Http::Response::Status::ResetContent;
 		break;
 	}
