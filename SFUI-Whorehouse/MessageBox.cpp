@@ -15,7 +15,6 @@ MessageBox::MessageBox(MessageBoxOptions settings_)
 		message.setFont(font);
 		message.setString(settings.text);
 		message.setCharacterSize(18);
-		message.setOrigin(message.getLocalBounds().width / 2, message.getLocalBounds().height / 2);
 	}
 	else
 	{
@@ -92,6 +91,7 @@ void MessageBox::runBlocking()
 	window.create(sf::VideoMode(settings.width, settings.height), settings.title, sf::Style::Titlebar);
 	window.setVerticalSyncEnabled(true);
 	message.setPosition(static_cast<int>(window.getView().getCenter().x), static_cast<int>(message.getCharacterSize()));
+	message.setPosition(7, 5);
 
 	{ // put buttons in their proper positions
 		buttons[0]->setPosition(sf::Vector2f(window.getSize().x - (buttons[0]->m_shape.getLocalBounds().width / 2) - 4, window.getSize().y - 16));
