@@ -1,6 +1,7 @@
 #include "Item.hpp"
 #include "Download.hpp"
 #include "Globals.hpp"
+#include "MessageBox.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -102,9 +103,6 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 		case sf::Http::Response::Status::InternalServerError:
 		{
-//			std::cout << "failed to download icon, aborting" << "\n";
-//			name.setString("Failed to download icon");
-//			description.setString("Encountered 500 Internal Server Error during download");
 			iconTexture.loadFromFile(CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "error_1x.png");
 			break;
 		}
@@ -128,8 +126,6 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 		downloaded = false;
 	}
-
-//	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5.0f, yPos)); // probably not the best
 
 	cardShape.setSize(sf::Vector2f(xSize, 75));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
@@ -319,13 +315,20 @@ void Item::download()
 
 void Item::openItem()
 {
+#ifdef _WIN32
 	std::cout << "opening item" << "\n";
-
-#if defined (_WIN32)
 	std::string launch = "start " + installDir + "release.zip";
-	system((launch).c_str());
+	system(launch.c_str());
 #else
 	std::cout << "Your system does not support this function!" << "\n";
+
+	MessageBoxOptions modOptions;
+	modOptions.title = "Unsupported Platform";
+	modOptions.text = "I can't open the thing because you're probably not using Windows. How sad!";
+	modOptions.settings = { "Ok" };
+
+	MessageBox platformAlert(modOptions);
+	platformAlert.runBlocking();
 #endif
 }
 
