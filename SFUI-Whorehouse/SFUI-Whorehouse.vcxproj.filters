@@ -29,6 +29,9 @@
     <Filter Include="Source Files\Launcher\States\Init">
       <UniqueIdentifier>{7fb316ba-a8c9-4dad-8643-ffe261ae48ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Launcher\States\Settings">
+      <UniqueIdentifier>{f54b5d0c-686b-4e3e-b850-6a7a389580ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -81,6 +84,9 @@
     </ClCompile>
     <ClCompile Include="BasicFileParser.cpp">
       <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsState.cpp">
+      <Filter>Source Files\Launcher\States\Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +143,9 @@
     </ClInclude>
     <ClInclude Include="BasicFileParser.hpp">
       <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsState.hpp">
+      <Filter>Source Files\Launcher\States\Settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

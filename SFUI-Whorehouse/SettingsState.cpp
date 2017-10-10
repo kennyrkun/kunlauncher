@@ -1,6 +1,6 @@
 #include "AppEngine.hpp"
 #include "AppState.hpp"
-#include "InitialiseState.hpp"
+#include "SettingsState.hpp"
 #include "HomeState.hpp"
 
 #include "Globals.hpp"
@@ -15,11 +15,11 @@
 #include <fstream>
 #include <experimental\filesystem>
 
-InitialiseState InitialiseState::IntialiseState_dontfuckwithme;
+SettingsState SettingsState::IntialiseState_dontfuckwithme;
 
 namespace fs = std::experimental::filesystem;
 
-void InitialiseState::Init(AppEngine* app_)
+void SettingsState::Init(AppEngine* app_)
 {
 	std::cout << "IntialiseState Init" << "\n";
 
@@ -58,7 +58,7 @@ void InitialiseState::Init(AppEngine* app_)
 	currentLauncherTask.setCharacterSize(20);
 	setTaskText("initialising");
 
-	helperThread = new std::thread(&InitialiseState::initialisise, this);
+	helperThread = new std::thread(&SettingsState::initialisise, this);
 	helperRunning = true;
 	helperRunning = false;
 	isReady = false;
@@ -66,7 +66,7 @@ void InitialiseState::Init(AppEngine* app_)
 	std::cout << "thread launched" << "\n";
 }
 
-void InitialiseState::Cleanup()
+void SettingsState::Cleanup()
 {
 	std::cout << "IntialiseState Cleaningup" << "\n";
 
@@ -85,17 +85,17 @@ void InitialiseState::Cleanup()
 	std::cout << "IntialiseState Cleanedup" << "\n";
 }
 
-void InitialiseState::Pause()
+void SettingsState::Pause()
 {
 	printf("IntialiseState Pause\n");
 }
 
-void InitialiseState::Resume()
+void SettingsState::Resume()
 {
 	std::cout << "IntialiseState Resume" << "\n";
 }
 
-void InitialiseState::HandleEvents(sf::Event& event)
+void SettingsState::HandleEvents(sf::Event& event)
 {
 	if (event.type == sf::Event::EventType::Closed)
 	{
@@ -113,12 +113,12 @@ void InitialiseState::HandleEvents(sf::Event& event)
 	}
 }
 
-void InitialiseState::Update()
+void SettingsState::Update()
 {
 
 }
 
-void InitialiseState::Draw()
+void SettingsState::Draw()
 {
 	if (helperDone)
 	{
@@ -135,14 +135,14 @@ void InitialiseState::Draw()
 			app->Quit();
 
 			// FIXME: cross platform support that is not shit :D
-			#ifdef _WIN32
+#ifdef _WIN32
 			std::string thingtodo("start kunlauncher.exe");
 			system(thingtodo.c_str());
-			#endif // _WIN32
+#endif // _WIN32
 
 			exit(0);
 		}
-		else 
+		else
 			app->ChangeState(HomeState::Instance());
 
 		return;
@@ -158,48 +158,48 @@ void InitialiseState::Draw()
 	app->window->display();
 }
 
-void InitialiseState::initialisise()
+void SettingsState::initialisise()
 {
 	validateFileStructure();
 
 	/*
 	if (!fs::exists(".\\" + CONST::DIR::BASE))
 	{
-		std::cout << "bin folder does not exist, creating it" << "\n";
+	std::cout << "bin folder does not exist, creating it" << "\n";
 
-		fs::create_directory(".\\" + CONST::DIR::BASE);
+	fs::create_directory(".\\" + CONST::DIR::BASE);
 
-		app->settings.updateItemIndexOnStart = true;
+	app->settings.updateItemIndexOnStart = true;
 	}
 	else
 	{
-		if (fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "icon.png"))
-		{
-			//	sf::Image icon;
-			//	icon.loadFromFile(".\\" + BASE_FOLDER + "\\res\\tex\\icon.png");
-			//	window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-		}
+	if (fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "icon.png"))
+	{
+	//	sf::Image icon;
+	//	icon.loadFromFile(".\\" + BASE_FOLDER + "\\res\\tex\\icon.png");
+	//	window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+	}
 	}
 	progressBar->oneThingDone(); // check for bine folder
 
 	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS))
 	{
-		std::cout << "apps folder does not exist, creating it" << "\n";
+	std::cout << "apps folder does not exist, creating it" << "\n";
 
-		fs::create_directory(".\\" + CONST::DIR::BASE + "apps");
+	fs::create_directory(".\\" + CONST::DIR::BASE + "apps");
 
-		app->settings.updateItemIndexOnStart = true;
+	app->settings.updateItemIndexOnStart = true;
 	}
 	progressBar->oneThingDone(); // check for apps folder
 
 	if (!fs::exists(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat"))
 	{
-		std::cout << "app index file does not exist, creating one" << "\n";
+	std::cout << "app index file does not exist, creating one" << "\n";
 
-		std::ofstream createIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat");
-		createIndex.close();
+	std::ofstream createIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat");
+	createIndex.close();
 
-		app->settings.updateItemIndexOnStart = true;
+	app->settings.updateItemIndexOnStart = true;
 	}
 	progressBar->oneThingDone(); // check for app index in apps
 	*/
@@ -310,7 +310,7 @@ void InitialiseState::initialisise()
 	helperDone = true;
 }
 
-int InitialiseState::validateFileStructure()
+int SettingsState::validateFileStructure()
 {
 	setTaskText("validating files");
 
@@ -390,48 +390,48 @@ int InitialiseState::validateFileStructure()
 	return 0;
 }
 
-int InitialiseState::updateFileStructure()
+int SettingsState::updateFileStructure()
 {
 	return 0;
 }
 
-int InitialiseState::validateResourceFiles()
+int SettingsState::validateResourceFiles()
 {
 	// retrieve resource list
 	// load it into a string
 
 	// find keyword
-		// find open bracket
-			// parse the things inside there
-				// from first " to last " (or maybe ;?)
-					// load the filename into a vector
+	// find open bracket
+	// parse the things inside there
+	// from first " to last " (or maybe ;?)
+	// load the filename into a vector
 	// find closing bracket
 
 	// go through vectors and make sure we have the files
-		// if not download them
+	// if not download them
 
 	return 0;
 }
 
-int InitialiseState::getResourceFiles()
+int SettingsState::getResourceFiles()
 {
 	// retrieve resource list
 	// load it into a string
 
 	// find keyword
-		// find open bracket
-			// parse the things inside there
-				// from first " to last " (or maybe ;?)
-					// load the filename into a vector
-		// find closing bracket
+	// find open bracket
+	// parse the things inside there
+	// from first " to last " (or maybe ;?)
+	// load the filename into a vector
+	// find closing bracket
 
 	// go through vectors and make sure we have the files
-		// if not download them
+	// if not download them
 
 	return 0;
 }
 
-void InitialiseState::setTaskText(std::string text)
+void SettingsState::setTaskText(std::string text)
 {
 	std::cout << "TASK: " << text << "\n";
 	currentLauncherTask.setString(text);

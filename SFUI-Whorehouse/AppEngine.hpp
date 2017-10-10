@@ -10,8 +10,8 @@ class AppState;
 struct AppSettings
 {
 #ifdef _DEBUG
-	bool updateLauncherOnStart = true;
-	bool updateItemIndexOnStart = true;
+	bool updateLauncherOnStart = false;
+	bool updateItemIndexOnStart = false;
 #else
 	bool updateLauncherOnStart = true;
 	bool updateItemsOnStart = true;
@@ -20,7 +20,7 @@ struct AppSettings
 	bool verticalSync = true;
 
 	int width = 525;
-	int height = 400;
+	int height = 325;
 };
 
 class AppEngine
