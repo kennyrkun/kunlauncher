@@ -14,6 +14,14 @@ int main(int argc, char *argv[])
 	{
 		std::cout << i << ": " << argv[i] << "\n";
 
+		if (std::string(argv[i]) == "-verticalsync")
+		{
+			if (std::string(argv[i + 1]) == "1")
+				settings.verticalSync = true;
+			else if (std::string(argv[i + 1]) == "0")
+				settings.verticalSync = false;
+		}
+
 		if (std::string(argv[i]) == "-nolauncherupdate")
 		{
 			std::cout << "launcher will not check for updates" << "\n";
