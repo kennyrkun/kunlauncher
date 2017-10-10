@@ -68,125 +68,121 @@ void HomeState::Resume()
 
 void HomeState::HandleEvents(sf::Event& event)
 {
-//	sf::Event event;
-//	while (app->window->pollEvent(event))
+	if (event.type == sf::Event::EventType::Closed)
 	{
-		if (event.type == sf::Event::EventType::Closed)
+		app->Quit();
+	}
+	else if (event.type == sf::Event::EventType::Resized)
+	{
+		std::cout << "new width: " << event.size.width << "\n";
+		std::cout << "new height: " << event.size.height << "\n";
+
+		sf::Vector2u newSize(event.size.width, event.size.height);
+
+		if (newSize.x >= 525 && newSize.y >= 325)
 		{
-			app->Quit();
+			sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+			*mainView = sf::View(visibleArea);
+			app->window->setView(sf::View(visibleArea));
+
+			cardScroller->setSize(event.size.width, event.size.height);
+			cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
 		}
-		else if (event.type == sf::Event::EventType::Resized)
+		else
 		{
-			std::cout << "new width: " << event.size.width << "\n";
-			std::cout << "new height: " << event.size.height << "\n";
+			if (event.size.width <= 525)
+				newSize.x = 525;
 
-			sf::Vector2u newSize(event.size.width, event.size.height);
+			if (event.size.height <= 325)
+				newSize.y = 325;
 
-			if (newSize.x >= 525 && newSize.y >= 325)
+			app->window->setSize(newSize);
+		}
+
+		updateScrollThumbSize();
+	}
+	else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled)
+	{
+		if (event.mouseWheel.delta < 0) // down, or move items up
+		{
+			//				if (scrollbar.canScrollDown())
+			//					cardScroller->move(0, scrollbar.scrollJump);
+
+			scrollbar.moveThumbDown();
+
+			if (scrollerBottomPosition < scrollerMaxPosition)
 			{
-				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-				*mainView = sf::View(visibleArea);
-				app->window->setView(sf::View(visibleArea));
+				cardScroller->move(0, scrollbar.scrollJump);
 
-				cardScroller->setSize(event.size.width, event.size.height);
-				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
+				updateScrollLimits();
+
+				if (scrollerBottomPosition > scrollerMaxPosition) // clamp
+				{
+					std::cout << "cardScroller went too far down (" << scrollerBottomPosition << ":" << scrollerMaxPosition << "), clamping..." << "\n";
+					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
+					updateScrollLimits();
+				}
 			}
 			else
 			{
-				if (event.size.width <= 525)
-					newSize.x = 525;
-
-				if (event.size.height <= 325)
-					newSize.y = 325;
-
-				app->window->setSize(newSize);
+				std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << "\n";
 			}
-
-			updateScrollThumbSize();
 		}
-		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled)
+		else if (event.mouseWheel.delta > 0) // scroll up, or move items down
 		{
-			if (event.mouseWheel.delta < 0) // down, or move items up
+			//				if (scrollbar.canScrollUp())
+			//					cardScroller->move(0, -scrollbar.scrollJump);
+
+			scrollbar.moveThumbUp();
+
+			if (scrollerTopPosition > scrollerMinPosition)
 			{
-				//				if (scrollbar.canScrollDown())
-				//					cardScroller->move(0, scrollbar.scrollJump);
+				cardScroller->move(0, -scrollbar.scrollJump);
 
-				scrollbar.moveThumbDown();
+				updateScrollLimits();
 
-				if (scrollerBottomPosition < scrollerMaxPosition)
+				if (scrollerTopPosition < scrollerMinPosition) // clamp
 				{
-					cardScroller->move(0, scrollbar.scrollJump);
-
+					std::cout << "cardScroller went too far up (" << scrollerTopPosition << ":" << scrollerMaxPosition << "), clamping..." << "\n";
+					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
 					updateScrollLimits();
-
-					if (scrollerBottomPosition > scrollerMaxPosition) // clamp
-					{
-						std::cout << "cardScroller went too far down (" << scrollerBottomPosition << ":" << scrollerMaxPosition << "), clamping..." << "\n";
-						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
-						updateScrollLimits();
-					}
-				}
-				else
-				{
-					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << "\n";
 				}
 			}
-			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
+			else
 			{
-				//				if (scrollbar.canScrollUp())
-				//					cardScroller->move(0, -scrollbar.scrollJump);
-
-				scrollbar.moveThumbUp();
-
-				if (scrollerTopPosition > scrollerMinPosition)
+				std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << "\n";
+			}
+		}
+	}
+	else if (event.type == sf::Event::EventType::MouseButtonPressed)
+	{
+		if (event.key.code == sf::Mouse::Button::Left)
+		{
+			//sectionwdd
+			for (size_t i = 0; i < sections.size(); i++)
+			{
+				if (mouseIsOver(sections[i]->cardShape))
 				{
-					cardScroller->move(0, -scrollbar.scrollJump);
+					std::cout << "over shape of " << sections[i]->forwardStateName << "\n";
 
-					updateScrollLimits();
-
-					if (scrollerTopPosition < scrollerMinPosition) // clamp
-					{
-						std::cout << "cardScroller went too far up (" << scrollerTopPosition << ":" << scrollerMaxPosition << "), clamping..." << "\n";
-						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
-						updateScrollLimits();
-					}
-				}
-				else
-				{
-					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << "\n";
+					if (sections[i]->forwardStateName == "appListState")
+						app->ChangeState(AppListState::Instance());
+					else if (sections[i]->forwardStateName == "settingsState")
+						// do nothing
+						continue;
+					else
+						std::cout << "over nothing" << "\n";
 				}
 			}
 		}
-		else if (event.type == sf::Event::EventType::MouseButtonPressed)
-		{
-			if (event.key.code == sf::Mouse::Button::Left)
-			{
-				//sectionwdd
-				for (size_t i = 0; i < sections.size(); i++)
-				{
-					if (mouseIsOver(sections[i]->cardShape))
-					{
-						std::cout << "over shape of " << sections[i]->forwardStateName << "\n";
-
-						if (sections[i]->forwardStateName == "appListState")
-							app->ChangeState(AppListState::Instance());
-						else if (sections[i]->forwardStateName == "settingsState")
-							// do nothing
-							continue;
-						else
-							std::cout << "over nothing" << "\n";
-					}
-				}
-			}
-		}
-		else if (event.type == sf::Event::EventType::MouseButtonReleased)
-		{
+	}
+	else if (event.type == sf::Event::EventType::MouseButtonReleased)
+	{
 //			if (scrollbar.thumbDragging)
 //			{
 //				scrollbar.thumbDragging = false;
 //				scrollbar.scrollThumb.setFillColor(CONST::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
 //			}
-		}
 	}
 }
 
