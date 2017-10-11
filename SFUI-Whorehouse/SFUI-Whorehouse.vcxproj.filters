@@ -43,9 +43,6 @@
     <ClCompile Include="ThreadManager.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
-    <ClCompile Include="Scrollbar.cpp">
-      <Filter>Source Files\Backend\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="AppEngine.cpp">
       <Filter>Source Files\Backend\Base</Filter>
     </ClCompile>
@@ -95,9 +92,6 @@
     </ClInclude>
     <ClInclude Include="ThreadManager.hpp">
       <Filter>Source Files\Backend</Filter>
-    </ClInclude>
-    <ClInclude Include="Scrollbar.hpp">
-      <Filter>Source Files\Backend\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="AppEngine.hpp">
       <Filter>Source Files\Backend\Base</Filter>

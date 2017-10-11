@@ -141,7 +141,6 @@
     <ClCompile Include="AppEngine.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Scrollbar.cpp" />
     <ClCompile Include="Section.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
@@ -162,7 +161,6 @@
     <ClInclude Include="AppState.hpp" />
     <ClInclude Include="ProgressBar.hpp" />
     <ClInclude Include="ResourceManager.hpp" />
-    <ClInclude Include="Scrollbar.hpp" />
     <ClInclude Include="Section.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="ThreadManager.hpp" />

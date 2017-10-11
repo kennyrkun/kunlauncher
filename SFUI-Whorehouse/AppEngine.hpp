@@ -20,7 +20,7 @@ struct AppSettings
 	bool verticalSync = true;
 
 	int width = 525;
-	int height = 325;
+	int height = 375;
 };
 
 class AppEngine

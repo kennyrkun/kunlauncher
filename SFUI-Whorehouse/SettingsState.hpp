@@ -34,32 +34,14 @@ protected:
 private:
 	static SettingsState IntialiseState_dontfuckwithme;
 	AppEngine* app;
-	// FIXME: shouldn't need to be a pointer
-	LauncherUpdater *updater;
 
-	std::thread *helperThread;
-	bool helperRunning = false;
-	bool helperDone = false;
+	sf::Color bgColor; // and all the code that makes it rainbowy, thanks Lukas. <https://stackoverflow.com/questions/11458552/cycle-r-g-b-vales-as-hue>
 
-	bool updatIsAvailable = false;
-	bool isReady = false;
-	bool restartNow = false;
+	int dr = 0;
+	int dg = 0;
+	int db = 0;
 
-	void initialisise();
-
-	int validateFileStructure();
-	int updateFileStructure();
-
-	int validateResourceFiles();
-	int getResourceFiles();
-
-	sf::Font font;
-	sf::Text initialiseText;
-	sf::RectangleShape thingthatdoesntripoffvisualstudio;
-	ProgressBar* progressBar;
-
-	sf::Text currentLauncherTask;
-	void setTaskText(std::string text);
+	sf::Uint8 r = 255, g = 0, b = 0;
 };
 
 #endif // !SETTINGS_STATE_HPP

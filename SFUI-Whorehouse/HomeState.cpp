@@ -2,6 +2,7 @@
 #include "AppState.hpp"
 #include "HomeState.hpp"
 #include "AppListState.hpp"
+#include "SettingsState.hpp"
 
 #include "Globals.hpp"
 #include "Download.hpp"
@@ -168,8 +169,7 @@ void HomeState::HandleEvents(sf::Event& event)
 					if (sections[i]->forwardStateName == "appListState")
 						app->ChangeState(AppListState::Instance());
 					else if (sections[i]->forwardStateName == "settingsState")
-						// do nothing
-						continue;
+						app->ChangeState(SettingsState::Instance());
 					else
 						std::cout << "over nothing" << "\n";
 				}
@@ -236,7 +236,14 @@ void HomeState::loadApps() // TOOD: this.
 		(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), 
 		28);
 
+	Section* settingsSection = new Section("Settings", "settingsState",
+		(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
+		app->window->getSize().y,
+		(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
+		75);
+
 	sections.push_back(appListSection);
+	sections.push_back(settingsSection);
 
 	updateScrollThumbSize();
 }
