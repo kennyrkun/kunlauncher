@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <SFUI\Button.hpp>
+#include <SFUI\TextButton.hpp>
 
 // public:
 
@@ -39,7 +39,7 @@ MessageBox::MessageBox(MessageBoxOptions settings_)
 	{
 		std::cout << "adding button for option \"" << settings.settings[i] << "\"" << "\n";
 
-		SFUI::Button *newButton = new SFUI::Button(settings.settings[i]);
+		SFUI::TextButton *newButton = new SFUI::TextButton(settings.settings[i]);
 		// we will set their positions later, because if we do it now they won't know where to go because the window hasn't been created
 		// and they don't know how big it'll be and my god this is all just a huge mess and kill me now
 		buttons.push_back(newButton);

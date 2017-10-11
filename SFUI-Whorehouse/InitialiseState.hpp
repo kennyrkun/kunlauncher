@@ -2,9 +2,10 @@
 #define INITALISE_STATE_HPP
 
 #include "AppState.hpp"
-#include "Scrollbar.hpp"
 
 #include <SFML\Graphics.hpp>
+#include <SFUI\Scrollbar.hpp>
+
 #include <thread>
 
 class LauncherUpdater;

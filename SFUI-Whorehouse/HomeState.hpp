@@ -1,9 +1,10 @@
 #ifndef HOME_STATE_HPP
 #define HOME_STATE_HPP
 
-#include <SFML\Graphics.hpp>
 #include "AppState.hpp"
-#include "Scrollbar.hpp"
+
+#include <SFML\Graphics.hpp>
+#include <SFUI\Scrollbar.hpp>
 
 #include <thread>
 #include <vector>
@@ -37,7 +38,7 @@ private:
 
 	sf::View *mainView;
 	sf::View *cardScroller;
-	Scrollbar scrollbar;
+	SFUI::Scrollbar scrollbar;
 
 	std::vector<std::thread> threads;
 	std::vector<Section*> sections;
