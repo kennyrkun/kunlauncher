@@ -167,11 +167,13 @@ void HomeState::HandleEvents(sf::Event& event)
 					std::cout << "over shape of " << sections[i]->forwardStateName << "\n";
 
 					if (sections[i]->forwardStateName == "appListState")
-						app->ChangeState(AppListState::Instance());
+					{
+						app->PushState(AppListState::Instance());
+					}
 					else if (sections[i]->forwardStateName == "settingsState")
-						app->ChangeState(SettingsState::Instance());
-					else
-						std::cout << "over nothing" << "\n";
+					{
+						app->PushState(SettingsState::Instance());
+					}
 				}
 			}
 		}

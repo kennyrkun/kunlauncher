@@ -59,6 +59,7 @@ void AppListState::Cleanup()
 
 	items.clear();
 	links.clear();
+	
 //	delete app; // dont delete app because it's being used by the thing and we need it.
 //	app = nullptr;
 
@@ -126,7 +127,7 @@ void AppListState::HandleEvents(sf::Event& event)
 
 				updateScrollLimits();
 
-				if (scrollerBottomPosition > scrollerMaxPosition) // clamp
+				if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
 				{
 					std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << "\n";
 					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
@@ -151,7 +152,7 @@ void AppListState::HandleEvents(sf::Event& event)
 
 				updateScrollLimits();
 
-				if (scrollerTopPosition < scrollerMinPosition) // clamp
+				if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
 				{
 					std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << "\n";
 					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
@@ -244,7 +245,7 @@ void AppListState::HandleEvents(sf::Event& event)
 		}
 		else if (event.key.code == sf::Mouse::Button::Right)
 		{
-			app->ChangeState(HomeState::Instance());
+			app->PopState();
 		}
 	}
 	else if (event.type == sf::Event::EventType::MouseButtonReleased)
