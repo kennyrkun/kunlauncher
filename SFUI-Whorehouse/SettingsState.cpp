@@ -23,6 +23,16 @@ void SettingsState::Init(AppEngine* app_)
 {
 	std::cout << "IntialiseState Init" << "\n";
 	app = app_;
+
+	sf::Texture icon;
+	icon.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "error_1x.png");
+	
+	button = new SFUI::IconButton;
+
+	button->setButtonSize(40);
+	button->setPosition(app->window->getView().getCenter());
+	button->setIconTexture(icon);
+	button->setButtonColor(sf::Color::Black);
 }
 
 void SettingsState::Cleanup()
@@ -97,6 +107,8 @@ void SettingsState::Update()
 void SettingsState::Draw()
 {
 	app->window->clear(sf::Color(r, g, b));
+
+	app->window->draw(*button);
 
 	app->window->display();
 }

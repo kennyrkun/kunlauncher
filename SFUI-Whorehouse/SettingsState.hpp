@@ -4,7 +4,7 @@
 #include "AppState.hpp"
 
 #include <SFML\Graphics.hpp>
-#include <SFUI\Scrollbar.hpp>
+#include <SFUI\IconButton.hpp>
 
 #include <thread>
 
@@ -43,6 +43,8 @@ private:
 	int db = 0;
 
 	sf::Uint8 r = 255, g = 0, b = 0;
+
+	SFUI::IconButton* button;
 };
 
 #endif // !SETTINGS_STATE_HPP
