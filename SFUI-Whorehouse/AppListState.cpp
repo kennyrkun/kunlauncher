@@ -245,7 +245,7 @@ void AppListState::HandleEvents(sf::Event& event)
 		}
 		else if (event.key.code == sf::Mouse::Button::Right)
 		{
-			app->PopState();
+			app->ChangeState(HomeState::Instance());
 		}
 	}
 	else if (event.type == sf::Event::EventType::MouseButtonReleased)

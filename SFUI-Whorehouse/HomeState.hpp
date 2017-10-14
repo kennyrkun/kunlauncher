@@ -4,7 +4,7 @@
 #include "AppState.hpp"
 
 #include <SFML\Graphics.hpp>
-#include <SFUI\Scrollbar.hpp>
+#include <SFUI\IconButton.hpp>
 
 #include <thread>
 #include <vector>
@@ -36,26 +36,12 @@ private:
 	static HomeState HomeState_dontfuckwithme;
 	AppEngine* app;
 
-	sf::View *mainView;
-	sf::View *cardScroller;
-	SFUI::Scrollbar scrollbar;
-
 	std::vector<std::thread> threads;
-	std::vector<Section*> sections;
+	std::vector<SFUI::IconButton*> sections;
 
 	std::thread *helperThread;
 	bool helperRunning = false;
 	bool helperDone = false;
-
-	void loadApps();
-
-	void updateScrollThumbSize();
-	// TODO: viewable arae class
-	float scrollerTopPosition;
-	float scrollerBottomPosition;
-	float scrollerMinPosition;
-	float scrollerMaxPosition;
-	void updateScrollLimits();
 
 	bool mouseIsOver(sf::Shape &object);
 	bool mouseIsOver(sf::Shape &object, sf::View* view);

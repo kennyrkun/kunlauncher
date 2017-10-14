@@ -12,6 +12,8 @@ namespace fs = std::experimental::filesystem;
 
 Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos)
 {
+	sf::Clock itemCreateTimer;
+
 	std::cout << "creating new card for \"" + itemName_ + "\"" << "\n";
 
 	targetWindow = target_window;
@@ -192,7 +194,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	launchButton.setOrigin(sf::Vector2f(launchButton.getLocalBounds().width / 2, launchButton.getLocalBounds().height / 2));
 	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
 
-	std::cout << "card is ready" << "\n";
+	std::cout << "card is ready (took " << itemCreateTimer.getElapsedTime().asSeconds() << " seconds)" << "\n";
 }
 
 Item::~Item()

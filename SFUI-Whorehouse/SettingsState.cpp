@@ -25,12 +25,11 @@ void SettingsState::Init(AppEngine* app_)
 	app = app_;
 
 	sf::Texture icon;
-	icon.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "ic_settings_white_48dp_2x.png");
+	icon.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "settings_2x.png");
 	
 	button = new SFUI::IconButton;
 
 	button->setButtonSize(96);
-	button->setPosition(sf::Vector2f(app->window->getView().getCenter().x - button->shape.getLocalBounds().width / 2, app->window->getView().getCenter().y - button->shape.getLocalBounds().height / 2));
 	button->setIconTexture(icon);
 	button->setButtonColor(sf::Color(100, 100, 100));
 }
@@ -62,7 +61,7 @@ void SettingsState::HandleEvents(sf::Event& event)
 	{
 		if (event.key.code == sf::Mouse::Button::Right)
 		{
-			app->PopState();
+			app->ChangeState(HomeState::Instance());
 		}
 	}
 }
