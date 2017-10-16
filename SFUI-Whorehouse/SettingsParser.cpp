@@ -63,7 +63,7 @@ bool SettingsParser::read()
 	std::ifstream in(m_filename);
 	if (!in.is_open())
 	{
-		std::cerr << "Error: Unable to open settings file \"" << m_filename << "\" for reading!" << std::endl;
+		std::cerr << "unable to open settings file \"" << m_filename << "\" for reading!" << std::endl;
 		return false;
 	}
 
@@ -133,7 +133,7 @@ bool SettingsParser::write() const
 	std::ofstream out(m_filename);
 	if (!out.is_open())
 	{
-		std::cerr << "Error: Unable to open settings file \"" << m_filename << "\" for writing!" << std::endl;
+		std::cerr << "unable to open settings file \"" << m_filename << "\" for writing!" << std::endl;
 		return false;
 	}
 	for (auto it = fileContents.begin(); it != fileContents.end(); ++it)
@@ -158,7 +158,7 @@ bool SettingsParser::write() const
 */
 std::pair<std::string, std::string> SettingsParser::parseLine(const std::string &line) const
 {
-	if (line.size() > 0 && line[0] != '#')
+	if (line.size() > 0 && (line[0] != '/' && line[1] != '/'))
 	{
 		size_t index = 0;
 		// trim leading whitespace
