@@ -25,30 +25,30 @@ void SettingsState::Init(AppEngine* app_)
 	app = app_;
 
 	sf::Texture icon;
-	icon.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "settings_2x.png");
+	icon.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "error_1x.png");
 	
 	button = new SFUI::IconButton;
 
-	button->setButtonSize(96);
-	button->setIconTexture(icon);
+	button->setIconTexture(icon, false);
+	button->setButtonSize(sf::Vector2f(96, 96));
 	button->setButtonColor(sf::Color(100, 100, 100));
 }
 
 void SettingsState::Cleanup()
 {
-	std::cout << "IntialiseState Cleaningup" << "\n";
+	std::cout << "SettingsState Cleaningup" << "\n";
 
-	std::cout << "IntialiseState Cleanedup" << "\n";
+	std::cout << "SettingsState Cleanedup" << "\n";
 }
 
 void SettingsState::Pause()
 {
-	printf("IntialiseState Pause\n");
+	std::cout << "SettingsState Pause" << std::endl;
 }
 
 void SettingsState::Resume()
 {
-	std::cout << "IntialiseState Resume" << "\n";
+	std::cout << "SettingsState Resume" << "\n";
 }
 
 void SettingsState::HandleEvents(sf::Event& event)
