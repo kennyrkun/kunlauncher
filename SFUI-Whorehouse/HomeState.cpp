@@ -25,29 +25,26 @@ void HomeState::Init(AppEngine* app_)
 
 	if (!app->window->isOpen())
 	{
-		app->window->create(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + CONST::VERSION, sf::Style::Close);
+		app->window->create(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + GBL::VERSION, sf::Style::Resize | sf::Style::Close);
 		app->window->setVerticalSyncEnabled(app->settings.verticalSync);
 	}
 
 //	SFUI::IconButton* appListButton = new SFUI::IconButton;
 
 	SFUI::IconButton *appListButton = new SFUI::IconButton;
-	appListButton->setButtonSize(96);
-	appListButton->setIconTexture(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "apps_2x.png");
+	appListButton->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "apps_2x.png", true);
 	appListButton->setButtonColor(sf::Color(100, 100, 100));
 	appListButton->setPosition(sf::Vector2f(app->window->getView().getCenter().x - appListButton->shape.getLocalBounds().width * 1.5 - 48, app->window->getView().getCenter().y - appListButton->shape.getLocalBounds().height / 2));
 	sections.push_back(appListButton);
 
 	SFUI::IconButton *settingsState = new SFUI::IconButton;
-	settingsState->setButtonSize(96);
-	settingsState->setIconTexture(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "settings_2x.png");
+	settingsState->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "settings_2x.png", true);
 	settingsState->setButtonColor(sf::Color(100, 100, 100));
 	settingsState->setPosition(sf::Vector2f(app->window->getView().getCenter().x - settingsState->shape.getLocalBounds().width / 2, app->window->getView().getCenter().y - settingsState->shape.getLocalBounds().height / 2));
 	sections.push_back(settingsState);
 
 	SFUI::IconButton *powerButton = new SFUI::IconButton;
-	powerButton->setButtonSize(96);
-	powerButton->setIconTexture(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "power_2x.png");
+	powerButton->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "power_2x.png", true);
 	powerButton->setButtonColor(sf::Color(100, 100, 100));
 	powerButton->setPosition(sf::Vector2f(app->window->getView().getCenter().x + powerButton->shape.getLocalBounds().width / 2 + 48, app->window->getView().getCenter().y - powerButton->shape.getLocalBounds().height / 2));
 	sections.push_back(powerButton);
@@ -129,7 +126,7 @@ void HomeState::Update()
 
 void HomeState::Draw()
 {
-	app->window->clear(CONST::COLOR::BACKGROUND);
+	app->window->clear(GBL::COLOR::BACKGROUND);
 
 	for (size_t i = 0; i < sections.size(); i++)
 	{

@@ -8,7 +8,7 @@ class ResourceManager;
 
 // TODO: redo this system
 
-namespace CONST
+namespace GBL
 {
 	const std::string VERSION = "0.14.0";
 
@@ -29,31 +29,31 @@ namespace CONST
 
 	namespace COLOR
 	{
-		const sf::Color BACKGROUND = sf::Color(50, 50, 50);
+		extern sf::Color BACKGROUND;
+		extern sf::Color TEXT;
 
 		namespace SCROLLBAR
 		{
-			const sf::Color SCROLLBAR = sf::Color(80, 80, 80);
-			const sf::Color SCROLLTHUMB = sf::Color(110, 110, 110);
-			const sf::Color SCROLLTHUMB_HOVER = sf::Color(158, 158, 158);
-			const sf::Color SCROLLTHUMB_HOLD = sf::Color(239, 235, 239);
+			extern sf::Color SCROLLBAR;
+			extern sf::Color SCROLLTHUMB;
+			extern sf::Color SCROLLTHUMB_HOVER;
+			extern sf::Color SCROLLTHUMB_HOLD;
 		}
 
 		namespace ITEM
 		{
-			const sf::Color CARD = sf::Color(100, 100, 100);
-			const sf::Color ICON = sf::Color(255, 255, 255);
-			const sf::Color ICON_HOVER = sf::Color(255, 255, 255);
-			const sf::Color REDOWLOAD = sf::Color(255, 255, 255);
-			const sf::Color UPDATE_IS_AVAILABLE = sf::Color(255, 200, 0);
-			const sf::Color DOWNLOAD = sf::Color(255, 255, 255);
+			extern sf::Color CARD;
+			extern sf::Color ICON;
+			extern sf::Color REDOWLOAD;
+			extern sf::Color UPDATE_IS_AVAILABLE;
+			extern sf::Color DOWNLOAD;
 		}
 
 		namespace LINK
 		{
-			const sf::Color CARD = sf::Color(100, 100, 100);
-			const sf::Color FOLLOW = sf::Color(255, 255, 255);
-			const sf::Color TEXT = sf::Color(0, 170, 232);
+			extern sf::Color CARD;
+			extern sf::Color FOLLOW;
+			extern sf::Color TEXT;
 		}
 	}
 }

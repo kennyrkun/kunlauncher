@@ -79,11 +79,14 @@
     <ClCompile Include="LauncherUpdater.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
-    <ClCompile Include="BasicFileParser.cpp">
-      <Filter>Source Files\Backend</Filter>
-    </ClCompile>
     <ClCompile Include="SettingsState.cpp">
       <Filter>Source Files\Launcher\States\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsParser.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Globals.cpp">
+      <Filter>Source Files\Backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -135,11 +138,11 @@
     <ClInclude Include="LauncherUpdater.hpp">
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
-    <ClInclude Include="BasicFileParser.hpp">
-      <Filter>Source Files\Backend</Filter>
-    </ClInclude>
     <ClInclude Include="SettingsState.hpp">
       <Filter>Source Files\Launcher\States\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsParser.hpp">
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

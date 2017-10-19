@@ -21,7 +21,7 @@ std::string LauncherUpdater::getRemoteVersion()
 
 std::string LauncherUpdater::getLocalVersion()
 {
-	localVersion = CONST::VERSION;
+	localVersion = GBL::VERSION;
 	return localVersion;
 }
 
@@ -98,7 +98,7 @@ int LauncherUpdater::createUpdateFile()
 {
 	std::cout << "creating update file" << std::endl;
 
-	std::ofstream writeUpdateFile(CONST::DIR::BASE + "up.date", std::ios::binary);
+	std::ofstream writeUpdateFile(GBL::DIR::BASE + "up.date", std::ios::binary);
 
 	if (writeUpdateFile.is_open())
 	{
@@ -113,13 +113,13 @@ int LauncherUpdater::createUpdateFile()
 
 int LauncherUpdater::readUpdateFile()
 {
-	if (fs::exists(CONST::DIR::BASE + CONST::DIR::CONFIG + "up.date"))
+	if (fs::exists(GBL::DIR::BASE + GBL::DIR::CONFIG + "up.date"))
 	{
 		std::cout << "reading update file" << std::endl;
 
 		std::string fileBuffer, temp, oldVersion, newVersion, updateFinished;
 
-		std::ifstream getUpdateFile(CONST::DIR::BASE + "up.date", std::ios::binary);
+		std::ifstream getUpdateFile(GBL::DIR::BASE + "up.date", std::ios::binary);
 		getUpdateFile >> fileBuffer;
 
 		std::cout << "filebuffer--------" << "\n" << fileBuffer << std::endl;

@@ -73,7 +73,7 @@ std::string Download::getInputPath()
 
 int Download::download()
 {
-	sf::Http http(CONST::DIR::WEB_HOSTNAME);
+	sf::Http http(GBL::DIR::WEB_HOSTNAME);
 	sf::Http::Request request(inpath, sf::Http::Request::Get);
 
 	sf::Clock timer;

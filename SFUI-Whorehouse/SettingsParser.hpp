@@ -38,6 +38,7 @@ public:
 
 	bool isChanged() const;
 
+	// TODO: change these to bool or int so that they can be used in IF statements
 	template<typename T>
 	void get(const std::string& key, T & value) const;
 	template<typename T>
