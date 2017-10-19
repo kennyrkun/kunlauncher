@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 
 	AppSettings settings;
 
+	/*
 	for (int i = 0; i < argc; i++)
 	{
 		std::cout << i << ": " << argv[i] << "\n";
@@ -44,6 +45,7 @@ int main(int argc, char *argv[])
 			settings.height = std::stoi(argv[i + 1]);
 		}
 	}
+	*/
 
 	std::cout << "\n";
 
