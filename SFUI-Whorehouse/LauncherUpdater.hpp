@@ -11,6 +11,9 @@ public:
 		FailGeneric,
 		NoUpdateFile,
 		CouldNotDownload,
+		Updated,
+		UpdateAvailable,
+		NoUpdateAvailable,
 
 		Success
 	};

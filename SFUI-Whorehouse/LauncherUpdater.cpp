@@ -33,12 +33,12 @@ int LauncherUpdater::checkForUpdates()
 	{
 		std::cout << "launcher is out of date" << "\n";
 		//		return true;
-		return true;
+		return Status::UpdateAvailable;
 	}
 	else
 	{
 		std::cout << "launcher is up to date" << "\n";
-		return false;
+		return Status::NoUpdateAvailable;
 	}
 }
 
@@ -58,8 +58,10 @@ int LauncherUpdater::replaceOldExecutable()
 {
 	try
 	{
-//		fs::rename("kunlauncher.exe", "kunlaucher.exe.old");
+		fs::rename("kunlauncher.exe", "kunlaucher.exe.old");
 		fs::rename("latest_kunlauncher.exe", "kunlauncher.exe");
+
+		return Status::Success;
 	}
 	catch (const std::exception& e)
 	{
@@ -67,9 +69,8 @@ int LauncherUpdater::replaceOldExecutable()
 		abort();
 
 		// TODO: handle this better;
+		return Status::FailGeneric;
 	}
-
-	return 0;
 }
 
 int LauncherUpdater::removeOldExecutable()
@@ -81,13 +82,15 @@ int LauncherUpdater::removeOldExecutable()
 		try
 		{
 			fs::remove("kunlauncher.exe.old");
-
 			std::cout << "removed old executable" << std::endl;
+			return Status::Success;
 		}
 		catch (const std::exception& e)
 		{
 			std::cout << "could not remvoe old executable:" << std::endl;
 			std::cout << e.what() << "\n";
+
+			return Status::FailGeneric;
 		}
 	}
 
