@@ -8,6 +8,7 @@
 #include "MessageBox.hpp"
 #include "Item.hpp"
 #include "Link.hpp"
+#include "SettingsParser.hpp"
 
 #include <SFML\Graphics.hpp>
 #include <SFML\Network.hpp>
@@ -253,7 +254,7 @@ void AppListState::HandleEvents(sf::Event& event)
 		if (scrollbar.thumbDragging)
 		{
 			scrollbar.thumbDragging = false;
-			scrollbar.scrollThumb.setFillColor(CONST::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
+			scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
 		}
 	}
 	else if (event.type == sf::Event::EventType::KeyPressed)
@@ -264,11 +265,11 @@ void AppListState::HandleEvents(sf::Event& event)
 			{
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
 				{
-					fs::remove(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "\\index.dat");
+					fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "\\index.dat");
 
 					Download getItemIndex;
-					getItemIndex.setInputPath("./" + CONST::DIR::WEB_APP_DIRECTORY + "/index.dat");
-					getItemIndex.setOutputDir(".\\" + CONST::DIR::BASE + CONST::DIR::APPS);
+					getItemIndex.setInputPath("./" + GBL::DIR::WEB_APP_DIRECTORY + "/index.dat");
+					getItemIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
 					getItemIndex.setOutputFilename("\\index.dat");
 					getItemIndex.download();
 					getItemIndex.save();
@@ -301,6 +302,75 @@ void AppListState::HandleEvents(sf::Event& event)
 				std::cout << "helper is running, not switching states" << "\n";
 			}
 		}
+
+		if (app->settings.experimentalThemes) // 8
+		{
+			std::cout << "loading theme settings" << std::endl;
+
+			SettingsParser settings;
+			if (settings.loadFromFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf"))
+				settings.get("defaultTheme", app->settings.theme);
+			std::cout << app->settings.theme << std::endl;
+
+			if (settings.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + app->settings.theme + ".sfuitheme"))
+			{
+				std::cout << "loaded theme \"" << app->settings.theme << "\"." << std::endl;
+
+				// globals
+				std::vector<int> colors;
+				settings.get("global_background", colors);
+				GBL::COLOR::BACKGROUND = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				/* scrollbar
+				std::cout << "scrollbar theme settings" << std::endl;
+
+				settings.get("scrollbar_scrollbar", colors);
+				GBL::COLOR::SCROLLBAR::SCROLLBAR = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				settings.get("scrollbar_scrollthumb", colors);
+				GBL::COLOR::SCROLLBAR::SCROLLTHUMB = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				settings.get("scrollbar_scrollthumb_hover", colors);
+				GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				settings.get("scrollbar_scrollthumb_hold", colors);
+				GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear(); */
+
+				// items
+				std::cout << "item theme settings" << std::endl;
+
+				settings.get("item_card", colors);
+				GBL::COLOR::ITEM::CARD = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				settings.get("item_icon", colors);
+				GBL::COLOR::ITEM::ICON = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				settings.get("item_redownload", colors);
+				GBL::COLOR::ITEM::REDOWLOAD = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				settings.get("item_update_is_available", colors);
+				GBL::COLOR::ITEM::UPDATE_IS_AVAILABLE = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				settings.get("item_download", colors);
+				GBL::COLOR::ITEM::DOWNLOAD = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+
+				std::cout << "done downloading themes" << std::endl;
+			}
+			else
+			{
+				std::cout << "failed to load settings file" << std::endl; // use default colours
+			}
+		}
 	}
 }
 
@@ -329,7 +399,7 @@ void AppListState::Update()
 
 void AppListState::Draw()
 {
-	app->window->clear(CONST::COLOR::BACKGROUND);
+	app->window->clear(GBL::COLOR::BACKGROUND);
 
 	//scrollable
 	app->window->setView(*cardScroller);
@@ -358,7 +428,7 @@ void AppListState::loadApps() // TOOD: this.
 	std::string line; // each line of index.dat;
 	std::cout << "\n";
 
-	std::ifstream readIndex(".\\" + CONST::DIR::BASE + CONST::DIR::APPS + "index.dat", std::ios::in);
+	std::ifstream readIndex(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{

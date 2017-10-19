@@ -23,14 +23,6 @@ void HomeState::Init(AppEngine* app_)
 
 	app = app_;
 
-	if (!app->window->isOpen())
-	{
-		app->window->create(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + GBL::VERSION, sf::Style::Resize | sf::Style::Close);
-		app->window->setVerticalSyncEnabled(app->settings.verticalSync);
-	}
-
-//	SFUI::IconButton* appListButton = new SFUI::IconButton;
-
 	SFUI::IconButton *appListButton = new SFUI::IconButton;
 	appListButton->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "apps_2x.png", true);
 	appListButton->setButtonColor(sf::Color(100, 100, 100));

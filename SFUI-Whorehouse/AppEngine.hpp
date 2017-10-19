@@ -25,7 +25,7 @@ struct AppSettings
 	int width = 525;
 	int height = 375;
 
-	std::string theme = "THEMEFUCKER";
+	std::string theme = "dark";
 };
 
 class AppEngine

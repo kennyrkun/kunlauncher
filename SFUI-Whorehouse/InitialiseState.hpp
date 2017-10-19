@@ -51,6 +51,8 @@ private:
 	int validateFileStructure();
 	int updateFileStructure();
 
+	int getThemeConfiguration();
+
 	int validateResourceFiles();
 	int getResourceFiles();
 

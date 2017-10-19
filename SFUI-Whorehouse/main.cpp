@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
 	AppSettings settings;
 
-	/*
+	/* TODO: don't get overriden by config
 	for (int i = 0; i < argc; i++)
 	{
 		std::cout << i << ": " << argv[i] << "\n";
