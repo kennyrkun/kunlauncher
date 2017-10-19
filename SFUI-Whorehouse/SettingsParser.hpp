@@ -38,11 +38,10 @@ public:
 
 	bool isChanged() const;
 
-	// TODO: change these to bool or int so that they can be used in IF statements
 	template<typename T>
-	void get(const std::string& key, T & value) const;
+	bool get(const std::string& key, T & value) const;
 	template<typename T>
-	void get(const std::string& key, std::vector<T> &value) const;
+	bool get(const std::string& key, std::vector<T> &value) const;
 
 	template<typename T>
 	void set(const std::string &key, const T value);
@@ -199,11 +198,19 @@ inline std::string SettingsParser::convertToType<std::string>(const std::string 
 }
 
 template<typename T>
-inline void SettingsParser::get(const std::string& key, T &value) const {
+inline bool SettingsParser::get(const std::string& key, T &value) const {
 	auto it = m_data.find(key);
 
 	if (it != m_data.end()) {
 		value = convertToType<T>(it->second);
+
+		return true;
+	}
+	else
+	{
+		std::cout << "failed to find key \"" << key << "\"" << std::endl;
+
+		return false;
 	}
 }
 
@@ -212,7 +219,7 @@ inline void SettingsParser::get(const std::string& key, T &value) const {
 * seperated by comma. The vector is cleared before it is filled.
 */
 template<typename T>
-inline void SettingsParser::get(const std::string& key, std::vector<T> &value) const {
+inline bool SettingsParser::get(const std::string& key, std::vector<T> &value) const {
 	auto it = m_data.find(key);
 	if (it != m_data.end()) {
 
@@ -225,6 +232,14 @@ inline void SettingsParser::get(const std::string& key, std::vector<T> &value) c
 		while (getline(parser, output, ',')) {
 			value.push_back(convertToType<T>(output));
 		}
+
+		return true;
+	}
+	else
+	{
+		std::cout << "failed to find key \"" << key << "\"" << std::endl;
+
+		return false;
 	}
 }
 
