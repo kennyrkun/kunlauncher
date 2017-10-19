@@ -18,7 +18,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 	targetWindow = target_window;
 	itemName = itemName_;
-	installDir = ".\\" + CONST::DIR::BASE + CONST::DIR::APPS + itemName + "\\"; // .\\bin\\apps\\itemName\\
+	installDir = ".\\" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "\\"; // .\\bin\\apps\\itemName\\
 
 	if (!fs::exists(installDir))
 	{
@@ -49,7 +49,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		std::cout << "info was not found, downloading" << "\n";
 
 		Download downloadInfo;
-		downloadInfo.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
+		downloadInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
 		downloadInfo.setOutputDir(installDir);
 		downloadInfo.setOutputFilename("info.dat");
 
@@ -88,7 +88,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		std::cout << "icon was not found, downloading" << "\n";
 
 		Download downloadIcon;
-		downloadIcon.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
+		downloadIcon.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
 		downloadIcon.setOutputDir(installDir);
 		downloadIcon.setOutputFilename("icon.png");
 
@@ -105,7 +105,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 		case sf::Http::Response::Status::InternalServerError:
 		{
-			iconTexture.loadFromFile(CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "error_1x.png");
+			iconTexture.loadFromFile(GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "error_1x.png");
 			break;
 		}
 
@@ -132,7 +132,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	cardShape.setSize(sf::Vector2f(xSize, 75));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
 	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
-	cardShape.setFillColor(CONST::COLOR::ITEM::CARD);
+	cardShape.setFillColor(GBL::COLOR::ITEM::CARD);
 
 	totalHeight = cardShape.getSize().y;
 
@@ -156,43 +156,47 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	description.setPosition(static_cast<int>(icon.getPosition().x + 45), static_cast<int>(cardShape.getPosition().y - 15));
 	version.setPosition(static_cast<int>(icon.getPosition().x + 45), static_cast<int>(cardShape.getPosition().y + 10));
 
-	name.setFillColor(sf::Color::White);
-	description.setFillColor(sf::Color::White);
-	version.setFillColor(sf::Color::White);
+	name.setFillColor(GBL::COLOR::TEXT);
+	description.setFillColor(GBL::COLOR::TEXT);
+	version.setFillColor(GBL::COLOR::TEXT);
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 
-	if (!downloadButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "get_app_1x.png"))
+	if (!downloadButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "get_app_1x.png"))
 		downloadButton.setFillColor(sf::Color::Green);
 	downloadButtonTexture.setSmooth(true);
 	downloadButton.setTexture(&downloadButtonTexture);
 	downloadButton.setSize(sf::Vector2f(24, 24));
 	downloadButton.setOrigin(sf::Vector2f(downloadButton.getLocalBounds().width / 2, downloadButton.getLocalBounds().height / 2));
 	downloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
+	downloadButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
-	redownloadButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "auto_renew_1x.png");
+	redownloadButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "auto_renew_1x.png");
 	redownloadButtonTexture.setSmooth(true);
 	redownloadButton.setTexture(&redownloadButtonTexture);
 	redownloadButton.setRadius(10);
 	redownloadButton.setRotation(30);
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
+	redownloadButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
-	if (!removeButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "delete_forever_1x.png"))
+	if (!removeButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "delete_forever_1x.png"))
 		removeButton.setFillColor(sf::Color::Red);
 	removeButtonTexture.setSmooth(true);
 	removeButton.setTexture(&removeButtonTexture);
 	removeButton.setSize(sf::Vector2f(24, 24));
 	removeButton.setOrigin(sf::Vector2f(removeButton.getLocalBounds().width / 2, removeButton.getLocalBounds().height / 2));
 	removeButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 15));
+	removeButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
-	if (!launchButtonTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "launch_1x.png"))
+	if (!launchButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "launch_1x.png"))
 		launchButton.setFillColor(sf::Color::Green);
 	launchButtonTexture.setSmooth(true);
 	launchButton.setTexture(&launchButtonTexture);
 	launchButton.setSize(sf::Vector2f(20, 20));
 	launchButton.setOrigin(sf::Vector2f(launchButton.getLocalBounds().width / 2, launchButton.getLocalBounds().height / 2));
 	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
+	launchButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
 	std::cout << "card is ready (took " << itemCreateTimer.getElapsedTime().asSeconds() << " seconds)" << "\n";
 }
@@ -225,7 +229,7 @@ bool Item::checkForUpdate()
 	std::cout << "checking for updates" << "\n";
 
 	Download getRemoteVersion;
-	getRemoteVersion.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
+	getRemoteVersion.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
 	getRemoteVersion.download();
 
 	if (getRemoteVersion.htmlReturnCode == sf::Http::Response::NotFound)
@@ -445,7 +449,7 @@ int Item::downloadIcon()
 	std::cout << "\n" << "downloading icon" << "\n";
 
 	Download getIcon;
-	getIcon.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
+	getIcon.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
 	getIcon.setOutputDir(installDir);
 	getIcon.setOutputFilename("icon.png");
 
@@ -466,7 +470,7 @@ int Item::downloadInfo()
 	std::cout << "\n" << "downloading info" << "\n";
 
 	Download getInfo;
-	getInfo.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
+	getInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
 	getInfo.setOutputDir(installDir);
 	getInfo.setOutputFilename("info.dat");
 	getInfo.download();
@@ -480,7 +484,7 @@ int Item::downloadFiles()
 	std::cout << "\n" << "downloading files" << "\n";
 
 	Download getInfo;
-	getInfo.setInputPath(CONST::DIR::WEB_APP_DIRECTORY + itemName + "/release.zip");
+	getInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/release.zip");
 	getInfo.setOutputDir(installDir);
 	getInfo.setOutputFilename("release.zip");
 	getInfo.download();

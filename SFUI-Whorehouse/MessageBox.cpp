@@ -1,4 +1,5 @@
 #include "MessageBox.hpp"
+#include "Globals.hpp"
 
 #include <iostream>
 
@@ -92,6 +93,7 @@ void MessageBox::runBlocking()
 	window.setVerticalSyncEnabled(true);
 	message.setPosition(static_cast<int>(window.getView().getCenter().x), static_cast<int>(message.getCharacterSize()));
 	message.setPosition(7, 5);
+	message.setFillColor(GBL::COLOR::TEXT);
 
 	{ // put buttons in their proper positions
 		buttons[0]->setPosition(sf::Vector2f(window.getSize().x - (buttons[0]->m_shape.getLocalBounds().width / 2) - 4, window.getSize().y - 16));
@@ -145,7 +147,7 @@ void MessageBox::runBlocking()
 			}
 		}
 
-		window.clear(sf::Color(30, 30, 30));
+		window.clear(GBL::COLOR::BACKGROUND);
 
 		window.draw(message);
 
