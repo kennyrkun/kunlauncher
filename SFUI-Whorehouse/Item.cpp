@@ -232,38 +232,45 @@ bool Item::checkForUpdate()
 	getRemoteVersion.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
 	getRemoteVersion.download();
 
-	if (getRemoteVersion.htmlReturnCode == sf::Http::Response::NotFound)
+	if (!getRemoteVersion.htmlReturnCode == sf::Http::Response::NotFound)
 	{
-		return false;
-	}
-	else
-	{
-		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
-		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
-		getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find('\n'), getRemoteVersion.fileBuffer.length());
-
-		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find_first_of('"') + 1);
-		getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find_last_of('"'), getRemoteVersion.fileBuffer.length());
-		std::string rVersion = getRemoteVersion.fileBuffer;
-		std::string lVersion = version.getString();
-
-		if (lVersion != rVersion)
+		if (!getRemoteVersion.fileBuffer.find("Cox fucked the launcher again."))
 		{
-			std::cout << "item is out of date! (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
+			getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
+			getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
+			getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find('\n'), getRemoteVersion.fileBuffer.length());
 
-			updateIsAvailable = true;
-			redownloadButton.setFillColor(sf::Color::Yellow);
+			getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find_first_of('"') + 1);
+			getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find_last_of('"'), getRemoteVersion.fileBuffer.length());
+			std::string rVersion = getRemoteVersion.fileBuffer;
+			std::string lVersion = version.getString();
 
-			version.setString(lVersion + " (New " + rVersion + "!)");
+			if (lVersion != rVersion)
+			{
+				std::cout << "item is out of date! (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
 
-			return true;
+				updateIsAvailable = true;
+				redownloadButton.setFillColor(sf::Color::Yellow);
+
+				version.setString(lVersion + " (New " + rVersion + "!)");
+
+				return true;
+			}
+			else
+			{
+				std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
+
+				return false;
+			}
 		}
 		else
 		{
-			std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
-			
 			return false;
 		}
+	}
+	else
+	{
+		return false;
 	}
 }
 
@@ -416,32 +423,41 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 {
 	//TODO: add checks here to make sure we don't try to parse a file that ended up being a 500 or 404
 
-	std::cout << "parsing info for " << dir  << "\n";
+	if (!dir.find("Cox fucked the launcher again."))
+	{
+		std::cout << "parsing info for " << dir << "\n";
 
-	std::ifstream getit(dir + "info.dat", std::ios::in);
+		std::ifstream getit(dir + "info.dat", std::ios::in);
 
-	std::string name_;
-	std::string description_;
-	std::string version_;
+		std::string name_;
+		std::string description_;
+		std::string version_;
 
-	// line 1, the name
-	getline(getit, name_);
-	// line 2, description
-	getline(getit, description_);
-	// line 3, version
-	getline(getit, version_);
+		// line 1, the name
+		getline(getit, name_);
+		// line 2, description
+		getline(getit, description_);
+		// line 3, version
+		getline(getit, version_);
 
-	name_.erase(0, name_.find_first_of('"') + 1);
-	name_.erase(name_.find_last_of('"'), name_.length());
-	name.setString(name_);
+		name_.erase(0, name_.find_first_of('"') + 1);
+		name_.erase(name_.find_last_of('"'), name_.length());
+		name.setString(name_);
 
-	description_.erase(0, description_.find_first_of('"') + 1);
-	description_.erase(description_.find_last_of('"'), description_.length());
-	description.setString(description_);
+		description_.erase(0, description_.find_first_of('"') + 1);
+		description_.erase(description_.find_last_of('"'), description_.length());
+		description.setString(description_);
 
-	version_.erase(0, version_.find_first_of('"') + 1);
-	version_.erase(version_.find_last_of('"'), version_.length());
-	version.setString(version_);
+		version_.erase(0, version_.find_first_of('"') + 1);
+		version_.erase(version_.find_last_of('"'), version_.length());
+		version.setString(version_);
+	}
+	else
+	{
+		name.setString("Cox fucked the launcher again.");
+		description.setString("Cox thinks my webserver is a scam, so they blocked it. Try again later.");
+		version.setString("Fuck you, Cox Communications.");
+	}
 }
 
 int Item::downloadIcon()
