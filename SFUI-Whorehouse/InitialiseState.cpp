@@ -83,7 +83,11 @@ void InitialiseState::Cleanup()
 	}
 
 	sf::RenderWindow* newWindow = new sf::RenderWindow(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + GBL::VERSION, sf::Style::Resize | sf::Style::Close);
+	newWindow->setVerticalSyncEnabled(true);
+
 	app->window->close();
+	delete app->window;
+	app->window = nullptr;
 	app->window = newWindow;
 
 	std::cout << "IntialiseState Cleanedup" << "\n";

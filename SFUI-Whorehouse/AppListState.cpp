@@ -28,7 +28,7 @@ void AppListState::Init(AppEngine* app_)
 
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
-//	scrollbar.create();
+	//	scrollbar.create();
 	scrollbar.create(app->window);
 
 	tracker1.setSize(sf::Vector2f(5, 5));
@@ -42,7 +42,7 @@ void AppListState::Init(AppEngine* app_)
 	tracker1.setFillColor(sf::Color::Green);
 	tracker2.setFillColor(sf::Color::Blue);
 	tracker3.setFillColor(sf::Color::Red);
-	
+
 	helperThread = new std::thread(&AppListState::loadApps, this);
 	helperRunning = true;
 	std::cout << "thread launched" << "\n";
@@ -60,9 +60,9 @@ void AppListState::Cleanup()
 
 	items.clear();
 	links.clear();
-	
-//	delete app; // dont delete app because it's being used by the thing and we need it.
-//	app = nullptr;
+
+	//	delete app; // dont delete app because it's being used by the thing and we need it.
+	//	app = nullptr;
 
 	std::cout << "AppListState Cleanup" << "\n";
 }
@@ -117,9 +117,6 @@ void AppListState::HandleEvents(sf::Event& event)
 	{
 		if (event.mouseWheel.delta < 0) // down, or move items up
 		{
-//				if (scrollbar.canScrollDown())
-//					cardScroller->move(0, scrollbar.scrollJump);
-
 			scrollbar.moveThumbDown();
 
 			if (scrollerBottomPosition < scrollerMaxPosition)
@@ -142,9 +139,6 @@ void AppListState::HandleEvents(sf::Event& event)
 		}
 		else if (event.mouseWheel.delta > 0) // scroll up, or move items down
 		{
-//				if (scrollbar.canScrollUp())
-//					cardScroller->move(0, -scrollbar.scrollJump);
-
 			scrollbar.moveThumbUp();
 
 			if (scrollerTopPosition > scrollerMinPosition)
@@ -225,8 +219,8 @@ void AppListState::HandleEvents(sf::Event& event)
 					{
 						threads.push_back(std::thread(&Item::download, items[i]));
 
-//							std::thread *newThread = new std::thread(&Item::updateItem, items[i]);
-//							threads.push_back(newThread);
+						//							std::thread *newThread = new std::thread(&Item::updateItem, items[i]);
+						//							threads.push_back(newThread);
 
 						clicked = true;
 						break;
@@ -300,75 +294,6 @@ void AppListState::HandleEvents(sf::Event& event)
 			else
 			{
 				std::cout << "helper is running, not switching states" << "\n";
-			}
-		}
-
-		if (app->settings.experimentalThemes) // 8
-		{
-			std::cout << "loading theme settings" << std::endl;
-
-			SettingsParser settings;
-			if (settings.loadFromFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf"))
-				settings.get("defaultTheme", app->settings.theme);
-			std::cout << app->settings.theme << std::endl;
-
-			if (settings.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + app->settings.theme + ".sfuitheme"))
-			{
-				std::cout << "loaded theme \"" << app->settings.theme << "\"." << std::endl;
-
-				// globals
-				std::vector<int> colors;
-				settings.get("global_background", colors);
-				GBL::COLOR::BACKGROUND = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				/* scrollbar
-				std::cout << "scrollbar theme settings" << std::endl;
-
-				settings.get("scrollbar_scrollbar", colors);
-				GBL::COLOR::SCROLLBAR::SCROLLBAR = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				settings.get("scrollbar_scrollthumb", colors);
-				GBL::COLOR::SCROLLBAR::SCROLLTHUMB = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				settings.get("scrollbar_scrollthumb_hover", colors);
-				GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				settings.get("scrollbar_scrollthumb_hold", colors);
-				GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear(); */
-
-				// items
-				std::cout << "item theme settings" << std::endl;
-
-				settings.get("item_card", colors);
-				GBL::COLOR::ITEM::CARD = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				settings.get("item_icon", colors);
-				GBL::COLOR::ITEM::ICON = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				settings.get("item_redownload", colors);
-				GBL::COLOR::ITEM::REDOWLOAD = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				settings.get("item_update_is_available", colors);
-				GBL::COLOR::ITEM::UPDATE_IS_AVAILABLE = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				settings.get("item_download", colors);
-				GBL::COLOR::ITEM::DOWNLOAD = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-
-				std::cout << "done downloading themes" << std::endl;
-			}
-			else
-			{
-				std::cout << "failed to load settings file" << std::endl; // use default colours
 			}
 		}
 	}
@@ -470,15 +395,15 @@ void AppListState::loadApps() // TOOD: this.
 				if (items.empty())
 					newItem = new Item(line, app->window,
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
-					app->window->getSize().y,
-					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
-					(75 / 2) + 10);
+						app->window->getSize().y,
+						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
+						(75 / 2) + 10);
 				else
 					newItem = new Item(line, app->window,
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
-					app->window->getSize().y,
-					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
-					items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
+						app->window->getSize().y,
+						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
+						items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
 
 				items.push_back(newItem);
 				std::cout << "\n";
