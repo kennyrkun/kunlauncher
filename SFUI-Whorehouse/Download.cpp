@@ -71,6 +71,38 @@ std::string Download::getInputPath()
 	return inpath;
 }
 
+// TODO: make this function useable, by adding some sort of decryption thingy
+int Download::getFileSize()
+{
+	sf::Ftp ftp;
+
+	// Connect to the server
+	sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
+	if (response.isOk())
+		std::cout << "Connected" << std::endl;
+
+	// Log in
+	response = ftp.login("laurent", "dF6Zm89D");
+	if (response.isOk())
+		std::cout << "Logged in" << std::endl;
+
+	response = ftp.sendCommand("SIZE", inpath);
+	if (response.isOk())
+		std::cout << "File size: " << response.getMessage() << std::endl;
+
+	// Disconnect from the server (optional)
+	ftp.disconnect();
+
+	if (response.isOk())
+	{
+		return std::stoi(response.getMessage());
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 int Download::download()
 {
 	sf::Http http(GBL::DIR::WEB_HOSTNAME);
@@ -82,6 +114,13 @@ int Download::download()
 
 	fileBuffer = response.getBody();
 	fileSize = response.getBody().size();
+
+	if (fileBuffer.find("Your Friend in the Digital Age"))
+	{
+		std::cout << "COX FUCKED ME AGAIN" << std::endl;
+
+		fileBuffer = "Cox fucked the launcher again.";
+	}
 
 	if (!silent)
 	{

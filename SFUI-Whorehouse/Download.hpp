@@ -19,6 +19,7 @@ public:
 	void setInputPath(std::string path);
 	std::string getInputPath();
 
+	int getFileSize();
 	int download();
 	void save();
 
