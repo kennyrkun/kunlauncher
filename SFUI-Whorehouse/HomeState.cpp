@@ -33,6 +33,7 @@ void HomeState::Init(AppEngine* app_)
 	settingsState->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "settings_2x.png", true);
 	settingsState->setButtonColor(sf::Color(100, 100, 100));
 	settingsState->setPosition(sf::Vector2f(app->window->getView().getCenter().x - settingsState->shape.getLocalBounds().width / 2, app->window->getView().getCenter().y - settingsState->shape.getLocalBounds().height / 2));
+	settingsState->disable();
 	sections.push_back(settingsState);
 
 	SFUI::IconButton *powerButton = new SFUI::IconButton;
@@ -80,15 +81,12 @@ void HomeState::HandleEvents(sf::Event& event)
 		if (event.key.code == sf::Mouse::Button::Left)
 		{
 			//sections
-			for (size_t i = 0; i < sections.size(); i++)
-			{
-				if (mouseIsOver(sections[0]->shape))
-					app->ChangeState(AppListState::Instance());
-				else if (mouseIsOver(sections[1]->shape))
-					app->ChangeState(SettingsState::Instance());
-				else if (mouseIsOver(sections[2]->shape))
-					app->Quit();
-			}
+			if (mouseIsOver(sections[0]->shape) && sections[0]->enabled)
+				app->ChangeState(AppListState::Instance());
+			else if (mouseIsOver(sections[1]->shape) && sections[1]->enabled)
+				app->ChangeState(SettingsState::Instance());
+			else if (mouseIsOver(sections[2]->shape) && sections[2]->enabled)
+				app->Quit();
 		}
 	}
 }
