@@ -1,5 +1,5 @@
-#ifndef MODAL_HPP
-#define MODAL_HPP
+#ifndef MESSAGEBOX_HPP
+#define MESSAGEBOX_HPP
 
 #include <string>
 #include <vector>
@@ -42,4 +42,4 @@ private:
 	bool mouseIsOver(const sf::Shape &object);
 };
 
-#endif
+#endif // !MESSAGEBOX_HPP
