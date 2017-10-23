@@ -7,6 +7,8 @@
 #include <fstream>
 #include <cmath>
 
+namespace fs = std::experimental::filesystem;
+
 Download::Download(bool silent_)
 {
 	silent = silent_;
@@ -34,7 +36,7 @@ void Download::setOutputDir(std::string dir)
 	if (!silent)
 		std::cout << "output set to: " << outdir << "\n";
 
-	if (!std::experimental::filesystem::exists(outdir))
+	if (!fs::exists(outdir))
 		createDirectory(outdir);
 }
 
@@ -69,9 +71,41 @@ std::string Download::getInputPath()
 	return inpath;
 }
 
+// TODO: make this function useable, by adding some sort of decryption thingy
+int Download::getFileSize()
+{
+	sf::Ftp ftp;
+
+	// Connect to the server
+	sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
+	if (response.isOk())
+		std::cout << "Connected" << std::endl;
+
+	// Log in
+	response = ftp.login("laurent", "dF6Zm89D");
+	if (response.isOk())
+		std::cout << "Logged in" << std::endl;
+
+	response = ftp.sendCommand("SIZE", inpath);
+	if (response.isOk())
+		std::cout << "File size: " << response.getMessage() << std::endl;
+
+	// Disconnect from the server (optional)
+	ftp.disconnect();
+
+	if (response.isOk())
+	{
+		return std::stoi(response.getMessage());
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 int Download::download()
 {
-	sf::Http http(CONST::DIR::WEB_HOSTNAME);
+	sf::Http http(GBL::DIR::WEB_HOSTNAME);
 	sf::Http::Request request(inpath, sf::Http::Request::Get);
 
 	sf::Clock timer;
@@ -81,6 +115,13 @@ int Download::download()
 	fileBuffer = response.getBody();
 	fileSize = response.getBody().size();
 
+	if (fileBuffer.find("Your Friend in the Digital Age"))
+	{
+		std::cout << "COX FUCKED ME AGAIN" << std::endl;
+
+		fileBuffer = "Cox fucked the launcher again.";
+	}
+
 	if (!silent)
 	{
 		std::cout << "downloaded remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... " << "\n";
@@ -89,11 +130,11 @@ int Download::download()
 
 	htmlReturnCode = response.getStatus();
 
-	switch (response.getStatus())
+	switch (htmlReturnCode)
 	{
 	case sf::Http::Response::Ok:
 		if (!silent)
-			std::cout << "successfully connected to file server, and got files (200)" << "\n";
+			std::cout << "file server reports all is well (200)" << "\n";
 
 		return sf::Http::Response::Status::Ok;
 		break;
@@ -113,6 +154,9 @@ int Download::download()
 		break;
 
 	default:
+		if (!silent)
+			std::cout << "something fucking broke" << std::endl;
+
 		return sf::Http::Response::Status::ResetContent;
 		break;
 	}
@@ -140,7 +184,7 @@ void Download::save()
 	}
 	else
 	{
-		std::cout << "failed to open file for saving" << std::endl;
+		std::cout << "failed to open " << outdir + outfile << " for saving" << "\n";
 
 		return;
 	}
@@ -161,18 +205,18 @@ std::string Download::getAppropriateFileSize(const long long int bytes, const in
 
 void Download::createDirectory(std::string dir) // recursively
 {
-	std::vector<std::experimental::filesystem::path> subdirectories;
+	std::vector<fs::path> subdirectories;
 	dir.erase(0, 2); // .\\
 
-	for (auto& part : std::experimental::filesystem::path(dir))
+	for (auto& part : fs::path(dir))
 	{
 		subdirectories.push_back(part);
 	}
 
-	std::experimental::filesystem::path last = subdirectories.front(); // first path
+	fs::path last = subdirectories.front(); // first path
 	for (size_t i = 0; i < subdirectories.size() - 1; i++)
 	{
-		std::experimental::filesystem::create_directory(last);
+		fs::create_directory(last);
 		last = last.append(subdirectories[i + 1]); // add the next path to this path
 	}
 }

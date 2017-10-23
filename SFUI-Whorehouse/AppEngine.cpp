@@ -34,7 +34,6 @@ void AppEngine::Cleanup()
 
 void AppEngine::ChangeState(AppState* state)
 {
-	// cleanup the current state
 	if (!states.empty()) {
 		states.back()->Cleanup();
 		states.pop_back();

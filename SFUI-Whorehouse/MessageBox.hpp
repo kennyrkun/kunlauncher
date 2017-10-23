@@ -6,7 +6,7 @@
 
 #include <SFML\Graphics.hpp>
 
-namespace SFUI { class Button; }
+namespace SFUI { class TextButton; }
 
 struct MessageBoxOptions
 {
@@ -37,7 +37,7 @@ private:
 	sf::Font font;
 	sf::Text message;
 	std::string messageString;
-	std::vector<SFUI::Button*> buttons;
+	std::vector<SFUI::TextButton*> buttons;
 
 	bool mouseIsOver(const sf::Shape &object);
 };

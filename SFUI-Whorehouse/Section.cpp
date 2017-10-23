@@ -22,7 +22,7 @@ Section::Section(std::string text, std::string forwardSection, float xSize, floa
 	title.setFont(font);
 	title.setPosition(static_cast<int>((cardShape.getPosition().x - cardShape.getLocalBounds().width / 2) + 15), static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 
-	followSectionTexture.loadFromFile(".\\" + CONST::DIR::BASE + CONST::DIR::RESOURCE + CONST::DIR::TEXTURE + "input_1x.png");
+	followSectionTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "input_1x.png");
 	followSectionTexture.setSmooth(true);
 	followSectionButton.setTexture(&followSectionTexture);
 	followSectionButton.setSize(sf::Vector2f(24, 24));

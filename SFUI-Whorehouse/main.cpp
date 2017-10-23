@@ -1,5 +1,4 @@
 #include "AppEngine.hpp"
-//#include "AppListState.hpp"
 #include "InitialiseState.hpp"
 
 #include <iostream>
@@ -10,9 +9,16 @@ int main(int argc, char *argv[])
 
 	AppSettings settings;
 
+	/* TODO: don't get overriden by config
 	for (int i = 0; i < argc; i++)
 	{
 		std::cout << i << ": " << argv[i] << "\n";
+
+		if (std::string(argv[i]) == "-noverticalsync")
+		{
+			std::cout << "vertical sync disabled" << std::endl;
+			settings.verticalSync = false;
+		}
 
 		if (std::string(argv[i]) == "-nolauncherupdate")
 		{
@@ -23,7 +29,7 @@ int main(int argc, char *argv[])
 		if (std::string(argv[i]) == "-noindexupdate")
 		{
 			std::cout << "will not check for app updates" << "\n";
-			settings.updateItemsOnStart = false;
+			settings.checkForNewItemsOnStart = false;
 		}
 
 		if (std::string(argv[i]) == "-width")
@@ -38,6 +44,7 @@ int main(int argc, char *argv[])
 			settings.height = std::stoi(argv[i + 1]);
 		}
 	}
+	*/
 
 	std::cout << "\n";
 

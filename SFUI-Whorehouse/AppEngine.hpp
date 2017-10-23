@@ -7,22 +7,25 @@
 
 class AppState;
 
+//TODO: don't set these if they've been overriden via command line arugements
 struct AppSettings
 {
 #ifdef _DEBUG
-	bool updateItemsOnStart = false;
 	bool updateLauncherOnStart = false;
-	bool updateItemsDuringRun = false;
+	bool checkForNewItemsOnStart = false;
+	bool experimentalThemes = true;
 #else
-	bool updateItemsOnStart = true;
 	bool updateLauncherOnStart = true;
-	bool updateItemsDuringRun = true;
+	bool checkForNewItemsOnStart = true;
+	bool experimentalThemes = false;
 #endif
 	bool fullscreen = false;
 	bool verticalSync = true;
 
 	int width = 525;
-	int height = 400;
+	int height = 375;
+
+	std::string theme = "dark";
 };
 
 class AppEngine

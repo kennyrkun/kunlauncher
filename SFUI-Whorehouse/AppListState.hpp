@@ -1,9 +1,10 @@
 #ifndef APPLIST_STATE_HPP
 #define APPLIST_STATE_HPP
 
-#include <SFML\Graphics.hpp>
 #include "AppState.hpp"
-#include "Scrollbar.hpp"
+
+#include <SFML\Graphics.hpp>
+#include <SFUI\Scrollbar.hpp>
 
 #include <thread>
 #include <vector>
@@ -38,7 +39,7 @@ private:
 
 	sf::View *mainView;
 	sf::View *cardScroller;
-	Scrollbar scrollbar;
+	SFUI::Scrollbar scrollbar;
 
 	sf::RectangleShape tracker1;
 	sf::RectangleShape tracker2;

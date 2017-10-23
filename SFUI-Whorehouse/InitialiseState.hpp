@@ -1,15 +1,15 @@
 #ifndef INITALISE_STATE_HPP
 #define INITALISE_STATE_HPP
 
-#include <SFML\Graphics.hpp>
 #include "AppState.hpp"
-#include "Scrollbar.hpp"
+
+#include <SFML\Graphics.hpp>
+#include <SFUI\Scrollbar.hpp>
 
 #include <thread>
 
+class LauncherUpdater;
 class ProgressBar;
-class Link;
-class Item;
 
 class InitialiseState : public AppState
 {
@@ -35,24 +35,26 @@ protected:
 private:
 	static InitialiseState IntialiseState_dontfuckwithme;
 	AppEngine* app;
+	// FIXME: shouldn't need to be a pointer
+	LauncherUpdater *updater;
 
 	std::thread *helperThread;
 	bool helperRunning = false;
 	bool helperDone = false;
 
+	bool updatIsAvailable = false;
 	bool isReady = false;
 	bool restartNow = false;
 
 	void initialisise();
-	bool checkForLauncherUpdates();
-	bool launcherUpdateAvailabe = false;
-	std::string updateLauncher();
 
 	int validateFileStructure();
 	int updateFileStructure();
 
+	int getThemeConfiguration();
+
 	int validateResourceFiles();
-	int updateResourceFiles();
+	int getResourceFiles();
 
 	sf::Font font;
 	sf::Text initialiseText;

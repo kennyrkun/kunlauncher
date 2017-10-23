@@ -19,6 +19,7 @@ public:
 	void setInputPath(std::string path);
 	std::string getInputPath();
 
+	int getFileSize();
 	int download();
 	void save();
 
@@ -30,7 +31,7 @@ public:
 
 private:
 	std::string outdir = ".\\";
-	std::string outfile = "file.file";
+	std::string outfile = "";
 	std::string inpath = "./";
 
 	bool silent = false;

@@ -2,7 +2,7 @@
 #define ITEM_HPP
 
 #include <SFML\Graphics.hpp>
-#include "SFUI\Button.hpp"
+#include "SFUI\TextButton.hpp"
 
 class Item
 {
