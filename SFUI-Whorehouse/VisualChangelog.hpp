@@ -20,15 +20,19 @@ struct MessageBoxOptions
 class VisualChangeLog
 {
 public:
-	VisualChangeLog(MessageBoxOptions settings_);
+	VisualChangeLog();
 	~VisualChangeLog();
 
-	void runBlocking();
+	void run();
 
-	void close();
-	int returnCode;
+	int returnCode = 0;
+	bool done = false;
 
 private:
+	void HandleEvents();
+	void Update();
+	void Draw();
+
 	MessageBoxOptions settings;
 	sf::RenderWindow window;
 

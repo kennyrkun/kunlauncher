@@ -259,7 +259,7 @@ void InitialiseState::initialisise()
 		{
 			progressBar->oneThingDone(); // check for update
 
-			MessageBoxOptions modOptions;
+			MessageBox::Options modOptions;
 
 			//TODO: add erorr handling
 			modOptions.title = "Update Available";
@@ -285,7 +285,7 @@ void InitialiseState::initialisise()
 				updater->replaceOldExecutable();
 				progressBar->oneThingDone(); // replace exe
 
-				MessageBoxOptions modOptions;
+				MessageBox::Options modOptions;
 				modOptions.text = "Launcher updated";
 
 				modOptions.text = "Launcher updated to v" + updater->remoteVersion + "! Restart it!";

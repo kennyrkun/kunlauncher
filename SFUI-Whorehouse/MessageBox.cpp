@@ -7,7 +7,7 @@
 
 // public:
 
-MessageBox::MessageBox(MessageBoxOptions settings_)
+MessageBox::MessageBox(Options settings_)
 {
 	settings = settings_;
 

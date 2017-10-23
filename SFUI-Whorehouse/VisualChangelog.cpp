@@ -7,10 +7,9 @@
 
 // public:
 
-VisualChangeLog::VisualChangeLog(MessageBoxOptions settings_)
+/*
+VisualChangeLog::VisualChangeLog()
 {
-	settings = settings_;
-
 	if (font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
 	{
 		message.setFont(font);
@@ -174,3 +173,4 @@ bool VisualChangeLog::mouseIsOver(const sf::Shape &object)
 	else
 		return false;
 }
+*/

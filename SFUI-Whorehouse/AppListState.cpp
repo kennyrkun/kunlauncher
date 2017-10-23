@@ -173,7 +173,7 @@ void AppListState::HandleEvents(sf::Event& event)
 				{
 					if (mouseIsOver(items[i]->removeButton))
 					{
-						MessageBoxOptions modOptions;
+						MessageBox::Options modOptions;
 						modOptions.title = "Confirm Deletion";
 						modOptions.text = "Delete \"" + items[i]->itemName + "\"?";
 						std::vector<std::string> modaloptions;

@@ -8,19 +8,20 @@
 
 namespace SFUI { class TextButton; }
 
-struct MessageBoxOptions
-{
-	std::string title;
-	std::string text;
-	std::vector<std::string> settings;
-	int width = 300;
-	int height = 75;
-};
-
 class MessageBox
 {
 public:
-	MessageBox(MessageBoxOptions settings_);
+	struct Options
+	{
+		std::string title;
+		std::string text;
+		std::vector<std::string> settings;
+		int width = 300;
+		int height = 75;
+	};
+
+public:
+	MessageBox(Options settings_);
 	~MessageBox();
 
 	void runBlocking();
@@ -29,7 +30,7 @@ public:
 	int returnCode;
 
 private:
-	MessageBoxOptions settings;
+	Options settings;
 	sf::RenderWindow window;
 
 	std::string title;
