@@ -259,10 +259,14 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Custom
 /SFUI-Whorehouse/old launcher class.txt
 /upload
 /notes.txt
-/SFUI-Whorehouse/resources
+/SFUI-Whorehouse/bin
 /SFUI-Whorehouse/latest_launcher.exe
 /SFUI-Whorehouse/kunlauncher.exe
 /SFUI-Whorehouse/kunlaucher.exe.old
+SFUI
+SFML
