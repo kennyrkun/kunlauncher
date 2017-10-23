@@ -170,6 +170,22 @@ void InitialiseState::initialisise()
 {
 	validateFileStructure();
 
+	progressBar->addThingToDo();
+	{
+		std::cout << "loading config" << std::endl;
+		SettingsParser settings;
+		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf"))
+		{
+			settings.get("window_width", app->settings.width);
+			settings.get("window_height", app->settings.height);
+			settings.get("updatelauncheronstart", app->settings.updateLauncherOnStart);
+			settings.get("checkforitemsonstart", app->settings.checkForNewItemsOnStart);
+			settings.get("experimentalThemes", app->settings.experimentalThemes);
+			settings.get("defaultTheme", app->settings.theme);
+		}
+	}
+	progressBar->oneThingDone(); // 3
+
 	/*
 	if (!fs::exists(".\\" + CONST::DIR::BASE))
 	{
@@ -328,7 +344,7 @@ int InitialiseState::validateFileStructure()
 {
 	setTaskText("validating files");
 
-	progressBar->addThingsToDo(7); // bin, config, apps, app index, resources
+	progressBar->addThingsToDo(6); // bin, config, apps, app index, resources
 
 	std::cout << "checking for bin" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE)) // 1
@@ -364,26 +380,6 @@ int InitialiseState::validateFileStructure()
 	}
 	progressBar->oneThingDone(); // 2
 
-	std::cout << "loading config" << std::endl;
-	if (fs::exists(".\\" + GBL::DIR::BASE + "kunlauncher.conf")) // 3
-	{
-		SettingsParser settings;
-		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf"))
-		{
-			settings.get("window_width", app->settings.width);
-			settings.get("window_height", app->settings.height);
-			settings.get("updatelauncheronstart", app->settings.updateLauncherOnStart);
-			settings.get("checkforitemsonstart", app->settings.checkForNewItemsOnStart);
-			settings.get("experimentalThemes", app->settings.experimentalThemes);
-			settings.get("defaultTheme", app->settings.theme);
-		}
-	}
-	else
-	{
-		std::cout << "settings file does not exist; something is very wrong." << std::endl;
-	}
-	progressBar->oneThingDone(); // 3
-
 	std::cout << "checking for third party notices" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + "thirdpartynotices.txt")) // 4
 	{
@@ -414,7 +410,7 @@ int InitialiseState::validateFileStructure()
 			break;
 		}
 	}
-	progressBar->oneThingDone(); // 4
+	progressBar->oneThingDone(); // 3
 
 	std::cout << "checking for apps" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::APPS)) // 5
@@ -428,7 +424,7 @@ int InitialiseState::validateFileStructure()
 
 		progressBar->oneThingDone();
 	}
-	progressBar->oneThingDone(); // 5
+	progressBar->oneThingDone(); // 4
 
 	std::cout << "checking for apps+index" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat")) // 6
@@ -445,7 +441,7 @@ int InitialiseState::validateFileStructure()
 
 		progressBar->oneThingDone();
 	}
-	progressBar->oneThingDone(); // 6
+	progressBar->oneThingDone(); // 5
 
 	std::cout << "checking for resources" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE)) // 7
@@ -464,7 +460,7 @@ int InitialiseState::validateFileStructure()
 		if (!validateResourceFiles())
 			getResourceFiles();
 	}
-	progressBar->oneThingDone(); // 7
+	progressBar->oneThingDone(); // 6
 
 	return 0;
 }
@@ -643,6 +639,34 @@ int InitialiseState::getThemeConfiguration()
 
 int InitialiseState::validateResourceFiles()
 {
+	setTaskText("validating resource files");
+
+	progressBar->addThingToDo();
+
+	if (fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "textures.dat"))
+	{
+		SettingsParser getTextures;
+		std::vector<std::string> textures;
+		getTextures.get("textures", textures);
+		progressBar->addThingsToDo(textures.size());
+
+		for (size_t i = 0; i < textures.size(); i++)
+		{
+			if (fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::TEXTURE + textures[i]))
+			{
+				std::cout << textures[i] << " exsits." << std::endl;
+			}
+
+			progressBar->oneThingDone();
+		}
+	}
+	else
+	{
+		std::cout << (".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "textures.dat") << " does not exist" << std::endl; 
+	}
+
+	progressBar->oneThingDone();
+
 	// retrieve resource list
 	// load it into a string
 
