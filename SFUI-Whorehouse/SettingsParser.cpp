@@ -63,7 +63,7 @@ bool SettingsParser::read()
 	std::ifstream in(m_filename);
 	if (!in.is_open())
 	{
-		std::cerr << "unable to open settings file \"" << m_filename << "\" for reading!" << std::endl;
+		std::cerr << "unable to open settings file \"" << m_filename << "\" for reading!" << "\n";
 		return false;
 	}
 
@@ -133,7 +133,7 @@ bool SettingsParser::write() const
 	std::ofstream out(m_filename);
 	if (!out.is_open())
 	{
-		std::cerr << "unable to open settings file \"" << m_filename << "\" for writing!" << std::endl;
+		std::cerr << "unable to open settings file \"" << m_filename << "\" for writing!" << "\n";
 		return false;
 	}
 	for (auto it = fileContents.begin(); it != fileContents.end(); ++it)
@@ -144,7 +144,7 @@ bool SettingsParser::write() const
 			// if this line is not empty or a comment also write the assignment and the value
 			out << " = " << it->second;
 
-		out << std::endl;
+		out << "\n";
 	}
 	out.close();
 	return true;
@@ -189,9 +189,9 @@ std::pair<std::string, std::string> SettingsParser::parseLine(const std::string 
 void SettingsParser::print() const
 {
 	for (auto& element : m_data)
-		std::cout << element.first << " = " << element.second << std::endl;
+		std::cout << element.first << " = " << element.second << "\n";
 
-	std::cout << std::endl << "Size: " << m_data.size() << std::endl;
+	std::cout << std::endl << "Size: " << m_data.size() << "\n";
 }
 
 

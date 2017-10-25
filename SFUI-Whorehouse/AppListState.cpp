@@ -358,14 +358,14 @@ void AppListState::loadApps() // TOOD: this.
 
 	if (line.find("Dear Valued Cox Customer") == 0)
 	{
-		std::cout << "cox fucked the launcher" << std::endl;
-		std::cout << line << std::endl;
+		std::cout << "cox fucked the launcher" << "\n";
+		std::cout << line << "\n";
 
 		abort();
 	}
 	else
 	{
-		std::cout << "cox did not fuck the launcher" << std::endl;
+		std::cout << "cox did not fuck the launcher" << "\n";
 		line = "";
 	}
 

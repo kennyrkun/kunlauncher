@@ -17,15 +17,15 @@ ProgressBar::ProgressBar(sf::Vector2f position, float width, float height)
 
 void ProgressBar::addThingToDo()
 {
-	std::cout << "Mr. ProgressBar: Added one more task." << std::endl;
+	std::cout << "Mr. ProgressBar: Added one more task." << "\n";
 
 	thingsToDo += 1;
 	setValue(thingsDone, thingsToDo);
 }
 
-void ProgressBar::addThingsToDo(int things)
+void ProgressBar::addThingsToDo(signed int things)
 {
-	std::cout << "Mr. Progressbar: Added " << things << " more tasks" << std::endl;
+	std::cout << "Mr. Progressbar: Added " << things << " more tasks" << "\n";
 
 	thingsToDo += things;
 	setValue(thingsDone, thingsToDo);

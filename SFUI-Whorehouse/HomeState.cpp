@@ -42,7 +42,7 @@ void HomeState::Init(AppEngine* app_)
 	powerButton->setPosition(sf::Vector2f(app->window->getView().getCenter().x + powerButton->shape.getLocalBounds().width / 2 + 48, app->window->getView().getCenter().y - powerButton->shape.getLocalBounds().height / 2));
 	sections.push_back(powerButton);
 
-	std::cout << "loaded " << sections.size() << " sections" << std::endl;
+	std::cout << "loaded " << sections.size() << " sections" << "\n";
 }
 
 void HomeState::Cleanup()

@@ -79,16 +79,16 @@ int Download::getFileSize()
 	// Connect to the server
 	sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
 	if (response.isOk())
-		std::cout << "Connected" << std::endl;
+		std::cout << "Connected" << "\n";
 
 	// Log in
 	response = ftp.login("laurent", "dF6Zm89D");
 	if (response.isOk())
-		std::cout << "Logged in" << std::endl;
+		std::cout << "Logged in" << "\n";
 
 	response = ftp.sendCommand("SIZE", inpath);
 	if (response.isOk())
-		std::cout << "File size: " << response.getMessage() << std::endl;
+		std::cout << "File size: " << response.getMessage() << "\n";
 
 	// Disconnect from the server (optional)
 	ftp.disconnect();
@@ -117,7 +117,7 @@ int Download::download()
 
 	if (fileBuffer.find("Your Friend in the Digital Age"))
 	{
-		std::cout << "COX FUCKED ME AGAIN" << std::endl;
+		std::cout << "COX FUCKED ME AGAIN" << "\n";
 
 		fileBuffer = "Cox fucked the launcher again.";
 	}
@@ -155,7 +155,7 @@ int Download::download()
 
 	default:
 		if (!silent)
-			std::cout << "something fucking broke" << std::endl;
+			std::cout << "something fucking broke" << "\n";
 
 		return sf::Http::Response::Status::ResetContent;
 		break;

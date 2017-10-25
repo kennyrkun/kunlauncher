@@ -75,19 +75,19 @@ int LauncherUpdater::replaceOldExecutable()
 
 int LauncherUpdater::removeOldExecutable()
 {
-	std::cout << "removing old executable" << std::endl;
+	std::cout << "removing old executable" << "\n";
 
 	if (fs::exists("kunlauncher.exe.old"))
 	{
 		try
 		{
 			fs::remove("kunlauncher.exe.old");
-			std::cout << "removed old executable" << std::endl;
+			std::cout << "removed old executable" << "\n";
 			return Status::Success;
 		}
 		catch (const std::exception& e)
 		{
-			std::cout << "could not remvoe old executable:" << std::endl;
+			std::cout << "could not remvoe old executable:" << "\n";
 			std::cout << e.what() << "\n";
 
 			return Status::FailGeneric;
@@ -99,7 +99,7 @@ int LauncherUpdater::removeOldExecutable()
 
 int LauncherUpdater::createUpdateFile()
 {
-	std::cout << "creating update file" << std::endl;
+	std::cout << "creating update file" << "\n";
 
 	std::ofstream writeUpdateFile(GBL::DIR::BASE + "up.date", std::ios::binary);
 
@@ -118,24 +118,24 @@ int LauncherUpdater::readUpdateFile()
 {
 	if (fs::exists(GBL::DIR::BASE + GBL::DIR::CONFIG + "up.date"))
 	{
-		std::cout << "reading update file" << std::endl;
+		std::cout << "reading update file" << "\n";
 
 		std::string fileBuffer, temp, oldVersion, newVersion, updateFinished;
 
 		std::ifstream getUpdateFile(GBL::DIR::BASE + "up.date", std::ios::binary);
 		getUpdateFile >> fileBuffer;
 
-		std::cout << "filebuffer--------" << "\n" << fileBuffer << std::endl;
+		std::cout << "filebuffer--------" << "\n" << fileBuffer << "\n";
 
 		temp.erase(0, temp.find('"') + 1); // OlderVersion="
 		temp.erase(temp.find('"'), temp.back());
 		oldVersion = temp;
-		std::cout << "oldVersion: " << oldVersion << std::endl;
+		std::cout << "oldVersion: " << oldVersion << "\n";
 
 		fileBuffer.erase(0, temp.find("\n")); // delete first line
 		temp = fileBuffer;
 
-		std::cout << "------------------" << "\n" << fileBuffer << std::endl;
+		std::cout << "------------------" << "\n" << fileBuffer << "\n";
 	}
 	else
 	{

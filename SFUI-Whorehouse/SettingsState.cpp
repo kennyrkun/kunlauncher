@@ -43,7 +43,7 @@ void SettingsState::Cleanup()
 
 void SettingsState::Pause()
 {
-	std::cout << "SettingsState Pause" << std::endl;
+	std::cout << "SettingsState Pause" << "\n";
 }
 
 void SettingsState::Resume()

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 		if (std::string(argv[i]) == "-noverticalsync")
 		{
-			std::cout << "vertical sync disabled" << std::endl;
+			std::cout << "vertical sync disabled" << "\n";
 			settings.verticalSync = false;
 		}
 
