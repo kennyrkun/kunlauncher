@@ -348,13 +348,13 @@ void AppListState::loadApps() // TOOD: this.
 	items.clear();
 	links.clear();
 	updateScrollThumbSize();
+	std::cout << std::endl; // for a line break
 
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
-	std::cout << std::endl;
 
 	std::ifstream readIndex(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
-	readIndex >> line;
+	std::getline(readIndex, line);
 
 	if (line.find("Dear Valued Cox Customer") == 0)
 	{
@@ -366,7 +366,10 @@ void AppListState::loadApps() // TOOD: this.
 	else
 	{
 		std::cout << "cox did not fuck the launcher" << std::endl;
-		line = "";
+
+		readIndex.clear();
+		readIndex.seekg(0, std::ios::beg);
+		line.clear();
 	}
 
 	int loopi(0);
@@ -409,16 +412,16 @@ void AppListState::loadApps() // TOOD: this.
 
 				if (items.empty())
 					newItem = new Item(line, app->window,
-					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
-						app->window->getSize().y,
-						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
-						(75 / 2) + 10);
+					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16), 
+					app->window->getSize().y, // I'm not sure what this is for?????
+					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // mid-window, excluding scrollbar size
+					(75 / 2) + 10);
 				else
 					newItem = new Item(line, app->window,
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
-						app->window->getSize().y,
-						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
-						items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
+					app->window->getSize().y, // I'm not sure what this is for?????
+					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // the middle of the window (exluding the size of the scrollbar)
+					items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
 
 				items.push_back(newItem);
 				std::cout << std::endl;
@@ -482,7 +485,7 @@ void AppListState::loadApps() // TOOD: this.
 		}
 		else
 		{
-			std::cout << "String is malformed! Skipping!" << std::endl;
+			std::cout << "String is malformed! Skipping! (" << line << ")\n" << std::endl;
 			loopi += 1;
 			continue;
 		}

@@ -309,7 +309,7 @@ int InitialiseState::validateFileStructure()
 {
 	setTaskText("validating files");
 
-	progressBar->addThingsToDo(6); // bin, config, apps, app index, resources
+	progressBar->addThingsToDo(5); // bin, config, apps, app index, resources
 
 	std::cout << "checking for bin" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE)) // 1
@@ -407,25 +407,6 @@ int InitialiseState::validateFileStructure()
 		progressBar->oneThingDone();
 	}
 	progressBar->oneThingDone(); // 5
-
-	std::cout << "checking for resources" << std::endl;
-	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE)) // 7
-	{
-		progressBar->addThingsToDo(2);
-		std::cout << "resources missing, creating" << std::endl;
-
-		fs::create_directory(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE);
-		progressBar->oneThingDone();
-
-		getResourceFiles();
-		progressBar->oneThingDone();
-	}
-	else
-	{
-		if (!validateResourceFiles())
-			getResourceFiles();
-	}
-	progressBar->oneThingDone(); // 6
 
 	return 0;
 }
