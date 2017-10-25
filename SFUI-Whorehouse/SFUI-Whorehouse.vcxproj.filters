@@ -46,9 +46,6 @@
     <ClCompile Include="AppEngine.cpp">
       <Filter>Source Files\Backend\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Launcher.cpp">
-      <Filter>Source Files\Launcher</Filter>
-    </ClCompile>
     <ClCompile Include="Link.cpp">
       <Filter>Source Files\Launcher\States\AppList</Filter>
     </ClCompile>
@@ -104,9 +101,6 @@
     </ClInclude>
     <ClInclude Include="AppState.hpp">
       <Filter>Source Files\Backend\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Launcher.hpp">
-      <Filter>Source Files\Launcher</Filter>
     </ClInclude>
     <ClInclude Include="Link.hpp">
       <Filter>Source Files\Launcher\States\AppList</Filter>
