@@ -602,74 +602,16 @@ int InitialiseState::getThemeConfiguration()
 	return 0;
 }
 
-int InitialiseState::validateResourceFiles()
-{
-	setTaskText("validating resource files");
-
-	progressBar->addThingToDo();
-
-	if (fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "textures.dat"))
-	{
-		SettingsParser getTextures;
-		std::vector<std::string> textures;
-		getTextures.get("textures", textures);
-		progressBar->addThingsToDo(textures.size());
-
-		for (size_t i = 0; i < textures.size(); i++)
-		{
-			if (fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::TEXTURE + textures[i]))
-			{
-				std::cout << textures[i] << " exsits." << std::endl;
-			}
-
-			progressBar->oneThingDone();
-		}
-	}
-	else
-	{
-		std::cout << (".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "textures.dat") << " does not exist" << std::endl; 
-	}
-
-	progressBar->oneThingDone();
-
-	// retrieve resource list
-	// load it into a string
-
-	// find keyword
-		// find open bracket
-			// parse the things inside there
-				// from first " to last " (or maybe ;?)
-					// load the filename into a vector
-	// find closing bracket
-
-	// go through vectors and make sure we have the files
-		// if not download them
-
-	return 0;
-}
-
-int InitialiseState::getResourceFiles()
-{
-	// retrieve resource list
-	// load it into a string
-
-	// find keyword
-		// find open bracket
-			// parse the things inside there
-				// from first " to last " (or maybe ;?)
-					// load the filename into a vector
-		// find closing bracket
-
-	// go through vectors and make sure we have the files
-		// if not download them
-
-	return 0;
-}
-
 void InitialiseState::setTaskText(std::string text)
 {
 	std::cout << "TASK: " << text << std::endl;
 	currentLauncherTask.setString(text);
+
+	if (currentLauncherTask.getLocalBounds().width > app->window->getSize().x)
+	{
+		std::cout << "that's some long text right there!" << std::endl;
+	}
+
 	currentLauncherTask.setOrigin(currentLauncherTask.getLocalBounds().width / 2, currentLauncherTask.getLocalBounds().height - 20);
 	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(initialiseText.getPosition().y + 50)));
 }

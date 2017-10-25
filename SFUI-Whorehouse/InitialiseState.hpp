@@ -53,9 +53,6 @@ private:
 
 	int getThemeConfiguration();
 
-	int validateResourceFiles();
-	int getResourceFiles();
-
 	sf::Font font;
 	sf::Text initialiseText;
 	sf::RectangleShape thingthatdoesntripoffvisualstudio;
