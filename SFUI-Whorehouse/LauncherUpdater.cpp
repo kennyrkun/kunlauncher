@@ -27,17 +27,17 @@ std::string LauncherUpdater::getLocalVersion()
 
 int LauncherUpdater::checkForUpdates()
 {
-	std::cout << "r" << getRemoteVersion() << " : " << "l" << getLocalVersion() << "\n";
+	std::cout << "r" << getRemoteVersion() << " : " << "l" << getLocalVersion() << std::endl;
 
 	if (getRemoteVersion() != getLocalVersion())
 	{
-		std::cout << "launcher is out of date" << "\n";
+		std::cout << "launcher is out of date" << std::endl;
 		//		return true;
 		return Status::UpdateAvailable;
 	}
 	else
 	{
-		std::cout << "launcher is up to date" << "\n";
+		std::cout << "launcher is up to date" << std::endl;
 		return Status::NoUpdateAvailable;
 	}
 }
@@ -65,7 +65,7 @@ int LauncherUpdater::replaceOldExecutable()
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what() << "\n";
+		std::cout << e.what() << std::endl;
 		abort();
 
 		// TODO: handle this better;
@@ -75,20 +75,20 @@ int LauncherUpdater::replaceOldExecutable()
 
 int LauncherUpdater::removeOldExecutable()
 {
-	std::cout << "removing old executable" << "\n";
+	std::cout << "removing old executable" << std::endl;
 
 	if (fs::exists("kunlauncher.exe.old"))
 	{
 		try
 		{
 			fs::remove("kunlauncher.exe.old");
-			std::cout << "removed old executable" << "\n";
+			std::cout << "removed old executable" << std::endl;
 			return Status::Success;
 		}
 		catch (const std::exception& e)
 		{
-			std::cout << "could not remvoe old executable:" << "\n";
-			std::cout << e.what() << "\n";
+			std::cout << "could not remvoe old executable:" << std::endl;
+			std::cout << e.what() << std::endl;
 
 			return Status::FailGeneric;
 		}
@@ -99,14 +99,14 @@ int LauncherUpdater::removeOldExecutable()
 
 int LauncherUpdater::createUpdateFile()
 {
-	std::cout << "creating update file" << "\n";
+	std::cout << "creating update file" << std::endl;
 
 	std::ofstream writeUpdateFile(GBL::DIR::BASE + "up.date", std::ios::binary);
 
 	if (writeUpdateFile.is_open())
 	{
-		writeUpdateFile << "OldVersion=\"" << localVersion << "\"" << "\n";
-		writeUpdateFile << "NewVersion=\"" << remoteVersion << "\"" << "\n";
+		writeUpdateFile << "OldVersion=\"" << localVersion << "\"" << std::endl;
+		writeUpdateFile << "NewVersion=\"" << remoteVersion << "\"" << std::endl;
 
 		writeUpdateFile.close();
 
@@ -118,24 +118,24 @@ int LauncherUpdater::readUpdateFile()
 {
 	if (fs::exists(GBL::DIR::BASE + GBL::DIR::CONFIG + "up.date"))
 	{
-		std::cout << "reading update file" << "\n";
+		std::cout << "reading update file" << std::endl;
 
 		std::string fileBuffer, temp, oldVersion, newVersion, updateFinished;
 
 		std::ifstream getUpdateFile(GBL::DIR::BASE + "up.date", std::ios::binary);
 		getUpdateFile >> fileBuffer;
 
-		std::cout << "filebuffer--------" << "\n" << fileBuffer << "\n";
+		std::cout << "filebuffer--------" << "\n" << fileBuffer << std::endl;
 
 		temp.erase(0, temp.find('"') + 1); // OlderVersion="
 		temp.erase(temp.find('"'), temp.back());
 		oldVersion = temp;
-		std::cout << "oldVersion: " << oldVersion << "\n";
+		std::cout << "oldVersion: " << oldVersion << std::endl;
 
 		fileBuffer.erase(0, temp.find("\n")); // delete first line
 		temp = fileBuffer;
 
-		std::cout << "------------------" << "\n" << fileBuffer << "\n";
+		std::cout << "------------------" << "\n" << fileBuffer << std::endl;
 	}
 	else
 	{

@@ -17,7 +17,7 @@ ProgressBar::ProgressBar(sf::Vector2f position, float width, float height)
 
 void ProgressBar::addThingToDo()
 {
-	std::cout << "Mr. ProgressBar: Added one more task." << "\n";
+	std::cout << "Mr. ProgressBar: Added one more task." << std::endl;
 
 	thingsToDo += 1;
 	setValue(thingsDone, thingsToDo);
@@ -25,7 +25,7 @@ void ProgressBar::addThingToDo()
 
 void ProgressBar::addThingsToDo(signed int things)
 {
-	std::cout << "Mr. Progressbar: Added " << things << " more tasks" << "\n";
+	std::cout << "Mr. Progressbar: Added " << things << " more tasks" << std::endl;
 
 	thingsToDo += things;
 	setValue(thingsDone, thingsToDo);
@@ -58,7 +58,7 @@ void ProgressBar::setValue(int thingsDone_)
 	bar[1].position.x = percentDone * 4;
 	bar[2].position.x = percentDone * 4;
 
-	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << "\n";
+	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << std::endl;
 }
 
 void ProgressBar::setValue(int thingsDone_, int thingsToDo_)
@@ -70,7 +70,7 @@ void ProgressBar::setValue(int thingsDone_, int thingsToDo_)
 	bar[1].position.x = percentDone * 4;
 	bar[2].position.x = percentDone * 4;
 	
-	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << "\n";
+	std::cout << "Mr. ProgressBar: " << percentDone << "% (" << thingsDone << "/" << thingsToDo << ")" << std::endl;
 }
 
 float ProgressBar::getValue() const

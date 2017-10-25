@@ -22,7 +22,7 @@ namespace fs = std::experimental::filesystem;
 
 void AppListState::Init(AppEngine* app_)
 {
-	std::cout << "AppListState Init" << "\n";
+	std::cout << "AppListState Init" << std::endl;
 
 	app = app_;
 
@@ -45,7 +45,7 @@ void AppListState::Init(AppEngine* app_)
 
 	helperThread = new std::thread(&AppListState::loadApps, this);
 	helperRunning = true;
-	std::cout << "thread launched" << "\n";
+	std::cout << "thread launched" << std::endl;
 }
 
 void AppListState::Cleanup()
@@ -54,7 +54,7 @@ void AppListState::Cleanup()
 
 	if (helperRunning)
 	{
-		std::cout << "waiting on helper thread to finish" << "\n";
+		std::cout << "waiting on helper thread to finish" << std::endl;
 		helperThread->join();
 	}
 
@@ -64,17 +64,17 @@ void AppListState::Cleanup()
 	//	delete app; // dont delete app because it's being used by the thing and we need it.
 	//	app = nullptr;
 
-	std::cout << "AppListState Cleanup" << "\n";
+	std::cout << "AppListState Cleanup" << std::endl;
 }
 
 void AppListState::Pause()
 {
-	std::cout << "AppListState Pause" << "\n";
+	std::cout << "AppListState Pause" << std::endl;
 }
 
 void AppListState::Resume()
 {
-	std::cout << "AppListState Resume" << "\n";
+	std::cout << "AppListState Resume" << std::endl;
 }
 
 void AppListState::HandleEvents(sf::Event& event)
@@ -85,8 +85,8 @@ void AppListState::HandleEvents(sf::Event& event)
 	}
 	else if (event.type == sf::Event::EventType::Resized)
 	{
-		std::cout << "new width: " << event.size.width << "\n";
-		std::cout << "new height: " << event.size.height << "\n";
+		std::cout << "new width: " << event.size.width << std::endl;
+		std::cout << "new height: " << event.size.height << std::endl;
 
 		sf::Vector2u newSize(event.size.width, event.size.height);
 
@@ -127,14 +127,14 @@ void AppListState::HandleEvents(sf::Event& event)
 
 				if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
 				{
-					std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << "\n";
+					std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
 					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
 					updateScrollLimits();
 				}
 			}
 			else
 			{
-				std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << "\n";
+				std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
 			}
 		}
 		else if (event.mouseWheel.delta > 0) // scroll up, or move items down
@@ -149,14 +149,14 @@ void AppListState::HandleEvents(sf::Event& event)
 
 				if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
 				{
-					std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << "\n";
+					std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
 					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
 					updateScrollLimits();
 				}
 			}
 			else
 			{
-				std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << "\n";
+				std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
 			}
 		}
 	}
@@ -186,11 +186,11 @@ void AppListState::HandleEvents(sf::Event& event)
 
 						if (confirmDelete.returnCode == 0)
 						{
-							std::cout << "answer no" << "\n";
+							std::cout << "answer no" << std::endl;
 						}
 						else if (confirmDelete.returnCode == 1)
 						{
-							std::cout << "answer yes" << "\n";
+							std::cout << "answer yes" << std::endl;
 
 							threads.push_back(std::thread(&Item::deleteFiles, items[i]));
 
@@ -269,7 +269,7 @@ void AppListState::HandleEvents(sf::Event& event)
 					getItemIndex.save();
 				}
 
-				std::cout << "refreshing applist" << "\n";
+				std::cout << "refreshing applist" << std::endl;
 
 				links.clear();
 				items.clear();
@@ -282,7 +282,7 @@ void AppListState::HandleEvents(sf::Event& event)
 			}
 			else
 			{
-				std::cout << "helper is running, not reloading." << "\n";
+				std::cout << "helper is running, not reloading." << std::endl;
 			}
 		}
 		else if (event.key.code == sf::Keyboard::Key::Escape)
@@ -293,7 +293,7 @@ void AppListState::HandleEvents(sf::Event& event)
 			}
 			else
 			{
-				std::cout << "helper is running, not switching states" << "\n";
+				std::cout << "helper is running, not switching states" << std::endl;
 			}
 		}
 	}
@@ -303,7 +303,7 @@ void AppListState::Update()
 {
 	if (helperDone && !helperRunning)
 	{
-		std::cout << "helper done, joining" << "\n";
+		std::cout << "helper done, joining" << std::endl;
 		helperThread->join();
 
 		helperDone = false;
@@ -314,7 +314,7 @@ void AppListState::Update()
 	{
 		if (threads[i].joinable())
 		{
-			std::cout << "joining" << "\n";
+			std::cout << "joining" << std::endl;
 
 			threads[i].detach();
 			threads.erase(threads.begin() + i);
@@ -351,46 +351,46 @@ void AppListState::loadApps() // TOOD: this.
 
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
-	std::cout << "\n";
+	std::cout << std::endl;
 
 	std::ifstream readIndex(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
 	readIndex >> line;
 
 	if (line.find("Dear Valued Cox Customer") == 0)
 	{
-		std::cout << "cox fucked the launcher" << "\n";
-		std::cout << line << "\n";
+		std::cout << "cox fucked the launcher" << std::endl;
+		std::cout << line << std::endl;
 
 		abort();
 	}
 	else
 	{
-		std::cout << "cox did not fuck the launcher" << "\n";
+		std::cout << "cox did not fuck the launcher" << std::endl;
 		line = "";
 	}
 
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
-		std::cout << loopi << " - " << line << "\n";
+		std::cout << loopi << " - " << line << std::endl;
 
 		// syntax should look like this: APP:"appname"
 		// or for links, LINK:"text"TO"link.com"
 		if (line[0] == 'A' && line[1] == 'P' && line[2] == 'P') // it's an app
 		{
-			std::cout << "it's an app" << "\n";
+			std::cout << "it's an app" << std::endl;
 			line.erase(0, 3); // remove APP
-			std::cout << line << "\n";
+			std::cout << line << std::endl;
 			line.erase(0, 1); // remove :
-			std::cout << line << "\n";
+			std::cout << line << std::endl;
 			line.erase(0, 1); // remove first "
-			std::cout << line << "\n";
+			std::cout << line << std::endl;
 			line.erase(line.length() - 1, line.length()); // remove last "
-			std::cout << line << "\n";
+			std::cout << line << std::endl;
 
 			if (comesAfterLink)
 			{
-				std::cout << "(item after link)" << "\n";
+				std::cout << "(item after link)" << std::endl;
 
 				Item* newItem = new Item(line, app->window,
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
@@ -399,11 +399,11 @@ void AppListState::loadApps() // TOOD: this.
 					items.back()->cardShape.getPosition().y + items.back()->totalHeight /* PADDING */);
 
 				items.push_back(newItem);
-				std::cout << "\n";
+				std::cout << std::endl;
 			}
 			else // not after a link
 			{
-				std::cout << "(item not after link)" << "\n";
+				std::cout << "(item not after link)" << std::endl;
 
 				Item* newItem;
 
@@ -421,7 +421,7 @@ void AppListState::loadApps() // TOOD: this.
 						items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
 
 				items.push_back(newItem);
-				std::cout << "\n";
+				std::cout << std::endl;
 			}
 
 			comesAfterItem = true;
@@ -429,7 +429,7 @@ void AppListState::loadApps() // TOOD: this.
 		}
 		else if (line[0] == 'L' && line[1] == 'I' && line[2] == 'N' && line[3] == 'K')
 		{
-			std::cout << "it's a link" << "\n";
+			std::cout << "it's a link" << std::endl;
 
 			std::string linkText, linkRel, linkFull(line);
 
@@ -451,7 +451,7 @@ void AppListState::loadApps() // TOOD: this.
 
 			if (comesAfterItem)
 			{
-				std::cout << "(link after item)" << "\n";
+				std::cout << "(link after item)" << std::endl;
 
 				Link* newLink = new Link(linkText, linkRel, app->window, items.back()->cardShape.getPosition().y + 66); // we don't check to make sure this isn't empty, because we know there's an item before it.
 				links.push_back(newLink);
@@ -464,17 +464,17 @@ void AppListState::loadApps() // TOOD: this.
 				{
 					newLink = new Link(linkText, linkRel, app->window, 28);
 
-					std::cout << "(link not after item, first link)" << "\n";
+					std::cout << "(link not after item, first link)" << std::endl;
 				}
 				else // not the first link
 				{
 					newLink = new Link(linkText, linkRel, app->window, links.back()->cardShape.getPosition().y + 48);
 
-					std::cout << "(link after link, not after item)" << "\n";
+					std::cout << "(link after link, not after item)" << std::endl;
 				}
 
 				links.push_back(newLink);
-				std::cout << "\n";
+				std::cout << std::endl;
 			}
 
 			comesAfterItem = false;
@@ -482,7 +482,7 @@ void AppListState::loadApps() // TOOD: this.
 		}
 		else
 		{
-			std::cout << "String is malformed! Skipping!" << "\n";
+			std::cout << "String is malformed! Skipping!" << std::endl;
 			loopi += 1;
 			continue;
 		}
@@ -491,7 +491,7 @@ void AppListState::loadApps() // TOOD: this.
 		loopi += 1;
 	}
 
-	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded)" << "\n";
+	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded)" << std::endl;
 	helperDone = true;
 }
 

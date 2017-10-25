@@ -6,14 +6,14 @@
 
 ResourceManager::ResourceManager()
 {
-	std::cout << "ResourceManager created." << "\n";
+	std::cout << "ResourceManager created." << std::endl;
 }
 
 ResourceManager::~ResourceManager()
 {
 	freeAllTextures();
 
-	std::cout << "ResourceManager deconstructed." << "\n";
+	std::cout << "ResourceManager deconstructed." << std::endl;
 }
 
 void ResourceManager::loadTexture(std::string resourceName, std::string fileLocation)
@@ -24,7 +24,7 @@ void ResourceManager::loadTexture(std::string resourceName, std::string fileLoca
 		new_tex->loadFromFile(fileLocation);
 		loadedTextures[resourceName] = new_tex;
 
-		std::cout << "Loaded texture\"" + resourceName + "\" from \"" + fileLocation + "\"" << "\n";
+		std::cout << "Loaded texture\"" + resourceName + "\" from \"" + fileLocation + "\"" << std::endl;
 	}
 }
 
@@ -33,7 +33,7 @@ void ResourceManager::freeTexture(std::string filename)
 	delete loadedTextures[filename];
 	loadedTextures[filename] = nullptr;
 
-	std::cout << "Freed texture \"" + filename + "\"" << "\n";
+	std::cout << "Freed texture \"" + filename + "\"" << std::endl;
 }
 
 void ResourceManager::freeAllTextures()
@@ -47,7 +47,7 @@ void ResourceManager::freeAllTextures()
 		it->second = nullptr;
 	}
 
-	std::cout << "Freed all textures." << "\n";
+	std::cout << "Freed all textures." << std::endl;
 }
 
 bool ResourceManager::isTextureLoaded(std::string filename)
@@ -79,5 +79,5 @@ void ResourceManager::freeAll()
 		it->second = nullptr;
 	}
 
-	std::cout << "Freed all textures." << "\n";
+	std::cout << "Freed all textures." << std::endl;
 }

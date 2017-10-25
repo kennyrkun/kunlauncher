@@ -18,7 +18,7 @@ VisualChangeLog::VisualChangeLog()
 	}
 	else
 	{
-		std::cerr << "unable to load font" << "\n";
+		std::cerr << "unable to load font" << std::endl;
 		abort();
 
 		//TODO: handle this better
@@ -37,7 +37,7 @@ VisualChangeLog::VisualChangeLog()
 
 	for (size_t i = 0; i < settings.settings.size(); i++)
 	{
-		std::cout << "adding button for option \"" << settings.settings[i] << "\"" << "\n";
+		std::cout << "adding button for option \"" << settings.settings[i] << "\"" << std::endl;
 
 		SFUI::TextButton *newButton = new SFUI::TextButton(settings.settings[i]);
 		// we will set their positions later, because if we do it now they won't know where to go because the window hasn't been created
@@ -56,7 +56,7 @@ VisualChangeLog::VisualChangeLog()
 			// it's the new largest
 			largest = combinedWidths[i];
 		else
-			std::cout << i << " not the largest" << "\n";
+			std::cout << i << " not the largest" << std::endl;
 
 	if (largest < 900)
 	{
@@ -64,7 +64,7 @@ VisualChangeLog::VisualChangeLog()
 	}
 	else
 	{
-		std::cout << "modal is too wide, setting it to 900" << "\n";
+		std::cout << "modal is too wide, setting it to 900" << std::endl;
 		settings.width = 900;
 	}
 
@@ -74,11 +74,11 @@ VisualChangeLog::VisualChangeLog()
 	}
 	else
 	{
-		std::cout << "modal is too tall, setting it to 600" << "\n";
+		std::cout << "modal is too tall, setting it to 600" << std::endl;
 		settings.height = 600;
 	}
 
-	std::cout << "largest number is " << largest << "\n";
+	std::cout << "largest number is " << largest << std::endl;
 }
 
 VisualChangeLog::~VisualChangeLog()

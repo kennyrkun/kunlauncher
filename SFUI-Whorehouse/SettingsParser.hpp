@@ -208,7 +208,7 @@ inline bool SettingsParser::get(const std::string& key, T &value) const {
 	}
 	else
 	{
-		std::cout << "failed to find key \"" << key << "\"" << "\n";
+		std::cout << "failed to find key \"" << key << "\"" << std::endl;
 
 		return false;
 	}
@@ -237,7 +237,7 @@ inline bool SettingsParser::get(const std::string& key, std::vector<T> &value) c
 	}
 	else
 	{
-		std::cout << "failed to find key \"" << key << "\"" << "\n";
+		std::cout << "failed to find key \"" << key << "\"" << std::endl;
 
 		return false;
 	}

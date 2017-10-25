@@ -19,7 +19,7 @@ HomeState HomeState::HomeState_dontfuckwithme;
 
 void HomeState::Init(AppEngine* app_)
 {
-	std::cout << "HomeState Init" << "\n";
+	std::cout << "HomeState Init" << std::endl;
 
 	app = app_;
 
@@ -42,14 +42,14 @@ void HomeState::Init(AppEngine* app_)
 	powerButton->setPosition(sf::Vector2f(app->window->getView().getCenter().x + powerButton->shape.getLocalBounds().width / 2 + 48, app->window->getView().getCenter().y - powerButton->shape.getLocalBounds().height / 2));
 	sections.push_back(powerButton);
 
-	std::cout << "loaded " << sections.size() << " sections" << "\n";
+	std::cout << "loaded " << sections.size() << " sections" << std::endl;
 }
 
 void HomeState::Cleanup()
 {
 	if (helperRunning)
 	{
-		std::cout << "waiting on helper thread to finish" << "\n";
+		std::cout << "waiting on helper thread to finish" << std::endl;
 		helperThread->join();
 	}
 
@@ -57,17 +57,17 @@ void HomeState::Cleanup()
 	//	delete app; // dont delete app because it's being used by the thing and we need it.
 	//	app = nullptr;
 
-	std::cout << "HomeState Cleanup" << "\n";
+	std::cout << "HomeState Cleanup" << std::endl;
 }
 
 void HomeState::Pause()
 {
-	std::cout << "HomeState Pause" << "\n";
+	std::cout << "HomeState Pause" << std::endl;
 }
 
 void HomeState::Resume()
 {
-	std::cout << "HomeState Resume" << "\n";
+	std::cout << "HomeState Resume" << std::endl;
 }
 
 void HomeState::HandleEvents(sf::Event& event)
@@ -95,7 +95,7 @@ void HomeState::Update()
 {
 	if (helperDone && !helperRunning)
 	{
-		std::cout << "helper done, joining" << "\n";
+		std::cout << "helper done, joining" << std::endl;
 		helperThread->join();
 
 		helperDone = false;
@@ -106,7 +106,7 @@ void HomeState::Update()
 	{
 		if (threads[i].joinable())
 		{
-			std::cout << "joining" << "\n";
+			std::cout << "joining" << std::endl;
 
 			threads[i].detach();
 			threads.erase(threads.begin() + i);

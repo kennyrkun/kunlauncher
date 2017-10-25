@@ -23,17 +23,17 @@ namespace fs = std::experimental::filesystem;
 
 void InitialiseState::Init(AppEngine* app_)
 {
-	std::cout << "IntialiseState Init" << "\n";
+	std::cout << "IntialiseState Init" << std::endl;
 
 	app = app_;
 
 	if (!font.loadFromFile(".\\" + GBL::DIR::BASE + "\\" + GBL::DIR::RESOURCE + "\\" + GBL::DIR::FONT + "\\Product Sans.ttf"))
 	{
-		std::cout << "failed to load product sans, falling back to Arial!" << "\n";
+		std::cout << "failed to load product sans, falling back to Arial!" << std::endl;
 
 		if (!font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
 		{
-			std::cout << "failed to load a font!" << "\n";
+			std::cout << "failed to load a font!" << std::endl;
 
 			abort();
 		}
@@ -65,20 +65,20 @@ void InitialiseState::Init(AppEngine* app_)
 	helperRunning = false;
 	isReady = false;
 
-	std::cout << "thread launched" << "\n";
+	std::cout << "thread launched" << std::endl;
 }
 
 void InitialiseState::Cleanup()
 {
-	std::cout << "IntialiseState Cleaningup" << "\n";
+	std::cout << "IntialiseState Cleaningup" << std::endl;
 
-	std::cout << "initialising finished" << "\n";
-	std::cout << "helperDone: " << helperDone << "\n";
-	std::cout << "helperRunning: " << helperRunning << "\n";
+	std::cout << "initialising finished" << std::endl;
+	std::cout << "helperDone: " << helperDone << std::endl;
+	std::cout << "helperRunning: " << helperRunning << std::endl;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
 	{
-		std::cout << "developer mode activated" << "\n";
+		std::cout << "developer mode activated" << std::endl;
 		app->developerModeActive = true;
 	}
 
@@ -90,7 +90,7 @@ void InitialiseState::Cleanup()
 	app->window = nullptr;
 	app->window = newWindow;
 
-	std::cout << "IntialiseState Cleanedup" << "\n";
+	std::cout << "IntialiseState Cleanedup" << std::endl;
 }
 
 void InitialiseState::Pause()
@@ -100,7 +100,7 @@ void InitialiseState::Pause()
 
 void InitialiseState::Resume()
 {
-	std::cout << "IntialiseState Resume" << "\n";
+	std::cout << "IntialiseState Resume" << std::endl;
 }
 
 void InitialiseState::HandleEvents(sf::Event& event)
@@ -116,7 +116,7 @@ void InitialiseState::HandleEvents(sf::Event& event)
 			app->developerModeActive = true;
 			progressBar->setColor(sf::Color::Red, sf::Color::Green, sf::Color::Magenta, sf::Color::Blue);
 
-			std::cout << "developer mode toggled" << "\n";
+			std::cout << "developer mode toggled" << std::endl;
 		}
 	}
 }
@@ -130,7 +130,7 @@ void InitialiseState::Draw()
 {
 	if (helperDone)
 	{
-		std::cout << "helper is done, joining" << "\n";
+		std::cout << "helper is done, joining" << std::endl;
 
 		helperThread->join();
 		delete helperThread;
@@ -174,7 +174,7 @@ void InitialiseState::initialisise()
 
 	progressBar->addThingToDo();
 	{
-		std::cout << "loading config" << "\n";
+		std::cout << "loading config" << std::endl;
 		SettingsParser settings;
 		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf"))
 		{
@@ -187,14 +187,14 @@ void InitialiseState::initialisise()
 		}
 		else
 		{
-			std::cout << "failed to load settings, using defaults" << "\n";
+			std::cout << "failed to load settings, using defaults" << std::endl;
 		}
 	}
 	progressBar->oneThingDone(); // 3
 
 	if (app->settings.checkForNewItemsOnStart)
 	{
-		std::cout << "updating app index." << "\n";
+		std::cout << "updating app index." << std::endl;
 		progressBar->addThingsToDo(2);
 
 		Download getItemIndex;
@@ -209,7 +209,7 @@ void InitialiseState::initialisise()
 	}
 	else
 	{
-		std::cout << "skipping item update" << "\n";
+		std::cout << "skipping item update" << std::endl;
 	}
 
 	if (app->settings.updateLauncherOnStart)
@@ -237,7 +237,7 @@ void InitialiseState::initialisise()
 			{
 			case 0:
 			{
-				std::cout << "yes, update now." << "\n";
+				std::cout << "yes, update now." << std::endl;
 				progressBar->addThingsToDo(2); // update and replace exe
 
 				setTaskText("downloading update");
@@ -261,14 +261,14 @@ void InitialiseState::initialisise()
 				{
 				case 0:
 				{
-					std::cout << "restarting now" << "\n";
+					std::cout << "restarting now" << std::endl;
 					restartNow = true;
 					break;
 				}
 
 				case 1:
 				{
-					std::cout << "restarting later" << "\n";
+					std::cout << "restarting later" << std::endl;
 					updateSuccessfulModal.close();
 					break;
 				}
@@ -282,7 +282,7 @@ void InitialiseState::initialisise()
 
 			case 1:
 			{
-				std::cout << "don't update now" << "\n";
+				std::cout << "don't update now" << std::endl;
 				break;
 			}
 
@@ -293,7 +293,7 @@ void InitialiseState::initialisise()
 	}
 	else
 	{
-		std::cout << "skipping check for updates" << "\n";
+		std::cout << "skipping check for updates" << std::endl;
 	}
 
 	getThemeConfiguration();
@@ -311,10 +311,10 @@ int InitialiseState::validateFileStructure()
 
 	progressBar->addThingsToDo(6); // bin, config, apps, app index, resources
 
-	std::cout << "checking for bin" << "\n";
+	std::cout << "checking for bin" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE)) // 1
 	{
-		std::cout << "bin folder missing, creating" << "\n";
+		std::cout << "bin folder missing, creating" << std::endl;
 		progressBar->addThingToDo();
 
 		fs::create_directory(".\\" + GBL::DIR::BASE);
@@ -323,21 +323,21 @@ int InitialiseState::validateFileStructure()
 	}
 	progressBar->oneThingDone(); // 1
 
-	std::cout << "checking for config" << "\n";
+	std::cout << "checking for config" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + "kunlauncher.conf")) // 2
 	{
-		std::cout << "config file missing, creating" << "\n";
+		std::cout << "config file missing, creating" << std::endl;
 		progressBar->addThingToDo();
 
 		std::ofstream createConfigurationFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf");
 
-		createConfigurationFile << "// default configuration for kunlauncher" << "\n";
-		createConfigurationFile << "\n";
-		createConfigurationFile << "window_width = 525" << "\n";
-		createConfigurationFile << "window_height = 400" << "\n";
-		createConfigurationFile << "updatelauncheronstart = TRUE" << "\n";
-		createConfigurationFile << "checkfornewitemsonstart = TRUE" << "\n";
-		createConfigurationFile << "experimentalThemes = FALSE" << "\n";
+		createConfigurationFile << "// default configuration for kunlauncher" << std::endl;
+		createConfigurationFile << std::endl;
+		createConfigurationFile << "window_width = 525" << std::endl;
+		createConfigurationFile << "window_height = 400" << std::endl;
+		createConfigurationFile << "updatelauncheronstart = TRUE" << std::endl;
+		createConfigurationFile << "checkfornewitemsonstart = TRUE" << std::endl;
+		createConfigurationFile << "experimentalThemes = FALSE" << std::endl;
 
 		createConfigurationFile.close();
 
@@ -345,10 +345,10 @@ int InitialiseState::validateFileStructure()
 	}
 	progressBar->oneThingDone(); // 2
 
-	std::cout << "checking for third party notices" << "\n";
+	std::cout << "checking for third party notices" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + "thirdpartynotices.txt")) // 4
 	{
-		std::cout << "missing thirdpartynotices, downloading..." << "\n";
+		std::cout << "missing thirdpartynotices, downloading..." << std::endl;
 		progressBar->addThingToDo();
 
 		Download getThirdPartyNotices;
@@ -365,11 +365,11 @@ int InitialiseState::validateFileStructure()
 		{
 			getThirdPartyNotices.save();
 
-			std::cout << "successfully downloaded and saved third party notices." << "\n";
+			std::cout << "successfully downloaded and saved third party notices." << std::endl;
 		}
 		case sf::Http::Response::Status::NotFound:
 		{
-			std::cout << "failed to download third party notices." << "\n";
+			std::cout << "failed to download third party notices." << std::endl;
 		}
 		default:
 			break;
@@ -377,12 +377,12 @@ int InitialiseState::validateFileStructure()
 	}
 	progressBar->oneThingDone(); // 3
 
-	std::cout << "checking for apps" << "\n";
+	std::cout << "checking for apps" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::APPS)) // 5
 	{
-		std::cout << GBL::DIR::BASE + GBL::DIR::APPS << "\n";
+		std::cout << GBL::DIR::BASE + GBL::DIR::APPS << std::endl;
 
-		std::cout << "apps folder missing, creating" << "\n";
+		std::cout << "apps folder missing, creating" << std::endl;
 		progressBar->addThingToDo();
 
 		fs::create_directory(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
@@ -391,10 +391,10 @@ int InitialiseState::validateFileStructure()
 	}
 	progressBar->oneThingDone(); // 4
 
-	std::cout << "checking for apps+index" << "\n";
+	std::cout << "checking for apps+index" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat")) // 6
 	{
-		std::cout << "app index missing, creating" << "\n";
+		std::cout << "app index missing, creating" << std::endl;
 		progressBar->addThingToDo();
 
 		Download getItemIndex;
@@ -408,11 +408,11 @@ int InitialiseState::validateFileStructure()
 	}
 	progressBar->oneThingDone(); // 5
 
-	std::cout << "checking for resources" << "\n";
+	std::cout << "checking for resources" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE)) // 7
 	{
 		progressBar->addThingsToDo(2);
-		std::cout << "resources missing, creating" << "\n";
+		std::cout << "resources missing, creating" << std::endl;
 
 		fs::create_directory(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE);
 		progressBar->oneThingDone();
@@ -439,39 +439,39 @@ int InitialiseState::getThemeConfiguration()
 {
 	if (app->settings.experimentalThemes) // 8
 	{
-		std::cout << "checking for theme file" << "\n";
+		std::cout << "checking for theme file" << std::endl;
 		progressBar->addThingToDo();
 
 		if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "dark.sfuitheme"))
 		{
 			progressBar->addThingToDo();
-			std::cout << "creating theme file" << "\n";
+			std::cout << "creating theme file" << std::endl;
 			std::ofstream createDarkTheme(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "dark.sfuitheme");
 
-			createDarkTheme << "// default 'dark' theme for kunlauncher" << "\n";
-			createDarkTheme << "\n";
-			createDarkTheme << "// globals" << "\n";
-			createDarkTheme << "global_background = 50, 50, 50" << "\n";
-			createDarkTheme << "global_text = 255, 255, 255" << "\n";
-			createDarkTheme << "\n";
-			createDarkTheme << "// scrollbar (useless because SFUI currently does not support themes)" << "\n";
-			createDarkTheme << "//scrollbar_scrollbar = 80, 80, 80" << "\n";
-			createDarkTheme << "//scrollbar_scrollthumb = 110, 110, 110" << "\n";
-			createDarkTheme << "//scrollbar_scrollthumb_hover = 158, 158, 158" << "\n";
-			createDarkTheme << "//scrollbar_scrollthumb_hold = 239, 235, 339" << "\n";
-			createDarkTheme << "\n";
-			createDarkTheme << "// items" << "\n";
-			createDarkTheme << "item_card = 100, 100, 100" << "\n";
-			createDarkTheme << "item_icon = 255, 255, 255" << "\n";
-			createDarkTheme << "item_icon_hover = 255, 255, 255" << "\n";
-			createDarkTheme << "item_redownload = 255, 255, 255" << "\n";
-			createDarkTheme << "item_update_is_available = 255, 200, 0" << "\n";
-			createDarkTheme << "item_download = 255, 255, 255" << "\n";
-			createDarkTheme << "\n";
-			createDarkTheme << "// links" << "\n";
-			createDarkTheme << "link_card = 100, 100, 100" << "\n";
-			createDarkTheme << "link_follow = 255, 200, 0" << "\n";
-			createDarkTheme << "link_text = 0, 170, 232" << "\n";
+			createDarkTheme << "// default 'dark' theme for kunlauncher" << std::endl;
+			createDarkTheme << std::endl;
+			createDarkTheme << "// globals" << std::endl;
+			createDarkTheme << "global_background = 50, 50, 50" << std::endl;
+			createDarkTheme << "global_text = 255, 255, 255" << std::endl;
+			createDarkTheme << std::endl;
+			createDarkTheme << "// scrollbar (useless because SFUI currently does not support themes)" << std::endl;
+			createDarkTheme << "//scrollbar_scrollbar = 80, 80, 80" << std::endl;
+			createDarkTheme << "//scrollbar_scrollthumb = 110, 110, 110" << std::endl;
+			createDarkTheme << "//scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
+			createDarkTheme << "//scrollbar_scrollthumb_hold = 239, 235, 339" << std::endl;
+			createDarkTheme << std::endl;
+			createDarkTheme << "// items" << std::endl;
+			createDarkTheme << "item_card = 100, 100, 100" << std::endl;
+			createDarkTheme << "item_icon = 255, 255, 255" << std::endl;
+			createDarkTheme << "item_icon_hover = 255, 255, 255" << std::endl;
+			createDarkTheme << "item_redownload = 255, 255, 255" << std::endl;
+			createDarkTheme << "item_update_is_available = 255, 200, 0" << std::endl;
+			createDarkTheme << "item_download = 255, 255, 255" << std::endl;
+			createDarkTheme << std::endl;
+			createDarkTheme << "// links" << std::endl;
+			createDarkTheme << "link_card = 100, 100, 100" << std::endl;
+			createDarkTheme << "link_follow = 255, 200, 0" << std::endl;
+			createDarkTheme << "link_text = 0, 170, 232" << std::endl;
 
 			createDarkTheme.close();
 		}
@@ -479,47 +479,47 @@ int InitialiseState::getThemeConfiguration()
 		if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "light.sfuitheme"))
 		{
 			progressBar->addThingToDo();
-			std::cout << "creating theme file" << "\n";
+			std::cout << "creating theme file" << std::endl;
 			std::ofstream createLightTheme(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "light.sfuitheme");
 
-			createLightTheme << "// default 'light' theme for kunlauncher" << "\n";
-			createLightTheme << "\n";
-			createLightTheme << "// globals" << "\n";
-			createLightTheme << "global_background = 255, 255, 255" << "\n";
-			createLightTheme << "global_text = 0, 0, 0" << "\n";
-			createLightTheme << "\n";
-			createLightTheme << "// scrollbar (useless because SFUI currently does not support themes)" << "\n";
-			createLightTheme << "//scrollbar_scrollbar = 80, 80, 80" << "\n";
-			createLightTheme << "//scrollbar_scrollthumb = 110, 110, 110" << "\n";
-			createLightTheme << "//scrollbar_scrollthumb_hover = 158, 158, 158" << "\n";
-			createLightTheme << "//scrollbar_scrollthumb_hold = 239, 235, 339" << "\n";
-			createLightTheme << "\n";
-			createLightTheme << "// items" << "\n";
-			createLightTheme << "item_card = 192, 192, 192" << "\n";
-			createLightTheme << "item_icon = 255, 255, 255" << "\n";
-			createLightTheme << "item_icon_hover = 255, 255, 255" << "\n";
-			createLightTheme << "item_redownload = 255, 255, 255" << "\n";
-			createLightTheme << "item_update_is_available = 255, 200, 0" << "\n";
-			createLightTheme << "item_download = 255, 255, 255" << "\n";
-			createLightTheme << "\n";
-			createLightTheme << "// links" << "\n";
-			createLightTheme << "link_card = 100, 100, 100" << "\n";
-			createLightTheme << "link_follow = 255, 200, 0" << "\n";
-			createLightTheme << "link_text = 0, 170, 232" << "\n";
+			createLightTheme << "// default 'light' theme for kunlauncher" << std::endl;
+			createLightTheme << std::endl;
+			createLightTheme << "// globals" << std::endl;
+			createLightTheme << "global_background = 255, 255, 255" << std::endl;
+			createLightTheme << "global_text = 0, 0, 0" << std::endl;
+			createLightTheme << std::endl;
+			createLightTheme << "// scrollbar (useless because SFUI currently does not support themes)" << std::endl;
+			createLightTheme << "//scrollbar_scrollbar = 80, 80, 80" << std::endl;
+			createLightTheme << "//scrollbar_scrollthumb = 110, 110, 110" << std::endl;
+			createLightTheme << "//scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
+			createLightTheme << "//scrollbar_scrollthumb_hold = 239, 235, 339" << std::endl;
+			createLightTheme << std::endl;
+			createLightTheme << "// items" << std::endl;
+			createLightTheme << "item_card = 192, 192, 192" << std::endl;
+			createLightTheme << "item_icon = 255, 255, 255" << std::endl;
+			createLightTheme << "item_icon_hover = 255, 255, 255" << std::endl;
+			createLightTheme << "item_redownload = 255, 255, 255" << std::endl;
+			createLightTheme << "item_update_is_available = 255, 200, 0" << std::endl;
+			createLightTheme << "item_download = 255, 255, 255" << std::endl;
+			createLightTheme << std::endl;
+			createLightTheme << "// links" << std::endl;
+			createLightTheme << "link_card = 100, 100, 100" << std::endl;
+			createLightTheme << "link_follow = 255, 200, 0" << std::endl;
+			createLightTheme << "link_text = 0, 170, 232" << std::endl;
 
 			createLightTheme.close();
 		}
 
-		std::cout << "loading theme settings" << "\n";
+		std::cout << "loading theme settings" << std::endl;
 
 		SettingsParser settings;
 		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf"))
 			settings.get("defaultTheme", app->settings.theme);
-		std::cout << app->settings.theme << "\n";
+		std::cout << app->settings.theme << std::endl;
 
 		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + app->settings.theme + ".sfuitheme"))
 		{
-			std::cout << "loaded theme \"" << app->settings.theme << "\"." << "\n";
+			std::cout << "loaded theme \"" << app->settings.theme << "\"." << std::endl;
 
 			// globals
 			std::vector<int> colors;
@@ -537,7 +537,7 @@ int InitialiseState::getThemeConfiguration()
 			}
 
 			/* scrollbar
-			std::cout << "scrollbar theme settings" << "\n";
+			std::cout << "scrollbar theme settings" << std::endl;
 
 			settings.get("scrollbar_scrollbar", colors);
 			GBL::COLOR::SCROLLBAR::SCROLLBAR = sf::Color(colors[0], colors[1], colors[2]);
@@ -556,7 +556,7 @@ int InitialiseState::getThemeConfiguration()
 			colors.clear(); */
 
 			// items
-			std::cout << "item theme settings" << "\n";
+			std::cout << "item theme settings" << std::endl;
 
 			if (settings.get("item_card", colors))
 			{
@@ -588,11 +588,11 @@ int InitialiseState::getThemeConfiguration()
 				colors.clear();
 			}
 
-			std::cout << "done applying themes" << "\n";
+			std::cout << "done applying themes" << std::endl;
 		}
 		else
 		{
-			std::cout << "failed to load settings file" << "\n"; // use default colours
+			std::cout << "failed to load settings file" << std::endl; // use default colours
 		}
 
 		progressBar->oneThingDone();
@@ -619,7 +619,7 @@ int InitialiseState::validateResourceFiles()
 		{
 			if (fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::TEXTURE + textures[i]))
 			{
-				std::cout << textures[i] << " exsits." << "\n";
+				std::cout << textures[i] << " exsits." << std::endl;
 			}
 
 			progressBar->oneThingDone();
@@ -627,7 +627,7 @@ int InitialiseState::validateResourceFiles()
 	}
 	else
 	{
-		std::cout << (".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "textures.dat") << " does not exist" << "\n"; 
+		std::cout << (".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "textures.dat") << " does not exist" << std::endl; 
 	}
 
 	progressBar->oneThingDone();
@@ -668,7 +668,7 @@ int InitialiseState::getResourceFiles()
 
 void InitialiseState::setTaskText(std::string text)
 {
-	std::cout << "TASK: " << text << "\n";
+	std::cout << "TASK: " << text << std::endl;
 	currentLauncherTask.setString(text);
 	currentLauncherTask.setOrigin(currentLauncherTask.getLocalBounds().width / 2, currentLauncherTask.getLocalBounds().height - 20);
 	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(initialiseText.getPosition().y + 50)));

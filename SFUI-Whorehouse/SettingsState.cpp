@@ -21,7 +21,7 @@ namespace fs = std::experimental::filesystem;
 
 void SettingsState::Init(AppEngine* app_)
 {
-	std::cout << "IntialiseState Init" << "\n";
+	std::cout << "IntialiseState Init" << std::endl;
 	app = app_;
 
 	sf::Texture icon;
@@ -36,19 +36,19 @@ void SettingsState::Init(AppEngine* app_)
 
 void SettingsState::Cleanup()
 {
-	std::cout << "SettingsState Cleaningup" << "\n";
+	std::cout << "SettingsState Cleaningup" << std::endl;
 
-	std::cout << "SettingsState Cleanedup" << "\n";
+	std::cout << "SettingsState Cleanedup" << std::endl;
 }
 
 void SettingsState::Pause()
 {
-	std::cout << "SettingsState Pause" << "\n";
+	std::cout << "SettingsState Pause" << std::endl;
 }
 
 void SettingsState::Resume()
 {
-	std::cout << "SettingsState Resume" << "\n";
+	std::cout << "SettingsState Resume" << std::endl;
 }
 
 void SettingsState::HandleEvents(sf::Event& event)

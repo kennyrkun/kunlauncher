@@ -12,12 +12,12 @@ void AppEngine::Init(std::string title_, AppSettings settings_)
 	window->setVerticalSyncEnabled(settings.verticalSync);
 	m_running = true;
 
-	std::cout << "AppEngine Init" << "\n";
+	std::cout << "AppEngine Init" << std::endl;
 }
 
 void AppEngine::Cleanup()
 {
-	std::cout << "Cleaning up AppEngine." << "\n";
+	std::cout << "Cleaning up AppEngine." << std::endl;
 	
 	// cleanup the all states
 	while (!states.empty())
@@ -29,7 +29,7 @@ void AppEngine::Cleanup()
 	window->close();
 	delete window;
 
-	std::cout << "AppEngine cleaned up." << "\n";
+	std::cout << "AppEngine cleaned up." << std::endl;
 }
 
 void AppEngine::ChangeState(AppState* state)

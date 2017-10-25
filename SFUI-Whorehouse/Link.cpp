@@ -12,7 +12,7 @@ Link::Link(std::string text, std::string uri, sf::RenderWindow* target_window, f
 	linkText.setString(text);
 	linkRel = uri;
 
-	std::cout << "creating new card for \"" << linkText.getString().toAnsiString() << "\" linking to \"" << linkRel << "\"" << "\n";
+	std::cout << "creating new card for \"" << linkText.getString().toAnsiString() << "\" linking to \"" << linkRel << "\"" << std::endl;
 
 	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
@@ -38,7 +38,7 @@ Link::Link(std::string text, std::string uri, sf::RenderWindow* target_window, f
 
 	totalHeight = cardShape.getLocalBounds().height;
 
-	std::cout << "card is ready" << "\n";
+	std::cout << "card is ready" << std::endl;
 }
 
 Link::~Link()
@@ -48,13 +48,13 @@ Link::~Link()
 
 void Link::follow()
 {
-	std::cout << "\n" << "going to " << linkRel << "\n";
+	std::cout << "\n" << "going to " << linkRel << std::endl;
 
 #if defined (_WIN32) // one day it'll be cross platform... one day.
 	std::string test = "start " + linkRel;
 	system((test).c_str());
 #else
-	std::cout << "This function is not supported on your platform!" << "\n";
+	std::cout << "This function is not supported on your platform!" << std::endl;
 #endif
 }
 

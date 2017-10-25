@@ -11,7 +11,7 @@ Section::Section(std::string text, std::string forwardSection, float xSize, floa
 	title.setString(text);
 	forwardStateName = forwardSection;
 
-	std::cout << "creating new section card for \"" << title.getString().toAnsiString() << "\" for \"" << forwardStateName << "\"" << "\n";
+	std::cout << "creating new section card for \"" << title.getString().toAnsiString() << "\" for \"" << forwardStateName << "\"" << std::endl;
 
 	cardShape.setSize(sf::Vector2f(xSize, 40));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
@@ -33,7 +33,7 @@ Section::Section(std::string text, std::string forwardSection, float xSize, floa
 
 	totalHeight = cardShape.getLocalBounds().height;
 
-	std::cout << "card is ready" << "\n";
+	std::cout << "card is ready" << std::endl;
 }
 
 Section::~Section()
@@ -43,13 +43,13 @@ Section::~Section()
 
 void Section::follow()
 {
-	std::cout << "\n" << "going to " << forwardStateName << "\n";
+	std::cout << "\n" << "going to " << forwardStateName << std::endl;
 
 #if defined (_WIN32) // one day it'll be cross platform... one day.
 	std::string test = "start " + forwardStateName;
 	system((test).c_str());
 #else
-	std::cout << "This function is not supported on your platform!" << "\n";
+	std::cout << "This function is not supported on your platform!" << std::endl;
 #endif
 }
 

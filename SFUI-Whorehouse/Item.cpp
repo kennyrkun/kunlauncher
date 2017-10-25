@@ -14,7 +14,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 {
 	sf::Clock itemCreateTimer;
 
-	std::cout << "creating new card for \"" + itemName_ + "\"" << "\n";
+	std::cout << "creating new card for \"" + itemName_ + "\"" << std::endl;
 
 	targetWindow = target_window;
 	itemName = itemName_;
@@ -22,31 +22,31 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 	if (!fs::exists(installDir))
 	{
-		std::cout << "app directory does not already exist, creating..." << "\n";
+		std::cout << "app directory does not already exist, creating..." << std::endl;
 
 		try
 		{
 			fs::create_directory(installDir);
 
-			std::cout << " done" << "\n";
+			std::cout << " done" << std::endl;
 		}
 		catch (const std::exception& e)
 		{
-			std::cout << e.what() << "\n";
+			std::cout << e.what() << std::endl;
 			
-			std::cout << "failed to create directory" << "\n";
+			std::cout << "failed to create directory" << std::endl;
 		}
 	}
 
 	if (fs::exists(installDir + "info.dat"))
 	{
-		std::cout << "info was found, parsing" << "\n";
+		std::cout << "info was found, parsing" << std::endl;
 
 		parseInfo(installDir);
 	}
 	else // info is not downloaded
 	{
-		std::cout << "info was not found, downloading" << "\n";
+		std::cout << "info was not found, downloading" << std::endl;
 
 		Download downloadInfo;
 		downloadInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
@@ -57,7 +57,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		{
 		case sf::Http::Response::Status::Ok:
 		{
-			std::cout << "saving info" << "\n";
+			std::cout << "saving info" << std::endl;
 
 			downloadInfo.save();
 			parseInfo(installDir);
@@ -66,7 +66,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 		case sf::Http::Response::Status::InternalServerError:
 		{
-			std::cout << "failed to download info, aborting" << "\n";
+			std::cout << "failed to download info, aborting" << std::endl;
 			name.setString("Failed to load app!");
 			description.setString("Encountered 500 Internal Server Error during download");
 			break;
@@ -79,13 +79,13 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 	if (fs::exists(installDir + "icon.png"))
 	{
-		std::cout << "icon was found" << "\n";
+		std::cout << "icon was found" << std::endl;
 
 		iconTexture.loadFromFile(installDir + "icon.png");
 	}
 	else // icon is not downloaded
 	{
-		std::cout << "icon was not found, downloading" << "\n";
+		std::cout << "icon was not found, downloading" << std::endl;
 
 		Download downloadIcon;
 		downloadIcon.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
@@ -96,7 +96,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		{
 		case sf::Http::Response::Status::Ok:
 		{
-			std::cout << "saving icon" << "\n";
+			std::cout << "saving icon" << std::endl;
 
 			downloadIcon.save();
 			iconTexture.loadFromFile(installDir + "icon.png");
@@ -116,7 +116,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 	if (fs::exists(installDir + "release.zip"))
 	{
-		std::cout << "release was found, installed" << "\n";
+		std::cout << "release was found, installed" << std::endl;
 
 		downloaded = true;
 
@@ -124,7 +124,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	}
 	else // thing is not downloaded
 	{
-		std::cout << "release was not found, not installed" << "\n";
+		std::cout << "release was not found, not installed" << std::endl;
 
 		downloaded = false;
 	}
@@ -198,7 +198,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
 	launchButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
-	std::cout << "card is ready (took " << itemCreateTimer.getElapsedTime().asSeconds() << " seconds)" << "\n";
+	std::cout << "card is ready (took " << itemCreateTimer.getElapsedTime().asSeconds() << " seconds)" << std::endl;
 }
 
 Item::~Item()
@@ -210,23 +210,23 @@ Item::~Item()
 
 void Item::deleteFiles()
 {
-	std::cout << "using deprecated file deletion method" << "\n";
+	std::cout << "using deprecated file deletion method" << std::endl;
 
 	try
 	{
 		fs::remove(installDir + "release.zip");
-		std::cout << "done" << "\n";
+		std::cout << "done" << std::endl;
 		downloaded = false;
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << "\n" << e.what() << "\n";
+		std::cout << "\n" << e.what() << std::endl;
 	}
 }
 
 bool Item::checkForUpdate()
 {
-	std::cout << "checking for updates" << "\n";
+	std::cout << "checking for updates" << std::endl;
 
 	Download getRemoteVersion;
 	getRemoteVersion.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
@@ -245,7 +245,7 @@ bool Item::checkForUpdate()
 
 		if (lVersion != rVersion)
 		{
-			std::cout << "item is out of date! (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
+			std::cout << "item is out of date! (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
 
 			updateIsAvailable = true;
 			redownloadButton.setFillColor(sf::Color::Yellow);
@@ -256,7 +256,7 @@ bool Item::checkForUpdate()
 		}
 		else
 		{
-			std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << "\n";
+			std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
 
 			return false;
 		}
@@ -269,7 +269,7 @@ bool Item::checkForUpdate()
 
 void Item::updateItem()
 {
-	std::cout << "updating item" << "\n";
+	std::cout << "updating item" << std::endl;
 
 	download();
 }
@@ -282,17 +282,17 @@ void Item::download()
 
 	if (fs::exists(installDir + "/release.zip"))
 	{
-		std::cout << "updating " << itemName << "\n";
+		std::cout << "updating " << itemName << std::endl;
 
 		downloadIcon();
 		downloadInfo();
 		downloadFiles();
 
-		std::cout << "\n" << "finished updating " << itemName << "\n";
+		std::cout << "\n" << "finished updating " << itemName << std::endl;
 	}
 	else
 	{
-		std::cout << "downloading " << itemName << "\n";
+		std::cout << "downloading " << itemName << std::endl;
 
 		downloadInfo();
 
@@ -302,7 +302,7 @@ void Item::download()
 
 		downloadFiles();
 
-		std::cout << "\n" << "downloading update" << itemName << "\n";
+		std::cout << "\n" << "downloading update" << itemName << std::endl;
 	}
 
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
@@ -322,11 +322,11 @@ void Item::download()
 void Item::openItem()
 {
 #ifdef _WIN32
-	std::cout << "opening item" << "\n";
+	std::cout << "opening item" << std::endl;
 	std::string launch = "start " + installDir + "release.zip";
 	system(launch.c_str());
 #else
-	std::cout << "Your system does not support this function!" << "\n";
+	std::cout << "Your system does not support this function!" << std::endl;
 
 	MessageBoxOptions modOptions;
 	modOptions.title = "Unsupported Platform";
@@ -416,7 +416,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 {
 	//TODO: add checks here to make sure we don't try to parse a file that ended up being a 500 or 404
 
-	std::cout << "parsing info for " << dir << "\n";
+	std::cout << "parsing info for " << dir << std::endl;
 
 	std::ifstream getit(dir + "info.dat", std::ios::in);
 
@@ -446,7 +446,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 
 int Item::downloadIcon()
 {
-	std::cout << "\n" << "downloading icon" << "\n";
+	std::cout << "\n" << "downloading icon" << std::endl;
 
 	Download getIcon;
 	getIcon.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
@@ -459,7 +459,7 @@ int Item::downloadIcon()
 	}
 	else
 	{
-		std::cout << "failed to download icon <???>" << "\n";
+		std::cout << "failed to download icon <???>" << std::endl;
 	}
 
 	return 1;
@@ -467,7 +467,7 @@ int Item::downloadIcon()
 
 int Item::downloadInfo()
 {
-	std::cout << "\n" << "downloading info" << "\n";
+	std::cout << "\n" << "downloading info" << std::endl;
 
 	Download getInfo;
 	getInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
@@ -481,7 +481,7 @@ int Item::downloadInfo()
 
 int Item::downloadFiles()
 {
-	std::cout << "\n" << "downloading files" << "\n";
+	std::cout << "\n" << "downloading files" << std::endl;
 
 	Download getInfo;
 	getInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/release.zip");
@@ -497,9 +497,9 @@ int Item::downloadFiles()
 
 int Item::downloadFile(std::string fileName, std::string inPath, std::string outPath)
 {
-	std::cout << "deleting \"" + fileName + "\"" << "\n";
+	std::cout << "deleting \"" + fileName + "\"" << std::endl;
 
-	std::cout << "\n" << "downloading \"" + fileName + "\"" << "\n";
+	std::cout << "\n" << "downloading \"" + fileName + "\"" << std::endl;
 
 	Download getInfo;
 	getInfo.setInputPath(inPath);
@@ -512,22 +512,22 @@ int Item::downloadFile(std::string fileName, std::string inPath, std::string out
 	}
 	else
 	{
-		std::cout << "failed to download \"" + itemName + "\"" << "\n";
+		std::cout << "failed to download \"" + itemName + "\"" << std::endl;
 
 		return 0;
 	}
 
-	std::cout << "verifying" << "\n";
+	std::cout << "verifying" << std::endl;
 
 	if (fs::exists(outPath + "\\" + fileName))
 	{
-		std::cout << "success" << "\n";
+		std::cout << "success" << std::endl;
 
 		return 1;
 	}
 	else
 	{
-		std::cout << "failed to remove file" << "\n";
+		std::cout << "failed to remove file" << std::endl;
 
 		return 0;
 	}
@@ -535,29 +535,29 @@ int Item::downloadFile(std::string fileName, std::string inPath, std::string out
 
 int Item::deleteFile(std::string fileName, std::string filePath)
 {
-	std::cout << "deleting \"" + fileName + "\"" << "\n";
+	std::cout << "deleting \"" + fileName + "\"" << std::endl;
 
 	try
 	{
 		fs::remove(filePath + "\\" + fileName);
-		std::cout << "verifying" << "\n";
+		std::cout << "verifying" << std::endl;
 
 		if (fs::exists(filePath + "\\" = fileName))
 		{
-			std::cout << "failed to remove file" << "\n";
+			std::cout << "failed to remove file" << std::endl;
 
 			return 0;
 		}
 		else
 		{
-			std::cout << "success" << "\n";
+			std::cout << "success" << std::endl;
 
 			return 1;
 		}
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << "\n" << e.what() << "\n";
+		std::cout << "\n" << e.what() << std::endl;
 
 		return 0;
 	}
