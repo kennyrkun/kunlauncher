@@ -370,9 +370,9 @@ int InitialiseState::validateFileStructure()
 		createConfigurationFile << std::endl;
 		createConfigurationFile << "window_width = 525" << std::endl;
 		createConfigurationFile << "window_height = 400" << std::endl;
-		createConfigurationFile << "updatelauncheronstart = true" << std::endl;
-		createConfigurationFile << "checkfornewitemsonstart = true" << std::endl;
-		createConfigurationFile << "experimentalThemes = false" << std::endl;
+		createConfigurationFile << "updatelauncheronstart = TRUE" << std::endl;
+		createConfigurationFile << "checkfornewitemsonstart = TRUE" << std::endl;
+		createConfigurationFile << "experimentalThemes = FALSE" << std::endl;
 
 		createConfigurationFile.close();
 

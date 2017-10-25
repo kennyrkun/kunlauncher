@@ -10,7 +10,7 @@ class ResourceManager;
 
 namespace GBL
 {
-	const std::string VERSION = "0.14.0";
+	const std::string VERSION = "0.14.2";
 
 	namespace DIR
 	{

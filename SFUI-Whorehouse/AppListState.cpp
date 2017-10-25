@@ -354,6 +354,21 @@ void AppListState::loadApps() // TOOD: this.
 	std::cout << "\n";
 
 	std::ifstream readIndex(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
+	readIndex >> line;
+
+	if (line.find("Dear Valued Cox Customer") == 0)
+	{
+		std::cout << "cox fucked the launcher" << std::endl;
+		std::cout << line << std::endl;
+
+		abort();
+	}
+	else
+	{
+		std::cout << "cox did not fuck the launcher" << std::endl;
+		line = "";
+	}
+
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
