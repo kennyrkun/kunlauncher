@@ -72,7 +72,7 @@ std::string Download::getInputPath()
 }
 
 // TODO: make this function useable, by adding some sort of decryption thingy
-int Download::getFileSize()
+uintmax_t Download::getFileSize()
 {
 	sf::Ftp ftp;
 
