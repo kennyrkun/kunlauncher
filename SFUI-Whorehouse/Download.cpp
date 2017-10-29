@@ -113,7 +113,7 @@ int Download::download()
 	float elapsedTime = timer.getElapsedTime().asSeconds();
 
 	fileBuffer = response.getBody();
-	fileSize = response.getBody().size();
+	fileSize = fileBuffer.size();
 
 	if (fileBuffer.find("Your Friend in the Digital Age"))
 	{
@@ -170,6 +170,9 @@ void Download::save()
 	{
 		if (!silent)
 			std::cout << "saving file to \"" << outdir << outfile << "\"... " << std::endl;
+
+		std::cout << fileBuffer << std::endl;
+		std::cout << fileSize << std::endl;
 
 		for (int i = 0; i < fileSize; i++)
 			downloadFile << fileBuffer[i];
