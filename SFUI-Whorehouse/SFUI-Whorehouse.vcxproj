@@ -144,7 +144,6 @@
     <ClCompile Include="Section.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
-    <ClCompile Include="VisualChangelog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SettingsParser.hpp" />
@@ -164,7 +163,6 @@
     <ClInclude Include="Section.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="ThreadManager.hpp" />
-    <ClInclude Include="VisualChangelog.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
