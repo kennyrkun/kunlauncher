@@ -56,8 +56,6 @@ MessageBox::MessageBox(Options settings_)
 		if (combinedWidths[i] > largest)
 			// it's the new largest
 			largest = combinedWidths[i];
-		else
-			std::cout << i << " not the largest" << std::endl;
 
 	if (largest < 900)
 	{
@@ -78,8 +76,6 @@ MessageBox::MessageBox(Options settings_)
 		std::cout << "modal is too tall, setting it to 600" << std::endl;
 		settings.height = 600;
 	}
-
-	std::cout << "largest number is " << largest << std::endl;
 }
 
 MessageBox::~MessageBox()
