@@ -32,7 +32,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		catch (const std::exception& e)
 		{
 			std::cout << e.what() << std::endl;
-			
+
 			std::cout << "failed to create directory" << std::endl;
 		}
 	}
@@ -317,7 +317,7 @@ void Item::updateSize(float xSize, float ySize, float xPos, float yPos)
 void Item::draw()
 {
 	targetWindow->draw(cardShape);
-//	targetWindow->draw(controlBar);
+	//	targetWindow->draw(controlBar);
 	targetWindow->draw(icon);
 
 	targetWindow->draw(name);
@@ -364,7 +364,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 
 	std::cout << "parsing info for " << dir << std::endl;
 
-	if (fs::exists(dir + "info.dat") && (fs::file_size(dir + "info.dat") != 0)) // prevents crashing when it's broken
+	if (fs::exists(dir + "info.dat") && (fs::file_size(dir + "info.dat") != 0))
 	{
 		std::ifstream getit(dir + "info.dat", std::ios::in);
 
@@ -372,6 +372,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 		std::string description_;
 		std::string version_;
 
+		/*
 		// line 1, the name
 		getline(getit, name_);
 		// line 2, description
@@ -390,6 +391,38 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 		version_.erase(0, version_.find_first_of('"') + 1);
 		version_.erase(version_.find_last_of('"'), version_.length());
 		version.setString(version_);
+		*/
+
+		SettingsParser itemInfo;
+		if (itemInfo.loadFromFile(dir + "info.dat"))
+		{
+			if (itemInfo.get("name", name_))
+				name.setString(name_);
+
+			if (itemInfo.get("description", description_))
+				description.setString(description_);
+
+			if (itemInfo.get("version", version_))
+				version.setString(version_);
+		}
+		else
+		{
+			name.setString("Unable to load item info!");
+			description.setString("Try downloading the app.");
+			version.setString("");
+		}
+
+	}
+	else
+	{
+		std::cout << "info file is empty or missing" << std::endl;
+
+		iconTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "error_1x.png");
+		updateIsAvailable = true; // because there's no way to represent an error yet, we just mark it for needing to be redownloaded
+
+		name.setString("INFO IS MISSING");
+		description.setString("this app's info.dat is missing, try rewdownloading.");
+	}
 }
 
 int Item::downloadIcon()
