@@ -9,7 +9,7 @@
 
 namespace fs = std::experimental::filesystem;
 
-Download::Download(bool silent_)
+Download2::Download2(bool silent_)
 {
 	silent = silent_;
 
@@ -17,183 +17,231 @@ Download::Download(bool silent_)
 		std::cout << "downloader created" << std::endl;
 }
 
-Download::Download()
+Download2::Download2()
 {
 	if (!silent)
 		std::cout << "downloader created" << std::endl;
 }
 
-Download::~Download()
+Download2::~Download2()
 {
 	if (!silent)
 		std::cout << "downloader killed" << std::endl;
 }
 
-void Download::setOutputDir(std::string dir)
+void Download2::setOutputDir(std::string dir)
 {
-	outdir = dir;
+	saveDir = dir;
 
 	if (!silent)
-		std::cout << "output set to: " << outdir << std::endl;
+		std::cout << "output set to: " << saveDir << std::endl;
 
-	if (!fs::exists(outdir))
-		createDirectory(outdir);
+	if (!fs::exists(saveDir))
+		createDirectory(saveDir);
 }
 
-std::string Download::getOutputDir()
+std::string Download2::getOutputDir()
 {
-	return outdir;
+	return saveDir;
 }
 
-void Download::setOutputFilename(std::string file)
+void Download2::setOutputFilename(std::string file)
 {
-	outfile = file;
+	saveFile = file;
 
 	if (!silent)
-		std::cout << "output file set to: " << outfile << std::endl;
+		std::cout << "output file set to: " << saveFile << std::endl;
 }
 
-std::string Download::getOutputFilename()
+std::string Download2::getOutputFilename()
 {
-	return outfile;
+	return saveFile;
 }
 
-void Download::setInputPath(std::string path)
+void Download2::setInput(std::string in)
 {
-	inpath = path;
+	std::cout << "raw input path: " << in << std::endl;
 
-	if (!silent)
-		std::cout << "input uri set to: " << inpath << std::endl;
+	input = in;
+
+	std::string temppath = input;
+
+	for (size_t i = 0; i < temppath.length(); i++)
+		if (temppath[i] == '\\')
+			temppath[i] = '/'; // change all the slashes to forwards so that FTP accepts them
+
+	std::cout << "steralised input path: " << temppath << std::endl;
+
+	std::string filename = temppath;
+	std::string::size_type pos = filename.find_last_of("/\\");
+	if (pos != std::string::npos)
+		filename = filename.substr(pos + 1);
+	remoteFilename = filename;
+
+	remoteDirectory = temppath.erase(temppath.length() - remoteFilename.length(), temppath.back());
+
+	std::cout << "remoteDirectory: " << remoteDirectory << std::endl;
+	std::cout << "remoteFilename : " << remoteFilename << std::endl;
 }
 
-std::string Download::getInputPath()
+std::string Download2::getInput()
 {
-	return inpath;
+	return input;
+}
+
+void Download2::setInputDirectory(std::string directory)
+{
+	remoteDirectory = directory;
+}
+
+std::string Download2::getInputDirectory()
+{
+	return remoteDirectory;
+}
+
+void Download2::setInputFilename(std::string filename)
+{
+	remoteFilename = filename;
+}
+
+std::string Download2::getInputFilename()
+{
+	return remoteFilename;
 }
 
 // TODO: make this function useable, by adding some sort of decryption thingy
-uintmax_t Download::getFileSize()
+uintmax_t Download2::getFileSize()
 {
 	sf::Ftp ftp;
 
 	// Connect to the server
 	sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
 	if (response.isOk())
-		std::cout << "Connected" << std::endl;
+		if (!silent)
+			std::cout << "Connected" << std::endl;
 
 	// Log in
 	response = ftp.login("laurent", "dF6Zm89D");
 	if (response.isOk())
-		std::cout << "Logged in" << std::endl;
+		if (!silent)
+			std::cout << "Logged in" << std::endl;
 
-	response = ftp.sendCommand("SIZE", inpath);
+	response = ftp.sendCommand("SIZE", input);
 	if (response.isOk())
-		std::cout << "File size: " << response.getMessage() << std::endl;
+		if (!silent)
+			std::cout << "File size: " << response.getMessage() << std::endl;
 
 	// Disconnect from the server (optional)
 	ftp.disconnect();
 
 	if (response.isOk())
-	{
 		return std::stoi(response.getMessage());
-	}
 	else
-	{
-		return 0;
-	}
+		return -1;
 }
 
-int Download::download()
+int Download2::download()
 {
-	sf::Http http(GBL::DIR::WEB_HOSTNAME);
-	sf::Http::Request request(inpath, sf::Http::Request::Get);
+	std::cout << "saveDir : " << saveDir << std::endl;
+	std::cout << "saveFile: " << saveFile << std::endl;
+	std::cout << "remoteDirectory: " << remoteDirectory << std::endl;
+	std::cout << "remoteFilename : " << remoteFilename << std::endl;
 
-	sf::Clock timer;
-	sf::Http::Response response = http.sendRequest(request, sf::seconds(10));
-	float elapsedTime = timer.getElapsedTime().asSeconds();
+	sf::Ftp ftp;
 
-	fileBuffer = response.getBody();
-	fileSize = fileBuffer.size();
+	sf::Ftp::Response response = ftp.connect("files.000webhost.com");
+	if (response.isOk())
+		std::cout << "connected to ftp" << std::endl;
 
-	if (fileBuffer.find("Your Friend in the Digital Age"))
+	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
+	if (response.isOk())
+		std::cout << "Logged in" << std::endl;
+
+	response = ftp.changeDirectory("public_html");
+	if (!response.isOk())
 	{
-		std::cout << "COX FUCKED ME AGAIN" << std::endl;
+		std::cout << "failed to set ftp directory" << std::endl;
 
-		fileBuffer = "Cox fucked the launcher again.";
+		return -1;
 	}
 
-	if (!silent)
+	if (fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory + remoteFilename))
 	{
-		std::cout << "downloaded remote (" << fileSize << "b (" << getAppropriateFileSize(fileSize, 2) << "))... " << std::endl;
-		std::cout << "download took " << elapsedTime << " seconds" << std::endl;
+		std::cout << "file already exists in cache, removing." << std::endl;
+
+		try
+		{
+			fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory + remoteFilename);
+		}
+		catch (const std::exception& e)
+		{
+			std::cout << "failed to remove already existing file, aborting download:" << std::endl;
+			std::cout << e.what() << std::endl;
+			return -1;
+		}
 	}
 
-	htmlReturnCode = response.getStatus();
+	std::cout << "dl: " << remoteDirectory + remoteFilename << std::endl;
 
-	switch (htmlReturnCode)
+	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory))
+		createDirectory(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory);
+
+	response = ftp.download(remoteDirectory + remoteFilename, ".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory);
+	if (response.isOk())
 	{
-	case sf::Http::Response::Ok:
-		if (!silent)
-			std::cout << "file server reports all is well (200)" << std::endl;
+		std::cout << response.getStatus() << ": downloaded the thing to the place" << std::endl;
 
-		return sf::Http::Response::Status::Ok;
-		break;
+		if (saveFile.empty())
+			saveFile = remoteFilename;
 
-	case sf::Http::Response::NotFound:
-		if (!silent)
-			std::cout << "file does not exist on remote server (404)" << std::endl;
+		std::cout << "reading into filebuffer" << std::endl;
 
-		return sf::Http::Response::Status::NotFound;
-		break;
+		std::ifstream fileContent(".\\bin\\cache\\" + remoteDirectory + remoteFilename, std::ios::binary);
+		if (fileContent)
+		{
+			fileBuffer = (std::string((std::istreambuf_iterator<char>(fileContent)), std::istreambuf_iterator<char>()));
 
-	case sf::Http::Response::InternalServerError:
-		if (!silent)
-			std::cout << "encountered Internal Server Error (500)" << std::endl;
-
-		return sf::Http::Response::Status::InternalServerError;
-		break;
-
-	default:
-		if (!silent)
-			std::cout << "something fucking broke" << std::endl;
-
-		return sf::Http::Response::Status::ResetContent;
-		break;
-	}
-}
-
-void Download::save()
-{
-	std::ofstream downloadFile(outdir + outfile, std::ios::out | std::ios::binary);
-	
-	if (downloadFile.is_open())
-	{
-		if (!silent)
-			std::cout << "saving file to \"" << outdir << outfile << "\"... " << std::endl;
-
-		std::cout << fileBuffer << std::endl;
-		std::cout << fileSize << std::endl;
-
-		for (int i = 0; i < fileSize; i++)
-			downloadFile << fileBuffer[i];
-		downloadFile.close();
-
-		if (downloadFile.fail())
-			if (!silent)
-				std::cout << "failed" << std::endl;
+			std::cout << "downloaded file, wrote to buffer: " << getAppropriateFileSize(fileBuffer.size(), 3) << std::endl;
+			fileSize = fileBuffer.size();
+		}
 		else
-			if (!silent)
-				std::cout << "finished" << std::endl;
+		{
+			std::cout << "failed to open saved file" << std::endl;
+		}
 	}
 	else
 	{
-		std::cout << "failed to open " << outdir + outfile << " for saving" << std::endl;
+		std::cout << response.getMessage() << ": something went wrong! (" << response.getStatus() << ")" << std::endl;
+	}
 
-		return;
+	// Disconnect from the server (optional)
+	ftp.disconnect();
+
+	htmlReturnCode = sf::Http::Response::Status::Ok;
+	return htmlReturnCode;
+}
+
+void Download2::save()
+{
+	try
+	{
+		if (fs::exists(saveDir + saveFile))
+		{
+			std::cout << "output file already exists, overwriting" << std::endl;
+			fs::remove(saveDir + saveFile);
+		}
+
+		fs::copy_file(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory + remoteFilename, saveDir + saveFile);
+		std::cout << "saved file" << std::endl;
+	}
+	catch (const std::exception &e)
+	{
+		std::cout << "failed to save file:" << std::endl;
+		std::cout << e.what() << std::endl;
 	}
 }
 
-std::string Download::getAppropriateFileSize(const long long int bytes, const int decimals)
+std::string Download2::getAppropriateFileSize(const long long int bytes, const int decimals)
 {
 	int bytesPerUnit = 1024;
 	std::string sizes[] = { "Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "REALLY FUCKIN BIG" };
@@ -204,12 +252,28 @@ std::string Download::getAppropriateFileSize(const long long int bytes, const in
 	return number + " " + sizes[i];
 }
 
+void Download2::clearCache()
+{
+	try
+	{
+		fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE);
+		std::cout << "download cache cleared" << std::endl;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "failed to clear download cache:" << std::endl;
+		std::cout << e.what() << std::endl;
+	}
+}
+
 // private:
 
-void Download::createDirectory(std::string dir) // recursively
+void Download2::createDirectory(std::string dir) // recursively
 {
+	std::cout << "creating " << dir << std::endl;
+
 	std::vector<fs::path> subdirectories;
-	dir.erase(0, 2); // .\\
+//	dir.erase(0, 2); // .\\
 
 	for (auto& part : fs::path(dir))
 	{

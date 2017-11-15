@@ -51,17 +51,22 @@ void SettingsState::Resume()
 	std::cout << "SettingsState Resume" << std::endl;
 }
 
-void SettingsState::HandleEvents(sf::Event& event)
+void SettingsState::HandleEvents()
 {
-	if (event.type == sf::Event::EventType::Closed)
+	sf::Event event;
+
+	while (app->window->pollEvent(event))
 	{
-		app->Quit();
-	}
-	else if (event.type == sf::Event::EventType::MouseButtonPressed)
-	{
-		if (event.key.code == sf::Mouse::Button::Right)
+		if (event.type == sf::Event::EventType::Closed)
 		{
-			app->ChangeState(HomeState::Instance());
+			app->Quit();
+		}
+		else if (event.type == sf::Event::EventType::MouseButtonPressed)
+		{
+			if (event.key.code == sf::Mouse::Button::Right)
+			{
+				app->ChangeState(HomeState::Instance());
+			}
 		}
 	}
 }

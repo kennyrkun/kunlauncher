@@ -11,8 +11,8 @@ namespace fs = std::experimental::filesystem;
 
 std::string LauncherUpdater::getRemoteVersion()
 {
-	Download getHoHouse;
-	getHoHouse.setInputPath("version.info");
+	Download2 getHoHouse;
+	getHoHouse.setInput("version.info");
 	getHoHouse.download();
 
 	remoteVersion = getHoHouse.fileBuffer;
@@ -27,9 +27,12 @@ std::string LauncherUpdater::getLocalVersion()
 
 int LauncherUpdater::checkForUpdates()
 {
-	std::cout << "r" << getRemoteVersion() << " : " << "l" << getLocalVersion() << std::endl;
+	getRemoteVersion();
+	getLocalVersion();
 
-	if (getRemoteVersion() != getLocalVersion())
+	std::cout << "r" << remoteVersion << " : " << "l" << localVersion << std::endl;
+
+	if (remoteVersion != localVersion)
 	{
 		std::cout << "launcher is out of date" << std::endl;
 		//		return true;
@@ -44,8 +47,8 @@ int LauncherUpdater::checkForUpdates()
 
 int LauncherUpdater::downloadUpdate()
 {
-	Download getNewWhorehouse;
-	getNewWhorehouse.setInputPath("latest.noexe");
+	Download2 getNewWhorehouse;
+	getNewWhorehouse.setInput("latest.noexe");
 	getNewWhorehouse.setOutputDir(".\\");
 	getNewWhorehouse.setOutputFilename("latest_kunlauncher.exe");
 	getNewWhorehouse.download();
@@ -58,8 +61,11 @@ int LauncherUpdater::replaceOldExecutable()
 {
 	try
 	{
-		fs::rename("kunlauncher.exe", "kunlaucher.exe.old");
-		fs::rename("latest_kunlauncher.exe", "kunlauncher.exe");
+		if (fs::exists("kunlauncher.exe"))
+			fs::rename("kunlauncher.exe", "kunlaucher.exe.old");
+
+		if (fs::exists("latest_kunlauncher.exe"))
+			fs::rename("latest_kunlauncher.exe", "kunlauncher.exe");
 
 		return Status::Success;
 	}

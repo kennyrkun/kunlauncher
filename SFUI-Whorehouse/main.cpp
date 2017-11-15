@@ -1,6 +1,8 @@
 #include "AppEngine.hpp"
 #include "InitialiseState.hpp"
 
+#include <SFML\Graphics.hpp>
+
 #include <iostream>
 
 int main(int argc, char *argv[])
@@ -63,8 +65,6 @@ int main(int argc, char *argv[])
 
 		app->Cleanup();
 	}
-
-	std::cin.get();
 
 	return 0;
 }

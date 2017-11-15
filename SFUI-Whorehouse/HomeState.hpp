@@ -20,7 +20,7 @@ public:
 	void Pause();
 	void Resume();
 
-	void HandleEvents(sf::Event& event);
+	void HandleEvents();
 	void Update();
 	void Draw();
 

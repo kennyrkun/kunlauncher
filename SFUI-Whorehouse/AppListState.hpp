@@ -21,7 +21,7 @@ public:
 	void Pause();
 	void Resume();
 
-	void HandleEvents(sf::Event& event);
+	void HandleEvents();
 	void Update();
 	void Draw();
 
@@ -52,6 +52,7 @@ private:
 	std::thread *helperThread;
 	bool helperRunning = false;
 	bool helperDone = false;
+	bool loadingApps = false;
 
 	void loadApps();
 

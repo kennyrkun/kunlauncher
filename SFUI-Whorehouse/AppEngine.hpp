@@ -14,10 +14,12 @@ struct AppSettings
 	bool updateLauncherOnStart = false;
 	bool checkForNewItemsOnStart = false;
 	bool experimentalThemes = true;
+	bool printdownloadprogress = true;
 #else
 	bool updateLauncherOnStart = true;
 	bool checkForNewItemsOnStart = true;
 	bool experimentalThemes = false;
+	bool printdownloadprogress = false;
 #endif
 	bool fullscreen = false;
 	bool verticalSync = true;

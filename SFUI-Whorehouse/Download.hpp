@@ -3,21 +3,29 @@
 
 #include <string>
 
-class Download
+class Download2
 {
 public:
-	Download(bool);
-	Download();
-	~Download();
+	Download2(bool);
+	Download2();
+	~Download2();
 
-	void setOutputDir(std::string dir);
+	bool silent = false;
+
+	void setOutputDir(std::string directory);
 	std::string getOutputDir();
 
-	void setOutputFilename(std::string file);
+	void setOutputFilename(std::string filename);
 	std::string getOutputFilename();
 
-	void setInputPath(std::string path);
-	std::string getInputPath();
+	void setInput(std::string pathandfile);
+	std::string getInput();
+
+	void setInputDirectory(std::string directory);
+	std::string getInputDirectory();
+
+	void setInputFilename(std::string filename);
+	std::string getInputFilename();
 
 	uintmax_t getFileSize();
 	int download();
@@ -25,16 +33,20 @@ public:
 
 	std::string getAppropriateFileSize(const long long int bytes, const int decimals);
 
+	void clearCache();
+
 	int htmlReturnCode;
 	std::string fileBuffer;
 	uintmax_t fileSize;
 
 private:
-	std::string outdir = ".\\";
-	std::string outfile = "";
-	std::string inpath = "./";
+	std::string input;
 
-	bool silent = false;
+	std::string saveDir = ".\\bin\\cache";
+	std::string saveFile = "";
+
+	std::string remoteDirectory = "";
+	std::string remoteFilename = "";
 
 	void createDirectory(std::string dir);
 };

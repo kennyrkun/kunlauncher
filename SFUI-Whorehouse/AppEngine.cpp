@@ -10,6 +10,7 @@ void AppEngine::Init(std::string title_, AppSettings settings_)
 
 	window = new sf::RenderWindow;
 	window->setVerticalSyncEnabled(settings.verticalSync);
+	window->setKeyRepeatEnabled(false);
 	m_running = true;
 
 	std::cout << "AppEngine Init" << std::endl;
@@ -73,10 +74,7 @@ void AppEngine::PopState()
 
 void AppEngine::HandleEvents()
 {
-	sf::Event event;
-	window->pollEvent(event);
-
-	states.back()->HandleEvents(event);
+	states.back()->HandleEvents();
 }
 
 void AppEngine::Update()

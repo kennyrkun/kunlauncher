@@ -2,6 +2,7 @@
 #include "Download.hpp"
 #include "Globals.hpp"
 #include "MessageBox.hpp"
+#include "SettingsParser.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -27,8 +28,6 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		try
 		{
 			fs::create_directory(installDir);
-
-			std::cout << " done" << std::endl;
 		}
 		catch (const std::exception& e)
 		{
@@ -48,33 +47,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	{
 		std::cout << "info was not found, downloading" << std::endl;
 
-		Download downloadInfo;
-		downloadInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
-		downloadInfo.setOutputDir(installDir);
-		downloadInfo.setOutputFilename("info.dat");
-
-		switch (downloadInfo.download())
-		{
-		case sf::Http::Response::Status::Ok:
-		{
-			std::cout << "saving info" << std::endl;
-
-			downloadInfo.save();
-			parseInfo(installDir);
-			break;
-		}
-
-		case sf::Http::Response::Status::InternalServerError:
-		{
-			std::cout << "failed to download info, aborting" << std::endl;
-			name.setString("Failed to load app!");
-			description.setString("Encountered 500 Internal Server Error during download");
-			break;
-		}
-
-		default:
-			break;
-		}
+		downloadInfo();
 	}
 
 	if (fs::exists(installDir + "icon.png"))
@@ -87,31 +60,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	{
 		std::cout << "icon was not found, downloading" << std::endl;
 
-		Download downloadIcon;
-		downloadIcon.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
-		downloadIcon.setOutputDir(installDir);
-		downloadIcon.setOutputFilename("icon.png");
-
-		switch (downloadIcon.download())
-		{
-		case sf::Http::Response::Status::Ok:
-		{
-			std::cout << "saving icon" << std::endl;
-
-			downloadIcon.save();
-			iconTexture.loadFromFile(installDir + "icon.png");
-			break;
-		}
-
-		case sf::Http::Response::Status::InternalServerError:
-		{
-			iconTexture.loadFromFile(GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "error_1x.png");
-			break;
-		}
-
-		default:
-			break;
-		}
+		downloadIcon();
 	}
 
 	if (fs::exists(installDir + "release.zip"))
@@ -163,40 +112,45 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 
 	if (!downloadButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "get_app_1x.png"))
-		downloadButton.setFillColor(sf::Color::Green);
+		downloadButton.setFillColor(sf::Color(sf::Color::Green));
+	else
+		downloadButton.setFillColor(GBL::COLOR::ITEM::ICON);
 	downloadButtonTexture.setSmooth(true);
 	downloadButton.setTexture(&downloadButtonTexture);
 	downloadButton.setSize(sf::Vector2f(24, 24));
 	downloadButton.setOrigin(sf::Vector2f(downloadButton.getLocalBounds().width / 2, downloadButton.getLocalBounds().height / 2));
 	downloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
-	downloadButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
-	redownloadButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "auto_renew_1x.png");
+	if (redownloadButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "auto_renew_1x.png"))
+		redownloadButton.setFillColor(GBL::COLOR::ITEM::ICON);
+	else
+		redownloadButton.setFillColor(sf::Color::Yellow);
 	redownloadButtonTexture.setSmooth(true);
 	redownloadButton.setTexture(&redownloadButtonTexture);
 	redownloadButton.setRadius(10);
 	redownloadButton.setRotation(30);
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
-	redownloadButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
 	if (!removeButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "delete_forever_1x.png"))
 		removeButton.setFillColor(sf::Color::Red);
+	else
+		removeButton.setFillColor(GBL::COLOR::ITEM::ICON);
 	removeButtonTexture.setSmooth(true);
 	removeButton.setTexture(&removeButtonTexture);
 	removeButton.setSize(sf::Vector2f(24, 24));
 	removeButton.setOrigin(sf::Vector2f(removeButton.getLocalBounds().width / 2, removeButton.getLocalBounds().height / 2));
 	removeButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 15));
-	removeButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
 	if (!launchButtonTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "launch_1x.png"))
 		launchButton.setFillColor(sf::Color::Green);
+	else
+		launchButton.setFillColor(GBL::COLOR::ITEM::ICON);
 	launchButtonTexture.setSmooth(true);
 	launchButton.setTexture(&launchButtonTexture);
 	launchButton.setSize(sf::Vector2f(20, 20));
 	launchButton.setOrigin(sf::Vector2f(launchButton.getLocalBounds().width / 2, launchButton.getLocalBounds().height / 2));
 	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
-	launchButton.setFillColor(GBL::COLOR::ITEM::ICON);
 
 	std::cout << "card is ready (took " << itemCreateTimer.getElapsedTime().asSeconds() << " seconds)" << std::endl;
 }
@@ -228,41 +182,34 @@ bool Item::checkForUpdate()
 {
 	std::cout << "checking for updates" << std::endl;
 
-	Download getRemoteVersion;
-	getRemoteVersion.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
+	Download2 getRemoteVersion;
+	getRemoteVersion.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + itemName + "\\info.dat");
 	getRemoteVersion.download();
 
-	if (!getRemoteVersion.htmlReturnCode == sf::Http::Response::NotFound)
+	getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
+	getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
+	getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find('\n'), getRemoteVersion.fileBuffer.length());
+
+	getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find_first_of('"') + 1);
+	getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find_last_of('"'), getRemoteVersion.fileBuffer.length());
+	std::string rVersion = getRemoteVersion.fileBuffer;
+	std::string lVersion = version.getString();
+
+	if (lVersion != rVersion)
 	{
-		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
-		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
-		getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find('\n'), getRemoteVersion.fileBuffer.length());
+		std::cout << "item is out of date! (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
 
-		getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find_first_of('"') + 1);
-		getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find_last_of('"'), getRemoteVersion.fileBuffer.length());
-		std::string rVersion = getRemoteVersion.fileBuffer;
-		std::string lVersion = version.getString();
+		updateIsAvailable = true;
+		redownloadButton.setFillColor(sf::Color::Yellow);
 
-		if (lVersion != rVersion)
-		{
-			std::cout << "item is out of date! (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
+		version.setString(lVersion + " (New " + rVersion + "!)");
 
-			updateIsAvailable = true;
-			redownloadButton.setFillColor(sf::Color::Yellow);
-
-			version.setString(lVersion + " (New " + rVersion + "!)");
-
-			return true;
-		}
-		else
-		{
-			std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
-
-			return false;
-		}
+		return true;
 	}
 	else
 	{
+		std::cout << "item is up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
+
 		return false;
 	}
 }
@@ -298,11 +245,10 @@ void Item::download()
 
 		downloadIcon();
 		iconTexture.loadFromFile(installDir + "icon.png");
-		icon.setTexture(&iconTexture, true);
 
 		downloadFiles();
 
-		std::cout << "\n" << "downloading update" << itemName << std::endl;
+		std::cout << "\n" << "downloading update " << itemName << std::endl;
 	}
 
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
@@ -418,49 +364,46 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 
 	std::cout << "parsing info for " << dir << std::endl;
 
-	std::ifstream getit(dir + "info.dat", std::ios::in);
+	if (fs::exists(dir + "info.dat") && (fs::file_size(dir + "info.dat") != 0)) // prevents crashing when it's broken
+	{
+		std::ifstream getit(dir + "info.dat", std::ios::in);
 
-	std::string name_;
-	std::string description_;
-	std::string version_;
+		std::string name_;
+		std::string description_;
+		std::string version_;
 
-	// line 1, the name
-	getline(getit, name_);
-	// line 2, description
-	getline(getit, description_);
-	// line 3, version
-	getline(getit, version_);
+		// line 1, the name
+		getline(getit, name_);
+		// line 2, description
+		getline(getit, description_);
+		// line 3, version
+		getline(getit, version_);
 
-	name_.erase(0, name_.find_first_of('"') + 1);
-	name_.erase(name_.find_last_of('"'), name_.length());
-	name.setString(name_);
+		name_.erase(0, name_.find_first_of('"') + 1);
+		name_.erase(name_.find_last_of('"'), name_.length());
+		name.setString(name_);
 
-	description_.erase(0, description_.find_first_of('"') + 1);
-	description_.erase(description_.find_last_of('"'), description_.length());
-	description.setString(description_);
+		description_.erase(0, description_.find_first_of('"') + 1);
+		description_.erase(description_.find_last_of('"'), description_.length());
+		description.setString(description_);
 
-	version_.erase(0, version_.find_first_of('"') + 1);
-	version_.erase(version_.find_last_of('"'), version_.length());
-	version.setString(version_);
+		version_.erase(0, version_.find_first_of('"') + 1);
+		version_.erase(version_.find_last_of('"'), version_.length());
+		version.setString(version_);
 }
 
 int Item::downloadIcon()
 {
 	std::cout << "\n" << "downloading icon" << std::endl;
 
-	Download getIcon;
-	getIcon.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/icon.png");
-	getIcon.setOutputDir(installDir);
+	Download2 getIcon;
+	getIcon.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + itemName + "\\icon.png");
+	getIcon.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "\\");
 	getIcon.setOutputFilename("icon.png");
+	getIcon.download();
+	getIcon.save();
 
-	if (getIcon.download() == sf::Http::Response::Status::Ok)
-	{
-		getIcon.save();
-	}
-	else
-	{
-		std::cout << "failed to download icon <???>" << std::endl;
-	}
+	iconTexture.loadFromFile(installDir + "icon.png");
 
 	return 1;
 }
@@ -469,12 +412,14 @@ int Item::downloadInfo()
 {
 	std::cout << "\n" << "downloading info" << std::endl;
 
-	Download getInfo;
-	getInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/info.dat");
-	getInfo.setOutputDir(installDir);
+	Download2 getInfo;
+	getInfo.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + itemName + "\\info.dat");
+	getInfo.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "\\");
 	getInfo.setOutputFilename("info.dat");
 	getInfo.download();
 	getInfo.save();
+
+	parseInfo(installDir);
 
 	return 1;
 }
@@ -483,12 +428,12 @@ int Item::downloadFiles()
 {
 	std::cout << "\n" << "downloading files" << std::endl;
 
-	Download getInfo;
-	getInfo.setInputPath(GBL::DIR::WEB_APP_DIRECTORY + itemName + "/release.zip");
-	getInfo.setOutputDir(installDir);
-	getInfo.setOutputFilename("release.zip");
-	getInfo.download();
-	getInfo.save();
+	Download2 getFiles;
+	getFiles.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + itemName + "\\release.zip");
+	getFiles.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "\\");
+	getFiles.setOutputFilename("release.zip");
+	getFiles.download();
+	getFiles.save();
 
 	downloaded = true;
 
@@ -501,23 +446,12 @@ int Item::downloadFile(std::string fileName, std::string inPath, std::string out
 
 	std::cout << "\n" << "downloading \"" + fileName + "\"" << std::endl;
 
-	Download getInfo;
-	getInfo.setInputPath(inPath);
+	Download2 getInfo;
+	getInfo.setInput(inPath);
 	getInfo.setOutputDir(outPath);
 	getInfo.setOutputFilename(fileName);
-
-	if (getInfo.download() == sf::Http::Response::Status::Ok)
-	{
-		getInfo.save();
-	}
-	else
-	{
-		std::cout << "failed to download \"" + itemName + "\"" << std::endl;
-
-		return 0;
-	}
-
-	std::cout << "verifying" << std::endl;
+	getInfo.download();
+	getInfo.save();
 
 	if (fs::exists(outPath + "\\" + fileName))
 	{
@@ -527,7 +461,7 @@ int Item::downloadFile(std::string fileName, std::string inPath, std::string out
 	}
 	else
 	{
-		std::cout << "failed to remove file" << std::endl;
+		std::cout << "failed to download file" << std::endl;
 
 		return 0;
 	}

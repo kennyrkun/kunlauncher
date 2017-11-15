@@ -77,223 +77,230 @@ void AppListState::Resume()
 	std::cout << "AppListState Resume" << std::endl;
 }
 
-void AppListState::HandleEvents(sf::Event& event)
+void AppListState::HandleEvents()
 {
-	if (event.type == sf::Event::EventType::Closed)
-	{
-		app->Quit();
-	}
-	else if (event.type == sf::Event::EventType::Resized)
-	{
-		std::cout << "new width: " << event.size.width << std::endl;
-		std::cout << "new height: " << event.size.height << std::endl;
+	sf::Event event;
 
-		sf::Vector2u newSize(event.size.width, event.size.height);
-
-		if (newSize.x >= 525 && newSize.y >= 325)
+	while (app->window->pollEvent(event))
+	{
+		if (event.type == sf::Event::EventType::Closed)
 		{
-			sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-			*mainView = sf::View(visibleArea);
-			app->window->setView(sf::View(visibleArea));
-
-			cardScroller->setSize(event.size.width, event.size.height);
-			cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
-
-			// set the scrollbar size
-			updateScrollThumbSize();
+			app->Quit();
 		}
-		else
+		else if (event.type == sf::Event::EventType::Resized)
 		{
-			if (event.size.width <= 525)
-				newSize.x = 525;
+			std::cout << "new width: " << event.size.width << std::endl;
+			std::cout << "new height: " << event.size.height << std::endl;
 
-			if (event.size.height <= 325)
-				newSize.y = 325;
+			sf::Vector2u newSize(event.size.width, event.size.height);
 
-			app->window->setSize(newSize);
-		}
-	}
-	else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled)
-	{
-		if (event.mouseWheel.delta < 0) // down, or move items up
-		{
-			scrollbar.moveThumbDown();
-
-			if (scrollerBottomPosition < scrollerMaxPosition)
+			if (newSize.x >= 525 && newSize.y >= 325)
 			{
-				cardScroller->move(0, scrollbar.scrollJump);
+				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+				*mainView = sf::View(visibleArea);
+				app->window->setView(sf::View(visibleArea));
 
-				updateScrollLimits();
+				cardScroller->setSize(event.size.width, event.size.height);
+				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
 
-				if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
-				{
-					std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
-					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
-					updateScrollLimits();
-				}
+				// set the scrollbar size
+				updateScrollThumbSize();
 			}
 			else
 			{
-				std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+				if (event.size.width <= 525)
+					newSize.x = 525;
+
+				if (event.size.height <= 325)
+					newSize.y = 325;
+
+				app->window->setSize(newSize);
 			}
 		}
-		else if (event.mouseWheel.delta > 0) // scroll up, or move items down
+		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled)
 		{
-			scrollbar.moveThumbUp();
-
-			if (scrollerTopPosition > scrollerMinPosition)
+			if (event.mouseWheel.delta < 0) // down, or move items up
 			{
-				cardScroller->move(0, -scrollbar.scrollJump);
+				scrollbar.moveThumbDown();
 
-				updateScrollLimits();
-
-				if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
+				if (scrollerBottomPosition < scrollerMaxPosition)
 				{
-					std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
-					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
+					cardScroller->move(0, scrollbar.scrollJump);
+
 					updateScrollLimits();
-				}
-			}
-			else
-			{
-				std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
-			}
-		}
-	}
-	else if (event.type == sf::Event::EventType::MouseButtonPressed)
-	{
-		if (event.key.code == sf::Mouse::Button::Left)
-		{
-			bool clicked;
 
-			//links
-			for (size_t i = 0; i < items.size(); i++)
-			{
-				if (items[i]->downloaded)
-				{
-					if (mouseIsOver(items[i]->removeButton))
+					if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
 					{
-						MessageBox::Options modOptions;
-						modOptions.title = "Confirm Deletion";
-						modOptions.text = "Delete \"" + items[i]->itemName + "\"?";
-						std::vector<std::string> modaloptions;
-						modaloptions.push_back("No");
-						modaloptions.push_back("Yes");
-						modOptions.settings = modaloptions;
-
-						MessageBox confirmDelete(modOptions);
-						confirmDelete.runBlocking();
-
-						if (confirmDelete.returnCode == 0)
-						{
-							std::cout << "answer no" << std::endl;
-						}
-						else if (confirmDelete.returnCode == 1)
-						{
-							std::cout << "answer yes" << std::endl;
-
-							threads.push_back(std::thread(&Item::deleteFiles, items[i]));
-
-							clicked = true;
-							break;
-						}
-					}
-					else if (mouseIsOver(items[i]->redownloadButton))
-					{
-						threads.push_back(std::thread(&Item::updateItem, items[i]));
-
-						clicked = true;
-						break;
-					}
-					else if (mouseIsOver(items[i]->launchButton))
-					{
-						items[i]->openItem();
-
-						clicked = true;
-						break;
+						std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
+						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
+						updateScrollLimits();
 					}
 				}
 				else
 				{
-					if (mouseIsOver(items[i]->downloadButton))
+					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+				}
+			}
+			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
+			{
+				scrollbar.moveThumbUp();
+
+				if (scrollerTopPosition > scrollerMinPosition)
+				{
+					cardScroller->move(0, -scrollbar.scrollJump);
+
+					updateScrollLimits();
+
+					if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
 					{
-						threads.push_back(std::thread(&Item::download, items[i]));
+						std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
+						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
+						updateScrollLimits();
+					}
+				}
+				else
+				{
+					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+				}
+			}
+		}
+		else if (event.type == sf::Event::EventType::MouseButtonPressed)
+		{
+			if (event.mouseButton.button == sf::Mouse::Button::Left)
+			{
+				bool clicked(false);
 
-						//							std::thread *newThread = new std::thread(&Item::updateItem, items[i]);
-						//							threads.push_back(newThread);
+				//links
+				for (size_t i = 0; i < items.size(); i++)
+				{
+					if (items[i]->downloaded)
+					{
+						if (mouseIsOver(items[i]->removeButton))
+						{
+							MessageBox::Options modOptions;
+							modOptions.title = "Confirm Deletion";
+							modOptions.text = "Delete \"" + items[i]->name.getString() + "\"?";
+							std::vector<std::string> modaloptions = { "No", "Yes" };
+							modOptions.settings = modaloptions;
 
-						clicked = true;
+							MessageBox confirmDelete(modOptions);
+							confirmDelete.runBlocking();
+
+							if (confirmDelete.returnCode == 0)
+							{
+								std::cout << "answer no" << std::endl;
+							}
+							else if (confirmDelete.returnCode == 1)
+							{
+								std::cout << "answer yes" << std::endl;
+
+								threads.push_back(std::thread(&Item::deleteFiles, items[i]));
+
+								clicked = true;
+							}
+						}
+						else if (mouseIsOver(items[i]->redownloadButton))
+						{
+							std::cout << "redownload button pressed" << std::endl;
+
+							threads.push_back(std::thread(&Item::updateItem, items[i]));
+
+							clicked = true;
+						}
+						else if (mouseIsOver(items[i]->launchButton))
+						{
+							std::cout << "launch button pressed" << std::endl;
+
+							items[i]->openItem();
+
+							clicked = true;
+						}
+					}
+					else
+					{
+						if (mouseIsOver(items[i]->downloadButton))
+						{
+							std::cout << "download button pressed" << std::endl;
+
+							threads.push_back(std::thread(&Item::download, items[i]));
+
+							clicked = true;
+						}
+					}
+
+					if (clicked)
+						break;
+				}
+
+				//links
+				for (size_t i = 0; i < links.size(); i++)
+				{
+					if (mouseIsOver(links[i]->linkText) || mouseIsOver(links[i]->followLinkButton))
+					{
+						// follow link
+						links[i]->follow();
+
 						break;
 					}
 				}
 			}
-
-			//links
-			for (size_t i = 0; i < links.size(); i++)
-			{
-				if (mouseIsOver(links[i]->linkText) || mouseIsOver(links[i]->followLinkButton))
-				{
-					// follow link
-					links[i]->follow();
-				}
-			}
-		}
-		else if (event.key.code == sf::Mouse::Button::Right)
-		{
-			app->ChangeState(HomeState::Instance());
-		}
-	}
-	else if (event.type == sf::Event::EventType::MouseButtonReleased)
-	{
-		if (scrollbar.thumbDragging)
-		{
-			scrollbar.thumbDragging = false;
-			scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
-		}
-	}
-	else if (event.type == sf::Event::EventType::KeyPressed)
-	{
-		if (event.key.code == sf::Keyboard::Key::R)
-		{
-			if (helperRunning)
-			{
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
-				{
-					fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "\\index.dat");
-
-					Download getItemIndex;
-					getItemIndex.setInputPath("./" + GBL::DIR::WEB_APP_DIRECTORY + "/index.dat");
-					getItemIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
-					getItemIndex.setOutputFilename("\\index.dat");
-					getItemIndex.download();
-					getItemIndex.save();
-				}
-
-				std::cout << "refreshing applist" << std::endl;
-
-				links.clear();
-				items.clear();
-
-				helperThread = new std::thread(&AppListState::loadApps, this);
-				helperDone = false;
-				helperRunning = true;
-
-				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
-			}
-			else
-			{
-				std::cout << "helper is running, not reloading." << std::endl;
-			}
-		}
-		else if (event.key.code == sf::Keyboard::Key::Escape)
-		{
-			if (helperRunning)
+			else if (event.key.code == sf::Mouse::Button::Right)
 			{
 				app->ChangeState(HomeState::Instance());
 			}
-			else
+		}
+		else if (event.type == sf::Event::EventType::MouseButtonReleased)
+		{
+			if (scrollbar.thumbDragging)
 			{
-				std::cout << "helper is running, not switching states" << std::endl;
+				scrollbar.thumbDragging = false;
+				scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
+			}
+		}
+		else if (event.type == sf::Event::EventType::KeyPressed)
+		{
+			if (event.key.code == sf::Keyboard::Key::R)
+			{
+				if (helperRunning)
+				{
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
+					{
+						fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "\\index.dat");
+
+						Download2 getNewIndex;
+						getNewIndex.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + "\\index.dat");
+						getNewIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
+						getNewIndex.setOutputFilename("index.dat");
+						getNewIndex.download();
+						getNewIndex.save();
+					}
+
+					std::cout << "refreshing applist" << std::endl;
+
+					links.clear();
+					items.clear();
+
+					helperThread = new std::thread(&AppListState::loadApps, this);
+					helperDone = false;
+					helperRunning = true;
+
+					cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
+				}
+				else
+				{
+					std::cout << "helper is running, not reloading." << std::endl;
+				}
+			}
+			else if (event.key.code == sf::Keyboard::Key::Escape)
+			{
+				if (helperRunning)
+				{
+					app->ChangeState(HomeState::Instance());
+				}
+				else
+				{
+					std::cout << "helper is running, not switching states" << std::endl;
+				}
 			}
 		}
 	}
@@ -354,23 +361,6 @@ void AppListState::loadApps() // TOOD: this.
 	std::string line; // each line of index.dat;
 
 	std::ifstream readIndex(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
-	std::getline(readIndex, line);
-
-	if (line.find("Dear Valued Cox Customer") == 0)
-	{
-		std::cout << "cox fucked the launcher" << std::endl;
-		std::cout << line << std::endl;
-
-		abort();
-	}
-	else
-	{
-		std::cout << "cox did not fuck the launcher" << std::endl;
-
-		readIndex.clear();
-		readIndex.seekg(0, std::ios::beg);
-		line.clear();
-	}
 
 	int loopi(0);
 	while (std::getline(readIndex, line))
@@ -381,15 +371,10 @@ void AppListState::loadApps() // TOOD: this.
 		// or for links, LINK:"text"TO"link.com"
 		if (line[0] == 'A' && line[1] == 'P' && line[2] == 'P') // it's an app
 		{
-			std::cout << "it's an app" << std::endl;
 			line.erase(0, 3); // remove APP
-			std::cout << line << std::endl;
 			line.erase(0, 1); // remove :
-			std::cout << line << std::endl;
 			line.erase(0, 1); // remove first "
-			std::cout << line << std::endl;
 			line.erase(line.length() - 1, line.length()); // remove last "
-			std::cout << line << std::endl;
 
 			if (comesAfterLink)
 			{

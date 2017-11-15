@@ -58,7 +58,6 @@ void InitialiseState::Init(AppEngine* app_)
 
 	currentLauncherTask.setFont(font);
 	currentLauncherTask.setCharacterSize(20);
-	setTaskText("initialising");
 
 	helperThread = new std::thread(&InitialiseState::initialisise, this);
 	helperRunning = true;
@@ -84,6 +83,7 @@ void InitialiseState::Cleanup()
 
 	sf::RenderWindow* newWindow = new sf::RenderWindow(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + GBL::VERSION, sf::Style::Resize | sf::Style::Close);
 	newWindow->setVerticalSyncEnabled(true);
+	newWindow->setKeyRepeatEnabled(false);
 
 	app->window->close();
 	delete app->window;
@@ -103,20 +103,25 @@ void InitialiseState::Resume()
 	std::cout << "IntialiseState Resume" << std::endl;
 }
 
-void InitialiseState::HandleEvents(sf::Event& event)
+void InitialiseState::HandleEvents()
 {
-	if (event.type == sf::Event::EventType::Closed)
-	{
-		app->Quit();
-	}
-	else if (event.type == sf::Event::EventType::KeyPressed)
-	{
-		if (event.key.code == sf::Keyboard::Key::LShift)
-		{
-			app->developerModeActive = true;
-			progressBar->setColor(sf::Color::Red, sf::Color::Green, sf::Color::Magenta, sf::Color::Blue);
+	sf::Event event;
 
-			std::cout << "developer mode toggled" << std::endl;
+	while (app->window->pollEvent(event))
+	{
+		if (event.type == sf::Event::EventType::Closed)
+		{
+			app->Quit();
+		}
+		else if (event.type == sf::Event::EventType::KeyPressed)
+		{
+			if (event.key.code == sf::Keyboard::Key::LShift)
+			{
+				app->developerModeActive = true;
+				progressBar->setColor(sf::Color::Red, sf::Color::Green, sf::Color::Magenta, sf::Color::Blue);
+
+				std::cout << "developer mode toggled" << std::endl;
+			}
 		}
 	}
 }
@@ -183,6 +188,7 @@ void InitialiseState::initialisise()
 			settings.get("updatelauncheronstart", app->settings.updateLauncherOnStart);
 			settings.get("checkforitemsonstart", app->settings.checkForNewItemsOnStart);
 			settings.get("experimentalThemes", app->settings.experimentalThemes);
+			settings.get("printdownloadprogress", app->settings.printdownloadprogress);
 			settings.get("defaultTheme", app->settings.theme);
 		}
 		else
@@ -197,14 +203,14 @@ void InitialiseState::initialisise()
 		std::cout << "updating app index." << std::endl;
 		progressBar->addThingsToDo(2);
 
-		Download getItemIndex;
-		getItemIndex.setInputPath("./" + GBL::DIR::WEB_APP_DIRECTORY + "/index.dat");
-		getItemIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
-		getItemIndex.setOutputFilename("\\index.dat");
+		Download2 getIndex;
+		getIndex.setInput("./" + GBL::DIR::WEB_APP_DIRECTORY + "/index.dat");
+		getIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
+		getIndex.setOutputFilename("index.dat");
 
-		getItemIndex.download();
+		getIndex.download();
 		progressBar->oneThingDone();
-		getItemIndex.save();
+		getIndex.save();
 		progressBar->oneThingDone();
 	}
 	else
@@ -217,8 +223,11 @@ void InitialiseState::initialisise()
 		setTaskText("checking for updates");
 		progressBar->addThingToDo(); // check for updates
 
+		if (fs::exists("kunlauncher.exe.old"))
+			fs::remove("kunlauncher.exe.old");
+
 		updater = new LauncherUpdater;
-		if (updater->checkForUpdates())
+		if (updater->checkForUpdates() == LauncherUpdater::Status::UpdateAvailable)
 		{
 			progressBar->oneThingDone(); // check for update
 
@@ -298,8 +307,6 @@ void InitialiseState::initialisise()
 
 	getThemeConfiguration();
 
-	sf::sleep(sf::seconds(2));
-
 	setTaskText("ready");
 
 	helperDone = true;
@@ -309,7 +316,7 @@ int InitialiseState::validateFileStructure()
 {
 	setTaskText("validating files");
 
-	progressBar->addThingsToDo(5); // bin, config, apps, app index, resources
+	progressBar->addThingsToDo(6); // bin, config, apps, app index, resources
 
 	std::cout << "checking for bin" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE)) // 1
@@ -320,6 +327,15 @@ int InitialiseState::validateFileStructure()
 		fs::create_directory(".\\" + GBL::DIR::BASE);
 
 		progressBar->oneThingDone();
+	}
+	progressBar->oneThingDone(); // 1
+
+	std::cout << "checking for cache" << std::endl;
+	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE)) // 1
+	{
+		std::cout << "creating cache folder" << std::endl;
+
+		fs::create_directories(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE);
 	}
 	progressBar->oneThingDone(); // 1
 
@@ -336,7 +352,7 @@ int InitialiseState::validateFileStructure()
 		createConfigurationFile << "window_width = 525" << std::endl;
 		createConfigurationFile << "window_height = 400" << std::endl;
 		createConfigurationFile << "updatelauncheronstart = TRUE" << std::endl;
-		createConfigurationFile << "checkfornewitemsonstart = TRUE" << std::endl;
+		createConfigurationFile << "checkforitemsonstart = TRUE" << std::endl;
 		createConfigurationFile << "experimentalThemes = FALSE" << std::endl;
 
 		createConfigurationFile.close();
@@ -351,8 +367,8 @@ int InitialiseState::validateFileStructure()
 		std::cout << "missing thirdpartynotices, downloading..." << std::endl;
 		progressBar->addThingToDo();
 
-		Download getThirdPartyNotices;
-		getThirdPartyNotices.setInputPath("./" + GBL::DIR::WEB_DIRECTORY + "/thirdpartynotices.txt");
+		Download2 getThirdPartyNotices;
+		getThirdPartyNotices.setInput("./" + GBL::DIR::WEB_DIRECTORY + "/thirdpartynotices.txt");
 		getThirdPartyNotices.setOutputDir(".\\" + GBL::DIR::BASE);
 		getThirdPartyNotices.setOutputFilename("\\thirdpartynotices.txt");
 		getThirdPartyNotices.download();
@@ -397,8 +413,8 @@ int InitialiseState::validateFileStructure()
 		std::cout << "app index missing, creating" << std::endl;
 		progressBar->addThingToDo();
 
-		Download getItemIndex;
-		getItemIndex.setInputPath("./" + GBL::DIR::WEB_APP_DIRECTORY + "/index.dat");
+		Download2 getItemIndex;
+		getItemIndex.setInput("./" + GBL::DIR::WEB_APP_DIRECTORY + "/index.dat");
 		getItemIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
 		getItemIndex.setOutputFilename("\\index.dat");
 		getItemIndex.download();

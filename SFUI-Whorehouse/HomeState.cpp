@@ -24,21 +24,33 @@ void HomeState::Init(AppEngine* app_)
 	app = app_;
 
 	SFUI::IconButton *appListButton = new SFUI::IconButton;
-	appListButton->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "apps_2x.png", true);
-	appListButton->setButtonColor(sf::Color(100, 100, 100));
+	if (!appListButton->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "apps_2x.png", true))
+	{
+		appListButton->setButtonSize(sf::Vector2f(96, 96));
+		appListButton->setButtonColor(sf::Color::Green);
+	}
+	else
+		appListButton->setButtonColor(sf::Color(100, 100, 100));
 	appListButton->setPosition(sf::Vector2f(app->window->getView().getCenter().x - appListButton->shape.getLocalBounds().width * 1.5 - 48, app->window->getView().getCenter().y - appListButton->shape.getLocalBounds().height / 2));
 	sections.push_back(appListButton);
 
 	SFUI::IconButton *settingsState = new SFUI::IconButton;
-	settingsState->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "settings_2x.png", true);
-	settingsState->setButtonColor(sf::Color(100, 100, 100));
+	if (!settingsState->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "settings_2x.png", true))
+		settingsState->setButtonSize(sf::Vector2f(96, 96));
+	else
+		settingsState->setButtonColor(sf::Color(100, 100, 100));
 	settingsState->setPosition(sf::Vector2f(app->window->getView().getCenter().x - settingsState->shape.getLocalBounds().width / 2, app->window->getView().getCenter().y - settingsState->shape.getLocalBounds().height / 2));
 	settingsState->disable();
 	sections.push_back(settingsState);
 
 	SFUI::IconButton *powerButton = new SFUI::IconButton;
-	powerButton->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "power_2x.png", true);
-	powerButton->setButtonColor(sf::Color(100, 100, 100));
+	if (!powerButton->setIconTexture(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "power_2x.png", true))
+	{
+		powerButton->setButtonSize(sf::Vector2f(96, 96));
+		powerButton->setButtonColor(sf::Color::Red);
+	}
+	else
+		powerButton->setButtonColor(sf::Color(100, 100, 100));
 	powerButton->setPosition(sf::Vector2f(app->window->getView().getCenter().x + powerButton->shape.getLocalBounds().width / 2 + 48, app->window->getView().getCenter().y - powerButton->shape.getLocalBounds().height / 2));
 	sections.push_back(powerButton);
 
@@ -70,23 +82,30 @@ void HomeState::Resume()
 	std::cout << "HomeState Resume" << std::endl;
 }
 
-void HomeState::HandleEvents(sf::Event& event)
+void HomeState::HandleEvents()
 {
-	if (event.type == sf::Event::EventType::Closed)
+	sf::Event event;
+
+	while (app->window->pollEvent(event))
 	{
-		app->Quit();
-	}
-	else if (event.type == sf::Event::EventType::MouseButtonPressed)
-	{
-		if (event.key.code == sf::Mouse::Button::Left)
+		if (event.type == sf::Event::EventType::Closed)
 		{
-			//sections
-			if (mouseIsOver(sections[0]->shape) && sections[0]->enabled)
-				app->ChangeState(AppListState::Instance());
-			else if (mouseIsOver(sections[1]->shape) && sections[1]->enabled)
-				app->ChangeState(SettingsState::Instance());
-			else if (mouseIsOver(sections[2]->shape) && sections[2]->enabled)
-				app->Quit();
+			app->Quit();
+		}
+		else if (event.type == sf::Event::EventType::MouseButtonPressed)
+		{
+			std::cout << "click" << std::endl;
+
+			if (event.mouseButton.button == sf::Mouse::Button::Left)
+			{
+				//sections
+				if (mouseIsOver(sections[0]->shape) && sections[0]->enabled)
+					app->ChangeState(AppListState::Instance());
+				else if (mouseIsOver(sections[1]->shape) && sections[1]->enabled)
+					app->ChangeState(SettingsState::Instance());
+				else if (mouseIsOver(sections[2]->shape) && sections[2]->enabled)
+					app->Quit();
+			}
 		}
 	}
 }
