@@ -87,7 +87,7 @@ void AppListState::HandleEvents()
 		{
 			app->Quit();
 		}
-		else if (event.type == sf::Event::EventType::Resized)
+		else if (event.type == sf::Event::EventType::Resized && !loadingApps)
 		{
 			std::cout << "new width: " << event.size.width << std::endl;
 			std::cout << "new height: " << event.size.height << std::endl;
@@ -117,7 +117,7 @@ void AppListState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 		}
-		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled)
+		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled && !loadingApps)
 		{
 			if (event.mouseWheel.delta < 0) // down, or move items up
 			{
@@ -164,7 +164,7 @@ void AppListState::HandleEvents()
 				}
 			}
 		}
-		else if (event.type == sf::Event::EventType::MouseButtonPressed)
+		else if (event.type == sf::Event::EventType::MouseButtonPressed && !loadingApps)
 		{
 			if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
@@ -249,7 +249,7 @@ void AppListState::HandleEvents()
 				app->ChangeState(HomeState::Instance());
 			}
 		}
-		else if (event.type == sf::Event::EventType::MouseButtonReleased)
+		else if (event.type == sf::Event::EventType::MouseButtonReleased && !loadingApps)
 		{
 			if (scrollbar.thumbDragging)
 			{
@@ -259,37 +259,51 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
-			if (event.key.code == sf::Keyboard::Key::R)
+			if (event.key.code == sf::Keyboard::Key::R && !loadingApps)
 			{
-				if (helperRunning)
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
 				{
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
+					try
+					{
+						fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
+					}
+					catch (const std::exception& e)
+					{
+						std::cout << "failed to remove apps folder: " << std::endl;
+						std::cout << e.what() << std::endl;
+					}
+				}
+
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
+				{
+					try
 					{
 						fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "\\index.dat");
-
-						Download2 getNewIndex;
-						getNewIndex.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + "\\index.dat");
-						getNewIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
-						getNewIndex.setOutputFilename("index.dat");
-						getNewIndex.download();
-						getNewIndex.save();
+					}
+					catch (const std::exception& e)
+					{
+						std::cout << "failed to remove item index:" << std::endl;
+						std::cout << e.what() << std::endl;
 					}
 
-					std::cout << "refreshing applist" << std::endl;
-
-					links.clear();
-					items.clear();
-
-					helperThread = new std::thread(&AppListState::loadApps, this);
-					helperDone = false;
-					helperRunning = true;
-
-					cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
+					Download2 getNewIndex;
+					getNewIndex.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + "\\index.dat");
+					getNewIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
+					getNewIndex.setOutputFilename("index.dat");
+					getNewIndex.download();
+					getNewIndex.save();
 				}
-				else
-				{
-					std::cout << "helper is running, not reloading." << std::endl;
-				}
+
+				std::cout << "refreshing applist" << std::endl;
+
+				links.clear();
+				items.clear();
+
+				helperThread = new std::thread(&AppListState::loadApps, this);
+				helperDone = false;
+				helperRunning = true;
+
+				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
 			}
 			else if (event.key.code == sf::Keyboard::Key::Escape)
 			{
@@ -352,6 +366,8 @@ void AppListState::Draw()
 
 void AppListState::loadApps() // TOOD: this.
 {
+	loadingApps = true;
+
 	items.clear();
 	links.clear();
 	updateScrollThumbSize();
@@ -481,6 +497,8 @@ void AppListState::loadApps() // TOOD: this.
 
 	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded)" << std::endl;
 	helperDone = true;
+
+	loadingApps = false;
 }
 
 void AppListState::updateScrollThumbSize()
