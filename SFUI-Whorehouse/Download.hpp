@@ -6,11 +6,8 @@
 class Download2
 {
 public:
-	Download2(bool);
 	Download2();
 	~Download2();
-
-	bool silent = false;
 
 	void setOutputDir(std::string directory);
 	std::string getOutputDir();

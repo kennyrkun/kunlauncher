@@ -49,7 +49,7 @@ private:
 	void initialisise();
 
 	int validateFileStructure();
-	int updateFileStructure();
+	int validateResourceFiles();
 
 	int getThemeConfiguration();
 

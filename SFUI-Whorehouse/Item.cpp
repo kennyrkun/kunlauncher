@@ -183,7 +183,7 @@ bool Item::checkForUpdate()
 	std::cout << "checking for updates" << std::endl;
 
 	Download2 getRemoteVersion;
-	getRemoteVersion.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + itemName + "\\info.dat");
+	getRemoteVersion.setInput(".\\" + GBL::WEB::APPS + itemName + "\\info.dat");
 	getRemoteVersion.download();
 
 	getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
@@ -430,7 +430,7 @@ int Item::downloadIcon()
 	std::cout << "\n" << "downloading icon" << std::endl;
 
 	Download2 getIcon;
-	getIcon.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + itemName + "\\icon.png");
+	getIcon.setInput(".\\" + GBL::WEB::APPS + itemName + "\\icon.png");
 	getIcon.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "\\");
 	getIcon.setOutputFilename("icon.png");
 	getIcon.download();
@@ -446,7 +446,7 @@ int Item::downloadInfo()
 	std::cout << "\n" << "downloading info" << std::endl;
 
 	Download2 getInfo;
-	getInfo.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + itemName + "\\info.dat");
+	getInfo.setInput(".\\" + GBL::WEB::APPS + itemName + "\\info.dat");
 	getInfo.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "\\");
 	getInfo.setOutputFilename("info.dat");
 	getInfo.download();
@@ -462,7 +462,7 @@ int Item::downloadFiles()
 	std::cout << "\n" << "downloading files" << std::endl;
 
 	Download2 getFiles;
-	getFiles.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + itemName + "\\release.zip");
+	getFiles.setInput(".\\" + GBL::WEB::APPS + itemName + "\\release.zip");
 	getFiles.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "\\");
 	getFiles.setOutputFilename("release.zip");
 	getFiles.download();

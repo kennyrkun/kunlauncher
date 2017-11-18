@@ -176,6 +176,7 @@ void InitialiseState::initialisise()
 	setTaskText("initialising");
 
 	validateFileStructure();
+	validateResourceFiles();
 
 	progressBar->addThingToDo();
 	{
@@ -204,7 +205,7 @@ void InitialiseState::initialisise()
 		progressBar->addThingsToDo(2);
 
 		Download2 getIndex;
-		getIndex.setInput("./" + GBL::DIR::WEB_APP_DIRECTORY + "/index.dat");
+		getIndex.setInput("./" + GBL::DIR::BASE + "/index.dat");
 		getIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
 		getIndex.setOutputFilename("index.dat");
 
@@ -368,7 +369,7 @@ int InitialiseState::validateFileStructure()
 		progressBar->addThingToDo();
 
 		Download2 getThirdPartyNotices;
-		getThirdPartyNotices.setInput("./" + GBL::DIR::WEB_DIRECTORY + "/thirdpartynotices.txt");
+		getThirdPartyNotices.setInput("./" + GBL::WEB::BASE + "/thirdpartynotices.txt");
 		getThirdPartyNotices.setOutputDir(".\\" + GBL::DIR::BASE);
 		getThirdPartyNotices.setOutputFilename("\\thirdpartynotices.txt");
 		getThirdPartyNotices.download();
@@ -414,7 +415,7 @@ int InitialiseState::validateFileStructure()
 		progressBar->addThingToDo();
 
 		Download2 getItemIndex;
-		getItemIndex.setInput("./" + GBL::DIR::WEB_APP_DIRECTORY + "/index.dat");
+		getItemIndex.setInput("./" + GBL::DIR::APPS + "/index.dat");
 		getItemIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
 		getItemIndex.setOutputFilename("\\index.dat");
 		getItemIndex.download();
@@ -427,9 +428,53 @@ int InitialiseState::validateFileStructure()
 	return 0;
 }
 
-int InitialiseState::updateFileStructure()
+int InitialiseState::validateResourceFiles()
 {
-	return 0;
+	setTaskText("validating resource files");
+
+	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "resources.dat"))
+		std::ofstream createResourcesManifest(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "resources.dat");
+
+	Download2 getResourceManifest;
+	getResourceManifest.setInput(".//" + GBL::WEB::LATEST::RESOURCE_LIST);
+	getResourceManifest.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE);
+	getResourceManifest.setOutputFilename("\\resources.dat");
+	getResourceManifest.download();
+	getResourceManifest.save();
+
+	SettingsParser getResources;
+	if (getResources.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "resources.dat"))
+	{
+		std::vector<std::string> textures;
+		getResources.get("textures", textures);
+
+		for (size_t i = 0; i < textures.size(); i++)
+		{
+			if (fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + textures[i]))
+			{
+				std::cout << textures[i] << " exists, next." << std::endl;
+			}
+			else
+			{
+				std::cout << std::endl;
+				std::cout << textures[i] << " is missing, downloading." << std::endl;
+
+				Download2 getResourceManifest;
+				getResourceManifest.setInput(".//" + GBL::WEB::LATEST::RESOURCE + "/textures/" + textures[i]);
+				getResourceManifest.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE);
+				getResourceManifest.setOutputFilename("\\" + textures[i]);
+				getResourceManifest.download();
+				getResourceManifest.save();
+			}
+		}
+
+		return 1;
+	}
+	else
+	{
+		std::cout << "unable to open resource manifest" << std::endl;
+		return 0;
+	}
 }
 
 int InitialiseState::getThemeConfiguration()

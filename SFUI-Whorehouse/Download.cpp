@@ -9,32 +9,21 @@
 
 namespace fs = std::experimental::filesystem;
 
-Download2::Download2(bool silent_)
-{
-	silent = silent_;
-
-	if (!silent)
-		std::cout << "downloader created" << std::endl;
-}
-
 Download2::Download2()
 {
-	if (!silent)
-		std::cout << "downloader created" << std::endl;
+	std::cout << "downloader created" << std::endl;
 }
 
 Download2::~Download2()
 {
-	if (!silent)
-		std::cout << "downloader killed" << std::endl;
+	std::cout << "downloader killed" << std::endl;
 }
 
 void Download2::setOutputDir(std::string dir)
 {
 	saveDir = dir;
 
-	if (!silent)
-		std::cout << "output set to: " << saveDir << std::endl;
+	std::cout << "output set to: " << saveDir << std::endl;
 
 	if (!fs::exists(saveDir))
 		createDirectory(saveDir);
@@ -49,8 +38,7 @@ void Download2::setOutputFilename(std::string file)
 {
 	saveFile = file;
 
-	if (!silent)
-		std::cout << "output file set to: " << saveFile << std::endl;
+	std::cout << "output file set to: " << saveFile << std::endl;
 }
 
 std::string Download2::getOutputFilename()
@@ -80,8 +68,8 @@ void Download2::setInput(std::string in)
 
 	remoteDirectory = temppath.erase(temppath.length() - remoteFilename.length(), temppath.back());
 
-	std::cout << "remoteDirectory: " << remoteDirectory << std::endl;
-	std::cout << "remoteFilename : " << remoteFilename << std::endl;
+//	std::cout << "remoteDirectory: " << remoteDirectory << std::endl;
+//	std::cout << "remoteFilename : " << remoteFilename << std::endl;
 }
 
 std::string Download2::getInput()
@@ -117,19 +105,16 @@ uintmax_t Download2::getFileSize()
 	// Connect to the server
 	sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
 	if (response.isOk())
-		if (!silent)
-			std::cout << "Connected" << std::endl;
+		std::cout << "Connected" << std::endl;
 
 	// Log in
 	response = ftp.login("laurent", "dF6Zm89D");
 	if (response.isOk())
-		if (!silent)
-			std::cout << "Logged in" << std::endl;
+		std::cout << "Logged in" << std::endl;
 
 	response = ftp.sendCommand("SIZE", input);
 	if (response.isOk())
-		if (!silent)
-			std::cout << "File size: " << response.getMessage() << std::endl;
+		std::cout << "File size: " << response.getMessage() << std::endl;
 
 	// Disconnect from the server (optional)
 	ftp.disconnect();
@@ -142,26 +127,31 @@ uintmax_t Download2::getFileSize()
 
 int Download2::download()
 {
-	std::cout << "saveDir : " << saveDir << std::endl;
-	std::cout << "saveFile: " << saveFile << std::endl;
-	std::cout << "remoteDirectory: " << remoteDirectory << std::endl;
-	std::cout << "remoteFilename : " << remoteFilename << std::endl;
+//	std::cout << "saveDir : " << saveDir << std::endl;
+//	std::cout << "saveFile: " << saveFile << std::endl;
+//	std::cout << "remoteDirectory: " << remoteDirectory << std::endl;
+//	std::cout << "remoteFilename : " << remoteFilename << std::endl;
 
 	sf::Ftp ftp;
 
 	sf::Ftp::Response response = ftp.connect("files.000webhost.com");
-	if (response.isOk())
-		std::cout << "connected to ftp" << std::endl;
+	if (!response.isOk())
+	{
+		std::cout << "failed to connect to ftp" << std::endl;
+		return -1;
+	}
 
 	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
-	if (response.isOk())
-		std::cout << "Logged in" << std::endl;
+	if (!response.isOk())
+	{
+		std::cout << "failed to login to ftp" << std::endl;
+		return -1;
+	}
 
 	response = ftp.changeDirectory("public_html");
 	if (!response.isOk())
 	{
 		std::cout << "failed to set ftp directory" << std::endl;
-
 		return -1;
 	}
 
@@ -189,7 +179,7 @@ int Download2::download()
 	response = ftp.download(remoteDirectory + remoteFilename, ".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory);
 	if (response.isOk())
 	{
-		std::cout << response.getStatus() << ": downloaded the thing to the place" << std::endl;
+		std::cout << response.getStatus() << ": downloaded the thing to " << saveDir << std::endl;
 
 		if (saveFile.empty())
 			saveFile = remoteFilename;

@@ -21,10 +21,22 @@ namespace GBL
 		const std::string FONT	   = "\\fonts\\";
 		const std::string APPS	   = "\\apps\\";
 		const std::string CONFIG   = BASE + "\\launcherconfig.cfg";
+	}
 
-		const std::string WEB_HOSTNAME		= "kunlauncher.000webhostapp.com/";
-		const std::string WEB_DIRECTORY		= "./";
-		const std::string WEB_APP_DIRECTORY = "/apps/";
+	namespace WEB
+	{
+		const std::string HOSTNAME = "kunlauncher.000webhostapp.com/";
+		const std::string BASE = "./";
+		const std::string APPS = "/apps/";
+		const std::string VERSION = "/launcher/version/";
+
+		namespace LATEST
+		{
+			const std::string DIR = "/launcher/version/latest/";
+			const std::string RESOURCE = "/launcher/version/latest/resources/";
+			const std::string RESOURCE_LIST = "/launcher/version/latest/resources/resources.dat";
+			const std::string EXECUTABLE = "/latest.noexe";
+		}
 	}
 
 	namespace COLOR

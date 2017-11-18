@@ -287,7 +287,7 @@ void AppListState::HandleEvents()
 					}
 
 					Download2 getNewIndex;
-					getNewIndex.setInput(".\\" + GBL::DIR::WEB_APP_DIRECTORY + "\\index.dat");
+					getNewIndex.setInput(".\\" + GBL::WEB::BASE + "\\index.dat");
 					getNewIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
 					getNewIndex.setOutputFilename("index.dat");
 					getNewIndex.download();
