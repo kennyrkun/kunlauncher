@@ -269,7 +269,7 @@ void Item::openItem()
 {
 #ifdef _WIN32
 	std::cout << "opening item" << std::endl;
-	std::string launch = "start " + installDir + "release.zip";
+	std::string launch = "@echoff\nstart " + installDir + "release.zip -kunlaunched";
 	system(launch.c_str());
 #else
 	std::cout << "Your system does not support this function!" << std::endl;

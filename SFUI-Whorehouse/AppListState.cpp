@@ -28,7 +28,7 @@ void AppListState::Init(AppEngine* app_)
 
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
-	//	scrollbar.create();
+//	scrollbar.create();
 	scrollbar.create(app->window);
 
 	tracker1.setSize(sf::Vector2f(5, 5));
@@ -136,10 +136,10 @@ void AppListState::HandleEvents()
 						updateScrollLimits();
 					}
 				}
-				else
-				{
-					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
-				}
+//				else
+//				{
+//					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+//				}
 			}
 			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
 			{
@@ -158,14 +158,23 @@ void AppListState::HandleEvents()
 						updateScrollLimits();
 					}
 				}
-				else
-				{
-					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
-				}
+//				else
+//				{
+//					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+//				}
 			}
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonPressed && !loadingApps)
 		{
+		}
+		else if (event.type == sf::Event::EventType::MouseButtonReleased && !loadingApps)
+		{
+			if (scrollbar.thumbDragging)
+			{
+				scrollbar.thumbDragging = false;
+				scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
+			}
+
 			if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
 				bool clicked(false);
@@ -249,31 +258,10 @@ void AppListState::HandleEvents()
 				app->ChangeState(HomeState::Instance());
 			}
 		}
-		else if (event.type == sf::Event::EventType::MouseButtonReleased && !loadingApps)
-		{
-			if (scrollbar.thumbDragging)
-			{
-				scrollbar.thumbDragging = false;
-				scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
-			}
-		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Key::R && !loadingApps)
 			{
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
-				{
-					try
-					{
-						fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
-					}
-					catch (const std::exception& e)
-					{
-						std::cout << "failed to remove apps folder: " << std::endl;
-						std::cout << e.what() << std::endl;
-					}
-				}
-
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
 				{
 					try
@@ -289,9 +277,23 @@ void AppListState::HandleEvents()
 					Download2 getNewIndex;
 					getNewIndex.setInput(".\\" + GBL::WEB::BASE + "\\index.dat");
 					getNewIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
-					getNewIndex.setOutputFilename("index.dat");
+					getNewIndex.setOutputFilename("\\index.dat");
 					getNewIndex.download();
 					getNewIndex.save();
+				}
+
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
+				{
+					try
+					{
+						fs::remove_all(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
+						fs::create_directory(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
+					}
+					catch (const std::exception& e)
+					{
+						std::cout << "failed to remove apps folder: " << std::endl;
+						std::cout << e.what() << std::endl;
+					}
 				}
 
 				std::cout << "refreshing applist" << std::endl;
@@ -307,7 +309,7 @@ void AppListState::HandleEvents()
 			}
 			else if (event.key.code == sf::Keyboard::Key::Escape)
 			{
-				if (helperRunning)
+				if (!helperRunning)
 				{
 					app->ChangeState(HomeState::Instance());
 				}
