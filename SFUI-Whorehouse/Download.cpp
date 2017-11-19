@@ -48,7 +48,7 @@ std::string Download2::getOutputFilename()
 
 void Download2::setInput(std::string in)
 {
-	std::cout << "raw input path: " << in << std::endl;
+//	std::cout << "raw input path: " << in << std::endl;
 
 	input = in;
 
@@ -171,8 +171,6 @@ int Download2::download()
 		}
 	}
 
-	std::cout << "dl: " << remoteDirectory + remoteFilename << std::endl;
-
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory))
 		createDirectory(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory);
 
@@ -183,8 +181,6 @@ int Download2::download()
 
 		if (saveFile.empty())
 			saveFile = remoteFilename;
-
-		std::cout << "reading into filebuffer" << std::endl;
 
 		std::ifstream fileContent(".\\bin\\cache\\" + remoteDirectory + remoteFilename, std::ios::binary);
 		if (fileContent)
@@ -198,6 +194,7 @@ int Download2::download()
 		{
 			std::cout << "failed to open saved file" << std::endl;
 		}
+		fileContent.close();
 	}
 	else
 	{
@@ -254,6 +251,8 @@ void Download2::clearCache()
 		std::cout << "failed to clear download cache:" << std::endl;
 		std::cout << e.what() << std::endl;
 	}
+
+	std::cin.get();
 }
 
 // private:
