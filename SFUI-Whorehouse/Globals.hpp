@@ -17,6 +17,7 @@ namespace GBL
 		const std::string BASE	   = "\\bin\\";
 		const std::string CACHE	   = "\\cache\\";
 		const std::string RESOURCE = "\\resources\\";
+		const std::string THEME	   = "\\themes\\";
 		const std::string TEXTURE  = "\\textures\\";
 		const std::string FONT	   = "\\fonts\\";
 		const std::string APPS	   = "\\apps\\";

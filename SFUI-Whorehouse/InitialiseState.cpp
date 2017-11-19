@@ -175,13 +175,9 @@ void InitialiseState::Draw()
 
 void InitialiseState::initialisise()
 {
-	setTaskText("initialising");
+	setTaskText("You can't see me!");
 
-	validateFileStructure();
-	validateResourceFiles();
-	getThemeConfiguration();
-
-	{
+	{ // always do this first.
 		progressBar->reset();
 		progressBar->addThingToDo();
 		setTaskText("loading configuration");
@@ -194,7 +190,7 @@ void InitialiseState::initialisise()
 			settings.get("checkforitemsonstart", app->settings.checkForNewItemsOnStart);
 			settings.get("experimentalThemes", app->settings.experimentalThemes);
 			settings.get("printdownloadprogress", app->settings.printdownloadprogress);
-			settings.get("defaultTheme", app->settings.theme);
+			settings.get("defaultTheme", app->settings.selectedTheme);
 		}
 		else
 		{
@@ -202,7 +198,10 @@ void InitialiseState::initialisise()
 		}
 		progressBar->oneThingDone();
 	}
-//	progressBar->oneThingDone(); // 3
+
+	validateFileStructure();
+	validateResourceFiles();
+	getThemeConfiguration();
 
 	if (app->settings.checkForNewItemsOnStart)
 	{
@@ -369,6 +368,7 @@ int InitialiseState::validateFileStructure()
 		createConfigurationFile << "updatelauncheronstart = TRUE" << std::endl;
 		createConfigurationFile << "checkforitemsonstart = TRUE" << std::endl;
 		createConfigurationFile << "experimentalThemes = FALSE" << std::endl;
+		createConfigurationFile << "selectedTheme = dark" << std::endl;
 		createConfigurationFile << std::endl;
 		createConfigurationFile << "// default controls:" << std::endl;
 		createConfigurationFile << "// R: Reload Apps list" << std::endl;
@@ -533,11 +533,11 @@ int InitialiseState::getThemeConfiguration()
 		std::cout << "checking for theme file" << std::endl;
 //		progressBar->addThingToDo();
 
-		if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "dark.sfuitheme"))
+		if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + "dark.sfuitheme"))
 		{
 //			progressBar->addThingToDo();
 			std::cout << "creating theme file" << std::endl;
-			std::ofstream createDarkTheme(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "dark.sfuitheme");
+			std::ofstream createDarkTheme(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + "dark.sfuitheme");
 
 			createDarkTheme << "// default 'dark' theme for kunlauncher" << std::endl;
 			createDarkTheme << std::endl;
@@ -549,7 +549,7 @@ int InitialiseState::getThemeConfiguration()
 			createDarkTheme << "scrollbar_scrollbar = 80, 80, 80" << std::endl;
 			createDarkTheme << "scrollbar_scrollthumb = 110, 110, 110" << std::endl;
 			createDarkTheme << "scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
-			createDarkTheme << "scrollbar_scrollthumb_hold = 239, 235, 339" << std::endl;
+			createDarkTheme << "scrollbar_scrollthumb_hold = 239, 235, 239" << std::endl;
 			createDarkTheme << std::endl;
 			createDarkTheme << "// items" << std::endl;
 			createDarkTheme << "item_card = 100, 100, 100" << std::endl;
@@ -567,11 +567,11 @@ int InitialiseState::getThemeConfiguration()
 			createDarkTheme.close();
 		}
 
-		if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "light.sfuitheme"))
+		if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + "light.sfuitheme"))
 		{
 //			progressBar->addThingToDo();
 			std::cout << "creating theme file" << std::endl;
-			std::ofstream createLightTheme(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "light.sfuitheme");
+			std::ofstream createLightTheme(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + "light.sfuitheme");
 
 			createLightTheme << "// default 'light' theme for kunlauncher" << std::endl;
 			createLightTheme << std::endl;
@@ -605,12 +605,12 @@ int InitialiseState::getThemeConfiguration()
 
 		SettingsParser settings;
 		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf"))
-			settings.get("defaultTheme", app->settings.theme);
-		std::cout << app->settings.theme << std::endl;
+			settings.get("selectedTheme", app->settings.selectedTheme);
+		std::cout << app->settings.selectedTheme << std::endl;
 
-		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + app->settings.theme + ".sfuitheme"))
+		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + app->settings.selectedTheme + ".sfuitheme"))
 		{
-			std::cout << "loaded theme \"" << app->settings.theme << "\"." << std::endl;
+			std::cout << "loaded theme \"" << app->settings.selectedTheme << "\"." << std::endl;
 
 			// globals
 			std::vector<int> colors;
