@@ -121,7 +121,7 @@ void AppListState::HandleEvents()
 			{
 				scrollbar.moveThumbDown();
 
-//				if (scrollerBottomPosition < scrollerMaxPosition)
+				if (scrollerBottomPosition < scrollerMaxPosition)
 				{
 					cardScroller->move(0, scrollbar.scrollJump);
 
@@ -134,16 +134,16 @@ void AppListState::HandleEvents()
 						updateScrollLimits();
 					}
 				}
-//				else
-//				{
-//					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
-//				}
+				else
+				{
+					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+				}
 			}
 			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
 			{
 				scrollbar.moveThumbUp();
 
-//				if (scrollerTopPosition > scrollerMinPosition)
+				if (scrollerTopPosition > scrollerMinPosition)
 				{
 					cardScroller->move(0, -scrollbar.scrollJump);
 
@@ -156,10 +156,10 @@ void AppListState::HandleEvents()
 						updateScrollLimits();
 					}
 				}
-//				else
-//				{
-//					std::cout << "cannot scroll view up (" << scrollerTopPosition << " < " << scrollerMaxPosition << ")" << std::endl;
-//				}
+				else
+				{
+					std::cout << "cannot scroll view up (" << scrollerTopPosition << " > " << scrollerMaxPosition << ")" << std::endl;
+				}
 			}
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonPressed && !loadingApps)

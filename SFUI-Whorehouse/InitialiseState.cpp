@@ -546,10 +546,10 @@ int InitialiseState::getThemeConfiguration()
 			createDarkTheme << "global_text = 255, 255, 255" << std::endl;
 			createDarkTheme << std::endl;
 			createDarkTheme << "// scrollbar (useless because SFUI currently does not support themes)" << std::endl;
-			createDarkTheme << "//scrollbar_scrollbar = 80, 80, 80" << std::endl;
-			createDarkTheme << "//scrollbar_scrollthumb = 110, 110, 110" << std::endl;
-			createDarkTheme << "//scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
-			createDarkTheme << "//scrollbar_scrollthumb_hold = 239, 235, 339" << std::endl;
+			createDarkTheme << "scrollbar_scrollbar = 80, 80, 80" << std::endl;
+			createDarkTheme << "scrollbar_scrollthumb = 110, 110, 110" << std::endl;
+			createDarkTheme << "scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
+			createDarkTheme << "scrollbar_scrollthumb_hold = 239, 235, 339" << std::endl;
 			createDarkTheme << std::endl;
 			createDarkTheme << "// items" << std::endl;
 			createDarkTheme << "item_card = 100, 100, 100" << std::endl;
@@ -580,10 +580,10 @@ int InitialiseState::getThemeConfiguration()
 			createLightTheme << "global_text = 0, 0, 0" << std::endl;
 			createLightTheme << std::endl;
 			createLightTheme << "// scrollbar (useless because SFUI currently does not support themes)" << std::endl;
-			createLightTheme << "//scrollbar_scrollbar = 80, 80, 80" << std::endl;
-			createLightTheme << "//scrollbar_scrollthumb = 110, 110, 110" << std::endl;
-			createLightTheme << "//scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
-			createLightTheme << "//scrollbar_scrollthumb_hold = 239, 235, 339" << std::endl;
+			createLightTheme << "scrollbar_scrollbar = 80, 80, 80" << std::endl;
+			createLightTheme << "scrollbar_scrollthumb = 110, 110, 110" << std::endl;
+			createLightTheme << "scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
+			createLightTheme << "scrollbar_scrollthumb_hold = 239, 235, 339" << std::endl;
 			createLightTheme << std::endl;
 			createLightTheme << "// items" << std::endl;
 			createLightTheme << "item_card = 192, 192, 192" << std::endl;
@@ -627,24 +627,32 @@ int InitialiseState::getThemeConfiguration()
 				colors.clear();
 			}
 
-			/* scrollbar
+			//scrollbar
 			std::cout << "scrollbar theme settings" << std::endl;
 
-			settings.get("scrollbar_scrollbar", colors);
-			GBL::COLOR::SCROLLBAR::SCROLLBAR = sf::Color(colors[0], colors[1], colors[2]);
-			colors.clear();
+			if (settings.get("scrollbar_scrollbar", colors))
+			{
+				GBL::COLOR::SCROLLBAR::SCROLLBAR = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+			}
 
-			settings.get("scrollbar_scrollthumb", colors);
-			GBL::COLOR::SCROLLBAR::SCROLLTHUMB = sf::Color(colors[0], colors[1], colors[2]);
-			colors.clear();
+			if (settings.get("scrollbar_scrollthumb", colors))
+			{
+				GBL::COLOR::SCROLLBAR::SCROLLTHUMB = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+			}
 
-			settings.get("scrollbar_scrollthumb_hover", colors);
-			GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER = sf::Color(colors[0], colors[1], colors[2]);
-			colors.clear();
+			if (settings.get("scrollbar_scrollthumb_hover", colors))
+			{
+				GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+			}
 
-			settings.get("scrollbar_scrollthumb_hold", colors);
-			GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD = sf::Color(colors[0], colors[1], colors[2]);
-			colors.clear(); */
+			if (settings.get("scrollbar_scrollthumb_hold", colors))
+			{
+				GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD = sf::Color(colors[0], colors[1], colors[2]);
+				colors.clear();
+			}
 
 			// items
 			std::cout << "item theme settings" << std::endl;
