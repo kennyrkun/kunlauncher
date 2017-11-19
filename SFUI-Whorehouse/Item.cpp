@@ -186,14 +186,16 @@ bool Item::checkForUpdate()
 	getRemoteVersion.setInput(".\\" + GBL::WEB::APPS + itemName + "\\info.dat");
 	getRemoteVersion.download();
 
-	getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
-	getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find('\n') + 1);
-	getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find('\n'), getRemoteVersion.fileBuffer.length());
+	std::string rVersion, lVersion = version.getString();
 
-	getRemoteVersion.fileBuffer.erase(0, getRemoteVersion.fileBuffer.find_first_of('"') + 1);
-	getRemoteVersion.fileBuffer.erase(getRemoteVersion.fileBuffer.find_last_of('"'), getRemoteVersion.fileBuffer.length());
-	std::string rVersion = getRemoteVersion.fileBuffer;
-	std::string lVersion = version.getString();
+	SettingsParser getVersion;
+	if (getVersion.loadFromFile(".\\" + GBL::WEB::APPS + itemName + "\\info.dat"))
+		getVersion.get("version", rVersion);
+	else
+	{
+		rVersion = lVersion;
+		std::cout << "failed to get remote app version" << std::endl;
+	}
 
 	if (lVersion != rVersion)
 	{
@@ -269,7 +271,7 @@ void Item::openItem()
 {
 #ifdef _WIN32
 	std::cout << "opening item" << std::endl;
-	std::string launch = "@echoff\nstart " + installDir + "release.zip -kunlaunched";
+	std::string launch = "start " + installDir + "release.zip -kunlaunched";
 	system(launch.c_str());
 #else
 	std::cout << "Your system does not support this function!" << std::endl;

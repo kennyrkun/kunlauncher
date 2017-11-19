@@ -28,7 +28,6 @@ void AppListState::Init(AppEngine* app_)
 
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
-//	scrollbar.create();
 	scrollbar.create(app->window);
 
 	tracker1.setSize(sf::Vector2f(5, 5));
@@ -44,7 +43,6 @@ void AppListState::Init(AppEngine* app_)
 	tracker3.setFillColor(sf::Color::Red);
 
 	helperThread = new std::thread(&AppListState::loadApps, this);
-	helperRunning = true;
 	std::cout << "thread launched" << std::endl;
 }
 
@@ -117,13 +115,13 @@ void AppListState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 		}
-		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled && !loadingApps)
+		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled)
 		{
 			if (event.mouseWheel.delta < 0) // down, or move items up
 			{
 				scrollbar.moveThumbDown();
 
-				if (scrollerBottomPosition < scrollerMaxPosition)
+//				if (scrollerBottomPosition < scrollerMaxPosition)
 				{
 					cardScroller->move(0, scrollbar.scrollJump);
 
@@ -145,7 +143,7 @@ void AppListState::HandleEvents()
 			{
 				scrollbar.moveThumbUp();
 
-				if (scrollerTopPosition > scrollerMinPosition)
+//				if (scrollerTopPosition > scrollerMinPosition)
 				{
 					cardScroller->move(0, -scrollbar.scrollJump);
 
@@ -166,13 +164,22 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonPressed && !loadingApps)
 		{
+			if (mouseIsOver(scrollbar.scrollThumb, mainView))
+			{
+				scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD);
+				scrollbar.originalPosition = scrollbar.scrollThumb.getPosition();
+				scrollbar.dragOffset = sf::Vector2i(scrollbar.scrollThumb.getPosition()) - sf::Mouse::getPosition(*app->window);
+				scrollbar.thumbDragging = true;
+				std::cout << "started dragging the scrollbar" << std::endl;
+			}
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonReleased && !loadingApps)
 		{
 			if (scrollbar.thumbDragging)
 			{
+				scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB);
 				scrollbar.thumbDragging = false;
-				scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
+				std::cout << "stopped dragging scrollbar" << std::endl;
 			}
 
 			if (event.mouseButton.button == sf::Mouse::Button::Left)
@@ -319,6 +326,18 @@ void AppListState::HandleEvents()
 				}
 			}
 		}
+		else if (event.type == sf::Event::EventType::MouseMoved)
+		{
+			if (scrollbar.thumbDragging)
+			{
+//				scrollbar.scrollThumb.setPosition(sf::Vector2f(scrollbar.scrollbar.getPosition().x, sf::Mouse::getPosition(*app->window).y));
+				scrollbar.scrollThumb.setPosition(sf::Vector2f(sf::Mouse::getPosition(*app->window) + scrollbar.dragOffset));
+				scrollbar.scrollThumb.setPosition(sf::Vector2f(scrollbar.scrollbar.getPosition().x, sf::Mouse::getPosition(*app->window).y + scrollbar.dragOffset.y));
+
+				if (sf::Mouse::getPosition(*app->window).x > scrollbar.scrollbar.getPosition().x + 150 || sf::Mouse::getPosition(*app->window).x < scrollbar.scrollbar.getPosition().x - 150) // error zone
+					scrollbar.scrollThumb.setPosition(scrollbar.originalPosition);
+			}
+		}
 	}
 }
 
@@ -368,7 +387,10 @@ void AppListState::Draw()
 
 void AppListState::loadApps() // TOOD: this.
 {
+	helperDone = false;
+	helperRunning = true;
 	loadingApps = true;
+	sf::Clock appLoadTime;
 
 	items.clear();
 	links.clear();
@@ -415,16 +437,16 @@ void AppListState::loadApps() // TOOD: this.
 
 				if (items.empty())
 					newItem = new Item(line, app->window,
-					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16), 
-					app->window->getSize().y, // I'm not sure what this is for?????
-					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // mid-window, excluding scrollbar size
-					(75 / 2) + 10);
+					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
+						app->window->getSize().y, // I'm not sure what this is for?????
+						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // mid-window, excluding scrollbar size
+						(75 / 2) + 10);
 				else
 					newItem = new Item(line, app->window,
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
-					app->window->getSize().y, // I'm not sure what this is for?????
-					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // the middle of the window (exluding the size of the scrollbar)
-					items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
+						app->window->getSize().y, // I'm not sure what this is for?????
+						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // the middle of the window (exluding the size of the scrollbar)
+						items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
 
 				items.push_back(newItem);
 				std::cout << std::endl;
@@ -497,9 +519,10 @@ void AppListState::loadApps() // TOOD: this.
 		loopi += 1;
 	}
 
-	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded)" << std::endl;
-	helperDone = true;
+	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded) in " << appLoadTime.getElapsedTime().asSeconds() << " seconds" << std::endl;
 
+	helperDone = true;
+	helperRunning = false;
 	loadingApps = false;
 }
 

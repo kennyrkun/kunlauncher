@@ -78,6 +78,11 @@ float ProgressBar::getValue() const
 	return percentDone;
 }
 
+void ProgressBar::reset()
+{
+	setValue(0, 0);
+}
+
 void ProgressBar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(bar, 4, sf::Quads, states);

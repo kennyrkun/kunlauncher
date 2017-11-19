@@ -23,6 +23,7 @@ namespace fs = std::experimental::filesystem;
 
 void InitialiseState::Init(AppEngine* app_)
 {
+	initTime.restart();
 	std::cout << "IntialiseState Init" << std::endl;
 
 	app = app_;
@@ -90,6 +91,7 @@ void InitialiseState::Cleanup()
 	app->window = nullptr;
 	app->window = newWindow;
 
+	std::cout << "Initalisation took " << initTime.getElapsedTime().asSeconds() << "s" << std::endl;
 	std::cout << "IntialiseState Cleanedup" << std::endl;
 }
 
@@ -177,10 +179,12 @@ void InitialiseState::initialisise()
 
 	validateFileStructure();
 	validateResourceFiles();
+	getThemeConfiguration();
 
-//	progressBar->addThingToDo();
 	{
-		std::cout << "loading config" << std::endl;
+		progressBar->reset();
+		progressBar->addThingToDo();
+		setTaskText("loading configuration");
 		SettingsParser settings;
 		if (settings.loadFromFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf"))
 		{
@@ -196,13 +200,16 @@ void InitialiseState::initialisise()
 		{
 			std::cout << "failed to load settings, using defaults" << std::endl;
 		}
+		progressBar->oneThingDone();
 	}
 //	progressBar->oneThingDone(); // 3
 
 	if (app->settings.checkForNewItemsOnStart)
 	{
-		std::cout << "updating app index." << std::endl;
-//		progressBar->addThingsToDo(2);
+		progressBar->reset();
+		progressBar->addThingsToDo(2);
+		setTaskText("updating app index");
+		std::cout << "updating app index" << std::endl;
 
 		Download2 getIndex;
 		getIndex.setInput("./" + GBL::WEB::APPS + "/index.dat");
@@ -210,9 +217,9 @@ void InitialiseState::initialisise()
 		getIndex.setOutputFilename("\\index.dat");
 
 		getIndex.download();
-//		progressBar->oneThingDone();
+		progressBar->oneThingDone();
 		getIndex.save();
-//		progressBar->oneThingDone();
+		progressBar->oneThingDone();
 	}
 	else
 	{
@@ -221,16 +228,28 @@ void InitialiseState::initialisise()
 
 	if (app->settings.updateLauncherOnStart)
 	{
+		progressBar->reset();
+		progressBar->addThingsToDo(2);
 		setTaskText("checking for updates");
-//		progressBar->addThingToDo(); // check for updates
 
 		if (fs::exists("kunlauncher.exe.old"))
-			fs::remove("kunlauncher.exe.old");
+		{
+			try
+			{
+				fs::remove("kunlauncher.exe.old");
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "failed to remove kunlauncher.exe.old" << std::endl;
+			}
+
+			progressBar->oneThingDone();
+		}
 
 		updater = new LauncherUpdater;
 		if (updater->checkForUpdates() == LauncherUpdater::Status::UpdateAvailable)
 		{
-//			progressBar->oneThingDone(); // check for update
+			progressBar->oneThingDone(); // check for update
 
 			MessageBox::Options modOptions;
 
@@ -247,16 +266,17 @@ void InitialiseState::initialisise()
 			{
 			case 0:
 			{
-				std::cout << "yes, update now." << std::endl;
-//				progressBar->addThingsToDo(2); // update and replace exe
+				progressBar->reset();
+				progressBar->addThingsToDo(2); // update and replace exe
+				setTaskText("updating launcher");
 
 				setTaskText("downloading update");
 				updater->downloadUpdate();
-//				progressBar->oneThingDone(); // update
+				progressBar->oneThingDone(); // update
 
 				setTaskText("replacing old executable");
 				updater->replaceOldExecutable();
-//				progressBar->oneThingDone(); // replace exe
+				progressBar->oneThingDone(); // replace exe
 
 				MessageBox::Options modOptions;
 				modOptions.text = "Launcher updated";
@@ -304,9 +324,8 @@ void InitialiseState::initialisise()
 	else
 	{
 		std::cout << "skipping check for updates" << std::endl;
+		progressBar->oneThingDone(); // check for update
 	}
-
-	getThemeConfiguration();
 
 	setTaskText("ready");
 
@@ -315,36 +334,31 @@ void InitialiseState::initialisise()
 
 int InitialiseState::validateFileStructure()
 {
+	progressBar->reset();
+	progressBar->addThingsToDo(6); // bin, config, apps, app index, resources
 	setTaskText("validating files");
-
-//	progressBar->addThingsToDo(6); // bin, config, apps, app index, resources
 
 	std::cout << "checking for bin" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE)) // 1
 	{
 		std::cout << "bin folder missing, creating" << std::endl;
-//		progressBar->addThingToDo();
-
 		fs::create_directory(".\\" + GBL::DIR::BASE);
 
-//		progressBar->oneThingDone();
 	}
-//	progressBar->oneThingDone(); // 1
+	progressBar->oneThingDone(); // 1
 
 	std::cout << "checking for cache" << std::endl;
-	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE)) // 1
+	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE)) // 2
 	{
 		std::cout << "creating cache folder" << std::endl;
-
 		fs::create_directories(".\\" + GBL::DIR::BASE + GBL::DIR::CACHE);
 	}
-//	progressBar->oneThingDone(); // 1
+	progressBar->oneThingDone(); // 2
 
 	std::cout << "checking for config" << std::endl;
-	if (!fs::exists(".\\" + GBL::DIR::BASE + "kunlauncher.conf")) // 2
+	if (!fs::exists(".\\" + GBL::DIR::BASE + "kunlauncher.conf")) // 3
 	{
 		std::cout << "config file missing, creating" << std::endl;
-//		progressBar->addThingToDo();
 
 		std::ofstream createConfigurationFile(".\\" + GBL::DIR::BASE + "kunlauncher.conf");
 
@@ -362,16 +376,14 @@ int InitialiseState::validateFileStructure()
 		createConfigurationFile << "// Control + Shift + R: delete all apps, redownload app manifest, and reload applist" << std::endl;
 
 		createConfigurationFile.close();
-
-//		progressBar->oneThingDone();
 	}
-//	progressBar->oneThingDone(); // 2
+	progressBar->oneThingDone(); // 3
 	
 	std::cout << "checking for third party notices" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + "thirdpartynotices.txt")) // 4
 	{
+		setTaskText("retrieving thirdpartynotices");
 		std::cout << "missing thirdpartynotices, downloading..." << std::endl;
-//		progressBar->addThingToDo();
 
 		Download2 getThirdPartyNotices;
 		getThirdPartyNotices.setInput("./" + GBL::WEB::BASE + "/thirdpartynotices.txt");
@@ -396,28 +408,25 @@ int InitialiseState::validateFileStructure()
 		default:
 			break;
 		}
+
+		setTaskText("validating files");
 	}
-//	progressBar->oneThingDone(); // 3
+	progressBar->oneThingDone(); // 4
 
 	std::cout << "checking for apps" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::APPS)) // 5
 	{
-		std::cout << GBL::DIR::BASE + GBL::DIR::APPS << std::endl;
-
 		std::cout << "apps folder missing, creating" << std::endl;
-//		progressBar->addThingToDo();
-
 		fs::create_directory(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
 
-//		progressBar->oneThingDone();
 	}
-//	progressBar->oneThingDone(); // 4
+	progressBar->oneThingDone(); // 5
 
 	std::cout << "checking for apps+index" << std::endl;
 	if (!fs::exists(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat")) // 6
 	{
+		setTaskText("retrieving app index");
 		std::cout << "app index missing, creating" << std::endl;
-//		progressBar->addThingToDo();
 
 		Download2 getItemIndex;
 		getItemIndex.setInput("./" + GBL::DIR::APPS + "/index.dat");
@@ -426,9 +435,9 @@ int InitialiseState::validateFileStructure()
 		getItemIndex.download();
 		getItemIndex.save();
 
-//		progressBar->oneThingDone();
+		setTaskText("validating files");
 	}
-//	progressBar->oneThingDone(); // 5
+	progressBar->oneThingDone(); // 6
 
 	return 0;
 }

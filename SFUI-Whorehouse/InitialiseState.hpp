@@ -60,6 +60,8 @@ private:
 
 	sf::Text currentLauncherTask;
 	void setTaskText(std::string text);
+
+	sf::Clock initTime;
 };
 
 #endif // !INITALISE_STATE_HPP

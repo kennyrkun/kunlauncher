@@ -18,6 +18,7 @@ public:
 	void setValue(signed int thingsDone_);
 	void setValue(signed int thingsDone_, signed int thingsToDo_);
 	float getValue() const;
+	void reset();
 
 	signed int thingsToDo;
 	signed int thingsDone;
