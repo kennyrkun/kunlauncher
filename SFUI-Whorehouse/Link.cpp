@@ -1,12 +1,12 @@
 #include <fstream>
 #include <iostream>
-#include <experimental\filesystem>
+#include <experimental/filesystem>
 
 #include "Globals.hpp"
 #include "Link.hpp"
 #include "Download.hpp"
 
-Link::Link(std::string text, std::string uri, sf::RenderWindow* target_window, float xPos)
+Link::Link(std::string text, std::string uri, sf::RenderWindow* target_window, float yPos)
 {
 	targetWindow = target_window;
 	linkText.setString(text);
@@ -14,19 +14,19 @@ Link::Link(std::string text, std::string uri, sf::RenderWindow* target_window, f
 
 	std::cout << "creating new card for \"" << linkText.getString().toAnsiString() << "\" linking to \"" << linkRel << "\"" << std::endl;
 
-	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25, 40));
+	cardShape.setSize(sf::Vector2f(targetWindow->getSize().x - 25.0f, 40.0f));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
-	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, xPos)); // probably not the best
+	cardShape.setPosition(sf::Vector2f((targetWindow->getSize().x / 2) - 5, yPos)); // probably not the best
 	cardShape.setFillColor(GBL::COLOR::LINK::CARD);
 
-	font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
+	font.loadFromFile("C://Windows//Fonts//Arial.ttf");
 	linkText.setFont(font);
 	linkText.setPosition(static_cast<int>((cardShape.getPosition().x - cardShape.getLocalBounds().width / 2) + 15), static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 	linkText.setStyle(sf::Text::Underlined);
-	linkText.setFillColor(GBL::COLOR::LINK::TEXT); // standard link blue, I think.
+	linkText.setFillColor(GBL::COLOR::LINK::TEXT);
 
 	// don't center them because they may get longer or shorter, but they need to be left aligned
-	followLinkTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "input_1x.png");
+	followLinkTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "input_1x.png");
 	followLinkTexture.setSmooth(true);
 	followLinkButton.setTexture(&followLinkTexture);
 	followLinkButton.setSize(sf::Vector2f(24, 24));
@@ -83,7 +83,7 @@ void Link::updateSize(float xSize, float ySize, float xPos, float yPos)
 	cardShape.setPosition(sf::Vector2f(xPos, cardShape.getPosition().y)); // probably not the best
 	totalHeight = cardShape.getLocalBounds().height;
 
-	linkText.setPosition(cardShape.getPosition().x - (cardShape.getLocalBounds().width / 2) + 10, static_cast<int>(cardShape.getPosition().y - 40));
+	linkText.setPosition(cardShape.getPosition().x - (cardShape.getLocalBounds().width / 2) + 10, static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 	followLinkButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
