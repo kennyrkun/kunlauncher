@@ -2,6 +2,7 @@
 #include "Globals.hpp"
 
 #include <iostream>
+#include <functional>
 
 #include <SFUI\TextButton.hpp>
 
@@ -11,7 +12,7 @@ MessageBox::MessageBox(Options settings_)
 {
 	settings = settings_;
 
-	if (font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
+	if (font.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::FONT + "Product Sans.ttf"))
 	{
 		message.setFont(font);
 		message.setString(settings.text);
@@ -19,8 +20,17 @@ MessageBox::MessageBox(Options settings_)
 	}
 	else
 	{
-		std::cerr << "unable to load font" << std::endl;
-		abort();
+		if (font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
+		{
+			message.setFont(font);
+			message.setString(settings.text);
+			message.setCharacterSize(18);
+		}
+		else
+		{
+			std::cerr << "unable to load font" << std::endl;
+			abort();
+		}
 
 		//TODO: handle this better
 	}
@@ -52,9 +62,7 @@ MessageBox::MessageBox(Options settings_)
 
 	int largest = combinedWidths.front();
 	for (size_t i = 0; i < combinedWidths.size(); i++)
-		// it's greater than the previous largest
 		if (combinedWidths[i] > largest)
-			// it's the new largest
 			largest = combinedWidths[i];
 
 	if (largest < 900)
