@@ -1,8 +1,8 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 
-#include <SFML\Graphics.hpp>
-#include "SFUI\TextButton.hpp"
+#include <SFML/Graphics.hpp>
+#include "SFUI/TextButton.hpp"
 
 class Item
 {
