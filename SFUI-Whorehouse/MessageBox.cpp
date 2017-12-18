@@ -4,7 +4,7 @@
 #include <iostream>
 #include <functional>
 
-#include <SFUI\TextButton.hpp>
+#include <SFUI/TextButton.hpp>
 
 // public:
 
@@ -12,7 +12,7 @@ MessageBox::MessageBox(Options settings_)
 {
 	settings = settings_;
 
-	if (font.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::FONT + "Product Sans.ttf"))
+	if (font.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::FONT + "Product Sans.ttf"))
 	{
 		message.setFont(font);
 		message.setString(settings.text);
@@ -20,7 +20,7 @@ MessageBox::MessageBox(Options settings_)
 	}
 	else
 	{
-		if (font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf"))
+		if (font.loadFromFile("C://Windows//Fonts//Arial.ttf"))
 		{
 			message.setFont(font);
 			message.setString(settings.text);
@@ -109,6 +109,10 @@ void MessageBox::runBlocking()
 		}
 	}
 
+	int selectedButtonNum = 0;
+	selectedButton = buttons[0];
+	buttons[0]->select();
+
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -120,6 +124,21 @@ void MessageBox::runBlocking()
 
 				returnCode = -1;
 			}
+			else if (event.type == sf::Event::EventType::MouseButtonPressed)
+			{
+				for (size_t i = 0; i < buttons.size(); i++)
+				{
+					if (mouseIsOver(buttons[i]->m_shape))
+					{
+						selectedButton->deselect();
+						selectedButton = buttons[i];
+						selectedButtonNum = i;
+						buttons[i]->select();
+
+						break;
+					}
+				}
+			}
 			else if (event.type == sf::Event::EventType::MouseButtonReleased)
 			{
 				if (event.key.code == sf::Mouse::Left)
@@ -128,6 +147,11 @@ void MessageBox::runBlocking()
 					{
 						if (mouseIsOver(buttons[i]->m_shape))
 						{
+							selectedButton->deselect();
+							selectedButton = buttons[i];
+							selectedButtonNum = i;
+							buttons[i]->select();
+
 							returnCode = i;
 
 							return;
@@ -135,19 +159,84 @@ void MessageBox::runBlocking()
 					}
 				}
 			}
-			else if (sf::Event::EventType::MouseMoved)
+			else if (event.type == sf::Event::EventType::MouseMoved)
 			{
 				for (size_t i = 0; i < buttons.size(); i++)
 				{
 					if (mouseIsOver(buttons[i]->m_shape))
 					{
-						buttons[i]->setButtonColor(sf::Color(200, 200, 200));
+						buttons[i]->setButtonColor(sf::Color(226, 245, 255));
 					}
 					else
 					{
 						buttons[i]->setButtonColor(sf::Color(240, 240, 240));
 					}
 				}
+			}
+			else if (event.type == sf::Event::EventType::KeyPressed)
+			{
+				if (event.key.code == sf::Keyboard::Key::Return)
+				{
+					std::cout << "enter pressed" << std::endl;
+				}
+			}
+			else if (event.type == sf::Event::EventType::KeyReleased)
+			{
+				if (event.key.code == sf::Keyboard::Key::Return)
+				{
+					std::cout << "enter released" << std::endl;
+
+					returnCode = selectedButtonNum;
+					return;
+				}
+				else if (event.key.code == sf::Keyboard::Key::Left)
+				{
+					selectedButton->deselect();
+
+					if ((selectedButtonNum + 1) >= buttons.size())
+					{
+						selectedButton = buttons.front();
+						selectedButtonNum = 0;
+					}
+					else
+					{
+						selectedButton = buttons[selectedButtonNum + 1];
+						selectedButtonNum += 1;
+					}
+
+					selectedButton->select();
+				}
+				else if (event.key.code == sf::Keyboard::Key::Right)
+				{
+					selectedButton->deselect();
+
+					if ((selectedButtonNum - 1) < 0)
+					{
+						selectedButton = buttons.back();
+						selectedButtonNum = buttons.size() - 1;
+					}
+					else
+					{
+						selectedButton = buttons[selectedButtonNum - 1];
+						selectedButtonNum -= 1;
+					}
+
+					selectedButton->select();
+				}
+			}
+			else if (event.type == sf::Event::EventType::LostFocus)
+			{
+				std::cout << "dialog lost focus" << std::endl;
+
+				if (selectedButton != nullptr)
+					selectedButton->deselect();
+			}
+			else if (event.type == sf::Event::EventType::GainedFocus)
+			{
+				std::cout << "dialog gained focus" << std::endl;
+
+				if (selectedButton != nullptr)
+					selectedButton->select();
 			}
 		}
 
@@ -157,7 +246,6 @@ void MessageBox::runBlocking()
 
 		for (size_t i = 0; i < buttons.size(); i++)
 			window.draw(*buttons[i]);
-//			buttons[i]->draw(window);
 
 		window.display();
 	}

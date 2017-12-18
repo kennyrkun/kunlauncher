@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace SFUI { class TextButton; }
 
@@ -28,6 +28,8 @@ public:
 
 	void close();
 	int returnCode;
+
+	SFUI::TextButton* selectedButton = nullptr;
 
 private:
 	Options settings;
