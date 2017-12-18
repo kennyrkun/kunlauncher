@@ -3,11 +3,24 @@
 
 #include <string>
 
-class Download2
+class Download
 {
 public:
-	Download2();
-	~Download2();
+	enum Status
+	{
+		Ok,
+		Failure,
+		LocalFileNotFound,
+		RemoteFileNotFound,
+		ConnectionFailed,
+		ConnectionTimedOut,
+		ConnectionRejected,
+		SaveFailed
+	};
+
+public:
+	Download();
+	~Download();
 
 	void setOutputDir(std::string directory);
 	std::string getOutputDir();
@@ -26,11 +39,12 @@ public:
 
 	uintmax_t getFileSize();
 	int download();
-	void save();
+	int save();
 
 	std::string getAppropriateFileSize(const long long int bytes, const int decimals);
 
 	void clearCache();
+	void cleanup();
 
 	int htmlReturnCode;
 	std::string fileBuffer;
@@ -39,7 +53,7 @@ public:
 private:
 	std::string input;
 
-	std::string saveDir = ".\\bin\\cache";
+	std::string saveDir = ".//bin//cache";
 	std::string saveFile = "";
 
 	std::string remoteDirectory = "";

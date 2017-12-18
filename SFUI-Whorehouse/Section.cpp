@@ -4,7 +4,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <experimental\filesystem>
+#include <experimental/filesystem>
 
 Section::Section(std::string text, std::string forwardSection, float xSize, float ySize, float xPos, float yPos)
 {
@@ -18,11 +18,11 @@ Section::Section(std::string text, std::string forwardSection, float xSize, floa
 	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
 	cardShape.setFillColor(sf::Color(100, 100, 100));
 
-	font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
+	font.loadFromFile("C://Windows//Fonts//Arial.ttf");
 	title.setFont(font);
 	title.setPosition(static_cast<int>((cardShape.getPosition().x - cardShape.getLocalBounds().width / 2) + 15), static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 
-	followSectionTexture.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "input_1x.png");
+	followSectionTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "input_1x.png");
 	followSectionTexture.setSmooth(true);
 	followSectionButton.setTexture(&followSectionTexture);
 	followSectionButton.setSize(sf::Vector2f(24, 24));
@@ -49,7 +49,7 @@ void Section::follow()
 	std::string test = "start " + forwardStateName;
 	system((test).c_str());
 #else
-	std::cout << "This function is not supported on your platform!" << std::endl;
+	std::cerr << "This function is not supported on your platform!" << std::endl;
 #endif
 }
 

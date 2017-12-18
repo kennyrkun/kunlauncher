@@ -3,8 +3,8 @@
 
 #include "AppState.hpp"
 
-#include <SFML\Graphics.hpp>
-#include <SFUI\Scrollbar.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFUI/Scrollbar.hpp>
 
 #include <thread>
 

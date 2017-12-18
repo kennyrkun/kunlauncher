@@ -9,11 +9,11 @@
 #include "LauncherUpdater.hpp"
 #include "ProgressBar.hpp"
 
-#include <SFML\Graphics.hpp>
-#include <SFML\Network.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include <iostream>
 #include <fstream>
-#include <experimental\filesystem>
+#include <experimental/filesystem>
 
 SettingsState SettingsState::IntialiseState_dontfuckwithme;
 
@@ -25,7 +25,7 @@ void SettingsState::Init(AppEngine* app_)
 	app = app_;
 
 	sf::Texture icon;
-	icon.loadFromFile(".\\" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "error_1x.png");
+	icon.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "error_1x.png");
 	
 	button = new SFUI::IconButton;
 
@@ -65,7 +65,7 @@ void SettingsState::HandleEvents()
 		{
 			if (event.key.code == sf::Mouse::Button::Right)
 			{
-				app->ChangeState(HomeState::Instance());
+				app->PopState();
 			}
 		}
 	}

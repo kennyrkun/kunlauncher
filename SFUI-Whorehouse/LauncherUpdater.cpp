@@ -5,13 +5,13 @@
 
 #include <iostream>
 #include <fstream>
-#include <experimental\filesystem>
+#include <experimental/filesystem>
 
 namespace fs = std::experimental::filesystem;
 
 std::string LauncherUpdater::getRemoteVersion()
 {
-	Download2 getHoHouse;
+	Download getHoHouse;
 	getHoHouse.setInput("version.info");
 	getHoHouse.download();
 
@@ -47,9 +47,9 @@ int LauncherUpdater::checkForUpdates()
 
 int LauncherUpdater::downloadUpdate()
 {
-	Download2 getNewWhorehouse;
+	Download getNewWhorehouse;
 	getNewWhorehouse.setInput("latest.noexe");
-	getNewWhorehouse.setOutputDir(".\\");
+	getNewWhorehouse.setOutputDir(".//");
 	getNewWhorehouse.setOutputFilename("latest_kunlauncher.exe");
 	getNewWhorehouse.download();
 	getNewWhorehouse.save();

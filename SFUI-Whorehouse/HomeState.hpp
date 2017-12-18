@@ -3,8 +3,8 @@
 
 #include "AppState.hpp"
 
-#include <SFML\Graphics.hpp>
-#include <SFUI\IconButton.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFUI/IconButton.hpp>
 
 #include <thread>
 #include <vector>

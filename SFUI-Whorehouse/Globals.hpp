@@ -1,7 +1,7 @@
 #ifndef Globals_HPP
 #define Globals_HPP
 
-#include <SFML\Graphics\Color.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <string>
 
 class ResourceManager;
@@ -14,14 +14,15 @@ namespace GBL
 
 	namespace DIR
 	{
-		const std::string BASE	   = "\\bin\\";
-		const std::string CACHE	   = "\\cache\\";
-		const std::string RESOURCE = "\\resources\\";
-		const std::string THEME	   = "\\themes\\";
-		const std::string TEXTURE  = "\\textures\\";
-		const std::string FONT	   = "\\fonts\\";
-		const std::string APPS	   = "\\apps\\";
-		const std::string CONFIG   = BASE + "\\launcherconfig.cfg";
+		const std::string BASE	   = "//bin//";
+		const std::string CACHE	   = "//cache//";
+		const std::string RESOURCE = "//resources//";
+		const std::string THEME	   = "//themes//";
+		const std::string TEXTURE  = "//textures//";
+		const std::string FONT	   = "//fonts//";
+		const std::string APPS	   = "//apps//";
+		const std::string STATS    = "//stats//";
+		const std::string CONFIG   = BASE + "//kunlauncher.conf";
 	}
 
 	namespace WEB

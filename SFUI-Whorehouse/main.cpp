@@ -1,7 +1,7 @@
 #include "AppEngine.hpp"
 #include "InitialiseState.hpp"
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <iostream>
 
@@ -51,19 +51,19 @@ int main(int argc, char *argv[])
 	std::cout << std::endl;
 
 	{
-		AppEngine* app = new AppEngine;
-		app->Init("KunLauncher", settings);
+		AppEngine app;
+		app.Init("KunLauncher", settings);
 
-		app->ChangeState(InitialiseState::Instance());
+		app.ChangeState(InitialiseState::Instance());
 
-		while (app->Running())
+		while (app.Running())
 		{
-			app->HandleEvents();
-			app->Update();
-			app->Draw();
+			app.HandleEvents();
+			app.Update();
+			app.Draw();
 		}
 
-		app->Cleanup();
+		app.Cleanup();
 	}
 
 	return 0;

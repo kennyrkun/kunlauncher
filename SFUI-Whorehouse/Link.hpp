@@ -1,7 +1,7 @@
 #ifndef LINK_HPP
 #define LINK_HPP
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 class Link 
 {

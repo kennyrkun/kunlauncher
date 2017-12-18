@@ -1,7 +1,7 @@
 #ifndef SECTION_HPP
 #define SECTION_HPP
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 class Section : public sf::Drawable
 {
