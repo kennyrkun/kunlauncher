@@ -388,6 +388,7 @@ int InitialiseState::validateFileStructure()
 		getThirdPartyNotices.setOutputDir(".//" + GBL::DIR::BASE);
 		getThirdPartyNotices.setOutputFilename("//thirdpartynotices.txt");
 		getThirdPartyNotices.download();
+		getThirdPartyNotices.save();
 
 		// TODO: update this if we already have it
 
