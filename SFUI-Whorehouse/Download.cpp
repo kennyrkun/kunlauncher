@@ -256,7 +256,7 @@ void Download::clearCache()
 {
 	try
 	{
-		fs::remove(".//" + GBL::DIR::BASE + GBL::DIR::CACHE);
+		fs::remove_all(".//" + GBL::DIR::BASE + GBL::DIR::CACHE);
 		std::cout << "download cache cleared" << std::endl;
 	}
 	catch (const std::exception& e)
