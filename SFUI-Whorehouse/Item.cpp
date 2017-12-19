@@ -391,7 +391,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 				version.setString(version_);
 			else
 			{
-				description.setStyle(sf::Text::Style::Italic);
+				version.setStyle(sf::Text::Style::Italic);
 				version.setString("Unknown");
 			}
 		}
