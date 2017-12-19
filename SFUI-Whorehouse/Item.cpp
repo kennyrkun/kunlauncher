@@ -375,7 +375,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 				name.setString(name_);
 			else
 			{
-				description.setStyle(sf::Text::Style::Italic);
+				name.setStyle(sf::Text::Style::Italic);
 				name.setString('"' + itemName + '"');
 			}
 
