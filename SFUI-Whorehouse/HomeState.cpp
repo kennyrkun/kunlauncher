@@ -107,6 +107,13 @@ void HomeState::HandleEvents()
 					app->Quit();
 			}
 		}
+		else if (event.type == sf::Event::EventType::KeyPressed)
+		{
+			if (event.key.code == sf::Keyboard::Key::Escape)
+			{
+				app->PopState();
+			}
+		}
 	}
 }
 

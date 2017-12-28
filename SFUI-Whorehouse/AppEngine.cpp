@@ -1,6 +1,8 @@
 #include "AppEngine.hpp"
 #include "AppState.hpp"
 
+#include "Download.hpp"
+
 #include <iostream>
 
 void AppEngine::Init(std::string title_, AppSettings settings_)
@@ -11,7 +13,7 @@ void AppEngine::Init(std::string title_, AppSettings settings_)
 	window = new sf::RenderWindow;
 	window->setVerticalSyncEnabled(settings.verticalSync);
 	window->setKeyRepeatEnabled(false);
-	m_running = true;
+	running = true;
 
 	std::cout << "AppEngine Init" << std::endl;
 }
@@ -30,12 +32,16 @@ void AppEngine::Cleanup()
 	window->close();
 	delete window;
 
+	Download clearCache;
+	clearCache.clearCache();
+
 	std::cout << "AppEngine cleaned up." << std::endl;
 }
 
 void AppEngine::ChangeState(AppState* state)
 {
-	if (!states.empty()) {
+	if (!states.empty()) 
+	{
 		states.back()->Cleanup();
 		states.pop_back();
 	}

@@ -10,11 +10,11 @@
 #include "Link.hpp"
 #include "SettingsParser.hpp"
 
-#include <SFML\Graphics.hpp>
-#include <SFML\Network.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include <iostream>
 #include <fstream>
-#include <experimental\filesystem>
+#include <experimental/filesystem>
 
 AppListState AppListState::AppListState_dontfuckwithme;
 
@@ -30,18 +30,6 @@ void AppListState::Init(AppEngine* app_)
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	scrollbar.create(app->window);
 
-	tracker1.setSize(sf::Vector2f(5, 5));
-	tracker2.setSize(sf::Vector2f(5, 5));
-	tracker3.setSize(sf::Vector2f(5, 5));
-
-	tracker1.setOrigin(tracker1.getLocalBounds().width / 2, tracker1.getLocalBounds().height / 2);
-	tracker2.setOrigin(tracker2.getLocalBounds().width / 2, tracker2.getLocalBounds().height / 2);
-	tracker3.setOrigin(tracker3.getLocalBounds().width / 2, tracker3.getLocalBounds().height / 2);
-
-	tracker1.setFillColor(sf::Color::Green);
-	tracker2.setFillColor(sf::Color::Blue);
-	tracker3.setFillColor(sf::Color::Red);
-
 	helperThread = new std::thread(&AppListState::loadApps, this);
 	std::cout << "thread launched" << std::endl;
 }
@@ -49,6 +37,7 @@ void AppListState::Init(AppEngine* app_)
 void AppListState::Cleanup()
 {
 	delete cardScroller;
+	delete mainView;
 
 	if (helperRunning)
 	{
@@ -122,21 +111,17 @@ void AppListState::HandleEvents()
 				scrollbar.moveThumbDown();
 
 				if (scrollerBottomPosition < scrollerMaxPosition)
-				{
 					cardScroller->move(0, scrollbar.scrollJump);
-
-					updateScrollLimits();
-
-					if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
-					{
-						std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
-						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
-						updateScrollLimits();
-					}
-				}
 				else
-				{
 					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
+
+				updateScrollLimits();
+
+				if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
+				{
+					std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
+					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
+					updateScrollLimits();
 				}
 			}
 			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
@@ -144,23 +129,26 @@ void AppListState::HandleEvents()
 				scrollbar.moveThumbUp();
 
 				if (scrollerTopPosition > scrollerMinPosition)
-				{
 					cardScroller->move(0, -scrollbar.scrollJump);
-
+				else
+					std::cout << "cannot scroll view up (" << scrollerTopPosition << " > " << scrollerMaxPosition << ")" << std::endl;
 					updateScrollLimits();
 
-					if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
-					{
-						std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
-						cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
-						updateScrollLimits();
-					}
-				}
-				else
+				if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
 				{
-					std::cout << "cannot scroll view up (" << scrollerTopPosition << " > " << scrollerMaxPosition << ")" << std::endl;
+					std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
+					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
+					updateScrollLimits();
 				}
 			}
+			/* SCROLL CODE
+			else if (!scrollbar.thumbDragging)
+				if (mouseIsOver(scrollbar.scrollThumb, mainView))
+					scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
+				else
+					if (scrollbar.scrollThumb.getFillColor() == GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER)
+						scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB);
+			*/
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonPressed && !loadingApps)
 		{
@@ -172,17 +160,10 @@ void AppListState::HandleEvents()
 				scrollbar.thumbDragging = true;
 				std::cout << "started dragging the scrollbar" << std::endl;
 			}
-		}
+		} 
 		else if (event.type == sf::Event::EventType::MouseButtonReleased && !loadingApps)
 		{
-			if (scrollbar.thumbDragging)
-			{
-				scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB);
-				scrollbar.thumbDragging = false;
-				std::cout << "stopped dragging scrollbar" << std::endl;
-			}
-
-			if (event.mouseButton.button == sf::Mouse::Button::Left)
+			if (event.mouseButton.button == sf::Mouse::Button::Left && !scrollbar.thumbDragging)
 			{
 				bool clicked(false);
 
@@ -198,7 +179,7 @@ void AppListState::HandleEvents()
 							modOptions.text = "Delete \"" + items[i]->name.getString() + "\"?";
 							std::vector<std::string> modaloptions = { "No", "Yes" };
 							modOptions.settings = modaloptions;
-
+							
 							MessageBox confirmDelete(modOptions);
 							confirmDelete.runBlocking();
 
@@ -264,6 +245,19 @@ void AppListState::HandleEvents()
 			{
 				app->ChangeState(HomeState::Instance());
 			}
+
+			/* SCROLL CODE
+			if (scrollbar.thumbDragging)
+			{
+				if (!mouseIsOver(scrollbar.scrollThumb))
+					scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB);
+				else
+					scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
+
+				scrollbar.thumbDragging = false;
+				std::cout << "stopped dragging scrollbar" << std::endl;
+			}
+			*/
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
@@ -273,7 +267,7 @@ void AppListState::HandleEvents()
 				{
 					try
 					{
-						fs::remove(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "\\index.dat");
+						fs::remove(".//" + GBL::DIR::BASE + GBL::DIR::APPS + "//index.dat");
 					}
 					catch (const std::exception& e)
 					{
@@ -281,10 +275,10 @@ void AppListState::HandleEvents()
 						std::cout << e.what() << std::endl;
 					}
 
-					Download2 getNewIndex;
-					getNewIndex.setInput(".\\" + GBL::WEB::BASE + "\\index.dat");
-					getNewIndex.setOutputDir(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
-					getNewIndex.setOutputFilename("\\index.dat");
+					Download getNewIndex;
+					getNewIndex.setInput(".//" + GBL::WEB::APPS + "//index.dat");
+					getNewIndex.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+					getNewIndex.setOutputFilename("//index.dat");
 					getNewIndex.download();
 					getNewIndex.save();
 				}
@@ -293,8 +287,8 @@ void AppListState::HandleEvents()
 				{
 					try
 					{
-						fs::remove_all(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
-						fs::create_directory(".\\" + GBL::DIR::BASE + GBL::DIR::APPS);
+						fs::remove_all(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+						fs::create_directory(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
 					}
 					catch (const std::exception& e)
 					{
@@ -326,18 +320,26 @@ void AppListState::HandleEvents()
 				}
 			}
 		}
+		/* SCROLL CODE
 		else if (event.type == sf::Event::EventType::MouseMoved)
 		{
 			if (scrollbar.thumbDragging)
 			{
-//				scrollbar.scrollThumb.setPosition(sf::Vector2f(scrollbar.scrollbar.getPosition().x, sf::Mouse::getPosition(*app->window).y));
-				scrollbar.scrollThumb.setPosition(sf::Vector2f(sf::Mouse::getPosition(*app->window) + scrollbar.dragOffset));
 				scrollbar.scrollThumb.setPosition(sf::Vector2f(scrollbar.scrollbar.getPosition().x, sf::Mouse::getPosition(*app->window).y + scrollbar.dragOffset.y));
+				cardScroller->setCenter(sf::Vector2f(cardScroller->getCenter().x,
+					scrollbar.scrollThumb.getPosition().y + (cardScroller->getSize().y / 2)));
 
 				if (sf::Mouse::getPosition(*app->window).x > scrollbar.scrollbar.getPosition().x + 150 || sf::Mouse::getPosition(*app->window).x < scrollbar.scrollbar.getPosition().x - 150) // error zone
 					scrollbar.scrollThumb.setPosition(scrollbar.originalPosition);
 			}
+			else if (!scrollbar.thumbDragging)
+				if (mouseIsOver(scrollbar.scrollThumb, mainView))
+					scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER);
+				else
+					if (scrollbar.scrollThumb.getFillColor() == GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER)
+						scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB);
 		}
+		*/
 	}
 }
 
@@ -352,16 +354,14 @@ void AppListState::Update()
 		helperRunning = false;
 	}
 
-	for (size_t i = 0; i < threads.size(); i++)
-	{
-		if (threads[i].joinable())
-		{
-			std::cout << "joining" << std::endl;
-
-			threads[i].detach();
-			threads.erase(threads.begin() + i);
-		}
-	}
+//	for (size_t i = 0; i < threads.size(); i++)
+//	{
+//		if (threads[i].joinable())
+//		{
+//			std::cout << "joining" << std::endl;
+//			threads.erase(threads.begin() + i);
+//		}
+//	}
 }
 
 void AppListState::Draw()
@@ -400,20 +400,18 @@ void AppListState::loadApps() // TOOD: this.
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
 
-	std::ifstream readIndex(".\\" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
+	std::ifstream readIndex(".//" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
 
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
-		std::cout << loopi << " - " << line << std::endl;
+		std::cout << loopi << " - " << line << " - " << loopi << std::endl;
 
 		// syntax should look like this: APP:"appname"
 		// or for links, LINK:"text"TO"link.com"
 		if (line[0] == 'A' && line[1] == 'P' && line[2] == 'P') // it's an app
 		{
-			line.erase(0, 3); // remove APP
-			line.erase(0, 1); // remove :
-			line.erase(0, 1); // remove first "
+			line.erase(0, 5); // remove APP
 			line.erase(line.length() - 1, line.length()); // remove last "
 
 			if (comesAfterLink)
@@ -424,7 +422,7 @@ void AppListState::loadApps() // TOOD: this.
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
 					app->window->getSize().y,
 					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
-					items.back()->cardShape.getPosition().y + items.back()->totalHeight /* PADDING */);
+					links.back()->cardShape.getPosition().y + links.back()->totalHeight * 2 - 14 /* PADDING */);
 
 				items.push_back(newItem);
 				std::cout << std::endl;
@@ -461,19 +459,14 @@ void AppListState::loadApps() // TOOD: this.
 
 			std::string linkText, linkRel, linkFull(line);
 
-			line.erase(0, 4); // remove LINK
-			line.erase(0, 1); // remove :
-			line.erase(0, 1); // remove first "
+			line.erase(0, 6); // remove LINK:"
 			line.erase(line.find('"'), line.length()); // remove everything after last " in link text
 			linkText = line;
 
 			line = linkFull;
-			line.erase(0, 4); // remove LINK
-			line.erase(0, 1); // remove :
-			line.erase(0, 1); // remove first " in like name
+			line.erase(0, 6); // remove LINK:"
 			line.erase(0, line.find('"') + 1); // remove last " in link name and everything before
-			line.erase(0, 2); // remove TO
-			line.erase(0, 1); // remove first "
+			line.erase(0, 3); // remove TO"
 			line.erase(line.length() - 1, line.length()); // remove last "
 			linkRel = line;
 
@@ -515,11 +508,23 @@ void AppListState::loadApps() // TOOD: this.
 			continue;
 		}
 
+		// TODO: 0.17.0
+//		if (items.back()->updateIsAvailable)
+//		{
+//			Item *updateItem = items.back; // temporary copy
+//			items.pop_back(); // remove from applist
+//			items.insert(items.begin(), updateItem); // put in front of applist
+//		}
+
 		updateScrollThumbSize();
 		loopi += 1;
 	}
 
+	readIndex.close();
+
 	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded) in " << appLoadTime.getElapsedTime().asSeconds() << " seconds" << std::endl;
+
+	app->window->requestFocus();
 
 	helperDone = true;
 	helperRunning = false;
