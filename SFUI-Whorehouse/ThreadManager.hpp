@@ -4,6 +4,15 @@
 #include <vector>
 #include <thread>
 
+class ThreadedOperation
+{
+	int percent;
+	int id;
+	bool done;
+
+	std::thread *thread;
+};
+
 typedef void(*callback_function)(void); // type for conciseness
 
 class ThreadManager
@@ -12,12 +21,15 @@ public:
 	ThreadManager();
 	~ThreadManager();
 
+	void newOperation(std::function function);
+
 	// add action to queue
 	// remove action from queue
 	// get action status
 
 private:
-	std::vector<std::thread*> threadQueue;
+	std::vector<ThreadedOperation*> threadQueue;
+//	std::vector<std::thread*> threadQueue;
 	std::thread *thread;
 };
 
