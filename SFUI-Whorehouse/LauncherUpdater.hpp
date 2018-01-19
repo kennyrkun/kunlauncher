@@ -3,6 +3,17 @@
 
 #include <string>
 
+struct Version
+{
+	std::string major_s;
+	std::string minor_s;
+	std::string patch_s;
+
+	int major;
+	int minor;
+	int patch;
+};
+
 class LauncherUpdater
 {
 public:

@@ -40,7 +40,9 @@ void HomeState::Init(AppEngine* app_)
 	else
 		settingsState->setButtonColor(sf::Color(100, 100, 100));
 	settingsState->setPosition(sf::Vector2f(app->window->getView().getCenter().x - settingsState->shape.getLocalBounds().width / 2, app->window->getView().getCenter().y - settingsState->shape.getLocalBounds().height / 2));
+#ifndef _DEBUG
 	settingsState->disable();
+#endif
 	sections.push_back(settingsState);
 
 	SFUI::IconButton *powerButton = new SFUI::IconButton;

@@ -17,13 +17,17 @@ std::string LauncherUpdater::getRemoteVersion()
 	getHoHouse.download();
 
 	remoteVersion = getHoHouse.fileBuffer;
+
+	SettingsParser getVersion;
+
 	return remoteVersion;
 }
 
 std::string LauncherUpdater::getLocalVersion()
 {
-	localVersion = GBL::VERSION;
-	return localVersion;
+//	Version localVersion = {GBL::VERSION::majors, GBL::VERSION::minors, GBL::VERSION::patchs, GBL::VERSION::major, GBL::VERSION::minor, GBL::VERSION::patch};
+
+	return GBL::VERSION::string;
 }
 
 int LauncherUpdater::checkForUpdates()
@@ -44,6 +48,19 @@ int LauncherUpdater::checkForUpdates()
 		requiredUpdate = true;
 
 	//TODO: actual version checking
+	// if lpatch < rpatch
+	//	if lminor < rminor
+	//  else
+	//	  if lmajor < rmajor
+	//		update = true;
+	//	  else
+	// else
+	// if lminor < rminor
+	// else
+	//	if lmajor < rmajor
+	//	   update = true;
+	//	else
+
 	if (remoteVersion != localVersion)
 	{
 		std::cout << "launcher is out of date" << std::endl;
@@ -127,6 +144,10 @@ int LauncherUpdater::createUpdateFile()
 		writeUpdateFile.close();
 
 		return 0;
+	}
+	else
+	{
+		return -1;
 	}
 }
 

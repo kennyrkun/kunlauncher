@@ -80,6 +80,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\\SFML\\include;..\\SFUI\\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\\SFML\\lib;..\\SFUI\\lib;</AdditionalLibraryDirectories>
