@@ -87,8 +87,8 @@ void AppListState::HandleEvents()
 				*mainView = sf::View(visibleArea);
 				app->window->setView(sf::View(visibleArea));
 
-				cardScroller->setSize(event.size.width, event.size.height);
-				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
+				cardScroller->setSize(sf::Vector2f(event.size.width, event.size.height));
+				cardScroller->setCenter(sf::Vector2f(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2));
 
 				// set the scrollbar size
 				updateScrollThumbSize();
@@ -152,6 +152,7 @@ void AppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonPressed && !loadingApps)
 		{
+			/*
 			if (mouseIsOver(scrollbar.scrollThumb, mainView))
 			{
 				scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD);
@@ -160,6 +161,7 @@ void AppListState::HandleEvents()
 				scrollbar.thumbDragging = true;
 				std::cout << "started dragging the scrollbar" << std::endl;
 			}
+			*/
 		} 
 		else if (event.type == sf::Event::EventType::MouseButtonReleased && !loadingApps)
 		{
@@ -263,6 +265,11 @@ void AppListState::HandleEvents()
 		{
 			if (event.key.code == sf::Keyboard::Key::R && !loadingApps)
 			{
+				std::cout << "refreshing applist" << std::endl;
+
+				links.clear();
+				items.clear();
+
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
 				{
 					try
@@ -283,12 +290,19 @@ void AppListState::HandleEvents()
 					getNewIndex.save();
 				}
 
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) // nuke everything and redownload
 				{
 					try
 					{
 						fs::remove_all(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
 						fs::create_directory(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+
+						Download getNewIndex;
+						getNewIndex.setInput(".//" + GBL::WEB::APPS + "//index.dat");
+						getNewIndex.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+						getNewIndex.setOutputFilename("//index.dat");
+						getNewIndex.download();
+						getNewIndex.save();
 					}
 					catch (const std::exception& e)
 					{
@@ -296,11 +310,6 @@ void AppListState::HandleEvents()
 						std::cout << e.what() << std::endl;
 					}
 				}
-
-				std::cout << "refreshing applist" << std::endl;
-
-				links.clear();
-				items.clear();
 
 				helperThread = new std::thread(&AppListState::loadApps, this);
 				helperDone = false;
@@ -400,7 +409,17 @@ void AppListState::loadApps() // TOOD: this.
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
 
-	std::ifstream readIndex(".//" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
+	if (!fs::exists("./" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat"))
+	{
+		Download getNewIndex;
+		getNewIndex.setInput(".//" + GBL::WEB::APPS + "//index.dat");
+		getNewIndex.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+		getNewIndex.setOutputFilename("//index.dat");
+		getNewIndex.download();
+		getNewIndex.save();
+	}
+
+	std::ifstream readIndex("./" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
 
 	int loopi(0);
 	while (std::getline(readIndex, line))
@@ -441,10 +460,10 @@ void AppListState::loadApps() // TOOD: this.
 						(75 / 2) + 10);
 				else
 					newItem = new Item(line, app->window,
-					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
+					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16.0f),
 						app->window->getSize().y, // I'm not sure what this is for?????
-						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // the middle of the window (exluding the size of the scrollbar)
-						items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10 /* PADDING */);
+						(app->window->getSize().x / 2.0f) - (scrollbar.scrollbar.getSize().x / 2.0f), // the middle of the window (exluding the size of the scrollbar)
+						items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10.0f /* PADDING */);
 
 				items.push_back(newItem);
 				std::cout << std::endl;
@@ -522,7 +541,7 @@ void AppListState::loadApps() // TOOD: this.
 
 	readIndex.close();
 
-	std::cout << "fiinished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded) in " << appLoadTime.getElapsedTime().asSeconds() << " seconds" << std::endl;
+	std::cout << "finished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded) in " << appLoadTime.getElapsedTime().asSeconds() << " seconds" << std::endl;
 
 	app->window->requestFocus();
 

@@ -49,6 +49,7 @@ public:
 	int htmlReturnCode;
 	std::string fileBuffer;
 	uintmax_t fileSize;
+	bool downloaded;
 
 private:
 	std::string input;

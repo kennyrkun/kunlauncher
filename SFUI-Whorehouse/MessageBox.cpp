@@ -12,7 +12,7 @@ MessageBox::MessageBox(Options settings_)
 {
 	settings = settings_;
 
-	if (font.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::FONT + "Product Sans.ttf"))
+	if (font.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::FONT + "Arial.ttf"))
 	{
 		message.setFont(font);
 		message.setString(settings.text);
@@ -35,15 +35,15 @@ MessageBox::MessageBox(Options settings_)
 		//TODO: handle this better
 	}
 
-	int messageWidth = message.getLocalBounds().width + 20;
-	int buttonsWidth = 0;
+	float messageWidth = message.getLocalBounds().width + 20;
+	float buttonsWidth = 0;
 
 	for (size_t i = 0; i < buttons.size(); i++)
 	{
-		buttonsWidth += buttons[i]->m_shape.getLocalBounds().width + 4;
+		buttonsWidth += buttons[i]->m_shape.getLocalBounds().width + 4.0f;
 	}
 
-	std::vector<int> combinedWidths;
+	std::vector<float> combinedWidths;
 	combinedWidths.push_back(messageWidth);
 
 	for (size_t i = 0; i < settings.settings.size(); i++)
@@ -58,31 +58,31 @@ MessageBox::MessageBox(Options settings_)
 		buttonsWidth += newButton->m_shape.getLocalBounds().width + 4;
 	}
 
-	combinedWidths.push_back(buttonsWidth + 6);
+	combinedWidths.push_back(buttonsWidth + 6.0f);
 
-	int largest = combinedWidths.front();
+	float largest = combinedWidths.front();
 	for (size_t i = 0; i < combinedWidths.size(); i++)
 		if (combinedWidths[i] > largest)
 			largest = combinedWidths[i];
 
-	if (largest < 900)
+	if (largest < 900.0f)
 	{
 		settings.width = largest;
 	}
 	else
 	{
 		std::cout << "modal is too wide, setting it to 900" << std::endl;
-		settings.width = 900;
+		settings.width = 900.0f;
 	}
 
-	if (message.getLocalBounds().height < 600)
+	if (message.getLocalBounds().height < 600.0f)
 	{
-		settings.height = message.getLocalBounds().height + buttons.back()->m_shape.getLocalBounds().height + 30;
+		settings.height = message.getLocalBounds().height + buttons.back()->m_shape.getLocalBounds().height + 30.0f;
 	}
 	else
 	{
 		std::cout << "modal is too tall, setting it to 600" << std::endl;
-		settings.height = 600;
+		settings.height = 600.0f;
 	}
 }
 

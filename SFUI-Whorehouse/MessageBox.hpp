@@ -16,8 +16,8 @@ public:
 		std::string title;
 		std::string text;
 		std::vector<std::string> settings;
-		int width = 300;
-		int height = 75;
+		float width = 300.0f;
+		float height = 75.0f;
 	};
 
 public:

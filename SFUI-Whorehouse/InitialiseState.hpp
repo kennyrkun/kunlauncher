@@ -36,7 +36,6 @@ private:
 	static InitialiseState IntialiseState_dontfuckwithme;
 	AppEngine* app;
 	// FIXME: shouldn't need to be a pointer
-	LauncherUpdater *updater;
 
 	std::thread *helperThread;
 	bool helperRunning = false;

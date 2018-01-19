@@ -8,13 +8,11 @@ class LauncherUpdater
 public:
 	enum Status
 	{
-		FailGeneric,
-		NoUpdateFile,
-		CouldNotDownload,
-		Updated,
+		DownloadFailed,
 		UpdateAvailable,
 		NoUpdateAvailable,
 
+		Failure,
 		Success
 	};
 
@@ -33,6 +31,8 @@ public:
 	bool restartAfterUpdate = false;
 	std::string remoteVersion;
 	std::string localVersion;
+
+	bool requiredUpdate;
 };
 
 #endif // !LAUNCHER_UPDATER_HPP

@@ -100,29 +100,44 @@ std::string Download::getInputFilename()
 // TODO: make this function useable, by adding some sort of decryption thingy
 uintmax_t Download::getFileSize()
 {
-	sf::Ftp ftp;
+	if (!downloaded && !remoteFilename.empty())
+	{
+		std::cout << "retrieving file size" << std::endl;
 
-	// Connect to the server
-	sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
-	if (response.isOk())
-		std::cout << "Connected" << std::endl;
+		sf::Ftp ftp;
 
-	// Log in
-	response = ftp.login("laurent", "dF6Zm89D");
-	if (response.isOk())
-		std::cout << "Logged in" << std::endl;
+		// Connect to the server
+		sf::Ftp::Response response = ftp.connect("files.000webhost.com");
+		if (response.isOk())
+			std::cout << "Connected" << std::endl;
 
-	response = ftp.sendCommand("SIZE", input);
-	if (response.isOk())
-		std::cout << "File size: " << response.getMessage() << std::endl;
+		// Log in
+		response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
+		if (response.isOk())
+			std::cout << "Logged in" << std::endl;
 
-	// Disconnect from the server (optional)
-	ftp.disconnect();
+		std::cout << "remote directory + remote filename: " << remoteDirectory + remoteFilename << std::endl;
 
-	if (response.isOk())
-		return std::stoi(response.getMessage());
+		response = ftp.sendCommand("SIZE", remoteDirectory + remoteFilename);
+		if (response.isOk())
+			std::cout << "File size: " << response.getMessage() << std::endl;
+		else
+		{
+			std::cout << response.getMessage() << std::endl;
+		}
+
+		// Disconnect from the server (optional)
+		ftp.disconnect();
+
+		if (response.isOk())
+			return std::stoi(response.getMessage());
+		else
+			return 0;
+	}
 	else
-		return 0;
+	{
+		return fileSize;
+	}
 }
 
 int Download::download()
@@ -144,18 +159,9 @@ int Download::download()
 	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
 	if (!response.isOk())
 	{
-		std::cerr << "failed to login to default ftp (" << response.getMessage() << " (" << response.getStatus() << "))" << std::endl;
+		std::cout << "failed to connect to ftp" << std::endl;
 
-		response = ftp.login("kunlauncher2", "9fH^!U2=Ys=+XJYq");
-		if (!response.isOk())
-		{
-			std::cerr << "failed to login to auxilary ftp (" << response.getMessage() << " (" << response.getStatus() << "))" << std::endl;
-			return Status::ConnectionRejected;
-		}
-		else
-		{
-			std::cout << "connected to aux ftp" << std::endl;
-		}
+		return Status::Failure;
 	}
 
 	response = ftp.changeDirectory("public_html");
@@ -214,6 +220,7 @@ int Download::download()
 	// Disconnect from the server (optional)
 	ftp.disconnect();
 
+	downloaded = true;
 	return Status::Ok;
 }
 

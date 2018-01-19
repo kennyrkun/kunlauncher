@@ -36,10 +36,10 @@ void ProgressBar::oneThingDone()
 	setValue(thingsDone + 1, thingsToDo);
 }
 
-void ProgressBar::setColor(const sf::Color & color)
+void ProgressBar::setColor(const sf::Color& color)
 {
 	for (int i = 0; i < 4; ++i)
-		bar[i].color = barColor;
+		bar[i].color = color;
 }
 
 void ProgressBar::setColor(const sf::Color & topLeft, const sf::Color & topRight, const sf::Color & bottomLeft, const sf::Color & bottomRight)

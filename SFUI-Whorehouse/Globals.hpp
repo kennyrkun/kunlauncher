@@ -10,34 +10,33 @@ class ResourceManager;
 
 namespace GBL
 {
-	const std::string VERSION = "0.16.0";
+	const std::string VERSION = "0.16.1";
 
 	namespace DIR
 	{
-		const std::string BASE	   = "//bin//";
-		const std::string CACHE	   = "//cache//";
-		const std::string RESOURCE = "//resources//";
-		const std::string THEME	   = "//themes//";
-		const std::string TEXTURE  = "//textures//";
-		const std::string FONT	   = "//fonts//";
-		const std::string APPS	   = "//apps//";
-		const std::string STATS    = "//stats//";
+		const std::string BASE	   = "/bin/";
+		const std::string CACHE	   = "/cache/";
+		const std::string RESOURCE = "/resources/";
+		const std::string THEME	   = "/themes/";
+		const std::string TEXTURE  = "/textures/";
+		const std::string FONT	   = "/fonts/";
+		const std::string APPS	   = "/apps/";
+		const std::string STATS    = "/stats/";
 		const std::string CONFIG   = BASE + "//kunlauncher.conf";
 	}
 
 	namespace WEB
 	{
-		const std::string HOSTNAME = "kunlauncher.000webhostapp.com/";
-		const std::string BASE = "./";
-		const std::string APPS = "/apps/";
-		const std::string VERSION = "/launcher/version/";
+		const std::string HOSTNAME	= "kunlauncher.000webhostapp.com/";
+		const std::string APPS		= "apps/";
+		const std::string VERSION	= "launcher/version/";
 
 		namespace LATEST
 		{
-			const std::string DIR = "/launcher/version/latest/";
-			const std::string RESOURCE = "/launcher/version/latest/resources/";
-			const std::string RESOURCE_LIST = "/launcher/version/latest/resources/resources.dat";
-			const std::string EXECUTABLE = "/latest.noexe";
+			const std::string DIR			= "launcher/version/latest/";
+			const std::string RESOURCE		= "launcher/version/latest/resources/";
+			const std::string RESOURCE_LIST = "launcher/version/latest/resources/resources.dat";
+			const std::string EXECUTABLE	= "latest.noexe";
 		}
 	}
 

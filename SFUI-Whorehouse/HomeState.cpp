@@ -92,6 +92,29 @@ void HomeState::HandleEvents()
 		{
 			app->Quit();
 		}
+		else if (event.type == sf::Event::EventType::Resized)
+		{
+			std::cout << "new width: " << event.size.width << std::endl;
+			std::cout << "new height: " << event.size.height << std::endl;
+
+			sf::Vector2u newSize(event.size.width, event.size.height);
+
+			if (newSize.x >= 525 && newSize.y >= 325)
+			{
+				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+				app->window->setView(sf::View(visibleArea));
+			}
+			else
+			{
+				if (event.size.width <= 525)
+					newSize.x = 525;
+
+				if (event.size.height <= 325)
+					newSize.y = 325;
+
+				app->window->setSize(newSize);
+			}
+		}
 		else if (event.type == sf::Event::EventType::MouseButtonPressed)
 		{
 			std::cout << "click" << std::endl;
@@ -128,6 +151,7 @@ void HomeState::Update()
 		helperRunning = false;
 	}
 
+	/*
 	for (size_t i = 0; i < threads.size(); i++)
 	{
 		if (threads[i].joinable())
@@ -137,7 +161,7 @@ void HomeState::Update()
 			threads[i].detach();
 			threads.erase(threads.begin() + i);
 		}
-	}
+	}*/
 }
 
 void HomeState::Draw()

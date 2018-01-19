@@ -20,7 +20,7 @@ public:
 
 	sf::Text	name;
 	std::string itemName;
-	int totalHeight;
+	float totalHeight;
 
 	int cardNumber; // used to store depth
 	bool downloaded;

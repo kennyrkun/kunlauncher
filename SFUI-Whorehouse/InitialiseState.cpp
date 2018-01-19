@@ -28,7 +28,7 @@ void InitialiseState::Init(AppEngine* app_)
 
 	app = app_;
 	
-	if (!font.loadFromFile(".//" + GBL::DIR::BASE + "//" + GBL::DIR::RESOURCE + "//" + GBL::DIR::FONT + "//Product Sans.ttf"))
+	if (!font.loadFromFile(".//" + GBL::DIR::BASE + "//" + GBL::DIR::RESOURCE + "//" + GBL::DIR::FONT + "//Arial.ttf"))
 	{
 		std::cout << "failed to load product sans, falling back to Arial!" << std::endl;
 
@@ -42,7 +42,7 @@ void InitialiseState::Init(AppEngine* app_)
 
 	app->window->create(sf::VideoMode(400, 150), app->title, sf::Style::None);
 	app->window->setVerticalSyncEnabled(app->settings.verticalSync);
-	app->window->setTitle("KunLauncher " + GBL::VERSION + " initalising");
+	app->window->setTitle("KunLauncher " + GBL::VERSION::string + " initalising");
 
 	initialiseText.setFont(font);
 	initialiseText.setCharacterSize(56);
@@ -52,12 +52,14 @@ void InitialiseState::Init(AppEngine* app_)
 
 	thingthatdoesntripoffvisualstudio.setSize(sf::Vector2f(app->window->getSize().x, 20));
 	thingthatdoesntripoffvisualstudio.setFillColor(sf::Color(100, 100, 100));
-	thingthatdoesntripoffvisualstudio.setPosition(0, (app->window->getSize().y - 20));
+	thingthatdoesntripoffvisualstudio.setPosition(sf::Vector2f(0, (app->window->getSize().y - 20)) );
 
 	progressBar = new ProgressBar(sf::Vector2f(0, (app->window->getSize().y - 20)), thingthatdoesntripoffvisualstudio.getSize().x, thingthatdoesntripoffvisualstudio.getSize().y);
 
 	currentLauncherTask.setFont(font);
 	currentLauncherTask.setCharacterSize(20);
+
+	setTaskText("You can't see me!");
 
 	helperThread = new std::thread(&InitialiseState::initialisise, this);
 	helperRunning = true;
@@ -81,13 +83,12 @@ void InitialiseState::Cleanup()
 		app->developerModeActive = true;
 	}
 
-	sf::RenderWindow* newWindow = new sf::RenderWindow(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + GBL::VERSION, sf::Style::Resize | sf::Style::Close);
+	sf::RenderWindow* newWindow = new sf::RenderWindow(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + GBL::VERSION::string, sf::Style::Resize | sf::Style::Close);
 	newWindow->setVerticalSyncEnabled(true);
 	newWindow->setKeyRepeatEnabled(false);
 
 	app->window->close();
 	delete app->window;
-	app->window = nullptr;
 	app->window = newWindow;
 
 	std::cout << "Initalisation took " << initTime.getElapsedTime().asSeconds() << "s" << std::endl;
@@ -148,7 +149,7 @@ void InitialiseState::Draw()
 		{
 			app->Quit();
 
-			// FIXME: cross platform support that is not shit :D
+			//TODO: cross platform support that is not shit :D
 			#ifdef _WIN32
 			std::string thingtodo("start kunlauncher.exe");
 			system(thingtodo.c_str());
@@ -174,8 +175,6 @@ void InitialiseState::Draw()
 
 void InitialiseState::initialisise()
 {
-	setTaskText("You can't see me!");
-
 	{ // always do this first.
 		progressBar->reset();
 		progressBar->addThingToDo();
@@ -188,7 +187,7 @@ void InitialiseState::initialisise()
 			settings.get("update_launcher_on_start", app->settings.updateLauncherOnStart);
 			settings.get("check_for_items_on_start", app->settings.checkForNewItemsOnStart);
 			settings.get("print_download_progress", app->settings.printdownloadprogress);
-			settings.get("default_theme", app->settings.selectedTheme);
+			settings.get("selected_theme", app->settings.selectedTheme);
 		}
 		else
 		{
@@ -209,7 +208,7 @@ void InitialiseState::initialisise()
 		std::cout << "updating app index" << std::endl;
 
 		Download getIndex;
-		getIndex.setInput("./" + GBL::WEB::APPS + "/index.dat");
+		getIndex.setInput(GBL::WEB::APPS + "/index.dat");
 		getIndex.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
 		getIndex.setOutputFilename("//index.dat");
 
@@ -237,32 +236,23 @@ void InitialiseState::initialisise()
 			}
 			catch (const std::exception& e)
 			{
-				std::cout << "failed to remove kunlauncher.exe.old" << std::endl;
+				std::cerr << "failed to remove kunlauncher.exe.old" << std::endl;
+				std::cerr << e.what() << std::endl;
 			}
 
 			progressBar->oneThingDone();
 		}
 
-		updater = new LauncherUpdater;
+		LauncherUpdater *updater = new LauncherUpdater;
+		//TODO: this probably isn't the best way to see if updates are available
 		if (updater->checkForUpdates() == LauncherUpdater::Status::UpdateAvailable)
 		{
 			progressBar->oneThingDone(); // check for update
 
-			MessageBox::Options modOptions;
-
-			//TODO: add erorr handling
-			modOptions.title = "Update Available";
-			modOptions.text = "Version " + updater->remoteVersion + " is available, would you like to update?";
-			modOptions.settings = { "Yes", "No" };
-
-			MessageBox doYouWannaUpdate(modOptions);
-			doYouWannaUpdate.runBlocking();
-			doYouWannaUpdate.close(); // right after it's done
-
-			switch (doYouWannaUpdate.returnCode)
+			if (!updater->requiredUpdate)
 			{
-			case 0:
-			{
+				std::cout << "forcing client update" << std::endl;
+
 				progressBar->reset();
 				progressBar->addThingsToDo(2); // update and replace exe
 				setTaskText("updating launcher");
@@ -275,46 +265,77 @@ void InitialiseState::initialisise()
 				updater->replaceOldExecutable();
 				progressBar->oneThingDone(); // replace exe
 
+				restartNow = true;
+			}
+			else
+			{
 				MessageBox::Options modOptions;
-				modOptions.text = "Launcher updated";
+				//TODO: add erorr handling
+				modOptions.title = "Update Available";
+				modOptions.text = "Version " + updater->remoteVersion + " is available, would you like to update?";
+				modOptions.settings = { "Yes", "No" };
 
-				modOptions.text = "Launcher updated to v" + updater->remoteVersion + "! Restart it!";
-				modOptions.settings = { "Restart Now", "Restart Later" };
+				MessageBox doYouWannaUpdate(modOptions);
+				doYouWannaUpdate.runBlocking();
+				doYouWannaUpdate.close(); // right after it's done
 
-				MessageBox updateSuccessfulModal(modOptions);
-				updateSuccessfulModal.runBlocking();
-
-				switch (updateSuccessfulModal.returnCode)
+				switch (doYouWannaUpdate.returnCode)
 				{
 				case 0:
 				{
-					std::cout << "restarting now" << std::endl;
-					restartNow = true;
+					progressBar->reset();
+					progressBar->addThingsToDo(2); // update and replace exe
+					setTaskText("updating launcher");
+
+					setTaskText("downloading update");
+					updater->downloadUpdate();
+					progressBar->oneThingDone(); // update
+
+					setTaskText("replacing old executable");
+					updater->replaceOldExecutable();
+					progressBar->oneThingDone(); // replace exe
+
+					MessageBox::Options modOptions;
+					modOptions.text = "Launcher updated";
+
+					modOptions.text = "Launcher updated to v" + updater->remoteVersion + "! Restart it!";
+					modOptions.settings = { "Restart Now", "Restart Later" };
+
+					MessageBox updateSuccessfulModal(modOptions);
+					updateSuccessfulModal.runBlocking();
+
+					switch (updateSuccessfulModal.returnCode)
+					{
+					case 0:
+					{
+						std::cout << "restarting now" << std::endl;
+						restartNow = true;
+						break;
+					}
+
+					case 1:
+					{
+						std::cout << "restarting later" << std::endl;
+						updateSuccessfulModal.close();
+						break;
+					}
+
+					default:
+						break;
+					}
+
 					break;
 				}
 
 				case 1:
 				{
-					std::cout << "restarting later" << std::endl;
-					updateSuccessfulModal.close();
+					std::cout << "don't update now" << std::endl;
 					break;
 				}
 
 				default:
 					break;
 				}
-
-				break;
-			}
-
-			case 1:
-			{
-				std::cout << "don't update now" << std::endl;
-				break;
-			}
-
-			default:
-				break;
 			}
 		}
 	}
@@ -332,7 +353,7 @@ void InitialiseState::initialisise()
 int InitialiseState::validateFileStructure()
 {
 	progressBar->reset();
-	progressBar->addThingsToDo(7); // bin, config, apps, app index, resources
+	progressBar->addThingsToDo(8); // bin, config, apps, app index, resources
 	setTaskText("validating files");
 
 	std::cout << "checking for bin" << std::endl;
@@ -365,8 +386,9 @@ int InitialiseState::validateFileStructure()
 		createConfigurationFile << "min_window_height = 400" << std::endl;
 		createConfigurationFile << "update_launcher_on_start = TRUE" << std::endl;
 		createConfigurationFile << "check_for_items_on_start = TRUE" << std::endl;
+		createConfigurationFile << "print_download_progress = TRUE" << std::endl;
 		createConfigurationFile << "selected_theme = dark" << std::endl;
-		createConfigurationFile << std::endl;
+		createConfigurationFile << std::endl; 
 		createConfigurationFile << "// default controls:" << std::endl;
 		createConfigurationFile << "// Right Click: go back" << std::endl;
 		createConfigurationFile << "// R: Reload Apps list" << std::endl;
@@ -384,7 +406,7 @@ int InitialiseState::validateFileStructure()
 		std::cout << "missing thirdpartynotices, downloading..." << std::endl;
 
 		Download getThirdPartyNotices;
-		getThirdPartyNotices.setInput("./" + GBL::WEB::BASE + "/thirdpartynotices.txt");
+		getThirdPartyNotices.setInput(GBL::WEB::LATEST::DIR + "/thirdpartynotices.txt");
 		getThirdPartyNotices.setOutputDir(".//" + GBL::DIR::BASE);
 		getThirdPartyNotices.setOutputFilename("//thirdpartynotices.txt");
 		getThirdPartyNotices.download();
@@ -428,7 +450,7 @@ int InitialiseState::validateFileStructure()
 		std::cout << "app index missing, creating" << std::endl;
 
 		Download getItemIndex;
-		getItemIndex.setInput("./" + GBL::DIR::APPS + "/index.dat");
+		getItemIndex.setInput(GBL::DIR::APPS + "/index.dat");
 		getItemIndex.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
 		getItemIndex.setOutputFilename("//index.dat");
 		getItemIndex.download();
@@ -438,8 +460,25 @@ int InitialiseState::validateFileStructure()
 	}
 	progressBar->oneThingDone(); // 6
 
+	std::cout << "checking for resource folder" << std::endl;
+	if (!fs::exists(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE)) // 6
+	{
+		std::cout << "resource folder is missing, creating" << std::endl;
+
+		try
+		{
+			fs::create_directory(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE);
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "failed to creat resources folder:" << std::endl;
+			std::cerr << e.what() << std::endl;
+		}
+	}
+	progressBar->oneThingDone(); // 6
+
 	std::cout << "checking for themes folder" << std::endl;
-	if (!fs::exists(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME)) // 6
+	if (!fs::exists(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME)) // 7
 	{
 		std::cout << "themes folder is missing, creating" << std::endl;
 
@@ -453,7 +492,7 @@ int InitialiseState::validateFileStructure()
 			std::cerr << e.what() << std::endl;
 		}
 	}
-	progressBar->oneThingDone(); // 6
+	progressBar->oneThingDone(); // 7
 
 	return 0;
 }
@@ -462,8 +501,6 @@ int InitialiseState::validateResourceFiles()
 {
 	setTaskText("validating resource files");
 
-	progressBar->addThingsToDo(2);
-
 	if (!fs::exists(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "resources.dat"))
 	{
 		std::ofstream createResourcesManifest(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "resources.dat");
@@ -471,13 +508,28 @@ int InitialiseState::validateResourceFiles()
 	}
 
 	Download getResourceManifest;
-	getResourceManifest.setInput(".//" + GBL::WEB::LATEST::RESOURCE_LIST);
-	getResourceManifest.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE);
-	getResourceManifest.setOutputFilename("//resources.dat");
-	getResourceManifest.download();
-	progressBar->oneThingDone();
-	getResourceManifest.save();
-	progressBar->oneThingDone();
+	getResourceManifest.setInput(GBL::WEB::LATEST::RESOURCE + "resources.dat");
+
+	if (getResourceManifest.getFileSize() != fs::file_size(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "resources.dat"))
+	{
+		std::cout << "resources have been updated" << std::endl;
+
+		progressBar->addThingsToDo(2);
+
+		getResourceManifest.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE);
+		getResourceManifest.setOutputFilename("//resources.dat");
+		getResourceManifest.download();
+		progressBar->oneThingDone();
+		getResourceManifest.save();
+		progressBar->oneThingDone();
+	}
+	else
+	{
+		std::cout << "resource manifest up to date" << std::endl;
+
+		std::cout << getResourceManifest.getFileSize() << std::endl;
+		std::cout << fs::file_size(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "resources.dat") << std::endl;
+	}
 
 	SettingsParser getResources;
 	if (getResources.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + "resources.dat"))
@@ -498,12 +550,12 @@ int InitialiseState::validateResourceFiles()
 				setTaskText("retrieving " + textures[i]);
 				std::cout << textures[i] << " is missing, downloading." << std::endl;
 
-				Download getResourceManifest;
-				getResourceManifest.setInput(".//" + GBL::WEB::LATEST::RESOURCE + "/textures/" + textures[i]);
-				getResourceManifest.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE);
-				getResourceManifest.setOutputFilename("//" + textures[i]);
-				getResourceManifest.download();
-				getResourceManifest.save();
+				Download getTexture;
+				getTexture.setInput(".//" + GBL::WEB::LATEST::RESOURCE + "/textures/" + textures[i]);
+				getTexture.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE);
+				getTexture.setOutputFilename("//" + textures[i]);
+				getTexture.download();
+				getTexture.save();
 			}
 
 			progressBar->oneThingDone();
@@ -525,12 +577,12 @@ int InitialiseState::validateResourceFiles()
 				setTaskText("retrieving " + fonts[i]);
 				std::cout << fonts[i] << " is missing, downloading." << std::endl;
 
-				Download getResourceManifest;
-				getResourceManifest.setInput(".//" + GBL::WEB::LATEST::RESOURCE + "/fonts/" + fonts[i]);
-				getResourceManifest.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::FONT);
-				getResourceManifest.setOutputFilename("//" + fonts[i]);
-				getResourceManifest.download();
-				getResourceManifest.save();
+				Download getFont;
+				getFont.setInput(".//" + GBL::WEB::LATEST::RESOURCE + "/fonts/" + fonts[i]);
+				getFont.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::FONT);
+				getFont.setOutputFilename("//" + fonts[i]);
+				getFont.download();
+				getFont.save();
 			}
 
 			progressBar->oneThingDone();
@@ -580,132 +632,132 @@ int InitialiseState::getThemeConfiguration()
 		createDarkTheme << "link_text = 0, 170, 232" << std::endl;
 
 		createDarkTheme.close();
+	}
 
-		if (!fs::exists(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + "light.sfuitheme"))
+	if (!fs::exists(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + "light.sfuitheme"))
+	{
+		std::cout << "creating theme file" << std::endl;
+		std::ofstream createLightTheme(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + "light.sfuitheme");
+
+		createLightTheme << "// default 'light' theme for kunlauncher" << std::endl;
+		createLightTheme << std::endl;
+		createLightTheme << "// globals" << std::endl;
+		createLightTheme << "global_background = 255, 255, 255" << std::endl;
+		createLightTheme << "global_text = 0, 0, 0" << std::endl;
+		createLightTheme << std::endl;
+		createLightTheme << "// scrollbar" << std::endl;
+		createLightTheme << "scrollbar_scrollbar = 80, 80, 80" << std::endl;
+		createLightTheme << "scrollbar_scrollthumb = 110, 110, 110" << std::endl;
+		createLightTheme << "scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
+		createLightTheme << "scrollbar_scrollthumb_hold = 239, 235, 239" << std::endl;
+		createLightTheme << std::endl;
+		createLightTheme << "// items" << std::endl;
+		createLightTheme << "item_card = 192, 192, 192" << std::endl;
+		createLightTheme << "item_icon = 255, 255, 255" << std::endl;
+		createLightTheme << "item_icon_hover = 255, 255, 255" << std::endl;
+		createLightTheme << "item_redownload = 255, 255, 255" << std::endl;
+		createLightTheme << "item_update_is_available = 255, 200, 0" << std::endl;
+		createLightTheme << "item_download = 255, 255, 255" << std::endl;
+		createLightTheme << std::endl;
+		createLightTheme << "// links" << std::endl;
+		createLightTheme << "link_card = 100, 100, 100" << std::endl;
+		createLightTheme << "link_follow = 255, 200, 0" << std::endl;
+		createLightTheme << "link_text = 0, 170, 232" << std::endl;
+
+		createLightTheme.close();
+	}
+
+	std::cout << "loading theme settings" << std::endl;
+
+	SettingsParser settings;
+	if (settings.loadFromFile(".//" + GBL::DIR::BASE + "kunlauncher.conf"))
+		settings.get("selecte_theme", app->settings.selectedTheme);
+	std::cout << app->settings.selectedTheme << std::endl;
+
+	if (settings.loadFromFile("./" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + app->settings.selectedTheme + ".sfuitheme"))
+	{
+		std::cout << "loaded theme \"" << app->settings.selectedTheme << "\"." << std::endl;
+
+		// globals
+		std::vector<int> colors;
+
+		if (settings.get("global_background", colors))
 		{
-			std::cout << "creating theme file" << std::endl;
-			std::ofstream createLightTheme(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + "light.sfuitheme");
-
-			createLightTheme << "// default 'light' theme for kunlauncher" << std::endl;
-			createLightTheme << std::endl;
-			createLightTheme << "// globals" << std::endl;
-			createLightTheme << "global_background = 255, 255, 255" << std::endl;
-			createLightTheme << "global_text = 0, 0, 0" << std::endl;
-			createLightTheme << std::endl;
-			createLightTheme << "// scrollbar" << std::endl;
-			createLightTheme << "scrollbar_scrollbar = 80, 80, 80" << std::endl;
-			createLightTheme << "scrollbar_scrollthumb = 110, 110, 110" << std::endl;
-			createLightTheme << "scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
-			createLightTheme << "scrollbar_scrollthumb_hold = 239, 235, 239" << std::endl;
-			createLightTheme << std::endl;
-			createLightTheme << "// items" << std::endl;
-			createLightTheme << "item_card = 192, 192, 192" << std::endl;
-			createLightTheme << "item_icon = 255, 255, 255" << std::endl;
-			createLightTheme << "item_icon_hover = 255, 255, 255" << std::endl;
-			createLightTheme << "item_redownload = 255, 255, 255" << std::endl;
-			createLightTheme << "item_update_is_available = 255, 200, 0" << std::endl;
-			createLightTheme << "item_download = 255, 255, 255" << std::endl;
-			createLightTheme << std::endl;
-			createLightTheme << "// links" << std::endl;
-			createLightTheme << "link_card = 100, 100, 100" << std::endl;
-			createLightTheme << "link_follow = 255, 200, 0" << std::endl;
-			createLightTheme << "link_text = 0, 170, 232" << std::endl;
-
-			createLightTheme.close();
+			GBL::COLOR::BACKGROUND = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
 		}
 
-		std::cout << "loading theme settings" << std::endl;
-
-		SettingsParser settings;
-		if (settings.loadFromFile(".//" + GBL::DIR::BASE + "kunlauncher.conf"))
-			settings.get("selectedTheme", app->settings.selectedTheme);
-		std::cout << app->settings.selectedTheme << std::endl;
-
-		if (settings.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + app->settings.selectedTheme + ".sfuitheme"))
+		if (settings.get("global_text", colors))
 		{
-			std::cout << "loaded theme \"" << app->settings.selectedTheme << "\"." << std::endl;
-
-			// globals
-			std::vector<int> colors;
-
-			if (settings.get("global_background", colors))
-			{
-				GBL::COLOR::BACKGROUND = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			if (settings.get("global_text", colors))
-			{
-				GBL::COLOR::TEXT = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			//scrollbar
-			std::cout << "scrollbar theme settings" << std::endl;
-
-			if (settings.get("scrollbar_scrollbar", colors))
-			{
-				GBL::COLOR::SCROLLBAR::SCROLLBAR = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			if (settings.get("scrollbar_scrollthumb", colors))
-			{
-				GBL::COLOR::SCROLLBAR::SCROLLTHUMB = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			if (settings.get("scrollbar_scrollthumb_hover", colors))
-			{
-				GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			if (settings.get("scrollbar_scrollthumb_hold", colors))
-			{
-				GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			// items
-			std::cout << "item theme settings" << std::endl;
-
-			if (settings.get("item_card", colors))
-			{
-				GBL::COLOR::ITEM::CARD = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			if (settings.get("item_icon", colors))
-			{
-				GBL::COLOR::ITEM::ICON = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			if (settings.get("item_redownload", colors))
-			{
-				GBL::COLOR::ITEM::REDOWLOAD = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			if (settings.get("item_update_is_available", colors))
-			{
-				GBL::COLOR::ITEM::UPDATE_IS_AVAILABLE = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			if (settings.get("item_download", colors))
-			{
-				GBL::COLOR::ITEM::DOWNLOAD = sf::Color(colors[0], colors[1], colors[2]);
-				colors.clear();
-			}
-
-			std::cout << "done applying themes" << std::endl;
+			GBL::COLOR::TEXT = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
 		}
-		else
+
+		//scrollbar
+		std::cout << "scrollbar theme settings" << std::endl;
+
+		if (settings.get("scrollbar_scrollbar", colors))
 		{
-			std::cerr << "failed to load settings file" << std::endl; // use default colours
+			GBL::COLOR::SCROLLBAR::SCROLLBAR = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
 		}
+
+		if (settings.get("scrollbar_scrollthumb", colors))
+		{
+			GBL::COLOR::SCROLLBAR::SCROLLTHUMB = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
+		}
+
+		if (settings.get("scrollbar_scrollthumb_hover", colors))
+		{
+			GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOVER = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
+		}
+
+		if (settings.get("scrollbar_scrollthumb_hold", colors))
+		{
+			GBL::COLOR::SCROLLBAR::SCROLLTHUMB_HOLD = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
+		}
+
+		// items
+		std::cout << "item theme settings" << std::endl;
+
+		if (settings.get("item_card", colors))
+		{
+			GBL::COLOR::ITEM::CARD = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
+		}
+
+		if (settings.get("item_icon", colors))
+		{
+			GBL::COLOR::ITEM::ICON = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
+		}
+
+		if (settings.get("item_redownload", colors))
+		{
+			GBL::COLOR::ITEM::REDOWLOAD = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
+		}
+
+		if (settings.get("item_update_is_available", colors))
+		{
+			GBL::COLOR::ITEM::UPDATE_IS_AVAILABLE = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
+		}
+
+		if (settings.get("item_download", colors))
+		{
+			GBL::COLOR::ITEM::DOWNLOAD = sf::Color(colors[0], colors[1], colors[2]);
+			colors.clear();
+		}
+
+		std::cout << "done applying themes" << std::endl;
+	}
+	else
+	{
+		std::cerr << "failed to load settings file" << std::endl; // use default colours
 	}
 
 	return 0;

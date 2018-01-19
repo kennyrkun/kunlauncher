@@ -21,7 +21,7 @@ public:
 	ThreadManager();
 	~ThreadManager();
 
-	void newOperation(std::function function);
+//	void newOperation(std::function function);
 
 	// add action to queue
 	// remove action from queue

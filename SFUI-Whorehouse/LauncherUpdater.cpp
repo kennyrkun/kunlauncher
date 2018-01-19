@@ -2,6 +2,7 @@
 
 #include "Globals.hpp"
 #include "Download.hpp"
+#include "SettingsParser.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -12,7 +13,7 @@ namespace fs = std::experimental::filesystem;
 std::string LauncherUpdater::getRemoteVersion()
 {
 	Download getHoHouse;
-	getHoHouse.setInput("version.info");
+	getHoHouse.setInput(GBL::WEB::LATEST::DIR + "version.info");
 	getHoHouse.download();
 
 	remoteVersion = getHoHouse.fileBuffer;
@@ -32,10 +33,20 @@ int LauncherUpdater::checkForUpdates()
 
 	std::cout << "r" << remoteVersion << " : " << "l" << localVersion << std::endl;
 
+	if (remoteVersion.empty())
+	{
+		std::cout << "failed to get version info" << std::endl;
+
+		return Status::Failure;
+	}
+
+	if (remoteVersion.find("REQUIRED"))
+		requiredUpdate = true;
+
+	//TODO: actual version checking
 	if (remoteVersion != localVersion)
 	{
 		std::cout << "launcher is out of date" << std::endl;
-		//		return true;
 		return Status::UpdateAvailable;
 	}
 	else
@@ -74,8 +85,7 @@ int LauncherUpdater::replaceOldExecutable()
 		std::cout << e.what() << std::endl;
 		abort();
 
-		// TODO: handle this better;
-		return Status::FailGeneric;
+		return Status::Failure;
 	}
 }
 
@@ -96,7 +106,7 @@ int LauncherUpdater::removeOldExecutable()
 			std::cout << "could not remvoe old executable:" << std::endl;
 			std::cout << e.what() << std::endl;
 
-			return Status::FailGeneric;
+			return Status::Failure;
 		}
 	}
 
@@ -145,7 +155,7 @@ int LauncherUpdater::readUpdateFile()
 	}
 	else
 	{
-		return Status::NoUpdateFile;
+//		return Status::NoUpdateFile;
 	}
 
 	return Status::Success;
