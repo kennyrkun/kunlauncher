@@ -26,7 +26,7 @@ Link::Link(std::string text, std::string uri, sf::RenderWindow* target_window, f
 	linkText.setFillColor(GBL::COLOR::LINK::TEXT);
 
 	// don't center them because they may get longer or shorter, but they need to be left aligned
-	followLinkTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "input_1x.png");
+	followLinkTexture.loadFromFile(GBL::DIR::textures + "input_1x.png");
 	followLinkTexture.setSmooth(true);
 	followLinkButton.setTexture(&followLinkTexture);
 	followLinkButton.setSize(sf::Vector2f(24, 24));

@@ -25,7 +25,7 @@ void SettingsState::Init(AppEngine* app_)
 	app = app_;
 
 	sf::Texture icon;
-	icon.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "error_1x.png");
+	icon.loadFromFile(GBL::DIR::textures + "error_1x.png");
 	
 	button = new SFUI::IconButton;
 

@@ -18,11 +18,11 @@ Section::Section(std::string text, std::string forwardSection, float xSize, floa
 	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
 	cardShape.setFillColor(sf::Color(100, 100, 100));
 
-	font.loadFromFile("C://Windows//Fonts//Arial.ttf");
+	font.loadFromFile(GBL::DIR::fonts + "Arial.ttf");
 	title.setFont(font);
 	title.setPosition(static_cast<int>((cardShape.getPosition().x - cardShape.getLocalBounds().width / 2) + 15), static_cast<int>(cardShape.getPosition().y - cardShape.getLocalBounds().height / 2));
 
-	followSectionTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "input_1x.png");
+	followSectionTexture.loadFromFile(GBL::DIR::textures + "input_1x.png");
 	followSectionTexture.setSmooth(true);
 	followSectionButton.setTexture(&followSectionTexture);
 	followSectionButton.setSize(sf::Vector2f(24, 24));
@@ -43,6 +43,8 @@ Section::~Section()
 
 void Section::follow()
 {
+	//TODO: better follow function stuff
+
 	std::cout << "\n" << "going to " << forwardStateName << std::endl;
 
 #if defined (_WIN32) // one day it'll be cross platform... one day.

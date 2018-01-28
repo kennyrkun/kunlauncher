@@ -274,7 +274,7 @@ void AppListState::HandleEvents()
 				{
 					try
 					{
-						fs::remove(".//" + GBL::DIR::BASE + GBL::DIR::APPS + "//index.dat");
+						fs::remove(GBL::DIR::apps + "//index.dat");
 					}
 					catch (const std::exception& e)
 					{
@@ -284,7 +284,7 @@ void AppListState::HandleEvents()
 
 					Download getNewIndex;
 					getNewIndex.setInput(".//" + GBL::WEB::APPS + "//index.dat");
-					getNewIndex.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+					getNewIndex.setOutputDir(GBL::DIR::apps);
 					getNewIndex.setOutputFilename("//index.dat");
 					getNewIndex.download();
 					getNewIndex.save();
@@ -294,12 +294,12 @@ void AppListState::HandleEvents()
 				{
 					try
 					{
-						fs::remove_all(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
-						fs::create_directory(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+						fs::remove_all(GBL::DIR::apps);
+						fs::create_directory(GBL::DIR::apps);
 
 						Download getNewIndex;
 						getNewIndex.setInput(".//" + GBL::WEB::APPS + "//index.dat");
-						getNewIndex.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+						getNewIndex.setOutputDir(GBL::DIR::apps);
 						getNewIndex.setOutputFilename("//index.dat");
 						getNewIndex.download();
 						getNewIndex.save();
@@ -394,7 +394,7 @@ void AppListState::Draw()
 	app->window->display();
 }
 
-void AppListState::loadApps() // TOOD: this.
+void AppListState::loadApps()
 {
 	helperDone = false;
 	helperRunning = true;
@@ -409,17 +409,17 @@ void AppListState::loadApps() // TOOD: this.
 	bool comesAfterLink(false), comesAfterItem(false);
 	std::string line; // each line of index.dat;
 
-	if (!fs::exists("./" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat"))
+	if (!fs::exists(GBL::DIR::apps + "index.dat"))
 	{
 		Download getNewIndex;
 		getNewIndex.setInput(".//" + GBL::WEB::APPS + "//index.dat");
-		getNewIndex.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS);
+		getNewIndex.setOutputDir(GBL::DIR::apps);
 		getNewIndex.setOutputFilename("//index.dat");
 		getNewIndex.download();
 		getNewIndex.save();
 	}
 
-	std::ifstream readIndex("./" + GBL::DIR::BASE + GBL::DIR::APPS + "index.dat", std::ios::in);
+	std::ifstream readIndex(GBL::DIR::apps + "index.dat", std::ios::in);
 
 	int loopi(0);
 	while (std::getline(readIndex, line))
@@ -527,7 +527,7 @@ void AppListState::loadApps() // TOOD: this.
 			continue;
 		}
 
-		// TODO: 0.17.0
+		//TODO: items with updates go to top
 //		if (items.back()->updateIsAvailable)
 //		{
 //			Item *updateItem = items.back; // temporary copy

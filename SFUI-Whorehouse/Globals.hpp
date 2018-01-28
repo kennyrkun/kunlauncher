@@ -14,22 +14,16 @@ namespace GBL
 
 	namespace DIR
 	{
-//		const std::string installDir = "";
-//		const std::string resources	 = installDir + "/bin/resources/";
-//		const std::string textures	 = resources + "textures/";
-//		const std::string fonts		 = resources + "fonts/";
-//		const std::string themes	 = resources + "themes/";
-//		const std::string stats		 = installDir + "stats/";
+		const std::string installDir = "./bin/";
+		const std::string apps		 = installDir + "apps/";
+		const std::string cache		 = installDir + "cache/";
+		const std::string resources  = installDir + "resources/";
+		const std::string textures	 = resources + "textures/";
+		const std::string fonts		 = resources + "fonts/";
+		const std::string themes	 = resources + "themes/";
+		const std::string stats		 = installDir + "stats/";
 
-		const std::string BASE	   = "/bin/";
-		const std::string CACHE	   = "/cache/";
-		const std::string RESOURCE = "/resources/";
-		const std::string THEME	   = "/themes/";
-		const std::string TEXTURE  = "/textures/";
-		const std::string FONT	   = "/fonts/";
-		const std::string APPS	   = "/apps/";
-		const std::string STATS    = "/stats/";
-		const std::string CONFIG   = BASE + "/kunlauncher.conf";
+		const std::string config	 = installDir + "kunlauncher.conf";
 	}
 
 	namespace WEB
@@ -41,7 +35,7 @@ namespace GBL
 		namespace LATEST
 		{
 			const std::string DIR			= "launcher/version/latest/";
-			const std::string RESOURCE		= "launcher/version/latest/resources/";
+			const std::string RESOURCES		= "launcher/version/latest/resources/";
 			const std::string RESOURCE_LIST = "launcher/version/latest/resources/resources.dat";
 			const std::string EXECUTABLE	= DIR + "latest.noexe";
 		}

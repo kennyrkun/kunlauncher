@@ -17,7 +17,7 @@ int LauncherUpdater::getRemoteVersion()
 	getHoHouse.download();
 
 	SettingsParser getVersion;
-	getVersion.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::CACHE + "/launcher/version/latest/version.info");
+	getVersion.loadFromFile(GBL::DIR::cache + "/launcher/version/latest/version.info");
 
 	getVersion.get("version", remoteVersion);
 	getVersion.get("required", requiredUpdate);

@@ -19,15 +19,15 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 	targetWindow = target_window;
 	itemName = itemName_;
-	installDir = ".//" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "//"; // .//bin//apps//itemName//
+	itemInstallDir = GBL::DIR::apps + itemName + "//"; // .//bin//apps//itemName//
 
-	if (!fs::exists(installDir))
+	if (!fs::exists(itemInstallDir))
 	{
 		std::cout << "app directory does not already exist, creating..." << std::endl;
 
 		try
 		{
-			fs::create_directory(installDir);
+			fs::create_directory(itemInstallDir);
 		}
 		catch (const std::exception& e)
 		{
@@ -36,11 +36,11 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		}
 	}
 
-	if (fs::exists(installDir + "icon.png"))
+	if (fs::exists(itemInstallDir + "icon.png"))
 	{
 		std::cout << "icon was found" << std::endl;
 
-		iconTexture.loadFromFile(installDir + "icon.png");
+		iconTexture.loadFromFile(itemInstallDir + "icon.png");
 	}
 	else // icon is not downloaded
 	{
@@ -49,7 +49,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		downloadIcon();
 	}
 
-	if (fs::exists(installDir + "info.dat"))
+	if (fs::exists(itemInstallDir + "info.dat"))
 	{
 		std::cout << "info was found, parsing" << std::endl;
 	}
@@ -58,9 +58,9 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 		std::cout << "info was not found, downloading" << std::endl;
 		downloadInfo();
 	}
-	parseInfo(installDir);
+	parseInfo(itemInstallDir);
 
-	if (fs::exists(installDir + "release.zip"))
+	if (fs::exists(itemInstallDir + "release.zip"))
 	{
 		std::cout << "release was found, installed" << std::endl;
 
@@ -87,8 +87,8 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	icon.setPosition(sf::Vector2f(cardShape.getPosition().x - (cardShape.getSize().x / 2) + icon.getLocalBounds().width / 2, cardShape.getPosition().y));
 	icon.setTexture(&iconTexture);
 	iconTexture.setSmooth(true);
-
-	font.loadFromFile("C://Windows//Fonts//Arial.ttf");
+	
+	font.loadFromFile(GBL::DIR::fonts + "Arial.ttf");
 
 	name.setFont(font);
 	description.setFont(font);
@@ -108,7 +108,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 
-	if (!downloadButtonTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "get_app_1x.png"))
+	if (!downloadButtonTexture.loadFromFile(GBL::DIR::textures + "get_app_1x.png"))
 		downloadButton.setFillColor(sf::Color(sf::Color::Green));
 	else
 		downloadButton.setFillColor(GBL::COLOR::ITEM::ICON);
@@ -118,7 +118,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	downloadButton.setOrigin(sf::Vector2f(downloadButton.getLocalBounds().width / 2, downloadButton.getLocalBounds().height / 2));
 	downloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 
-	if (redownloadButtonTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "auto_renew_1x.png"))
+	if (redownloadButtonTexture.loadFromFile(GBL::DIR::textures + "auto_renew_1x.png"))
 		redownloadButton.setFillColor(GBL::COLOR::ITEM::ICON);
 	else
 		redownloadButton.setFillColor(sf::Color::Yellow);
@@ -129,7 +129,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
 
-	if (!removeButtonTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "delete_forever_1x.png"))
+	if (!removeButtonTexture.loadFromFile(GBL::DIR::textures + "delete_forever_1x.png"))
 		removeButton.setFillColor(sf::Color::Red);
 	else
 		removeButton.setFillColor(GBL::COLOR::ITEM::ICON);
@@ -139,7 +139,7 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	removeButton.setOrigin(sf::Vector2f(removeButton.getLocalBounds().width / 2, removeButton.getLocalBounds().height / 2));
 	removeButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 15));
 
-	if (!launchButtonTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "launch_1x.png"))
+	if (!launchButtonTexture.loadFromFile(GBL::DIR::textures + "launch_1x.png"))
 		launchButton.setFillColor(sf::Color::Green);
 	else
 		launchButton.setFillColor(GBL::COLOR::ITEM::ICON);
@@ -165,7 +165,7 @@ void Item::deleteFiles()
 
 	try
 	{
-		fs::remove(installDir + "release.zip");
+		fs::remove(itemInstallDir + "release.zip");
 		std::cout << "done" << std::endl;
 		downloaded = false;
 	}
@@ -178,6 +178,9 @@ void Item::deleteFiles()
 
 bool Item::checkForUpdate()
 {
+	//TODO: give apps a variable in info.dat called release
+	//compare release to current, as the launcher updater does
+
 	std::cout << "checking for updates" << std::endl;
 
 	Download getRemoteVersion;
@@ -227,7 +230,7 @@ void Item::download()
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
 	isDownloading = true;
 
-	if (fs::exists(installDir + "/release.zip"))
+	if (fs::exists(itemInstallDir + "/release.zip"))
 	{
 		std::cout << "updating " << itemName << std::endl;
 
@@ -244,7 +247,7 @@ void Item::download()
 		downloadInfo();
 
 		downloadIcon();
-		iconTexture.loadFromFile(installDir + "icon.png");
+		iconTexture.loadFromFile(itemInstallDir + "icon.png");
 
 		downloadFiles();
 
@@ -265,17 +268,19 @@ void Item::download()
 
 void Item::openItem()
 {
+	//TODO: proper system for opening and monitoring apps
+
 #ifdef _WIN32
 	std::cout << "opening item" << std::endl;
-	std::string launch = "start " + installDir + "release.zip -kunlaunched";
+	std::string launch = "start " + itemInstallDir + "release.zip -kunlaunched";
 	system(launch.c_str());
 #else
 	std::cerr << "Opening stuff is not supported on this system." << std::endl;
 
-	MessageBoxOptions modOptions;
+	MessageBox::Options modOptions;
 	modOptions.title = "Unsupported Platform";
-	modOptions.text = "I can't open the thing because you're probably not using Windows. How sad!";
-	modOptions.settings = { "Ok" };
+	modOptions.text = "Opening items is not supported on your platform.\n\nTo open the app:\nInstallation Dir -> bin -> apps -> appname";
+	modOptions.settings = { "Sad" };
 
 	MessageBox platformAlert(modOptions);
 	platformAlert.runBlocking();
@@ -406,7 +411,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 	{
 		std::cout << "info file is empty or missing" << std::endl;
 
-		iconTexture.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "error_2x.png");
+		iconTexture.loadFromFile(GBL::DIR::textures + "error_2x.png");
 		updateIsAvailable = true; // because there's no way to represent an error yet, we just mark it for needing to be redownloaded
 
 		name.setString("missing info for \"" + itemName + "\"");
@@ -420,12 +425,12 @@ int Item::downloadIcon()
 
 	Download getIcon;
 	getIcon.setInput(".//" + GBL::WEB::APPS + itemName + "//icon.png");
-	getIcon.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "//");
+	getIcon.setOutputDir(GBL::DIR::apps + itemName + "//");
 	getIcon.setOutputFilename("icon.png");
 	getIcon.download();
 	getIcon.save();
 
-	iconTexture.loadFromFile(installDir + "icon.png");
+	iconTexture.loadFromFile(itemInstallDir + "icon.png");
 
 	return 1;
 }
@@ -436,12 +441,12 @@ int Item::downloadInfo()
 
 	Download getInfo;
 	getInfo.setInput(".//" + GBL::WEB::APPS + itemName + "//info.dat");
-	getInfo.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "//");
+	getInfo.setOutputDir(GBL::DIR::apps + itemName + "//");
 	getInfo.setOutputFilename("info.dat");
 	getInfo.download();
 	getInfo.save();
 
-	parseInfo(installDir);
+	parseInfo(itemInstallDir);
 
 	return 1;
 }
@@ -452,7 +457,7 @@ int Item::downloadFiles()
 
 	Download getFiles;
 	getFiles.setInput(".//" + GBL::WEB::APPS + itemName + "//release.zip");
-	getFiles.setOutputDir(".//" + GBL::DIR::BASE + GBL::DIR::APPS + itemName + "//");
+	getFiles.setOutputDir(GBL::DIR::apps + itemName + "//");
 	getFiles.setOutputFilename("release.zip");
 	getFiles.download();
 	getFiles.save();

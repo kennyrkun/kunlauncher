@@ -171,13 +171,13 @@ int Download::download()
 		return Status::Failure;
 	}
 
-	if (fs::exists(".//" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory + remoteFilename))
+	if (fs::exists(GBL::DIR::cache + remoteDirectory + remoteFilename))
 	{
 		std::cout << "file already exists in cache, removing." << std::endl;
 
 		try
 		{
-			fs::remove(".//" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory + remoteFilename);
+			fs::remove(GBL::DIR::cache + remoteDirectory + remoteFilename);
 		}
 		catch (const std::exception& e)
 		{
@@ -186,10 +186,10 @@ int Download::download()
 		}
 	}
 
-	if (!fs::exists(".//" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory))
-		createDirectory(".//" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory);
+	if (!fs::exists(GBL::DIR::cache + remoteDirectory))
+		createDirectory(GBL::DIR::cache + remoteDirectory);
 
-	response = ftp.download(remoteDirectory + remoteFilename, ".//" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory);
+	response = ftp.download(remoteDirectory + remoteFilename, GBL::DIR::cache + remoteDirectory);
 	if (response.isOk())
 	{
 		std::cout << response.getStatus() << ": downloaded the thing to " << saveDir << std::endl;
@@ -234,7 +234,7 @@ int Download::save()
 			fs::remove(saveDir + saveFile);
 		}
 
-		fs::copy_file(".//" + GBL::DIR::BASE + GBL::DIR::CACHE + remoteDirectory + remoteFilename, saveDir + saveFile);
+		fs::copy_file(GBL::DIR::cache + remoteDirectory + remoteFilename, saveDir + saveFile);
 		std::cout << "saved file" << std::endl;
 
 		return Status::Ok;
@@ -263,7 +263,7 @@ void Download::clearCache()
 {
 	try
 	{
-		fs::remove_all(".//" + GBL::DIR::BASE + GBL::DIR::CACHE);
+		fs::remove_all(GBL::DIR::cache);
 		std::cout << "download cache cleared" << std::endl;
 	}
 	catch (const std::exception& e)

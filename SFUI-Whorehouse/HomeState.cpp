@@ -24,7 +24,7 @@ void HomeState::Init(AppEngine* app_)
 	app = app_;
 
 	SFUI::IconButton *appListButton = new SFUI::IconButton;
-	if (!appListButton->setIconTexture(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "apps_2x.png", true))
+	if (!appListButton->setIconTexture(GBL::DIR::textures + "apps_2x.png", true))
 	{
 		appListButton->setButtonSize(sf::Vector2f(96, 96));
 		appListButton->setButtonColor(sf::Color::Green);
@@ -35,7 +35,7 @@ void HomeState::Init(AppEngine* app_)
 	sections.push_back(appListButton);
 
 	SFUI::IconButton *settingsState = new SFUI::IconButton;
-	if (!settingsState->setIconTexture(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "settings_2x.png", true))
+	if (!settingsState->setIconTexture(GBL::DIR::textures + "settings_2x.png", true))
 		settingsState->setButtonSize(sf::Vector2f(96, 96));
 	else
 		settingsState->setButtonColor(sf::Color(100, 100, 100));
@@ -46,7 +46,7 @@ void HomeState::Init(AppEngine* app_)
 	sections.push_back(settingsState);
 
 	SFUI::IconButton *powerButton = new SFUI::IconButton;
-	if (!powerButton->setIconTexture(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::TEXTURE + "power_2x.png", true))
+	if (!powerButton->setIconTexture(GBL::DIR::textures + "power_2x.png", true))
 	{
 		powerButton->setButtonSize(sf::Vector2f(96, 96));
 		powerButton->setButtonColor(sf::Color::Red);

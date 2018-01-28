@@ -48,7 +48,7 @@ private:
 	sf::Texture removeButtonTexture;
 	sf::Texture launchButtonTexture;
 
-	std::string installDir;
+	std::string itemInstallDir;
 	sf::Font	font;
 	sf::Text	description;
 	sf::Text	version;

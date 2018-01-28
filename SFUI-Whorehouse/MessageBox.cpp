@@ -11,7 +11,7 @@ MessageBox::MessageBox(Options settings_)
 {
 	settings = settings_;
 
-	if (font.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::FONT + "Arial.ttf"))
+	if (font.loadFromFile(GBL::DIR::fonts + "Arial.ttf"))
 	{
 		message.setFont(font);
 		message.setString(settings.text);
