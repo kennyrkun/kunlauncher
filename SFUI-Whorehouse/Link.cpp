@@ -1,10 +1,10 @@
-#include <fstream>
-#include <iostream>
-#include <experimental/filesystem>
-
 #include "Globals.hpp"
 #include "Link.hpp"
 #include "Download.hpp"
+
+#include <fstream>
+#include <iostream>
+#include <experimental/filesystem>
 
 Link::Link(std::string text, std::string uri, sf::RenderWindow* target_window, float yPos)
 {

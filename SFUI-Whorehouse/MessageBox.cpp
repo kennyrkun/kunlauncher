@@ -1,10 +1,9 @@
 #include "MessageBox.hpp"
 #include "Globals.hpp"
 
+#include <SFUI/TextButton.hpp>
 #include <iostream>
 #include <functional>
-
-#include <SFUI/TextButton.hpp>
 
 // public:
 

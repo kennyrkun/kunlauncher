@@ -1,10 +1,9 @@
 #ifndef MESSAGEBOX_HPP
 #define MESSAGEBOX_HPP
 
+#include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
-
-#include <SFML/Graphics.hpp>
 
 namespace SFUI { class TextButton; }
 

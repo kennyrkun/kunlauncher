@@ -85,6 +85,9 @@
     <ClCompile Include="Globals.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
+    <ClCompile Include="ItemInfo.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Download.hpp">
@@ -137,6 +140,9 @@
     </ClInclude>
     <ClInclude Include="SettingsParser.hpp">
       <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemInfo.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

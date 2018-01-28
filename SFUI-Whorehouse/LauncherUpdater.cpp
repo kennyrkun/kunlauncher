@@ -10,24 +10,24 @@
 
 namespace fs = std::experimental::filesystem;
 
-std::string LauncherUpdater::getRemoteVersion()
+int LauncherUpdater::getRemoteVersion()
 {
 	Download getHoHouse;
 	getHoHouse.setInput(GBL::WEB::LATEST::DIR + "version.info");
 	getHoHouse.download();
 
-	remoteVersion = getHoHouse.fileBuffer;
-
 	SettingsParser getVersion;
+	getVersion.loadFromFile(".//" + GBL::DIR::BASE + GBL::DIR::CACHE + "/launcher/version/latest/version.info");
+
+	getVersion.get("version", remoteVersion);
+	getVersion.get("required", requiredUpdate);
 
 	return remoteVersion;
 }
 
-std::string LauncherUpdater::getLocalVersion()
+int LauncherUpdater::getLocalVersion()
 {
-//	Version localVersion = {GBL::VERSION::majors, GBL::VERSION::minors, GBL::VERSION::patchs, GBL::VERSION::major, GBL::VERSION::minor, GBL::VERSION::patch};
-
-	return GBL::VERSION::string;
+	return localVersion = GBL::VERSION;
 }
 
 int LauncherUpdater::checkForUpdates()
@@ -37,38 +37,17 @@ int LauncherUpdater::checkForUpdates()
 
 	std::cout << "r" << remoteVersion << " : " << "l" << localVersion << std::endl;
 
-	if (remoteVersion.empty())
+	if (remoteVersion > localVersion)
 	{
-		std::cout << "failed to get version info" << std::endl;
+		if (requiredUpdate)
+			return Status::RequiredUpdate;
 
-		return Status::Failure;
-	}
-
-	if (remoteVersion.find("REQUIRED"))
-		requiredUpdate = true;
-
-	//TODO: actual version checking
-	// if lpatch < rpatch
-	//	if lminor < rminor
-	//  else
-	//	  if lmajor < rmajor
-	//		update = true;
-	//	  else
-	// else
-	// if lminor < rminor
-	// else
-	//	if lmajor < rmajor
-	//	   update = true;
-	//	else
-
-	if (remoteVersion != localVersion)
-	{
 		std::cout << "launcher is out of date" << std::endl;
 		return Status::UpdateAvailable;
 	}
 	else
 	{
-		std::cout << "launcher is up to date" << std::endl;
+		std::cout << "launcher is up to date or broken" << std::endl;
 		return Status::NoUpdateAvailable;
 	}
 }
@@ -76,7 +55,7 @@ int LauncherUpdater::checkForUpdates()
 int LauncherUpdater::downloadUpdate()
 {
 	Download getNewWhorehouse;
-	getNewWhorehouse.setInput("latest.noexe");
+	getNewWhorehouse.setInput(GBL::WEB::LATEST::EXECUTABLE);
 	getNewWhorehouse.setOutputDir(".//");
 	getNewWhorehouse.setOutputFilename("latest_kunlauncher.exe");
 	getNewWhorehouse.download();
@@ -99,8 +78,8 @@ int LauncherUpdater::replaceOldExecutable()
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what() << std::endl;
-		abort();
+		std::cerr << e.what() << std::endl;
+		std::cerr << "failed to replace old executable" << std::endl;
 
 		return Status::Failure;
 	}
@@ -130,54 +109,26 @@ int LauncherUpdater::removeOldExecutable()
 	return 0;
 }
 
-int LauncherUpdater::createUpdateFile()
-{
-	std::cout << "creating update file" << std::endl;
+/* method to seperate version numbers
 
-	std::ofstream writeUpdateFile(GBL::DIR::BASE + "up.date", std::ios::binary);
+std::string newpatchs, newminors, newmajors;
+int newpatch, newminor, newmajor;
 
-	if (writeUpdateFile.is_open())
-	{
-		writeUpdateFile << "OldVersion=\"" << localVersion << "\"" << std::endl;
-		writeUpdateFile << "NewVersion=\"" << remoteVersion << "\"" << std::endl;
+const std::string old = remoteVersion;
 
-		writeUpdateFile.close();
+newmajors = remoteVersion.erase(remoteVersion.find_first_of('.'), remoteVersion.back());
+newmajor = std::stoi(newmajors);
 
-		return 0;
-	}
-	else
-	{
-		return -1;
-	}
-}
+remoteVersion = old;
 
-int LauncherUpdater::readUpdateFile()
-{
-	if (fs::exists(GBL::DIR::BASE + GBL::DIR::CONFIG + "up.date"))
-	{
-		std::cout << "reading update file" << std::endl;
+remoteVersion.erase(0, remoteVersion.find_first_of('.') + 1);
+remoteVersion.erase(remoteVersion.find_first_of('.'), remoteVersion.back());
+newminors = remoteVersion;
+newminor= std::stoi(newminors);
 
-		std::string fileBuffer, temp, oldVersion, newVersion, updateFinished;
+remoteVersion = old;
 
-		std::ifstream getUpdateFile(GBL::DIR::BASE + "up.date", std::ios::binary);
-		getUpdateFile >> fileBuffer;
-
-		std::cout << "filebuffer--------" << "\n" << fileBuffer << std::endl;
-
-		temp.erase(0, temp.find('"') + 1); // OlderVersion="
-		temp.erase(temp.find('"'), temp.back());
-		oldVersion = temp;
-		std::cout << "oldVersion: " << oldVersion << std::endl;
-
-		fileBuffer.erase(0, temp.find("\n")); // delete first line
-		temp = fileBuffer;
-
-		std::cout << "------------------" << "\n" << fileBuffer << std::endl;
-	}
-	else
-	{
-//		return Status::NoUpdateFile;
-	}
-
-	return Status::Success;
-}
+remoteVersion.erase(0, remoteVersion.find_last_of('.') + 1);
+newpatchs = remoteVersion;
+newpatch = std::stoi(newpatchs);
+*/

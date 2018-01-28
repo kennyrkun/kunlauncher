@@ -31,6 +31,7 @@ class SettingsParser
 {
 public:
 	SettingsParser();
+	SettingsParser(const std::string& filename);
 	~SettingsParser();
 
 	bool loadFromFile(const std::string& filename);

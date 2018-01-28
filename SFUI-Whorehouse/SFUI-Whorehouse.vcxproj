@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="ItemInfo.cpp" />
     <ClCompile Include="SettingsParser.cpp" />
     <ClCompile Include="Download.cpp" />
     <ClCompile Include="AppListState.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ItemInfo.hpp" />
     <ClInclude Include="SettingsParser.hpp" />
     <ClInclude Include="Globals.hpp" />
     <ClInclude Include="Download.hpp" />

@@ -70,14 +70,7 @@ void ResourceManager::freeAll()
 {
 	//as more things are added, remove them one by one.
 
-	// Iterate through all the loaded textures, free them, and delete the pointers
-	std::map<std::string, sf::Texture*>::iterator it;
-
-	for (it = loadedTextures.begin(); it != loadedTextures.end(); it++)
-	{
-		delete it->second;
-		it->second = nullptr;
-	}
+	freeAllTextures();
 
 	std::cout << "Freed all textures." << std::endl;
 }

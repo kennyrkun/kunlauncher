@@ -42,7 +42,7 @@ void InitialiseState::Init(AppEngine* app_)
 
 	app->window->create(sf::VideoMode(400, 150), app->title, sf::Style::None);
 	app->window->setVerticalSyncEnabled(app->settings.verticalSync);
-	app->window->setTitle("KunLauncher " + GBL::VERSION::string + " initalising");
+	app->window->setTitle("KunLauncher " + std::to_string(GBL::VERSION) + " initalising");
 
 	initialiseText.setFont(font);
 	initialiseText.setCharacterSize(56);
@@ -83,7 +83,7 @@ void InitialiseState::Cleanup()
 		app->developerModeActive = true;
 	}
 
-	sf::RenderWindow* newWindow = new sf::RenderWindow(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + GBL::VERSION::string, sf::Style::Resize | sf::Style::Close);
+	sf::RenderWindow* newWindow = new sf::RenderWindow(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + std::to_string(GBL::VERSION), sf::Style::Resize | sf::Style::Close);
 	newWindow->setVerticalSyncEnabled(true);
 	newWindow->setKeyRepeatEnabled(false);
 
@@ -245,14 +245,43 @@ void InitialiseState::initialisise()
 
 		LauncherUpdater *updater = new LauncherUpdater;
 		//TODO: this probably isn't the best way to see if updates are available
-		if (updater->checkForUpdates() == LauncherUpdater::Status::UpdateAvailable)
+		int updateStatus = updater->checkForUpdates();
+
+		progressBar->oneThingDone(); // check for update
+
+		if (updateStatus == LauncherUpdater::Status::RequiredUpdate)
 		{
-			progressBar->oneThingDone(); // check for update
+			std::cout << "forcing client update" << std::endl;
 
-			if (!updater->requiredUpdate)
+			progressBar->reset();
+			progressBar->addThingsToDo(2); // update and replace exe
+
+			setTaskText("downloading update");
+			updater->downloadUpdate();
+			progressBar->oneThingDone(); // update
+
+			setTaskText("replacing old executable");
+			updater->replaceOldExecutable();
+			progressBar->oneThingDone(); // replace exe
+
+			restartNow = true;
+		}
+		else if (updateStatus == LauncherUpdater::Status::UpdateAvailable)
+		{
+			MessageBox::Options modOptions;
+			//TODO: add error handling
+			modOptions.title = "Update Available";
+			modOptions.text = "Version " + std::to_string(updater->remoteVersion) + " is available, would you like to update?";
+			modOptions.settings = { "Yes", "No" };
+
+			MessageBox doYouWannaUpdate(modOptions);
+			doYouWannaUpdate.runBlocking();
+			doYouWannaUpdate.close(); // right after it's done
+
+			switch (doYouWannaUpdate.returnCode)
 			{
-				std::cout << "forcing client update" << std::endl;
-
+			case 0:
+			{
 				progressBar->reset();
 				progressBar->addThingsToDo(2); // update and replace exe
 				setTaskText("updating launcher");
@@ -265,77 +294,46 @@ void InitialiseState::initialisise()
 				updater->replaceOldExecutable();
 				progressBar->oneThingDone(); // replace exe
 
-				restartNow = true;
-			}
-			else
-			{
 				MessageBox::Options modOptions;
-				//TODO: add erorr handling
-				modOptions.title = "Update Available";
-				modOptions.text = "Version " + updater->remoteVersion + " is available, would you like to update?";
-				modOptions.settings = { "Yes", "No" };
+				modOptions.text = "Launcher updated";
 
-				MessageBox doYouWannaUpdate(modOptions);
-				doYouWannaUpdate.runBlocking();
-				doYouWannaUpdate.close(); // right after it's done
+				modOptions.text = "Launcher updated to v" + std::to_string(updater->remoteVersion) + "! Restart?";
+				modOptions.settings = { "Restart Now", "Restart Later" };
 
-				switch (doYouWannaUpdate.returnCode)
+				MessageBox updateSuccessfulModal(modOptions);
+				updateSuccessfulModal.runBlocking();
+
+				switch (updateSuccessfulModal.returnCode)
 				{
 				case 0:
 				{
-					progressBar->reset();
-					progressBar->addThingsToDo(2); // update and replace exe
-					setTaskText("updating launcher");
-
-					setTaskText("downloading update");
-					updater->downloadUpdate();
-					progressBar->oneThingDone(); // update
-
-					setTaskText("replacing old executable");
-					updater->replaceOldExecutable();
-					progressBar->oneThingDone(); // replace exe
-
-					MessageBox::Options modOptions;
-					modOptions.text = "Launcher updated";
-
-					modOptions.text = "Launcher updated to v" + updater->remoteVersion + "! Restart it!";
-					modOptions.settings = { "Restart Now", "Restart Later" };
-
-					MessageBox updateSuccessfulModal(modOptions);
-					updateSuccessfulModal.runBlocking();
-
-					switch (updateSuccessfulModal.returnCode)
-					{
-					case 0:
-					{
-						std::cout << "restarting now" << std::endl;
-						restartNow = true;
-						break;
-					}
-
-					case 1:
-					{
-						std::cout << "restarting later" << std::endl;
-						updateSuccessfulModal.close();
-						break;
-					}
-
-					default:
-						break;
-					}
-
+					std::cout << "restarting now" << std::endl;
+					restartNow = true;
 					break;
 				}
 
 				case 1:
 				{
-					std::cout << "don't update now" << std::endl;
+					std::cout << "restarting later" << std::endl;
+					updateSuccessfulModal.close();
 					break;
 				}
 
 				default:
 					break;
 				}
+
+				break;
+			}
+
+			case 1:
+			{
+				std::cout << "don't update now" << std::endl;
+				break;
+			}
+
+			default:
+				break;
 			}
 		}
 	}
@@ -671,7 +669,7 @@ int InitialiseState::getThemeConfiguration()
 
 	SettingsParser settings;
 	if (settings.loadFromFile(".//" + GBL::DIR::BASE + "kunlauncher.conf"))
-		settings.get("selecte_theme", app->settings.selectedTheme);
+		settings.get("selected_theme", app->settings.selectedTheme);
 	std::cout << app->settings.selectedTheme << std::endl;
 
 	if (settings.loadFromFile("./" + GBL::DIR::BASE + GBL::DIR::RESOURCE + GBL::DIR::THEME + app->settings.selectedTheme + ".sfuitheme"))

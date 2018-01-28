@@ -33,6 +33,12 @@ SettingsParser::SettingsParser() : m_isChanged(false)
 }
 
 
+SettingsParser::SettingsParser(const std::string& filename) : m_isChanged(false)
+{
+	loadFromFile(filename);
+}
+
+
 SettingsParser::~SettingsParser()
 {
 	saveToFile();

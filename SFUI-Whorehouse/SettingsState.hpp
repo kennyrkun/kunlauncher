@@ -5,7 +5,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFUI/IconButton.hpp>
-
 #include <thread>
 
 class LauncherUpdater;

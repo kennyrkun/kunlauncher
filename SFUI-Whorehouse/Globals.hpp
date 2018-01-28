@@ -1,5 +1,5 @@
-#ifndef Globals_HPP
-#define Globals_HPP
+#ifndef GLOBALS_HPP
+#define GLOBALS_HPP
 
 #include <SFML/Graphics/Color.hpp>
 #include <string>
@@ -10,22 +10,17 @@ class ResourceManager;
 
 namespace GBL
 {
-	namespace VERSION
-	{
-		// 0.16.1
-		const int major = 0;
-		const int minor = 16;
-		const int patch = 1;
-
-		const std::string majors = "0";
-		const std::string minors = "16";
-		const std::string patchs = "1";
-
-		const std::string string = "0.16.1";
-	}
+	const int VERSION = 16;
 
 	namespace DIR
 	{
+//		const std::string installDir = "";
+//		const std::string resources	 = installDir + "/bin/resources/";
+//		const std::string textures	 = resources + "textures/";
+//		const std::string fonts		 = resources + "fonts/";
+//		const std::string themes	 = resources + "themes/";
+//		const std::string stats		 = installDir + "stats/";
+
 		const std::string BASE	   = "/bin/";
 		const std::string CACHE	   = "/cache/";
 		const std::string RESOURCE = "/resources/";
@@ -34,7 +29,7 @@ namespace GBL
 		const std::string FONT	   = "/fonts/";
 		const std::string APPS	   = "/apps/";
 		const std::string STATS    = "/stats/";
-		const std::string CONFIG   = BASE + "//kunlauncher.conf";
+		const std::string CONFIG   = BASE + "/kunlauncher.conf";
 	}
 
 	namespace WEB
@@ -48,7 +43,7 @@ namespace GBL
 			const std::string DIR			= "launcher/version/latest/";
 			const std::string RESOURCE		= "launcher/version/latest/resources/";
 			const std::string RESOURCE_LIST = "launcher/version/latest/resources/resources.dat";
-			const std::string EXECUTABLE	= "latest.noexe";
+			const std::string EXECUTABLE	= DIR + "latest.noexe";
 		}
 	}
 
@@ -83,4 +78,4 @@ namespace GBL
 	}
 }
 
-#endif
+#endif // !GLOBALS_HPP

@@ -5,7 +5,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFUI/Scrollbar.hpp>
-
 #include <thread>
 #include <vector>
 

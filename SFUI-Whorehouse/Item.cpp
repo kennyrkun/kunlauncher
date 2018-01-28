@@ -4,10 +4,10 @@
 #include "MessageBox.hpp"
 #include "SettingsParser.hpp"
 
+#include <SFML/Network.hpp>
 #include <fstream>
 #include <iostream>
 #include <experimental/filesystem>
-#include <SFML/Network.hpp>
 
 namespace fs = std::experimental::filesystem;
 
@@ -342,7 +342,7 @@ void Item::draw()
 	}
 }
 
-// privatez
+// private
 
 std::ifstream& Item::GotoLine(std::ifstream& file, unsigned int line)
 {
