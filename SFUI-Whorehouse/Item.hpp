@@ -4,6 +4,16 @@
 #include <SFML/Graphics.hpp>
 #include <SFUI/TextButton.hpp>
 
+struct ItemInfo
+{
+	std::string name;
+	std::string description;
+	std::string version;
+	std::string author;
+	std::string github;
+	int release;
+};
+
 class Item
 {
 public:
@@ -18,8 +28,8 @@ public:
 	sf::RectangleShape launchButton;
 //	sf::RectangleShape controlBar;
 
-	sf::Text	name;
-	std::string itemName;
+	ItemInfo info;
+
 	float totalHeight;
 
 	int cardNumber; // used to store depth
@@ -50,6 +60,7 @@ private:
 
 	std::string itemInstallDir;
 	sf::Font	font;
+	sf::Text	name;
 	sf::Text	description;
 	sf::Text	version;
 

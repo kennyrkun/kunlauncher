@@ -18,8 +18,8 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	std::cout << "creating new card for \"" + itemName_ + "\"" << std::endl;
 
 	targetWindow = target_window;
-	itemName = itemName_;
-	itemInstallDir = GBL::DIR::apps + itemName + "//"; // .//bin//apps//itemName//
+	info.name = itemName_;
+	itemInstallDir = GBL::DIR::apps + info.name + "//"; // .//bin//apps//itemName//
 
 	if (!fs::exists(itemInstallDir))
 	{
@@ -184,13 +184,13 @@ bool Item::checkForUpdate()
 	std::cout << "checking for updates" << std::endl;
 
 	Download getRemoteVersion;
-	getRemoteVersion.setInput(".//" + GBL::WEB::APPS + itemName + "//info.dat");
+	getRemoteVersion.setInput(".//" + GBL::WEB::APPS + info.name + "//info.dat");
 	getRemoteVersion.download();
 
 	std::string rVersion, lVersion = version.getString();
 
 	SettingsParser getVersion;
-	if (getVersion.loadFromFile(".//" + GBL::WEB::APPS + itemName + "//info.dat"))
+	if (getVersion.loadFromFile(".//" + GBL::WEB::APPS + info.name + "//info.dat"))
 		getVersion.get("version", rVersion);
 	else
 	{
@@ -232,17 +232,17 @@ void Item::download()
 
 	if (fs::exists(itemInstallDir + "/release.zip"))
 	{
-		std::cout << "updating " << itemName << std::endl;
+		std::cout << "updating " << info.name << std::endl;
 
 		downloadIcon();
 		downloadInfo();
 		downloadFiles();
 
-		std::cout << "\n" << "finished updating " << itemName << std::endl;
+		std::cout << "\n" << "finished updating " << info.name << std::endl;
 	}
 	else
 	{
-		std::cout << "downloading " << itemName << std::endl;
+		std::cout << "downloading " << info.name << std::endl;
 
 		downloadInfo();
 
@@ -251,7 +251,7 @@ void Item::download()
 
 		downloadFiles();
 
-		std::cout << "\n" << "downloading update " << itemName << std::endl;
+		std::cout << "\n" << "downloading update " << info.name << std::endl;
 	}
 
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
@@ -376,16 +376,16 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 		SettingsParser itemInfo;
 		if (itemInfo.loadFromFile(dir + "info.dat"))
 		{
-			if (itemInfo.get("name", name_))
-				name.setString(name_);
+			if (itemInfo.get("name", info.name))
+				name.setString(info.name);
 			else
 			{
 				name.setStyle(sf::Text::Style::Italic);
-				name.setString('"' + itemName + '"');
+				name.setString('"' + info.name + '"');
 			}
 
-			if (itemInfo.get("description", description_))
-				description.setString(description_);
+			if (itemInfo.get("description", info.description))
+				description.setString(info.description);
 			else
 			{
 				description.setStyle(sf::Text::Style::Italic);
@@ -414,7 +414,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 		iconTexture.loadFromFile(GBL::DIR::textures + "error_2x.png");
 		updateIsAvailable = true; // because there's no way to represent an error yet, we just mark it for needing to be redownloaded
 
-		name.setString("missing info for \"" + itemName + "\"");
+		name.setString("missing info for \"" + info.name + "\"");
 		description.setString("missing info.dat; try redownloading");
 	}
 }
@@ -424,8 +424,8 @@ int Item::downloadIcon()
 	std::cout << "\n" << "downloading icon" << std::endl;
 
 	Download getIcon;
-	getIcon.setInput(".//" + GBL::WEB::APPS + itemName + "//icon.png");
-	getIcon.setOutputDir(GBL::DIR::apps + itemName + "//");
+	getIcon.setInput(".//" + GBL::WEB::APPS + info.name + "//icon.png");
+	getIcon.setOutputDir(GBL::DIR::apps + info.name + "//");
 	getIcon.setOutputFilename("icon.png");
 	getIcon.download();
 	getIcon.save();
@@ -440,8 +440,8 @@ int Item::downloadInfo()
 	std::cout << "\n" << "downloading info" << std::endl;
 
 	Download getInfo;
-	getInfo.setInput(".//" + GBL::WEB::APPS + itemName + "//info.dat");
-	getInfo.setOutputDir(GBL::DIR::apps + itemName + "//");
+	getInfo.setInput(".//" + GBL::WEB::APPS + info.name + "//info.dat");
+	getInfo.setOutputDir(GBL::DIR::apps + info.name + "//");
 	getInfo.setOutputFilename("info.dat");
 	getInfo.download();
 	getInfo.save();
@@ -456,8 +456,8 @@ int Item::downloadFiles()
 	std::cout << "\n" << "downloading files" << std::endl;
 
 	Download getFiles;
-	getFiles.setInput(".//" + GBL::WEB::APPS + itemName + "//release.zip");
-	getFiles.setOutputDir(GBL::DIR::apps + itemName + "//");
+	getFiles.setInput(".//" + GBL::WEB::APPS + info.name + "//release.zip");
+	getFiles.setOutputDir(GBL::DIR::apps + info.name + "//");
 	getFiles.setOutputFilename("release.zip");
 	getFiles.download();
 	getFiles.save();
