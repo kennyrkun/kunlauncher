@@ -11,7 +11,7 @@
 class Link;
 class Item;
 
-class AppListState : public AppState
+class MyAppListState : public AppState
 {
 public:
 	void Init(AppEngine* app_);
@@ -24,16 +24,16 @@ public:
 	void Update();
 	void Draw();
 
-	static AppListState* Instance() 
+	static MyAppListState* Instance() 
 	{
-		return &AppListState_dontfuckwithme;
+		return &MyAppListState_dontfuckwithme;
 	}
 
 protected:
-	AppListState() { }
+	MyAppListState() { }
 
 private:
-	static AppListState AppListState_dontfuckwithme;
+	static MyAppListState MyAppListState_dontfuckwithme;
 	AppEngine* app;
 
 	sf::View *mainView;

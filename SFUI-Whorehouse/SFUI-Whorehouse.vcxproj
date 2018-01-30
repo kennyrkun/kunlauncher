@@ -129,10 +129,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Globals.cpp" />
-    <ClCompile Include="ItemInfo.cpp" />
+    <ClCompile Include="VisualChangeLog.cpp" />
     <ClCompile Include="SettingsParser.cpp" />
     <ClCompile Include="Download.cpp" />
-    <ClCompile Include="AppListState.cpp" />
+    <ClCompile Include="MyAppListState.cpp" />
     <ClCompile Include="HomeState.cpp" />
     <ClCompile Include="InitialiseState.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -148,11 +148,11 @@
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ItemInfo.hpp" />
+    <ClInclude Include="VisualChangeLog.hpp" />
     <ClInclude Include="SettingsParser.hpp" />
     <ClInclude Include="Globals.hpp" />
     <ClInclude Include="Download.hpp" />
-    <ClInclude Include="AppListState.hpp" />
+    <ClInclude Include="MyAppListState.hpp" />
     <ClInclude Include="HomeState.hpp" />
     <ClInclude Include="InitialiseState.hpp" />
     <ClInclude Include="Item.hpp" />

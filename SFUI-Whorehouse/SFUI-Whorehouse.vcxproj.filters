@@ -20,9 +20,6 @@
     <Filter Include="Source Files\Launcher\States">
       <UniqueIdentifier>{849e70b2-49f7-4852-9ad7-bae2d05af7e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Launcher\States\AppList">
-      <UniqueIdentifier>{12a224ad-429e-4800-a713-ea9138b7adfe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Launcher\States\Home">
       <UniqueIdentifier>{967f3594-d6e8-4e87-8fd5-bf62cce0831f}</UniqueIdentifier>
     </Filter>
@@ -31,6 +28,9 @@
     </Filter>
     <Filter Include="Source Files\Launcher\States\Settings">
       <UniqueIdentifier>{f54b5d0c-686b-4e3e-b850-6a7a389580ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Launcher\States\MyAppList">
+      <UniqueIdentifier>{12a224ad-429e-4800-a713-ea9138b7adfe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -47,13 +47,10 @@
       <Filter>Source Files\Backend\Base</Filter>
     </ClCompile>
     <ClCompile Include="Link.cpp">
-      <Filter>Source Files\Launcher\States\AppList</Filter>
+      <Filter>Source Files\Launcher\States\MyAppList</Filter>
     </ClCompile>
     <ClCompile Include="Item.cpp">
-      <Filter>Source Files\Launcher\States\AppList</Filter>
-    </ClCompile>
-    <ClCompile Include="AppListState.cpp">
-      <Filter>Source Files\Launcher\States\AppList</Filter>
+      <Filter>Source Files\Launcher\States\MyAppList</Filter>
     </ClCompile>
     <ClCompile Include="HomeState.cpp">
       <Filter>Source Files\Launcher\States\Home</Filter>
@@ -85,8 +82,11 @@
     <ClCompile Include="Globals.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
-    <ClCompile Include="ItemInfo.cpp">
+    <ClCompile Include="VisualChangeLog.cpp">
       <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyAppListState.cpp">
+      <Filter>Source Files\Launcher\States\MyAppList</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,13 +103,10 @@
       <Filter>Source Files\Backend\Base</Filter>
     </ClInclude>
     <ClInclude Include="Link.hpp">
-      <Filter>Source Files\Launcher\States\AppList</Filter>
+      <Filter>Source Files\Launcher\States\MyAppList</Filter>
     </ClInclude>
     <ClInclude Include="Item.hpp">
-      <Filter>Source Files\Launcher\States\AppList</Filter>
-    </ClInclude>
-    <ClInclude Include="AppListState.hpp">
-      <Filter>Source Files\Launcher\States\AppList</Filter>
+      <Filter>Source Files\Launcher\States\MyAppList</Filter>
     </ClInclude>
     <ClInclude Include="Globals.hpp">
       <Filter>Source Files\Backend</Filter>
@@ -141,8 +138,11 @@
     <ClInclude Include="SettingsParser.hpp">
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
-    <ClInclude Include="ItemInfo.hpp">
+    <ClInclude Include="VisualChangeLog.hpp">
       <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyAppListState.hpp">
+      <Filter>Source Files\Launcher\States\MyAppList</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

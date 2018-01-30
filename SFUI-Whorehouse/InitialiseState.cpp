@@ -30,7 +30,7 @@ void InitialiseState::Init(AppEngine* app_)
 	
 	if (!font.loadFromFile(GBL::DIR::fonts + "//Arial.ttf"))
 	{
-		std::cout << "failed to load product sans, falling back to Arial!" << std::endl;
+		std::cout << "failed to load provided arial, falling back to windows Arial!" << std::endl;
 
 		if (!font.loadFromFile("C://Windows//Fonts//Arial.ttf"))
 		{
@@ -178,7 +178,9 @@ void InitialiseState::initialisise()
 	{ // always do this first.
 		progressBar->reset();
 		progressBar->addThingToDo();
+
 		setTaskText("loading configuration");
+
 		SettingsParser settings;
 		if (settings.loadFromFile(GBL::DIR::config))
 		{
@@ -193,6 +195,7 @@ void InitialiseState::initialisise()
 		{
 			std::cout << "failed to load settings, using defaults" << std::endl;
 		}
+
 		progressBar->oneThingDone();
 	}
 
@@ -244,7 +247,6 @@ void InitialiseState::initialisise()
 		}
 
 		LauncherUpdater *updater = new LauncherUpdater;
-		//TODO: this probably isn't the best way to see if updates are available
 		int updateStatus = updater->checkForUpdates();
 
 		progressBar->oneThingDone(); // check for update
@@ -252,15 +254,14 @@ void InitialiseState::initialisise()
 		if (updateStatus == LauncherUpdater::Status::RequiredUpdate)
 		{
 			std::cout << "forcing client update" << std::endl;
+			setTaskText("updating");
 
 			progressBar->reset();
 			progressBar->addThingsToDo(2); // update and replace exe
 
-			setTaskText("downloading update");
 			updater->downloadUpdate();
 			progressBar->oneThingDone(); // update
 
-			setTaskText("replacing old executable");
 			updater->replaceOldExecutable();
 			progressBar->oneThingDone(); // replace exe
 
@@ -297,7 +298,7 @@ void InitialiseState::initialisise()
 				MessageBox::Options modOptions;
 				modOptions.text = "Launcher updated";
 
-				modOptions.text = "Launcher updated to v" + std::to_string(updater->remoteVersion) + "! Restart?";
+				modOptions.text = "Launcher updated to version " + std::to_string(updater->remoteVersion) + "! Restart?";
 				modOptions.settings = { "Restart Now", "Restart Later" };
 
 				MessageBox updateSuccessfulModal(modOptions);
@@ -450,8 +451,6 @@ int InitialiseState::validateFileStructure()
 			getItemIndex.setOutputFilename("//index.dat");
 			getItemIndex.download();
 			getItemIndex.save();
-
-			setTaskText("validating files");
 		}
 	} progressBar->oneThingDone();
 
