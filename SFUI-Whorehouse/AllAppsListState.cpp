@@ -1,6 +1,6 @@
 #include "AppEngine.hpp"
 #include "AppState.hpp"
-#include "MyAppListState.hpp"
+#include "ALlAppsListState.hpp"
 #include "HomeState.hpp"
 
 #include "Globals.hpp"
@@ -16,13 +16,13 @@
 #include <fstream>
 #include <experimental/filesystem>
 
-MyAppListState MyAppListState::MyAppListState_dontfuckwithme;
+AllAppsListState AllAppsListState::AllAppsListState_dontfuckwithme;
 
 namespace fs = std::experimental::filesystem;
 
-void MyAppListState::Init(AppEngine* app_)
+void AllAppsListState::Init(AppEngine* app_)
 {
-	std::cout << "MyAppListState Init" << std::endl;
+	std::cout << "AllAppsListState Init" << std::endl;
 
 	app = app_;
 
@@ -30,11 +30,11 @@ void MyAppListState::Init(AppEngine* app_)
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	scrollbar.create(app->window);
 
-	helperThread = new std::thread(&MyAppListState::loadApps, this);
+	helperThread = new std::thread(&AllAppsListState::loadApps, this);
 	std::cout << "thread launched" << std::endl;
 }
 
-void MyAppListState::Cleanup()
+void AllAppsListState::Cleanup()
 {
 	delete cardScroller;
 	delete mainView;
@@ -51,20 +51,20 @@ void MyAppListState::Cleanup()
 	//	delete app; // dont delete app because it's being used by the thing and we need it.
 	//	app = nullptr;
 
-	std::cout << "MyAppListState Cleanup" << std::endl;
+	std::cout << "AllAppsListState Cleanup" << std::endl;
 }
 
-void MyAppListState::Pause()
+void AllAppsListState::Pause()
 {
-	std::cout << "MyAppListState Pause" << std::endl;
+	std::cout << "AllAppsListState Pause" << std::endl;
 }
 
-void MyAppListState::Resume()
+void AllAppsListState::Resume()
 {
-	std::cout << "MyAppListState Resume" << std::endl;
+	std::cout << "AllAppsListState Resume" << std::endl;
 }
 
-void MyAppListState::HandleEvents()
+void AllAppsListState::HandleEvents()
 {
 	sf::Event event;
 
@@ -311,7 +311,7 @@ void MyAppListState::HandleEvents()
 					}
 				}
 
-				helperThread = new std::thread(&MyAppListState::loadApps, this);
+				helperThread = new std::thread(&AllAppsListState::loadApps, this);
 				helperDone = false;
 				helperRunning = true;
 
@@ -352,7 +352,7 @@ void MyAppListState::HandleEvents()
 	}
 }
 
-void MyAppListState::Update()
+void AllAppsListState::Update()
 {
 	if (helperDone && !helperRunning)
 	{
@@ -373,7 +373,7 @@ void MyAppListState::Update()
 //	}
 }
 
-void MyAppListState::Draw()
+void AllAppsListState::Draw()
 {
 	app->window->clear(GBL::COLOR::BACKGROUND);
 
@@ -394,13 +394,13 @@ void MyAppListState::Draw()
 	app->window->display();
 }
 
-void MyAppListState::loadApps()
+void AllAppsListState::loadApps()
 {
 	helperDone = false;
 	helperRunning = true;
 	loadingApps = true;
 
-	std::cout << "loading MyApps" << std::endl;
+	std::cout << "loading AllApps" << std::endl;
 
 	sf::Clock appLoadTime;
 
@@ -553,7 +553,7 @@ void MyAppListState::loadApps()
 	loadingApps = false;
 }
 
-void MyAppListState::updateScrollThumbSize()
+void AllAppsListState::updateScrollThumbSize()
 {
 	// set the scrollbar size
 
@@ -575,7 +575,7 @@ void MyAppListState::updateScrollThumbSize()
 	updateScrollLimits();
 }
 
-void MyAppListState::updateScrollLimits()
+void AllAppsListState::updateScrollLimits()
 {
 	scrollerTopPosition = cardScroller->getCenter().y - cardScroller->getSize().y / 2;
 	scrollerBottomPosition = cardScroller->getCenter().y + cardScroller->getSize().y / 2;
@@ -583,7 +583,7 @@ void MyAppListState::updateScrollLimits()
 	scrollerMaxPosition = scrollbar.contentHeight;
 }
 
-bool MyAppListState::mouseIsOver(const sf::Shape &object)
+bool AllAppsListState::mouseIsOver(const sf::Shape &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *cardScroller)))
 		return true;
@@ -591,7 +591,7 @@ bool MyAppListState::mouseIsOver(const sf::Shape &object)
 		return false;
 }
 
-bool MyAppListState::mouseIsOver(const sf::Shape &object, const sf::View* view)
+bool AllAppsListState::mouseIsOver(const sf::Shape &object, const sf::View* view)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *view)))
 		return true;
@@ -599,7 +599,7 @@ bool MyAppListState::mouseIsOver(const sf::Shape &object, const sf::View* view)
 		return false;
 }
 
-bool MyAppListState::mouseIsOver(const sf::Text &object)
+bool AllAppsListState::mouseIsOver(const sf::Text &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *cardScroller)))
 		return true;

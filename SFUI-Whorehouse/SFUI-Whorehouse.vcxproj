@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AllAppsListState.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="VisualChangeLog.cpp" />
     <ClCompile Include="SettingsParser.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AllAppsListState.hpp" />
     <ClInclude Include="VisualChangeLog.hpp" />
     <ClInclude Include="SettingsParser.hpp" />
     <ClInclude Include="Globals.hpp" />

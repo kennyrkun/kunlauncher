@@ -69,7 +69,7 @@ int LauncherUpdater::replaceOldExecutable()
 	try
 	{
 		if (fs::exists("kunlauncher.exe"))
-			fs::rename("kunlauncher.exe", "kunlaucher.exe.old");
+			fs::rename("kunlauncher.exe", "kunlauncher.exe.old");
 
 		if (fs::exists("latest_kunlauncher.exe"))
 			fs::rename("latest_kunlauncher.exe", "kunlauncher.exe");
