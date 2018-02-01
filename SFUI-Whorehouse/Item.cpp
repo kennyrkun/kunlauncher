@@ -157,7 +157,6 @@ Item::~Item()
 	delete targetWindow;
 }
 
-// public:
 
 void Item::deleteFiles()
 {
@@ -342,7 +341,8 @@ void Item::draw()
 		}
 		else
 		{
-			targetWindow->draw(downloadButton);
+			if (!missing)
+				targetWindow->draw(downloadButton);
 		}
 	}
 }
@@ -416,6 +416,8 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 
 		name.setString("missing info for \"" + info.name + "\"");
 		description.setString("missing info.dat; try redownloading");
+
+		missing = true;
 	}
 }
 

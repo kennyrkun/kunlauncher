@@ -33,6 +33,7 @@ public:
 	float totalHeight;
 
 	int cardNumber; // used to store depth
+	bool missing;
 	bool downloaded;
 	bool isDownloading;
 //	bool isRunning();
