@@ -9,7 +9,7 @@
 #include <vector>
 
 class Link;
-class Item;
+class StoreApp;
 
 class AllAppsListState : public AppState
 {
@@ -45,7 +45,7 @@ private:
 	sf::RectangleShape tracker3;
 
 	std::vector<std::thread> threads;
-	std::vector<Item*> items;
+	std::vector<StoreApp*> items;
 	std::vector<Link*> links;
 
 	std::thread *helperThread;

@@ -6,7 +6,7 @@
 #include "Globals.hpp"
 #include "Download.hpp"
 #include "MessageBox.hpp"
-#include "Item.hpp"
+#include "StoreApp.hpp"
 #include "Link.hpp"
 #include "SettingsParser.hpp"
 
@@ -193,7 +193,7 @@ void AllAppsListState::HandleEvents()
 							{
 								std::cout << "answer yes" << std::endl;
 
-								threads.push_back(std::thread(&Item::deleteFiles, items[i]));
+								threads.push_back(std::thread(&StoreApp::deleteFiles, items[i]));
 
 								clicked = true;
 							}
@@ -202,7 +202,7 @@ void AllAppsListState::HandleEvents()
 						{
 							std::cout << "redownload button pressed" << std::endl;
 
-							threads.push_back(std::thread(&Item::updateItem, items[i]));
+							threads.push_back(std::thread(&StoreApp::updateItem, items[i]));
 
 							clicked = true;
 						}
@@ -221,7 +221,7 @@ void AllAppsListState::HandleEvents()
 						{
 							std::cout << "download button pressed" << std::endl;
 
-							threads.push_back(std::thread(&Item::download, items[i]));
+							threads.push_back(std::thread(&StoreApp::download, items[i]));
 
 							clicked = true;
 						}
@@ -440,7 +440,7 @@ void AllAppsListState::loadApps()
 			{
 				std::cout << "(item after link)" << std::endl;
 
-				Item* newItem = new Item(line, app->window,
+				StoreApp* newItem = new StoreApp(line, app->window,
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
 					app->window->getSize().y,
 					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
@@ -453,16 +453,16 @@ void AllAppsListState::loadApps()
 			{
 				std::cout << "(item not after link)" << std::endl;
 
-				Item* newItem;
+				StoreApp* newItem;
 
 				if (items.empty())
-					newItem = new Item(line, app->window,
+					newItem = new StoreApp(line, app->window,
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
 						app->window->getSize().y, // I'm not sure what this is for?????
 						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // mid-window, excluding scrollbar size
 						(75 / 2) + 10);
 				else
-					newItem = new Item(line, app->window,
+					newItem = new StoreApp(line, app->window,
 					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16.0f),
 						app->window->getSize().y, // I'm not sure what this is for?????
 						(app->window->getSize().x / 2.0f) - (scrollbar.scrollbar.getSize().x / 2.0f), // the middle of the window (exluding the size of the scrollbar)
@@ -533,7 +533,7 @@ void AllAppsListState::loadApps()
 		//TODO: items with updates go to top
 //		if (items.back()->updateIsAvailable)
 //		{
-//			Item *updateItem = items.back; // temporary copy
+//			StoreApp *updateItem = items.back; // temporary copy
 //			items.pop_back(); // remove from applist
 //			items.insert(items.begin(), updateItem); // put in front of applist
 //		}

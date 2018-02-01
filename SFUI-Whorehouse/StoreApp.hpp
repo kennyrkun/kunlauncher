@@ -14,12 +14,12 @@ struct ItemInfo
 	int release;
 };
 
-class Item
+class StoreApp
 {
 public:
-	//Item(std::string itemName_, sf::RenderWindow* target_window, float xPos);
-	Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos);
-	~Item();
+	//StoreApp(std::string itemName_, sf::RenderWindow* target_window, float xPos);
+	StoreApp(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos);
+	~StoreApp();
 
 	sf::RectangleShape cardShape;
 	sf::RectangleShape downloadButton;

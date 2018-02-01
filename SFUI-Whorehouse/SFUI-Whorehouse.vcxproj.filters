@@ -88,13 +88,16 @@
     <ClCompile Include="MyAppListState.cpp">
       <Filter>Source Files\Launcher\States\AppLists\MyAppList</Filter>
     </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>Source Files\Launcher\States\AppLists</Filter>
+    <ClCompile Include="AllAppsListState.cpp">
+      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
     </ClCompile>
     <ClCompile Include="Link.cpp">
-      <Filter>Source Files\Launcher\States\AppLists</Filter>
+      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
     </ClCompile>
-    <ClCompile Include="AllAppsListState.cpp">
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files\Launcher\States\AppLists\MyAppList</Filter>
+    </ClCompile>
+    <ClCompile Include="StoreApp.cpp">
       <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
     </ClCompile>
   </ItemGroup>
@@ -147,13 +150,16 @@
     <ClInclude Include="MyAppListState.hpp">
       <Filter>Source Files\Launcher\States\AppLists\MyAppList</Filter>
     </ClInclude>
-    <ClInclude Include="Link.hpp">
-      <Filter>Source Files\Launcher\States\AppLists</Filter>
-    </ClInclude>
-    <ClInclude Include="Item.hpp">
-      <Filter>Source Files\Launcher\States\AppLists</Filter>
-    </ClInclude>
     <ClInclude Include="AllAppsListState.hpp">
+      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
+    </ClInclude>
+    <ClInclude Include="Link.hpp">
+      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
+    </ClInclude>
+    <ClInclude Include="App.hpp">
+      <Filter>Source Files\Launcher\States\AppLists\MyAppList</Filter>
+    </ClInclude>
+    <ClInclude Include="StoreApp.hpp">
       <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
     </ClInclude>
   </ItemGroup>

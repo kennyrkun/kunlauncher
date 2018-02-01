@@ -1,7 +1,6 @@
 #include "Download.hpp"
 #include "Globals.hpp"
 
-#include <SFML/Network.hpp>
 #include <experimental/filesystem>
 #include <iostream>
 #include <fstream>
@@ -104,8 +103,6 @@ uintmax_t Download::getFileSize()
 	{
 		std::cout << "retrieving file size" << std::endl;
 
-		sf::Ftp ftp;
-
 		// Connect to the server
 		sf::Ftp::Response response = ftp.connect("files.000webhost.com");
 		if (response.isOk())
@@ -126,7 +123,6 @@ uintmax_t Download::getFileSize()
 			std::cout << response.getMessage() << std::endl;
 		}
 
-		// Disconnect from the server (optional)
 		ftp.disconnect();
 
 		if (response.isOk())
@@ -217,7 +213,6 @@ int Download::download()
 		return Status::Failure;
 	}
 
-	// Disconnect from the server (optional)
 	ftp.disconnect();
 
 	downloaded = true;

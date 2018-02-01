@@ -1,6 +1,8 @@
 #ifndef DOWNLOAD_HPP
 #define DOWNLOAD_HPP
 
+#include "SFML\Network.hpp"
+
 #include <string>
 
 class Download
@@ -45,6 +47,8 @@ public:
 
 	void clearCache();
 	void cleanup();
+
+	sf::Ftp ftp;
 
 	int htmlReturnCode;
 	std::string fileBuffer;

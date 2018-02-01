@@ -1,13 +1,13 @@
 #include "AppEngine.hpp"
 #include "AppState.hpp"
 #include "MyAppListState.hpp"
+#include "AllAppsListState.hpp"
 #include "HomeState.hpp"
 
 #include "Globals.hpp"
 #include "Download.hpp"
 #include "MessageBox.hpp"
-#include "Item.hpp"
-#include "Link.hpp"
+#include "App.hpp"
 #include "SettingsParser.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -46,7 +46,6 @@ void MyAppListState::Cleanup()
 	}
 
 	items.clear();
-	links.clear();
 
 	//	delete app; // dont delete app because it's being used by the thing and we need it.
 	//	app = nullptr;
@@ -193,7 +192,7 @@ void MyAppListState::HandleEvents()
 							{
 								std::cout << "answer yes" << std::endl;
 
-								threads.push_back(std::thread(&Item::deleteFiles, items[i]));
+								threads.push_back(std::thread(&App::deleteFiles, items[i]));
 
 								clicked = true;
 							}
@@ -202,7 +201,7 @@ void MyAppListState::HandleEvents()
 						{
 							std::cout << "redownload button pressed" << std::endl;
 
-							threads.push_back(std::thread(&Item::updateItem, items[i]));
+							threads.push_back(std::thread(&App::updateItem, items[i]));
 
 							clicked = true;
 						}
@@ -221,7 +220,7 @@ void MyAppListState::HandleEvents()
 						{
 							std::cout << "download button pressed" << std::endl;
 
-							threads.push_back(std::thread(&Item::download, items[i]));
+							threads.push_back(std::thread(&App::download, items[i]));
 
 							clicked = true;
 						}
@@ -229,18 +228,6 @@ void MyAppListState::HandleEvents()
 
 					if (clicked)
 						break;
-				}
-
-				//links
-				for (size_t i = 0; i < links.size(); i++)
-				{
-					if (mouseIsOver(links[i]->linkText) || mouseIsOver(links[i]->followLinkButton))
-					{
-						// follow link
-						links[i]->follow();
-
-						break;
-					}
 				}
 			}
 			else if (event.key.code == sf::Mouse::Button::Right)
@@ -267,7 +254,6 @@ void MyAppListState::HandleEvents()
 			{
 				std::cout << "refreshing applist" << std::endl;
 
-				links.clear();
 				items.clear();
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
@@ -382,9 +368,6 @@ void MyAppListState::Draw()
 	for (size_t i = 0; i < items.size(); i++)
 		items[i]->draw();
 
-	for (size_t i = 0; i < links.size(); i++)
-		links[i]->draw();
-
 	//anchored
 	app->window->setView(*mainView);
 
@@ -405,7 +388,6 @@ void MyAppListState::loadApps()
 	sf::Clock appLoadTime;
 
 	items.clear();
-	links.clear();
 	updateScrollThumbSize();
 	std::cout << std::endl; // for a line break
 
@@ -415,16 +397,16 @@ void MyAppListState::loadApps()
 	{
 		std::cout << i << " - " << apps[i] << " - " << i << std::endl;
 
-		Item* newItem;
+		App* newItem;
 
 		if (items.empty())
-			newItem = new Item(apps[i], app->window,
+			newItem = new App(apps[i], app->window,
 			(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
 				app->window->getSize().y, // I'm not sure what this is for?????
 				(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // mid-window, excluding scrollbar size
 				(75 / 2) + 10);
 		else
-			newItem = new Item(apps[i], app->window,
+			newItem = new App(apps[i], app->window,
 			(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16.0f),
 				app->window->getSize().y, // I'm not sure what this is for?????
 				(app->window->getSize().x / 2.0f) - (scrollbar.scrollbar.getSize().x / 2.0f), // the middle of the window (exluding the size of the scrollbar)
@@ -436,7 +418,7 @@ void MyAppListState::loadApps()
 		//TODO: items with updates go to top
 //		if (items.back()->updateIsAvailable)
 //		{
-//			Item *updateItem = items.back; // temporary copy
+//			App *updateItem = items.back; // temporary copy
 //			items.pop_back(); // remove from applist
 //			items.insert(items.begin(), updateItem); // put in front of applist
 //		}
@@ -461,16 +443,10 @@ void MyAppListState::updateScrollThumbSize()
 	for (size_t i = 0; i < items.size(); i++)
 		contentHeight += items[i]->totalHeight + 10;
 
-	for (size_t i = 0; i < links.size(); i++)
-		contentHeight += links[i]->totalHeight + 10;
-
 	scrollbar.update(contentHeight, cardScroller->getSize().y);
 
 	for (size_t i = 0; i < items.size(); i++)
 		items[i]->updateSize(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16, app->window->getSize().y, (app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), items[i]->cardShape.getPosition().y + 43);
-
-	for (size_t i = 0; i < links.size(); i++)
-		links[i]->updateSize(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16, app->window->getSize().y, (app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), links[i]->cardShape.getPosition().y + links[i]->cardShape.getLocalBounds().height + 8);
 
 	updateScrollLimits();
 }

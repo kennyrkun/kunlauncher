@@ -1,13 +1,14 @@
+#include "HomeState.hpp"
+
 #include "AppEngine.hpp"
 #include "AppState.hpp"
-#include "HomeState.hpp"
-#include "MyAppListState.hpp"
+#include "AllAppsListState.hpp"
 #include "SettingsState.hpp"
 
 #include "Globals.hpp"
 #include "Download.hpp"
 #include "MessageBox.hpp"
-#include "Item.hpp"
+#include "App.hpp"
 #include "Section.hpp"
 
 #include <SFML/Network.hpp>
@@ -125,7 +126,7 @@ void HomeState::HandleEvents()
 			{
 				//sections
 				if (mouseIsOver(sections[0]->shape) && sections[0]->enabled)
-					app->ChangeState(MyAppListState::Instance());
+					app->ChangeState(AllAppsListState::Instance());
 				else if (mouseIsOver(sections[1]->shape) && sections[1]->enabled)
 					app->PushState(SettingsState::Instance());
 				else if (mouseIsOver(sections[2]->shape) && sections[2]->enabled)

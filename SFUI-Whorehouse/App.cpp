@@ -1,4 +1,5 @@
-#include "Item.hpp"
+#include "App.hpp"
+
 #include "Download.hpp"
 #include "Globals.hpp"
 #include "MessageBox.hpp"
@@ -11,7 +12,7 @@
 
 namespace fs = std::experimental::filesystem;
 
-Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos)
+App::App(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos)
 {
 	sf::Clock itemCreateTimer;
 
@@ -152,13 +153,13 @@ Item::Item(std::string itemName_, sf::RenderWindow* target_window, float xSize, 
 	std::cout << "card is ready (took " << itemCreateTimer.getElapsedTime().asSeconds() << " seconds)" << std::endl;
 }
 
-Item::~Item()
+App::~App()
 {
 	delete targetWindow;
 }
 
 
-void Item::deleteFiles()
+void App::deleteFiles()
 {
 	std::cout << "using deprecated file deletion method" << std::endl;
 
@@ -175,7 +176,7 @@ void Item::deleteFiles()
 	}
 }
 
-bool Item::checkForUpdate()
+bool App::checkForUpdate()
 {
 	//TODO: give apps a variable in info.dat called release
 	//compare release to current, as the launcher updater does
@@ -216,14 +217,14 @@ bool Item::checkForUpdate()
 	}
 }
 
-void Item::updateItem()
+void App::updateItem()
 {
 	std::cout << "updating item" << std::endl;
 
 	download();
 }
 
-void Item::download()
+void App::download()
 {
 	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
@@ -265,7 +266,7 @@ void Item::download()
 	isDownloading = false;
 }
 
-void Item::openItem()
+void App::openItem()
 {
 	//TODO: proper system for opening and monitoring apps
 
@@ -286,7 +287,7 @@ void Item::openItem()
 #endif
 }
 
-void Item::updateSize(float xSize, float ySize, float xPos, float yPos)
+void App::updateSize(float xSize, float ySize, float xPos, float yPos)
 {
 	cardShape.setSize(sf::Vector2f(xSize, 75));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
@@ -316,7 +317,7 @@ void Item::updateSize(float xSize, float ySize, float xPos, float yPos)
 	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
 }
 
-void Item::draw()
+void App::draw()
 {
 	targetWindow->draw(cardShape);
 	//	targetWindow->draw(controlBar);
@@ -349,7 +350,7 @@ void Item::draw()
 
 // private
 
-std::ifstream& Item::GotoLine(std::ifstream& file, unsigned int line)
+std::ifstream& App::GotoLine(std::ifstream& file, unsigned int line)
 {
 	file.seekg(std::ios::beg); // go to top
 
@@ -361,7 +362,7 @@ std::ifstream& Item::GotoLine(std::ifstream& file, unsigned int line)
 	return file; // return line
 }
 
-void Item::parseInfo(std::string dir) // a lot easier than I thought it would be.
+void App::parseInfo(std::string dir) // a lot easier than I thought it would be.
 {
 	//TODO: add checks here to make sure we don't try to parse a file that ended up being a 500 or 404
 
@@ -421,7 +422,7 @@ void Item::parseInfo(std::string dir) // a lot easier than I thought it would be
 	}
 }
 
-int Item::downloadIcon()
+int App::downloadIcon()
 {
 	std::cout << "\n" << "downloading icon" << std::endl;
 
@@ -437,7 +438,7 @@ int Item::downloadIcon()
 	return 1;
 }
 
-int Item::downloadInfo()
+int App::downloadInfo()
 {
 	std::cout << "\n" << "downloading info" << std::endl;
 
@@ -453,7 +454,7 @@ int Item::downloadInfo()
 	return 1;
 }
 
-int Item::downloadFiles()
+int App::downloadFiles()
 {
 	std::cout << "\n" << "downloading files" << std::endl;
 
@@ -469,7 +470,7 @@ int Item::downloadFiles()
 	return 1;
 }
 
-int Item::downloadFile(std::string fileName, std::string inPath, std::string outPath)
+int App::downloadFile(std::string fileName, std::string inPath, std::string outPath)
 {
 	std::cout << "deleting \"" + fileName + "\"" << std::endl;
 
@@ -496,7 +497,7 @@ int Item::downloadFile(std::string fileName, std::string inPath, std::string out
 	}
 }
 
-int Item::deleteFile(std::string fileName, std::string filePath)
+int App::deleteFile(std::string fileName, std::string filePath)
 {
 	std::cout << "deleting \"" + fileName + "\"" << std::endl;
 

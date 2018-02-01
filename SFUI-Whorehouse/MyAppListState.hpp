@@ -8,8 +8,7 @@
 #include <thread>
 #include <vector>
 
-class Link;
-class Item;
+class App;
 
 class MyAppListState : public AppState
 {
@@ -45,8 +44,7 @@ private:
 	sf::RectangleShape tracker3;
 
 	std::vector<std::thread> threads;
-	std::vector<Item*> items;
-	std::vector<Link*> links;
+	std::vector<App*> items;
 
 	std::thread *helperThread;
 	bool helperRunning = false;
