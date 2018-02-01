@@ -409,126 +409,29 @@ void MyAppListState::loadApps()
 	updateScrollThumbSize();
 	std::cout << std::endl; // for a line break
 
-	bool comesAfterLink(false), comesAfterItem(false);
-	std::string line; // each line of index.dat;
+	std::vector<std::string> apps = get_directories(GBL::DIR::apps);
 
-	if (!fs::exists(GBL::DIR::apps + "index.dat"))
+	for (size_t i = 0; i < apps.size(); i++)
 	{
-		Download getNewIndex;
-		getNewIndex.setInput(".//" + GBL::WEB::APPS + "//index.dat");
-		getNewIndex.setOutputDir(GBL::DIR::apps);
-		getNewIndex.setOutputFilename("//index.dat");
-		getNewIndex.download();
-		getNewIndex.save();
-	}
+		std::cout << i << " - " << apps[i] << " - " << i << std::endl;
 
-	std::ifstream readIndex(GBL::DIR::apps + "index.dat", std::ios::in);
+		Item* newItem;
 
-	int loopi(0);
-	while (std::getline(readIndex, line))
-	{
-		std::cout << loopi << " - " << line << " - " << loopi << std::endl;
-
-		// syntax should look like this: APP:"appname"
-		// or for links, LINK:"text"TO"link.com"
-		if (line[0] == 'A' && line[1] == 'P' && line[2] == 'P') // it's an app
-		{
-			line.erase(0, 5); // remove APP
-			line.erase(line.length() - 1, line.length()); // remove last "
-
-			if (comesAfterLink)
-			{
-				std::cout << "(item after link)" << std::endl;
-
-				Item* newItem = new Item(line, app->window,
-					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
-					app->window->getSize().y,
-					(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2),
-					links.back()->cardShape.getPosition().y + links.back()->totalHeight * 2 - 14 /* PADDING */);
-
-				items.push_back(newItem);
-				std::cout << std::endl;
-			}
-			else // not after a link
-			{
-				std::cout << "(item not after link)" << std::endl;
-
-				Item* newItem;
-
-				if (items.empty())
-					newItem = new Item(line, app->window,
-					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
-						app->window->getSize().y, // I'm not sure what this is for?????
-						(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // mid-window, excluding scrollbar size
-						(75 / 2) + 10);
-				else
-					newItem = new Item(line, app->window,
-					(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16.0f),
-						app->window->getSize().y, // I'm not sure what this is for?????
-						(app->window->getSize().x / 2.0f) - (scrollbar.scrollbar.getSize().x / 2.0f), // the middle of the window (exluding the size of the scrollbar)
-						items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10.0f /* PADDING */);
-
-				items.push_back(newItem);
-				std::cout << std::endl;
-			}
-
-			comesAfterItem = true;
-			comesAfterLink = false;
-		}
-		else if (line[0] == 'L' && line[1] == 'I' && line[2] == 'N' && line[3] == 'K')
-		{
-			std::cout << "it's a link" << std::endl;
-
-			std::string linkText, linkRel, linkFull(line);
-
-			line.erase(0, 6); // remove LINK:"
-			line.erase(line.find('"'), line.length()); // remove everything after last " in link text
-			linkText = line;
-
-			line = linkFull;
-			line.erase(0, 6); // remove LINK:"
-			line.erase(0, line.find('"') + 1); // remove last " in link name and everything before
-			line.erase(0, 3); // remove TO"
-			line.erase(line.length() - 1, line.length()); // remove last "
-			linkRel = line;
-
-			if (comesAfterItem)
-			{
-				std::cout << "(link after item)" << std::endl;
-
-				Link* newLink = new Link(linkText, linkRel, app->window, items.back()->cardShape.getPosition().y + 66); // we don't check to make sure this isn't empty, because we know there's an item before it.
-				links.push_back(newLink);
-			}
-			else // after a link or first of  either
-			{
-				Link* newLink;
-
-				if (links.empty())
-				{
-					newLink = new Link(linkText, linkRel, app->window, 28);
-
-					std::cout << "(link not after item, first link)" << std::endl;
-				}
-				else // not the first link
-				{
-					newLink = new Link(linkText, linkRel, app->window, links.back()->cardShape.getPosition().y + 48);
-
-					std::cout << "(link after link, not after item)" << std::endl;
-				}
-
-				links.push_back(newLink);
-				std::cout << std::endl;
-			}
-
-			comesAfterItem = false;
-			comesAfterLink = true;
-		}
+		if (items.empty())
+			newItem = new Item(apps[i], app->window,
+			(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
+				app->window->getSize().y, // I'm not sure what this is for?????
+				(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // mid-window, excluding scrollbar size
+				(75 / 2) + 10);
 		else
-		{
-			std::cout << "String is malformed! Skipping! (" << line << ")\n" << std::endl;
-			loopi += 1;
-			continue;
-		}
+			newItem = new Item(apps[i], app->window,
+			(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16.0f),
+				app->window->getSize().y, // I'm not sure what this is for?????
+				(app->window->getSize().x / 2.0f) - (scrollbar.scrollbar.getSize().x / 2.0f), // the middle of the window (exluding the size of the scrollbar)
+				items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10.0f /* PADDING */);
+
+		items.push_back(newItem);
+		std::cout << std::endl;
 
 		//TODO: items with updates go to top
 //		if (items.back()->updateIsAvailable)
@@ -539,12 +442,9 @@ void MyAppListState::loadApps()
 //		}
 
 		updateScrollThumbSize();
-		loopi += 1;
 	}
 
-	readIndex.close();
-
-	std::cout << "finished loading apps" << " (" << items.size() << " items, " << links.size() << " links loaded) in " << appLoadTime.getElapsedTime().asSeconds() << " seconds" << std::endl;
+	std::cout << "finished loading apps" << " (" << items.size() << " items) in " << appLoadTime.getElapsedTime().asSeconds() << " seconds" << std::endl;
 
 	app->window->requestFocus();
 
@@ -605,4 +505,13 @@ bool MyAppListState::mouseIsOver(const sf::Text &object)
 		return true;
 	else
 		return false;
+}
+
+std::vector<std::string> MyAppListState::get_directories(const std::string& s)
+{
+	std::vector<std::string> r;
+	for (auto& p : fs::directory_iterator(s))
+		if (p.status().type() == fs::file_type::directory)
+			r.push_back( p.path().string().substr( GBL::DIR::apps.size(), p.path().string().size() ) );
+	return r;
 }
