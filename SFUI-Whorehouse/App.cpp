@@ -159,6 +159,27 @@ App::~App()
 }
 
 
+void App::setPosition(const sf::Vector2f & pos)
+{
+	cardShape.setPosition(pos);
+
+	icon.setPosition(sf::Vector2f(cardShape.getPosition().x - (cardShape.getSize().x / 2) + icon.getLocalBounds().width / 2, cardShape.getPosition().y));
+
+	name.setPosition(static_cast<int>(icon.getPosition().x + 45), static_cast<int>(cardShape.getPosition().y - 40));
+	description.setPosition(static_cast<int>(icon.getPosition().x + 45), static_cast<int>(cardShape.getPosition().y - 15));
+	version.setPosition(static_cast<int>(icon.getPosition().x + 45), static_cast<int>(cardShape.getPosition().y + 10));
+
+	float fuckedUpXPosition = (cardShape.getPosition().x + (cardShape.getLocalBounds().width / 2)) - 30;
+
+	downloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y));
+
+	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y - 15));
+
+	removeButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 15));
+
+	launchButton.setPosition(sf::Vector2f(fuckedUpXPosition - 28, cardShape.getPosition().y));
+}
+
 void App::deleteFiles()
 {
 	std::cout << "using deprecated file deletion method" << std::endl;

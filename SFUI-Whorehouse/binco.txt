@@ -1,0 +1,52 @@
++binco
++-+ 1 Slots 1-4
+| +-+ 1 Slot 1 Head / Face
+| | +-+ 2 texture
+| |
+| +-+ 3 slot 2 Beard / Mask
+| | +-+ 4 texture
+| |
+| +-+ 5 slot 3 hair / hat
+| | +-+ 6 texture
+| |
+| +-+ 7 slot 4 top
+| | +-+ 8 texture
+| 
++-+ 1 Slots 5-8
+| +-+ 1 Slot 5 Legs
+| | +-+ 2 texture
+| |
+| +-+ 3 slot 6 bags
+| | +-+ 4 texture
+| |
+| +-+ 5 slot 7 shoes
+| | +-+ 6 texture
+| |
+| +-+ 7 slot 8 accessory
+| | +-+ 8 texture
+| 
++-+ 1 Slots 9-12
+| +-+ 1 Slot 9 accessory
+| | +-+ 2 texture
+| |
+| +-+ 3 slot 19 accessory
+| | +-+ 4 texture
+| |
+| +-+ 5 slot 11 badges
+| | +-+ 6 texture
+| |
+| +-+ 7 slot 12 shirt/jacket
+| | +-+ 8 texture
+| 
++-+ 4 Props slots 1-3
+| +-+ 1 slot 1 hats/masks/helmets
+| | +-+ 2 textures
+| |
+| +-+ 3 slot 2 glasses
+| | +-+ 4 textures
+| 
+| +-+ 5 slot 3 earrings
+| | +-+ 6 textures
+|
++-+ 5 Props slots 7-8
+|

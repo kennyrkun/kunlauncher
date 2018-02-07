@@ -1,5 +1,5 @@
-#ifndef ITEM_HPP
-#define ITEM_HPP
+#ifndef APP_HPP
+#define APP_HPP
 
 #include <SFML/Graphics.hpp>
 #include <SFUI/TextButton.hpp>
@@ -20,6 +20,8 @@ public:
 	//App(std::string itemName_, sf::RenderWindow* target_window, float xPos);
 	App(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos);
 	~App();
+
+	void setPosition(const sf::Vector2f& pos);
 
 	sf::RectangleShape cardShape;
 	sf::RectangleShape downloadButton;
@@ -77,4 +79,13 @@ private:
 	int deleteFile(std::string fileName, std::string filePath);
 };
 
-#endif
+struct AnimatedApp
+{
+	App* app;
+	sf::Vector2f position;
+	sf::Vector2f destination;
+	float ease_amount = 0.25f;
+	bool isAnimating = true;
+};
+
+#endif // !APP_HPP

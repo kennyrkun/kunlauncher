@@ -8,7 +8,7 @@
 #include <thread>
 #include <vector>
 
-class App;
+class AnimatedApp;
 
 class MyAppListState : public AppState
 {
@@ -44,7 +44,7 @@ private:
 	sf::RectangleShape tracker3;
 
 	std::vector<std::thread> threads;
-	std::vector<App*> items;
+	std::vector<AnimatedApp*> items;
 
 	std::thread *helperThread;
 	bool helperRunning = false;
@@ -64,7 +64,6 @@ private:
 	bool mouseIsOver(const sf::Shape &object);
 	bool mouseIsOver(const sf::Shape &object, const sf::View* view);
 	bool mouseIsOver(const sf::Text &object);
-
 
 	std::vector<std::string> get_directories(const std::string& s);
 };

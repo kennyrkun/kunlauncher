@@ -3,6 +3,7 @@
 #include "AppEngine.hpp"
 #include "AppState.hpp"
 #include "AllAppsListState.hpp"
+#include "MyAppListState.hpp"
 #include "SettingsState.hpp"
 
 #include "Globals.hpp"
@@ -126,7 +127,10 @@ void HomeState::HandleEvents()
 			{
 				//sections
 				if (mouseIsOver(sections[0]->shape) && sections[0]->enabled)
-					app->ChangeState(AllAppsListState::Instance());
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
+						app->ChangeState(MyAppListState::Instance());
+					else
+						app->ChangeState(AllAppsListState::Instance());
 				else if (mouseIsOver(sections[1]->shape) && sections[1]->enabled)
 					app->PushState(SettingsState::Instance());
 				else if (mouseIsOver(sections[2]->shape) && sections[2]->enabled)
