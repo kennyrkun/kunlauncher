@@ -34,13 +34,13 @@ MessageBox::MessageBox(Options settings_)
 		//TODO: handle this better
 	}
 
+	//TODO: refactor this
+
 	float messageWidth = message.getLocalBounds().width + 20;
 	float buttonsWidth = 0;
 
 	for (size_t i = 0; i < buttons.size(); i++)
-	{
 		buttonsWidth += buttons[i]->m_shape.getLocalBounds().width + 4.0f;
-	}
 
 	std::vector<float> combinedWidths;
 	combinedWidths.push_back(messageWidth);

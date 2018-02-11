@@ -36,6 +36,8 @@ void MyAppListState::Init(AppEngine* app_)
 
 void MyAppListState::Cleanup()
 {
+	std::cout << "Cleaning up MyAppListState." << std::endl;
+
 	delete cardScroller;
 	delete mainView;
 
@@ -50,7 +52,7 @@ void MyAppListState::Cleanup()
 	//	delete app; // dont delete app because it's being used by the thing and we need it.
 	//	app = nullptr;
 
-	std::cout << "MyAppListState Cleanup" << std::endl;
+	std::cout << "MyAppListState cleaned up." << std::endl;
 }
 
 void MyAppListState::Pause()
@@ -114,14 +116,13 @@ void MyAppListState::HandleEvents()
 				else
 					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
 
-				updateScrollLimits();
-
 				if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
 				{
 					std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
 					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
-					updateScrollLimits();
 				}
+
+				updateScrollLimits();
 			}
 			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
 			{
@@ -131,14 +132,14 @@ void MyAppListState::HandleEvents()
 					cardScroller->move(0, -scrollbar.scrollJump);
 				else
 					std::cout << "cannot scroll view up (" << scrollerTopPosition << " > " << scrollerMaxPosition << ")" << std::endl;
-					updateScrollLimits();
 
 				if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
 				{
 					std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
 					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
-					updateScrollLimits();
 				}
+
+				updateScrollLimits();
 			}
 			/* SCROLL CODE
 			else if (!scrollbar.thumbDragging)
@@ -232,7 +233,7 @@ void MyAppListState::HandleEvents()
 			}
 			else if (event.key.code == sf::Mouse::Button::Right)
 			{
-				app->ChangeState(HomeState::Instance());
+				app->PopState();
 			}
 
 			/* SCROLL CODE

@@ -94,3 +94,27 @@ void AppEngine::Draw()
 	// let the state draw the screen
 	states.back()->Draw();
 }
+
+void AppEngine::UpdateViewSize(const sf::Vector2f & size)
+{
+	std::cout << "new width: " << size.x << std::endl;
+	std::cout << "new height: " << size.y << std::endl;
+
+	sf::Vector2u newSize(size.x, size.y);
+
+	if (newSize.x >= 525 && newSize.y >= 325)
+	{
+		sf::FloatRect visibleArea(0, 0, size.x, size.y);
+		window->setView(sf::View(visibleArea));
+	}
+	else
+	{
+		if (size.x <= settings.width)
+			newSize.x = settings.width;
+
+		if (size.x <= settings.height)
+			newSize.y = settings.height;
+
+		window->setSize(newSize);
+	}
+}

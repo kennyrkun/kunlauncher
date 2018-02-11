@@ -347,8 +347,8 @@ void HomeState::Draw()
 		newses[i]->Draw();
 
 	app->window->setView(app->window->getDefaultView());
-	navbar->Draw();
 	app->window->draw(scrollbar);
+	navbar->Draw();
 
 	app->window->display();
 }

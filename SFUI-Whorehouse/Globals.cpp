@@ -7,6 +7,9 @@ namespace GBL
 		sf::Color BACKGROUND = sf::Color(50, 50, 50);
 		sf::Color TEXT = sf::Color(255, 255, 255);
 
+		sf::Color PRIMARY = sf::Color(100, 100, 100);
+		sf::Color SECONDARY = sf::Color(150, 150, 150);
+
 		namespace SCROLLBAR
 		{
 			sf::Color SCROLLBAR = sf::Color(80, 80, 80);

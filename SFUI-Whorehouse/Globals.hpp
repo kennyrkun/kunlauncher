@@ -35,9 +35,10 @@ namespace GBL
 		namespace LATEST
 		{
 			const std::string DIR			= "launcher/version/latest/";
-			const std::string RESOURCES		= "launcher/version/latest/resources/";
-			const std::string RESOURCE_LIST = "launcher/version/latest/resources/resources.dat";
+			const std::string RESOURCES		= DIR + "/resources/";
+			const std::string RESOURCE_LIST = RESOURCES + "resources.dat";
 			const std::string EXECUTABLE	= DIR + "latest.noexe";
+			const std::string CHNAGES		= DIR + "change.log";
 		}
 	}
 
@@ -45,6 +46,9 @@ namespace GBL
 	{
 		extern sf::Color BACKGROUND;
 		extern sf::Color TEXT;
+
+		extern sf::Color PRIMARY;
+		extern sf::Color SECONDARY;
 
 		namespace SCROLLBAR
 		{

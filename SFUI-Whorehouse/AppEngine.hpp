@@ -39,6 +39,8 @@ public:
 	bool Running() { return running; }
 	void Quit() { running = false; }
 
+	void UpdateViewSize(const sf::Vector2f& size);
+
 	std::string title;
 	bool developerModeActive = false;
 
