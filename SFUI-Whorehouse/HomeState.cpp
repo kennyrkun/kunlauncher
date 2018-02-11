@@ -29,6 +29,7 @@ void wrap(sf::Text& target, const float width)
 		if (target.findCharacterPos(i).x >= containerWidth)
 		{
 			//str.insert(str.rfind(' ', i), "\n");
+			str.insert(i - 1, "-");
 			str.insert(i, "\n");
 			target.setString(str);
 		}
@@ -147,7 +148,7 @@ News::News(std::string titlestr, std::string textstr, sf::RenderWindow* window) 
 
 	divider.setSize(sf::Vector2f(window->getSize().x - 40, 2));
 
-	wrap(text, window->getSize().x - 20);
+	wrap(text, window->getSize().x - 40);
 }
 
 News::~News()
@@ -200,7 +201,6 @@ void HomeState::Init(AppEngine* app_)
 
 	font.loadFromFile(GBL::DIR::fonts + "Arial.ttf");
 
-
 	navbar = new Navbar(app->window);
 	navbar->addSection("home");
 	navbar->addSection("my apps");
@@ -208,9 +208,8 @@ void HomeState::Init(AppEngine* app_)
 	navbar->addSection("settings");
 	navbar->sections[0]->text.setStyle(sf::Text::Style::Bold);
 
-	sf::Vector2f center(app->window->getView().getCenter().x, app->window->getView().getCenter().y - 40);
-	sf::Vector2f size(app->window->getView().getSize().x, app->window->getView().getSize().y - 40);
 	viewScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
+	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	scrollbar.create(app->window);
 
 	loadNews();
@@ -229,6 +228,9 @@ void HomeState::Cleanup()
 	}
 
 	sections.clear();
+
+	delete viewScroller;
+	delete mainView;
 
 	std::cout << "HomeState Cleanup" << std::endl;
 }
@@ -260,16 +262,35 @@ void HomeState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
-			app->UpdateViewSize(sf::Vector2f(event.size.width, event.size.height));
+			std::cout << "new width: " << event.size.width << std::endl;
+			std::cout << "new height: " << event.size.height << std::endl;
 
 			sf::Vector2u newSize(event.size.width, event.size.height);
 
-			viewScroller->setSize(sf::Vector2f(event.size.width, event.size.height));
-			viewScroller->setCenter(sf::Vector2f(viewScroller->getSize().x / 2, viewScroller->getSize().y / 2));
+			if (newSize.x >= 525 && newSize.y >= 325)
+			{
+				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+				*mainView = sf::View(visibleArea);
+				app->window->setView(sf::View(visibleArea));
 
-			divider.setSize(sf::Vector2f(event.size.width - 40, 2));
+				viewScroller->setSize(sf::Vector2f(event.size.width, event.size.height));
+				viewScroller->setCenter(sf::Vector2f(viewScroller->getSize().x / 2, viewScroller->getSize().y / 2));
 
-			updateScrollThumbSize();
+				navbar->bar.setSize(sf::Vector2f(event.size.width, 40));
+
+				// set the scrollbar size
+				updateScrollThumbSize();
+			}
+			else
+			{
+				if (event.size.width <= 525)
+					newSize.x = 525;
+
+				if (event.size.height <= 325)
+					newSize.y = 325;
+
+				app->window->setSize(newSize);
+			}
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
@@ -292,7 +313,7 @@ void HomeState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::MouseWheelMoved)
 		{
-			if (event.mouseWheel.delta < 0) // down, or move items up
+			if (event.mouseWheel.delta < 0) // down, or move apps up
 			{
 				scrollbar.moveThumbDown();
 
@@ -309,7 +330,7 @@ void HomeState::HandleEvents()
 
 				updateScrollLimits();
 			}
-			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
+			else if (event.mouseWheel.delta > 0) // scroll up, or move apps down
 			{
 				scrollbar.moveThumbUp();
 
@@ -346,7 +367,7 @@ void HomeState::Draw()
 	for (size_t i = 0; i < newses.size(); i++)
 		newses[i]->Draw();
 
-	app->window->setView(app->window->getDefaultView());
+	app->window->setView(*mainView);
 	app->window->draw(scrollbar);
 	navbar->Draw();
 

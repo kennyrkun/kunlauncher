@@ -47,7 +47,7 @@ void MyAppListState::Cleanup()
 		helperThread->join();
 	}
 
-	items.clear();
+	apps.clear();
 
 	//	delete app; // dont delete app because it's being used by the thing and we need it.
 	//	app = nullptr;
@@ -107,7 +107,7 @@ void MyAppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled && !loadingApps)
 		{
-			if (event.mouseWheel.delta < 0) // down, or move items up
+			if (event.mouseWheel.delta < 0) // down, or move apps up
 			{
 				scrollbar.moveThumbDown();
 
@@ -124,7 +124,7 @@ void MyAppListState::HandleEvents()
 
 				updateScrollLimits();
 			}
-			else if (event.mouseWheel.delta > 0) // scroll up, or move items down
+			else if (event.mouseWheel.delta > 0) // scroll up, or move apps down
 			{
 				scrollbar.moveThumbUp();
 
@@ -170,15 +170,15 @@ void MyAppListState::HandleEvents()
 				bool clicked(false);
 
 				//links
-				for (size_t i = 0; i < items.size(); i++)
+				for (size_t i = 0; i < apps.size(); i++)
 				{
-					if (items[i]->app->downloaded)
+					if (apps[i]->downloaded)
 					{
-						if (mouseIsOver(items[i]->app->removeButton))
+						if (mouseIsOver(apps[i]->removeButton))
 						{
 							MessageBox::Options modOptions;
 							modOptions.title = "Confirm Deletion";
-							modOptions.text = "Delete \"" + items[i]->app->info.name + "\"?";
+							modOptions.text = "Delete \"" + apps[i]->info.name + "\"?";
 							std::vector<std::string> modaloptions = { "No", "Yes" };
 							modOptions.settings = modaloptions;
 							
@@ -193,35 +193,35 @@ void MyAppListState::HandleEvents()
 							{
 								std::cout << "answer yes" << std::endl;
 
-								threads.push_back(std::thread(&App::deleteFiles, items[i]->app));
+								threads.push_back(std::thread(&App::deleteFiles, apps[i]));
 
 								clicked = true;
 							}
 						}
-						else if (mouseIsOver(items[i]->app->redownloadButton))
+						else if (mouseIsOver(apps[i]->redownloadButton))
 						{
 							std::cout << "redownload button pressed" << std::endl;
 
-							threads.push_back(std::thread(&App::updateItem, items[i]->app));
+							threads.push_back(std::thread(&App::updateItem, apps[i]));
 
 							clicked = true;
 						}
-						else if (mouseIsOver(items[i]->app->launchButton))
+						else if (mouseIsOver(apps[i]->launchButton))
 						{
 							std::cout << "launch button pressed" << std::endl;
 
-							items[i]->app->openItem();
+							apps[i]->openItem();
 
 							clicked = true;
 						}
 					}
 					else
 					{
-						if (mouseIsOver(items[i]->app->downloadButton))
+						if (mouseIsOver(apps[i]->downloadButton))
 						{
 							std::cout << "download button pressed" << std::endl;
 
-							threads.push_back(std::thread(&App::download, items[i]->app));
+							threads.push_back(std::thread(&App::download, apps[i]));
 
 							clicked = true;
 						}
@@ -255,9 +255,9 @@ void MyAppListState::HandleEvents()
 			{
 				std::cout << "refreshing applist" << std::endl;
 
-				items.clear();
+				apps.clear();
 
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload items list
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) // redownload apps list
 				{
 					try
 					{
@@ -341,49 +341,6 @@ void MyAppListState::HandleEvents()
 
 void MyAppListState::Update()
 {
-	for (size_t i = 0; i < items.size(); i++)
-	{
-		if (i != 0)
-		{
-			if (!items[i - 1]->isAnimating)
-			{
-				if (items[i]->isAnimating)
-				{
-					std::cout << "item" << i << " is animating" << std::endl;
-
-					sf::Vector2f lastPos = items[i]->app->cardShape.getPosition();
-
-					float vx = (items[i]->destination.x - items[i]->app->cardShape.getPosition().x) * items[i]->ease_amount;
-					float vy = (items[i]->destination.y - items[i]->app->cardShape.getPosition().y) * items[i]->ease_amount;
-					items[i]->app->setPosition(sf::Vector2f(items[i]->app->cardShape.getPosition().x + vx, items[i]->app->cardShape.getPosition().y + vy));
-
-					if (items[i]->app->cardShape.getPosition() == lastPos)
-						items[i]->isAnimating = false;
-
-					//TODO: see if it's done animating and remove it
-				}
-			}
-		}
-		else
-		{
-			if (items[i]->isAnimating)
-			{
-				std::cout << "item" << i << " is animating" << std::endl;
-
-				sf::Vector2f lastPos = items[i]->app->cardShape.getPosition();
-
-				float vx = (items[i]->destination.x - items[i]->app->cardShape.getPosition().x) * items[i]->ease_amount;
-				float vy = (items[i]->destination.y - items[i]->app->cardShape.getPosition().y) * items[i]->ease_amount;
-				items[i]->app->setPosition(sf::Vector2f(items[i]->app->cardShape.getPosition().x + vx, items[i]->app->cardShape.getPosition().y + vy));
-
-				if (items[i]->app->cardShape.getPosition() == lastPos)
-					items[i]->isAnimating = false;
-
-				//TODO: see if it's done animating and remove it
-			}
-		}
-	}
-
 	if (helperDone && !helperRunning)
 	{
 		std::cout << "helper done, joining" << std::endl;
@@ -411,8 +368,8 @@ void MyAppListState::Draw()
 
 	//scrollable
 	app->window->setView(*cardScroller);
-	for (size_t i = 0; i < items.size(); i++)
-		items[i]->app->draw();
+	for (size_t i = 0; i < apps.size(); i++)
+		apps[i]->draw();
 
 	//anchored
 	app->window->setView(*mainView);
@@ -439,64 +396,46 @@ void MyAppListState::loadApps()
 
 	sf::Clock appLoadTime;
 
-	items.clear();
+	apps.clear();
 	updateScrollThumbSize();
 	std::cout << std::endl; // for a line break
 
-	std::vector<std::string> apps = get_directories(GBL::DIR::apps);
+	std::vector<std::string> appList = get_directories(GBL::DIR::apps);
 
-	for (size_t i = 0; i < apps.size(); i++)
+	for (size_t i = 0; i < appList.size(); i++)
 	{
-		std::cout << i << " - " << apps[i] << " - " << i << std::endl;
+		std::cout << i << " - " << appList[i] << " - " << i << std::endl;
 
 		App* newItem;
 
-		if (items.empty())
-			newItem = createApp(apps[i], app->window,
+		if (apps.empty())
+			newItem = createApp(appList[i], app->window,
 			(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16),
 				app->window->getSize().y, // I'm not sure what this is for?????
 				(app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), // mid-window, excluding scrollbar size
-				app->window->getView().getCenter().y + 85);
-//				(75 / 2) + 10);
+				(75 / 2) + 10);
 		else
-			newItem = createApp(apps[i], app->window,
+			newItem = createApp(appList[i], app->window,
 			(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16.0f),
 				app->window->getSize().y, // I'm not sure what this is for?????
 				(app->window->getSize().x / 2.0f) - (scrollbar.scrollbar.getSize().x / 2.0f), // the middle of the window (exluding the size of the scrollbar)
-				app->window->getSize().y + items.back()->app->totalHeight + 10.f /* PADDING */);
+				apps.back()->cardShape.getPosition().y + apps.back()->totalHeight + 10.0f /* PADDING */);
 
-//			items.back()->cardShape.getPosition().y + items.back()->totalHeight + 10.0f /* PADDING */);
-
-		AnimatedApp* newApp = new AnimatedApp;
-
-		newApp->app = newItem;
-
-		if (items.empty())
-		{
-			newApp->destination = sf::Vector2f((app->window->getSize().x / 2.0f), (75 / 2) + 10);
-			newApp->position = sf::Vector2f((app->window->getSize().x / 2.0f) - (scrollbar.scrollbar.getSize().x / 2.0f), (75 / 2) + 10);
-		}
-		else
-		{
-			newApp->destination = sf::Vector2f((app->window->getSize().x / 2.0f), items.back()->position.y + items.back()->app->totalHeight + 10.0f);
-			newApp->position = sf::Vector2f((app->window->getSize().x / 2.0f), items.back()->position.y + items.back()->app->totalHeight + 10.0f);
-		}
-
-		items.push_back(newApp);
+		apps.push_back(newItem);
 		std::cout << std::endl;
 
-		//TODO: items with updates go to top
-//		if (items.back()->updateIsAvailable)
+		//TODO: apps with updates go to top
+//		if (apps.back()->updateIsAvailable)
 //		{
-//			App *updateItem = items.back; // temporary copy
-//			items.pop_back(); // remove from applist
-//			items.insert(items.begin(), updateItem); // put in front of applist
+//			App *updateItem = apps.back; // temporary copy
+//			apps.pop_back(); // remove from applist
+//			apps.insert(apps.begin(), updateItem); // put in front of applist
 //		}
 
 		updateScrollThumbSize();
 	}
 
-	std::cout << "finished loading apps" << " (" << items.size() << " items) in " << appLoadTime.getElapsedTime().asSeconds() << " seconds" << std::endl;
+	std::cout << "finished loading apps" << " (" << apps.size() << " apps) in " << appLoadTime.getElapsedTime().asSeconds() << " seconds" << std::endl;
 
 	app->window->requestFocus();
 
@@ -510,13 +449,13 @@ void MyAppListState::updateScrollThumbSize()
 	// set the scrollbar size
 
 	float contentHeight(0);
-	for (size_t i = 0; i < items.size(); i++)
-		contentHeight += items[i]->app->totalHeight + 10;
+	for (size_t i = 0; i < apps.size(); i++)
+		contentHeight += apps[i]->totalHeight + 10;
 
 	scrollbar.update(contentHeight, cardScroller->getSize().y);
 
-	for (size_t i = 0; i < items.size(); i++)
-		items[i]->app->updateSize(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16, app->window->getSize().y, (app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), items[i]->app->cardShape.getPosition().y + 43);
+	for (size_t i = 0; i < apps.size(); i++)
+		apps[i]->updateSize(app->window->getSize().x - scrollbar.scrollbar.getSize().x - 16, app->window->getSize().y, (app->window->getSize().x / 2) - (scrollbar.scrollbar.getSize().x / 2), apps[i]->cardShape.getPosition().y + 43);
 
 	updateScrollLimits();
 }

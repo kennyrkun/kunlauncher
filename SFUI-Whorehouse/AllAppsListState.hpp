@@ -45,7 +45,7 @@ private:
 	sf::RectangleShape tracker3;
 
 	std::vector<std::thread> threads;
-	std::vector<StoreApp*> items;
+	std::vector<StoreApp*> apps;
 	std::vector<Link*> links;
 
 	std::thread *helperThread;

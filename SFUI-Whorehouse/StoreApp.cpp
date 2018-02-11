@@ -278,7 +278,7 @@ void StoreApp::openItem()
 
 	MessageBox::Options modOptions;
 	modOptions.title = "Unsupported Platform";
-	modOptions.text = "Opening items is not supported on your platform.\n\nTo open the app:\nInstallation Dir -> bin -> apps -> appname";
+	modOptions.text = "Opening apps is not supported on your platform.\n\nTo open the app:\nInstallation Dir -> bin -> apps -> appname";
 	modOptions.settings = { "Sad" };
 
 	MessageBox platformAlert(modOptions);

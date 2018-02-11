@@ -79,13 +79,4 @@ private:
 	int deleteFile(std::string fileName, std::string filePath);
 };
 
-struct AnimatedApp
-{
-	App* app;
-	sf::Vector2f position;
-	sf::Vector2f destination;
-	float ease_amount = 0.25f;
-	bool isAnimating = true;
-};
-
 #endif // !APP_HPP

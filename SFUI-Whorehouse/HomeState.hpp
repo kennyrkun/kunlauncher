@@ -105,10 +105,7 @@ private:
 	std::vector<SFUI::IconButton*> sections;
 	std::vector<News*> newses;
 
-	sf::Text headerText;
-	sf::Text homeText;
 	sf::Font font;
-	sf::RectangleShape divider;
 
 	Navbar* navbar;
 
@@ -119,6 +116,7 @@ private:
 	bool helperDone = false;
 
 	sf::View* viewScroller;
+	sf::View* mainView;
 	SFUI::Scrollbar scrollbar;
 
 	void updateScrollThumbSize();

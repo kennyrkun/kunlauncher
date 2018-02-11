@@ -641,7 +641,7 @@ int InitialiseState::getThemeConfiguration()
 		createDarkTheme << "scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
 		createDarkTheme << "scrollbar_scrollthumb_hold = 239, 235, 239" << std::endl;
 		createDarkTheme << std::endl;
-		createDarkTheme << "// items" << std::endl;
+		createDarkTheme << "// apps" << std::endl;
 		createDarkTheme << "item_card = 100, 100, 100" << std::endl;
 		createDarkTheme << "item_icon = 255, 255, 255" << std::endl;
 		createDarkTheme << "item_icon_hover = 255, 255, 255" << std::endl;
@@ -674,7 +674,7 @@ int InitialiseState::getThemeConfiguration()
 		createLightTheme << "scrollbar_scrollthumb_hover = 158, 158, 158" << std::endl;
 		createLightTheme << "scrollbar_scrollthumb_hold = 239, 235, 239" << std::endl;
 		createLightTheme << std::endl;
-		createLightTheme << "// items" << std::endl;
+		createLightTheme << "// apps" << std::endl;
 		createLightTheme << "item_card = 192, 192, 192" << std::endl;
 		createLightTheme << "item_icon = 255, 255, 255" << std::endl;
 		createLightTheme << "item_icon_hover = 255, 255, 255" << std::endl;
@@ -743,7 +743,7 @@ int InitialiseState::getThemeConfiguration()
 			colors.clear();
 		}
 
-		// items
+		// apps
 		std::cout << "item theme settings" << std::endl;
 
 		if (settings.get("item_card", colors))
