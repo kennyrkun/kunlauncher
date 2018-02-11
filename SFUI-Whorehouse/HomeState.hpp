@@ -5,10 +5,76 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFUI/IconButton.hpp>
+#include <SFUI/Scrollbar.hpp>
 #include <thread>
 #include <vector>
 
-class Section;
+//class Section;
+
+class NavbarSection
+{
+public:
+	NavbarSection(std::string str, int sectionNUm);
+	~NavbarSection();
+
+	void update();
+
+	int sectionNum;
+	sf::Text text;
+
+private:
+	std::string str;
+	sf::Font font;
+};
+
+class Navbar
+{
+public:
+	Navbar(sf::RenderWindow* window);
+	~Navbar();
+
+	sf::RectangleShape bar;
+
+	std::vector<NavbarSection*> sections;
+
+	void addSection(std::string text);
+	void removeSection(int sectionNum);
+
+	void HandleEvents(const sf::Event& event);
+	void Update();
+	void Draw();
+
+private:
+	sf::RenderWindow* window;
+	sf::Font font;
+};
+
+class News
+{
+public:
+	News(std::string title, std::string text, sf::RenderWindow* window);
+	~News();
+
+	sf::Text title;
+	sf::Text text;
+	sf::RectangleShape divider;
+
+	void setPosition(const sf::Vector2f& pos);
+	sf::Vector2f getPosition();
+	float getLocalHeight();
+
+	void HandleEvents(const sf::Event& event);
+	void Update();
+	void Draw();
+
+private:
+	std::string titlestr;
+	std::string textstr;
+
+	sf::Font font;
+
+	sf::RenderWindow* window;
+};
 
 class HomeState : public AppState
 {
@@ -37,10 +103,31 @@ private:
 
 	std::vector<std::thread> threads;
 	std::vector<SFUI::IconButton*> sections;
+	std::vector<News*> newses;
+
+	sf::Text headerText;
+	sf::Text homeText;
+	sf::Font font;
+	sf::RectangleShape divider;
+
+	Navbar* navbar;
+
+	void loadNews();
 
 	std::thread *helperThread;
 	bool helperRunning = false;
 	bool helperDone = false;
+
+	sf::View* viewScroller;
+	SFUI::Scrollbar scrollbar;
+
+	void updateScrollThumbSize();
+	// TODO: viewable arae class
+	float scrollerTopPosition;
+	float scrollerBottomPosition;
+	float scrollerMinPosition;
+	float scrollerMaxPosition;
+	void updateScrollLimits();
 
 	bool mouseIsOver(sf::Shape &object);
 	bool mouseIsOver(sf::Shape &object, sf::View* view);
