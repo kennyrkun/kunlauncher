@@ -116,13 +116,14 @@ void MyAppListState::HandleEvents()
 				else
 					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
 
+				updateScrollLimits();
+
 				if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
 				{
 					std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
 					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMaxPosition - cardScroller->getSize().y / 2 + 8);
+					updateScrollLimits();
 				}
-
-				updateScrollLimits();
 			}
 			else if (event.mouseWheel.delta > 0) // scroll up, or move apps down
 			{
@@ -133,13 +134,14 @@ void MyAppListState::HandleEvents()
 				else
 					std::cout << "cannot scroll view up (" << scrollerTopPosition << " > " << scrollerMaxPosition << ")" << std::endl;
 
+				updateScrollLimits();
+
 				if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
 				{
 					std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
 					cardScroller->setCenter(cardScroller->getCenter().x, scrollerMinPosition + cardScroller->getSize().y / 2);
+					updateScrollLimits();
 				}
-
-				updateScrollLimits();
 			}
 			/* SCROLL CODE
 			else if (!scrollbar.thumbDragging)

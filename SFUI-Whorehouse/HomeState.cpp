@@ -322,13 +322,14 @@ void HomeState::HandleEvents()
 				else
 					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
 
+				updateScrollLimits();
+
 				if (scrollerBottomPosition > scrollerMaxPosition) // clamp cardScroller
 				{
 					std::cout << "cardScroller went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
 					viewScroller->setCenter(viewScroller->getCenter().x, scrollerMaxPosition - viewScroller->getSize().y / 2 + 8);
+					updateScrollLimits();
 				}
-
-				updateScrollLimits();
 			}
 			else if (event.mouseWheel.delta > 0) // scroll up, or move apps down
 			{
@@ -339,13 +340,14 @@ void HomeState::HandleEvents()
 				else
 					std::cout << "cannot scroll view up (" << scrollerTopPosition << " > " << scrollerMaxPosition << ")" << std::endl;
 
+				updateScrollLimits();
+
 				if (scrollerTopPosition < scrollerMinPosition) // clamp cardScroller
 				{
 					std::cout << "cardScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
 					viewScroller->setCenter(viewScroller->getCenter().x, scrollerMinPosition + viewScroller->getSize().y / 2);
+					updateScrollLimits();
 				}
-
-				updateScrollLimits();
 			}
 		}
 	}
