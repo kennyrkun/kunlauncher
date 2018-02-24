@@ -131,6 +131,9 @@
     <ClCompile Include="AllAppsListState.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="Navbar.cpp" />
+    <ClCompile Include="NavbarSection.cpp" />
+    <ClCompile Include="News.cpp" />
     <ClCompile Include="StoreApp.cpp" />
     <ClCompile Include="VisualChangeLog.cpp" />
     <ClCompile Include="SettingsParser.cpp" />
@@ -145,13 +148,15 @@
     <ClCompile Include="AppEngine.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Section.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllAppsListState.hpp" />
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="Navbar.hpp" />
+    <ClInclude Include="NavbarSection.hpp" />
+    <ClInclude Include="News.hpp" />
     <ClInclude Include="StoreApp.hpp" />
     <ClInclude Include="VisualChangeLog.hpp" />
     <ClInclude Include="SettingsParser.hpp" />
@@ -167,7 +172,6 @@
     <ClInclude Include="AppState.hpp" />
     <ClInclude Include="ProgressBar.hpp" />
     <ClInclude Include="ResourceManager.hpp" />
-    <ClInclude Include="Section.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="ThreadManager.hpp" />
   </ItemGroup>

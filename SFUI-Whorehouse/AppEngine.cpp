@@ -107,6 +107,7 @@ void AppEngine::UpdateViewSize(const sf::Vector2f & size)
 
 	sf::Vector2u newSize(size.x, size.y);
 
+	//TODO: define max size somewhere
 	if (newSize.x >= 525 && newSize.y >= 325)
 	{
 		sf::FloatRect visibleArea(0, 0, size.x, size.y);

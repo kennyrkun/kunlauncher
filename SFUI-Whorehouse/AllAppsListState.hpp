@@ -48,6 +48,7 @@ private:
 	std::vector<StoreApp*> apps;
 	std::vector<Link*> links;
 
+	//TODO: remove these
 	std::thread *helperThread;
 	bool helperRunning = false;
 	bool helperDone = false;

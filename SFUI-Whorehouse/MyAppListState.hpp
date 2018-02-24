@@ -46,12 +46,7 @@ private:
 	std::vector<std::thread> threads;
 	std::vector<App*> apps;
 
-	std::thread *helperThread;
-	bool helperRunning = false;
-	bool helperDone = false;
-	bool loadingApps = false;
-
-	void loadApps();
+	void loadApps(bool &finishedIndicator);
 
 	void updateScrollThumbSize();
 	// TODO: viewable arae class

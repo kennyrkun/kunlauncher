@@ -16,182 +16,6 @@
 #include <fstream>
 #include <experimental/filesystem>
 
-void wrap(sf::Text& target, const float width)
-{
-	std::cout << "wrapping string from " << width << std::endl;
-
-	std::string str = target.getString();
-
-	//	const float containerWidth = target.getCharacterSize();
-	const float containerWidth = width;
-	for (auto i = 0u; i < target.getString().getSize(); ++i)
-	{
-		if (target.findCharacterPos(i).x >= containerWidth)
-		{
-			//str.insert(str.rfind(' ', i), "\n");
-			str.insert(i - 1, "-");
-			str.insert(i, "\n");
-			target.setString(str);
-		}
-	}
-
-	std::cout << "string wrapped" << std::endl;
-}
-
-// NAVSECTION
-
-NavbarSection::NavbarSection(std::string str, int sectionNum) : str(str), sectionNum(sectionNum)
-{
-	std::cout << "creating navbar section \"" << str << "\" (" << sectionNum << ")" << std::endl;
-
-	font.loadFromFile(GBL::DIR::fonts + "Arial.ttf");
-
-	text.setFont(font);
-	text.setString(str);
-}
-
-NavbarSection::~NavbarSection()
-{
-	std::cout << "destroying navbar section " << str << "(" << sectionNum << ")" << std::endl;
-}
-
-void NavbarSection::update()
-{
-}
-
-// NAVBAR
-
-Navbar::Navbar(sf::RenderWindow* window) : window(window)
-{
-	std::cout << "creating navbar" << std::endl;
-
-	bar.setSize(sf::Vector2f(window->getSize().x, 40));
-	bar.setFillColor(GBL::COLOR::PRIMARY);
-
-	std::cout << "navbar ready" << std::endl;
-}
-
-Navbar::~Navbar()
-{
-	std::cout << "destroying navbar" << std::endl;
-
-	std::cout << "destroying destroyed" << std::endl;
-}
-
-void Navbar::addSection(std::string text)
-{
-	std::cout << "adding section \"" << text << "\"" << std::endl;
-
-	NavbarSection* newSection = new NavbarSection(text, sections.size());
-
-	if (sections.empty())
-		newSection->text.setPosition(sf::Vector2f(10, 0));
-	else
-		newSection->text.setPosition(sections.back()->text.getPosition().x + sections.back()->text.getLocalBounds().width + 34, 0);
-
-//	if (newSection->text.getPosition())
-//	{
-
-//	}
-
-	sections.push_back(newSection);
-}
-
-void Navbar::removeSection(int sectionNum)
-{
-	std::cout << "removing section " << sectionNum << std::endl;
-
-	if (sections[sectionNum] == nullptr)
-	{
-		std::cout << "section " << sectionNum << " does not exist" << std::endl;
-		return;
-	}
-
-	// I don't know if this actually works
-	delete sections[sectionNum];
-	sections.erase(std::remove(sections.begin(), sections.end(), sections[sectionNum]), sections.end());
-}
-
-void Navbar::HandleEvents(const sf::Event & event)
-{
-	if (event.type == sf::Event::EventType::Resized)
-	{
-		bar.setSize(sf::Vector2f(event.size.width, 40));
-	}
-}
-
-void Navbar::Update()
-{
-}
-
-void Navbar::Draw()
-{
-	window->draw(bar);
-
-	for (size_t i = 0; i < sections.size(); i++)
-		window->draw(sections[i]->text);
-}
-
-// NEWS
-
-News::News(std::string titlestr, std::string textstr, sf::RenderWindow* window) : titlestr(titlestr), textstr(textstr), window(window)
-{
-	font.loadFromFile(GBL::DIR::fonts + "Arial.ttf");
-
-	title.setFont(font);
-	title.setCharacterSize(26);
-	title.setString(titlestr);
-
-	text.setFont(font);
-	text.setCharacterSize(14);
-	text.setString(textstr);
-
-	divider.setSize(sf::Vector2f(window->getSize().x - 40, 2));
-
-	wrap(text, window->getSize().x - 40);
-}
-
-News::~News()
-{
-
-}
-
-void News::setPosition(const sf::Vector2f& pos)
-{
-	title.setPosition(pos);
-
-	divider.setPosition(sf::Vector2f(title.getPosition().x + 10, title.getPosition().y + title.getLocalBounds().height + 15));
-
-	text.setPosition(sf::Vector2f(title.getPosition().x, title.getPosition().y + title.getLocalBounds().height + 20));
-}
-
-sf::Vector2f News::getPosition()
-{
-	return title.getPosition();
-}
-
-float News::getLocalHeight()
-{
-	return (text.getPosition().y + text.getLocalBounds().height) - title.getPosition().y;
-}
-
-void News::HandleEvents(const sf::Event & event)
-{
-}
-
-void News::Update()
-{
-}
-
-void News::Draw()
-{
-	window->draw(title);
-	window->draw(divider);
-	window->draw(text);
-}
-
-// STATE
-
 HomeState HomeState::HomeState_dontfuckwithme;
 
 void HomeState::Init(AppEngine* app_)
@@ -233,6 +57,7 @@ void HomeState::Cleanup()
 		app->multithread->join();
 		app->multithreaded_process_finished = true;
 		app->multithreaded_process_running = false;
+		delete app->multithread;
 	}
 
 	sections.clear();
@@ -300,13 +125,8 @@ void HomeState::HandleEvents()
 
 				app->window->setSize(newSize);
 			}
-		}
-		else if (event.type == sf::Event::EventType::KeyPressed)
-		{
-			if (event.key.code == sf::Keyboard::Key::Escape)
-			{
-				app->PopState();
-			}
+
+			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonPressed)
 		{

@@ -38,6 +38,12 @@
     <Filter Include="Source Files\Launcher\States\AppLists\MyAppList">
       <UniqueIdentifier>{12a224ad-429e-4800-a713-ea9138b7adfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Launcher\States\Home\Navbar">
+      <UniqueIdentifier>{004c9d5e-4469-4c23-a2c8-06e5c25f56cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Launcher\States\Home\News">
+      <UniqueIdentifier>{da74b8a4-ca2c-45fc-9f26-69cc0814352c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -57,9 +63,6 @@
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Backend</Filter>
-    </ClCompile>
-    <ClCompile Include="Section.cpp">
-      <Filter>Source Files\Launcher\States\Home</Filter>
     </ClCompile>
     <ClCompile Include="ProgressBar.cpp">
       <Filter>Source Files\Backend\Graphics</Filter>
@@ -100,6 +103,15 @@
     <ClCompile Include="StoreApp.cpp">
       <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
     </ClCompile>
+    <ClCompile Include="News.cpp">
+      <Filter>Source Files\Launcher\States\Home\News</Filter>
+    </ClCompile>
+    <ClCompile Include="Navbar.cpp">
+      <Filter>Source Files\Launcher\States\Home\Navbar</Filter>
+    </ClCompile>
+    <ClCompile Include="NavbarSection.cpp">
+      <Filter>Source Files\Launcher\States\Home\Navbar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Download.hpp">
@@ -122,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="ResourceManager.hpp">
       <Filter>Source Files\Backend</Filter>
-    </ClInclude>
-    <ClInclude Include="Section.hpp">
-      <Filter>Source Files\Launcher\States\Home</Filter>
     </ClInclude>
     <ClInclude Include="ProgressBar.hpp">
       <Filter>Source Files\Backend\Graphics</Filter>
@@ -161,6 +170,15 @@
     </ClInclude>
     <ClInclude Include="StoreApp.hpp">
       <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
+    </ClInclude>
+    <ClInclude Include="News.hpp">
+      <Filter>Source Files\Launcher\States\Home\News</Filter>
+    </ClInclude>
+    <ClInclude Include="Navbar.hpp">
+      <Filter>Source Files\Launcher\States\Home\Navbar</Filter>
+    </ClInclude>
+    <ClInclude Include="NavbarSection.hpp">
+      <Filter>Source Files\Launcher\States\Home\Navbar</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

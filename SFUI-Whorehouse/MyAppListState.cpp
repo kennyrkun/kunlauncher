@@ -30,7 +30,10 @@ void MyAppListState::Init(AppEngine* app_)
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	scrollbar.create(app->window);
 
-	helperThread = new std::thread(&MyAppListState::loadApps, this);
+	app->multithreaded_process_finished = false;
+	app->multithreaded_process_running = true;
+	app->multithread = new std::thread(&MyAppListState::loadApps, this, std::ref(app->multithreaded_process_finished));
+
 	std::cout << "thread launched" << std::endl;
 }
 
@@ -41,10 +44,13 @@ void MyAppListState::Cleanup()
 	delete cardScroller;
 	delete mainView;
 
-	if (helperRunning)
+	if (app->multithreaded_process_running)
 	{
 		std::cout << "waiting on helper thread to finish" << std::endl;
-		helperThread->join();
+		app->multithread->join();
+		app->multithreaded_process_finished = true;
+		app->multithreaded_process_running = false;
+		delete app->multithread;
 	}
 
 	apps.clear();
@@ -75,7 +81,7 @@ void MyAppListState::HandleEvents()
 		{
 			app->Quit();
 		}
-		else if (event.type == sf::Event::EventType::Resized && !loadingApps)
+		else if (event.type == sf::Event::EventType::Resized)
 		{
 			std::cout << "new width: " << event.size.width << std::endl;
 			std::cout << "new height: " << event.size.height << std::endl;
@@ -105,7 +111,7 @@ void MyAppListState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 		}
-		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled && !loadingApps)
+		else if (event.type == sf::Event::EventType::MouseWheelMoved && scrollbar.isEnabled)
 		{
 			if (event.mouseWheel.delta < 0) // down, or move apps up
 			{
@@ -152,7 +158,7 @@ void MyAppListState::HandleEvents()
 						scrollbar.scrollThumb.setFillColor(GBL::COLOR::SCROLLBAR::SCROLLTHUMB);
 			*/
 		}
-		else if (event.type == sf::Event::EventType::MouseButtonPressed && !loadingApps)
+		else if (event.type == sf::Event::EventType::MouseButtonPressed && !app->multithreaded_process_running)
 		{
 			/*
 			if (mouseIsOver(scrollbar.scrollThumb, mainView))
@@ -165,7 +171,7 @@ void MyAppListState::HandleEvents()
 			}
 			*/
 		} 
-		else if (event.type == sf::Event::EventType::MouseButtonReleased && !loadingApps)
+		else if (event.type == sf::Event::EventType::MouseButtonReleased && !app->multithreaded_process_running)
 		{
 			if (event.mouseButton.button == sf::Mouse::Button::Left && !scrollbar.thumbDragging)
 			{
@@ -253,7 +259,7 @@ void MyAppListState::HandleEvents()
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
-			if (event.key.code == sf::Keyboard::Key::R && !loadingApps)
+			if (event.key.code == sf::Keyboard::Key::R && !app->multithreaded_process_running)
 			{
 				std::cout << "refreshing applist" << std::endl;
 
@@ -300,15 +306,15 @@ void MyAppListState::HandleEvents()
 					}
 				}
 
-				helperThread = new std::thread(&MyAppListState::loadApps, this);
-				helperDone = false;
-				helperRunning = true;
+				app->multithreaded_process_finished = false;
+				app->multithreaded_process_running = true;
+				app->multithread= new std::thread(&MyAppListState::loadApps, this, std::ref(app->multithreaded_process_finished));
 
 				cardScroller->setCenter(cardScroller->getSize().x / 2, cardScroller->getSize().y / 2);
 			}
 			else if (event.key.code == sf::Keyboard::Key::Escape)
 			{
-				if (!helperRunning)
+				if (!app->multithreaded_process_running)
 				{
 					app->ChangeState(HomeState::Instance());
 				}
@@ -343,25 +349,15 @@ void MyAppListState::HandleEvents()
 
 void MyAppListState::Update()
 {
-	if (helperDone && !helperRunning)
+	if (app->multithreaded_process_finished)
 	{
-		std::cout << "helper done, joining" << std::endl;
-		helperThread->join();
+		std::cout << "helper thread finished work, joining" << std::endl;
+		app->multithread->join();
+		app->multithreaded_process_finished = false;
+		app->multithreaded_process_running = false;
 
-		helperDone = false;
-		helperRunning = false;
+		delete app->multithread;
 	}
-
-	/*
-	for (size_t i = 0; i < threads.size(); i++)
-	{
-		if (threads[i].joinable())
-		{
-			std::cout << "joining" << std::endl;
-			threads.erase(threads.begin() + i);
-		}
-	}
-	*/
 }
 
 void MyAppListState::Draw()
@@ -379,6 +375,9 @@ void MyAppListState::Draw()
 	if (scrollbar.isEnabled)
 		app->window->draw(scrollbar);
 
+	if (app->multithreaded_process_running)
+		app->ShowMultiThreadedIndicator();
+
 	app->window->display();
 }
 
@@ -388,11 +387,9 @@ App* createApp(std::string itemName_, sf::RenderWindow* target_window, float xSi
 	return app;
 }
 
-void MyAppListState::loadApps()
+void MyAppListState::loadApps(bool &finishedIndicator)
 {
-	helperDone = false;
-	helperRunning = true;
-	loadingApps = true;
+	finishedIndicator = false;
 
 	std::cout << "loading MyApps" << std::endl;
 
@@ -441,9 +438,7 @@ void MyAppListState::loadApps()
 
 	app->window->requestFocus();
 
-	helperDone = true;
-	helperRunning = false;
-	loadingApps = false;
+	finishedIndicator = true;
 }
 
 void MyAppListState::updateScrollThumbSize()

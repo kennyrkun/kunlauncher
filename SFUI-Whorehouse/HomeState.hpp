@@ -8,72 +8,8 @@
 #include <SFUI/Scrollbar.hpp>
 #include <vector>
 
-//class Section;
-
-class NavbarSection
-{
-public:
-	NavbarSection(std::string str, int sectionNUm);
-	~NavbarSection();
-
-	void update();
-
-	int sectionNum;
-	sf::Text text;
-
-private:
-	std::string str;
-	sf::Font font;
-};
-
-class Navbar
-{
-public:
-	Navbar(sf::RenderWindow* window);
-	~Navbar();
-
-	sf::RectangleShape bar;
-
-	std::vector<NavbarSection*> sections;
-
-	void addSection(std::string text);
-	void removeSection(int sectionNum);
-
-	void HandleEvents(const sf::Event& event);
-	void Update();
-	void Draw();
-
-private:
-	sf::RenderWindow* window;
-	sf::Font font;
-};
-
-class News
-{
-public:
-	News(std::string title, std::string text, sf::RenderWindow* window);
-	~News();
-
-	sf::Text title;
-	sf::Text text;
-	sf::RectangleShape divider;
-
-	void setPosition(const sf::Vector2f& pos);
-	sf::Vector2f getPosition();
-	float getLocalHeight();
-
-	void HandleEvents(const sf::Event& event);
-	void Update();
-	void Draw();
-
-private:
-	std::string titlestr;
-	std::string textstr;
-
-	sf::Font font;
-
-	sf::RenderWindow* window;
-};
+#include "News.hpp"
+#include "Navbar.hpp"
 
 class HomeState : public AppState
 {
@@ -115,7 +51,7 @@ private:
 	SFUI::Scrollbar scrollbar;
 
 	void updateScrollThumbSize();
-	// TODO: viewable arae class
+	// TODO: viewable area class
 	float scrollerTopPosition;
 	float scrollerBottomPosition;
 	float scrollerMinPosition;
