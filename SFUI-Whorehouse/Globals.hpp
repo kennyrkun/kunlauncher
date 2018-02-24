@@ -10,6 +10,7 @@ class ResourceManager;
 
 namespace GBL
 {
+	const std::string appName = "KunLauncher";
 	const int VERSION = 16;
 
 	namespace DIR

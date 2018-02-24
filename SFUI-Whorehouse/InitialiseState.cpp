@@ -40,7 +40,7 @@ void InitialiseState::Init(AppEngine* app_)
 		}
 	}
 
-	app->window->create(sf::VideoMode(400, 150), app->title, sf::Style::None);
+	app->window->create(sf::VideoMode(400, 150), GBL::appName, sf::Style::None);
 	app->window->setVerticalSyncEnabled(app->settings.verticalSync);
 	app->window->setTitle("KunLauncher " + std::to_string(GBL::VERSION) + " initalising");
 
@@ -77,12 +77,7 @@ void InitialiseState::Cleanup()
 	std::cout << "helperDone: " << helperDone << std::endl;
 	std::cout << "helperRunning: " << helperRunning << std::endl;
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
-	{
-		std::cout << "developer mode activated" << std::endl;
-		app->developerModeActive = true;
-	}
-
+	// sneaka beakily create a new window without updating the taskbar
 	sf::RenderWindow* newWindow = new sf::RenderWindow(sf::VideoMode(app->settings.width, app->settings.height), "KunLauncher " + std::to_string(GBL::VERSION), sf::Style::Resize | sf::Style::Close);
 	newWindow->setVerticalSyncEnabled(true);
 	newWindow->setKeyRepeatEnabled(false);
@@ -90,6 +85,8 @@ void InitialiseState::Cleanup()
 	app->window->close();
 	delete app->window;
 	app->window = newWindow;
+
+	newWindow->requestFocus();
 
 	std::cout << "Initalisation took " << initTime.getElapsedTime().asSeconds() << "s" << std::endl;
 	std::cout << "IntialiseState Cleanedup" << std::endl;
@@ -119,7 +116,6 @@ void InitialiseState::HandleEvents()
 		{
 			if (event.key.code == sf::Keyboard::Key::LShift)
 			{
-				app->developerModeActive = true;
 				progressBar->setColor(sf::Color::Red, sf::Color::Green, sf::Color::Magenta, sf::Color::Blue);
 
 				std::cout << "developer mode toggled" << std::endl;

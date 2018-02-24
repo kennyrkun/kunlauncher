@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
+#include <thread>
 
 class AppState;
 
@@ -40,16 +41,15 @@ public:
 	void Quit() { running = false; }
 
 	void UpdateViewSize(const sf::Vector2f& size);
+
+	bool multithreaded_process_running;
+	bool multithreaded_process_finished;
 	void ShowMultiThreadedIndicator();
 	void SetMultiThreadedIndicatorPosition(const sf::Vector2f& pos);
-
-	std::string title;
-	bool developerModeActive = false;
+	std::thread *multithread;
 
 	sf::RenderWindow* window;
 	AppSettings settings;
-
-	bool multithreaded_process_running;
 
 private:
 	// the stack of states

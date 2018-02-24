@@ -216,9 +216,9 @@ void HomeState::Init(AppEngine* app_)
 
 	app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 
-	helperRunning = true;
-	helperThread = new std::thread(&HomeState::loadNews, this);
 	app->multithreaded_process_running = true;
+	app->multithreaded_process_finished = false;
+	app->multithread = new std::thread(&HomeState::loadNews, this, std::ref(app->multithreaded_process_finished));
 
 	std::cout << "HomeState ready" << std::endl;
 }
@@ -227,10 +227,12 @@ void HomeState::Cleanup()
 {
 	std::cout << "Cleaning up HomeState" << std::endl;
 
-	if (helperRunning)
+	if (app->multithreaded_process_running)
 	{
 		std::cout << "waiting on helper thread to finish" << std::endl;
-		helperThread->join();
+		app->multithread->join();
+		app->multithreaded_process_finished = true;
+		app->multithreaded_process_running = false;
 	}
 
 	sections.clear();
@@ -310,12 +312,15 @@ void HomeState::HandleEvents()
 		{
 			if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
-				if (mouseIsOver(navbar->sections[1]->text))
-					app->PushState(MyAppListState::Instance());
-				else if (mouseIsOver(navbar->sections[2]->text))
-					app->PushState(AllAppsListState::Instance());
-				else if (mouseIsOver(navbar->sections[3]->text))
-					app->PushState(SettingsState::Instance());
+				if (!app->multithreaded_process_running)
+				{
+					if (mouseIsOver(navbar->sections[1]->text))
+						app->PushState(MyAppListState::Instance());
+					else if (mouseIsOver(navbar->sections[2]->text))
+						app->PushState(AllAppsListState::Instance());
+					else if (mouseIsOver(navbar->sections[3]->text))
+						app->PushState(SettingsState::Instance());
+				}
 			}
 		}
 		else if (event.type == sf::Event::EventType::MouseWheelMoved)
@@ -362,14 +367,14 @@ void HomeState::HandleEvents()
 
 void HomeState::Update()
 {
-	if (helperDone)
+	if (app->multithreaded_process_finished)
 	{
 		std::cout << "helper thread finished work, joining" << std::endl;
-		helperThread->join();
-		helperRunning = false;
-		helperDone = false;
-
+		app->multithread->join();
+		app->multithreaded_process_finished = false;
 		app->multithreaded_process_running = false;
+
+		delete app->multithread;
 	}
 
 	navbar->Update();
@@ -390,15 +395,15 @@ void HomeState::Draw()
 	app->window->draw(scrollbar);
 	navbar->Draw();
 
-	if (helperRunning)
+	if (app->multithreaded_process_running)
 		app->ShowMultiThreadedIndicator();
 
 	app->window->display();
 }
 
-void HomeState::loadNews()
+void HomeState::loadNews(bool &finishedIdicator)
 {
-	helperDone = false;
+	finishedIdicator = false;
 
 	std::cout << "loading AllApps" << std::endl;
 
@@ -477,9 +482,7 @@ void HomeState::loadNews()
 
 	readIndex.close();
 
-	app->window->requestFocus();
-
-	helperDone = true;
+	finishedIdicator = true;
 }
 
 void HomeState::updateScrollThumbSize()

@@ -6,7 +6,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFUI/IconButton.hpp>
 #include <SFUI/Scrollbar.hpp>
-#include <thread>
 #include <vector>
 
 //class Section;
@@ -109,11 +108,7 @@ private:
 
 	Navbar* navbar;
 
-	void loadNews();
-
-	std::thread *helperThread;
-	bool helperRunning = false;
-	bool helperDone = false;
+	void loadNews(bool &finishedIndicator);
 
 	sf::View* viewScroller;
 	sf::View* mainView;

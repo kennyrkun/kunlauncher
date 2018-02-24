@@ -9,7 +9,6 @@
 void AppEngine::Init(std::string title_, AppSettings settings_)
 {
 	settings = settings_;
-	title = title_;
 
 	window = new sf::RenderWindow;
 	window->setVerticalSyncEnabled(settings.verticalSync);
