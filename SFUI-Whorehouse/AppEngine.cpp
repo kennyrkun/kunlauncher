@@ -1,6 +1,7 @@
 #include "AppEngine.hpp"
 #include "AppState.hpp"
 
+#include "Globals.hpp"
 #include "Download.hpp"
 
 #include <iostream>
@@ -14,6 +15,11 @@ void AppEngine::Init(std::string title_, AppSettings settings_)
 	window->setVerticalSyncEnabled(settings.verticalSync);
 	window->setKeyRepeatEnabled(false);
 	running = true;
+
+	multithreaded_process_indicator_tex.loadFromFile(GBL::DIR::textures + "settings_2x.png");
+	multithreaded_process_indicator.setRadius(20);
+	multithreaded_process_indicator.setOrigin(sf::Vector2f(20, 20));
+	multithreaded_process_indicator.setTexture(&multithreaded_process_indicator_tex);
 
 	std::cout << "AppEngine Init" << std::endl;
 }
@@ -117,4 +123,17 @@ void AppEngine::UpdateViewSize(const sf::Vector2f & size)
 
 		window->setSize(newSize);
 	}
+
+	SetMultiThreadedIndicatorPosition(sf::Vector2f(20, window->getSize().y - 20));
+}
+
+void AppEngine::ShowMultiThreadedIndicator()
+{
+	multithreaded_process_indicator.rotate(1);
+	window->draw(multithreaded_process_indicator);
+}
+
+void AppEngine::SetMultiThreadedIndicatorPosition(const sf::Vector2f & pos)
+{
+	multithreaded_process_indicator.setPosition(pos);
 }

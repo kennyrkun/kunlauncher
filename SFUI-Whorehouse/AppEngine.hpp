@@ -40,6 +40,8 @@ public:
 	void Quit() { running = false; }
 
 	void UpdateViewSize(const sf::Vector2f& size);
+	void ShowMultiThreadedIndicator();
+	void SetMultiThreadedIndicatorPosition(const sf::Vector2f& pos);
 
 	std::string title;
 	bool developerModeActive = false;
@@ -47,11 +49,16 @@ public:
 	sf::RenderWindow* window;
 	AppSettings settings;
 
+	bool multithreaded_process_running;
+
 private:
 	// the stack of states
 	std::vector<AppState*> states;
 
 	bool running;
+
+	sf::CircleShape multithreaded_process_indicator;
+	sf::Texture multithreaded_process_indicator_tex;
 };
 
 #endif // !PROGRAM_ENGINE_HPP

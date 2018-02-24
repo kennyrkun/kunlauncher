@@ -211,8 +211,14 @@ void HomeState::Init(AppEngine* app_)
 	viewScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	scrollbar.create(app->window);
+	scrollbar.setBarHeight(app->window->getSize().y - 40);
+	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, 40));
 
-	loadNews();
+	app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
+
+	helperRunning = true;
+	helperThread = new std::thread(&HomeState::loadNews, this);
+	app->multithreaded_process_running = true;
 
 	std::cout << "HomeState ready" << std::endl;
 }
@@ -277,6 +283,7 @@ void HomeState::HandleEvents()
 				viewScroller->setCenter(sf::Vector2f(viewScroller->getSize().x / 2, viewScroller->getSize().y / 2));
 
 				navbar->bar.setSize(sf::Vector2f(event.size.width, 40));
+				scrollbar.setBarHeight(app->window->getSize().y - 40);
 
 				// set the scrollbar size
 				updateScrollThumbSize();
@@ -318,7 +325,7 @@ void HomeState::HandleEvents()
 				scrollbar.moveThumbDown();
 
 				if (scrollerBottomPosition < scrollerMaxPosition)
-					viewScroller->move(0, scrollbar.scrollJump);
+					viewScroller->move(0, scrollbar.scrollJump + 14);
 				else
 					std::cout << "cannot scroll view down (" << scrollerBottomPosition << " < " << scrollerMaxPosition << ")" << std::endl;
 
@@ -336,7 +343,7 @@ void HomeState::HandleEvents()
 				scrollbar.moveThumbUp();
 
 				if (scrollerTopPosition > scrollerMinPosition)
-					viewScroller->move(0, -scrollbar.scrollJump);
+					viewScroller->move(0, -scrollbar.scrollJump - 14);
 				else
 					std::cout << "cannot scroll view up (" << scrollerTopPosition << " > " << scrollerMaxPosition << ")" << std::endl;
 
@@ -355,6 +362,16 @@ void HomeState::HandleEvents()
 
 void HomeState::Update()
 {
+	if (helperDone)
+	{
+		std::cout << "helper thread finished work, joining" << std::endl;
+		helperThread->join();
+		helperRunning = false;
+		helperDone = false;
+
+		app->multithreaded_process_running = false;
+	}
+
 	navbar->Update();
 
 	for (size_t i = 0; i < newses.size(); i++)
@@ -373,14 +390,15 @@ void HomeState::Draw()
 	app->window->draw(scrollbar);
 	navbar->Draw();
 
+	if (helperRunning)
+		app->ShowMultiThreadedIndicator();
+
 	app->window->display();
 }
 
 void HomeState::loadNews()
 {
 	helperDone = false;
-	helperRunning = true;
-//	loadingApps = true;
 
 	std::cout << "loading AllApps" << std::endl;
 
@@ -462,13 +480,11 @@ void HomeState::loadNews()
 	app->window->requestFocus();
 
 	helperDone = true;
-	helperRunning = false;
-//	loadingApps = false;
 }
 
 void HomeState::updateScrollThumbSize()
 {
-	float contentHeight(0);
+	float contentHeight(25);
 	for (size_t i = 0; i < newses.size(); i++)
 		contentHeight += newses[i]->getLocalHeight() + 25;
 
