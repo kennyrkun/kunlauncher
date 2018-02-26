@@ -28,13 +28,14 @@ void MyAppListState::Init(AppEngine* app_)
 
 	cardScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
+
 	scrollbar.create(app->window);
+//	scrollbar.setBarHeight(app->window->getSize().y - 40);
+	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, 0));
 
 	app->multithreaded_process_finished = false;
 	app->multithreaded_process_running = true;
 	app->multithread = new std::thread(&MyAppListState::loadApps, this, std::ref(app->multithreaded_process_finished));
-
-	std::cout << "thread launched" << std::endl;
 }
 
 void MyAppListState::Cleanup()
@@ -355,7 +356,6 @@ void MyAppListState::Update()
 		app->multithread->join();
 		app->multithreaded_process_finished = false;
 		app->multithreaded_process_running = false;
-
 		delete app->multithread;
 	}
 }

@@ -44,7 +44,7 @@ private:
 
 	Navbar* navbar;
 
-	void loadNews(bool &finishedIndicator);
+	void loadNews(bool &finishedIndicator, int start, int maxLoad);
 
 	sf::View* viewScroller;
 	sf::View* mainView;

@@ -1,5 +1,6 @@
 #include "AppEngine.hpp"
 #include "InitialiseState.hpp"
+#include "AllAppsListState.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <iostream>

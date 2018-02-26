@@ -34,6 +34,7 @@ void HomeState::Init(AppEngine* app_)
 
 	viewScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
+
 	scrollbar.create(app->window);
 	scrollbar.setBarHeight(app->window->getSize().y - 40);
 	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, 40));
@@ -42,7 +43,7 @@ void HomeState::Init(AppEngine* app_)
 
 	app->multithreaded_process_running = true;
 	app->multithreaded_process_finished = false;
-	app->multithread = new std::thread(&HomeState::loadNews, this, std::ref(app->multithreaded_process_finished));
+	app->multithread = new std::thread(&HomeState::loadNews, this, std::ref(app->multithreaded_process_finished), 0, 10);
 
 	std::cout << "HomeState ready" << std::endl;
 }
@@ -126,6 +127,7 @@ void HomeState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 
+			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, 40));
 			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonPressed)
@@ -221,7 +223,7 @@ void HomeState::Draw()
 	app->window->display();
 }
 
-void HomeState::loadNews(bool &finishedIdicator)
+void HomeState::loadNews(bool &finishedIdicator, int start, int maxLoad)
 {
 	finishedIdicator = false;
 
@@ -296,6 +298,9 @@ void HomeState::loadNews(bool &finishedIdicator)
 
 		updateScrollThumbSize();
 		loopi += 1;
+
+		if (loopi == maxLoad)
+			break; // only load this many (default 10);
 	}
 
 	std::cout << newses.size() << std::endl;

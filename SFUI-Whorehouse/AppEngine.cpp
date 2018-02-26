@@ -78,9 +78,7 @@ void AppEngine::PopState()
 
 	// resume previous state
 	if (!states.empty())
-	{
 		states.back()->Resume();
-	}
 }
 
 void AppEngine::HandleEvents()

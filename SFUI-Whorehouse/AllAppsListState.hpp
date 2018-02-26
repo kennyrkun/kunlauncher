@@ -49,12 +49,8 @@ private:
 	std::vector<Link*> links;
 
 	//TODO: remove these
-	std::thread *helperThread;
-	bool helperRunning = false;
-	bool helperDone = false;
-	bool loadingApps = false;
 
-	void loadApps();
+	void loadApps(bool &finisehdIndicator);
 
 	void updateScrollThumbSize();
 	// TODO: viewable arae class
