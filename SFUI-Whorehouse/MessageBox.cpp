@@ -27,7 +27,7 @@ MessageBox::MessageBox(Options settings_)
 		}
 		else
 		{
-			std::cerr << "unable to load font" << std::endl;
+			std::cerr << "unable to load font (mbox)" << std::endl;
 			abort();
 		}
 

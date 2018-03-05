@@ -34,9 +34,9 @@ void InitialiseState::Init(AppEngine* app_)
 
 		if (!font.loadFromFile("C://Windows//Fonts//Arial.ttf"))
 		{
-			std::cout << "failed to load a font!" << std::endl;
+			std::cout << "failed to load a font! (init)" << std::endl;
 
-			abort();
+			abort(); // TODO: handle this more gracefully
 		}
 	}
 

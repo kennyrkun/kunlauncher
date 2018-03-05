@@ -40,6 +40,8 @@ void AppEngine::Cleanup()
 	Download clearCache;
 	clearCache.clearCache();
 
+	std::cin.get();
+
 	std::cout << "AppEngine cleaned up." << std::endl;
 }
 

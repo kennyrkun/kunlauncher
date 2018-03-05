@@ -75,7 +75,7 @@ App::App(std::string itemName_, sf::RenderWindow* target_window, float xSize, fl
 
 		downloaded = false;
 	}
-
+	
 	cardShape.setSize(sf::Vector2f(xSize, 75));
 	cardShape.setOrigin(sf::Vector2f(cardShape.getLocalBounds().width / 2, cardShape.getLocalBounds().height / 2));
 	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
@@ -88,7 +88,7 @@ App::App(std::string itemName_, sf::RenderWindow* target_window, float xSize, fl
 	icon.setPosition(sf::Vector2f(cardShape.getPosition().x - (cardShape.getSize().x / 2) + icon.getLocalBounds().width / 2, cardShape.getPosition().y));
 	icon.setTexture(&iconTexture);
 	iconTexture.setSmooth(true);
-	
+
 	font.loadFromFile(GBL::DIR::fonts + "Arial.ttf");
 
 	name.setFont(font);
@@ -434,7 +434,7 @@ void App::parseInfo(std::string dir) // a lot easier than I thought it would be.
 		std::cout << "info file is empty or missing" << std::endl;
 
 		iconTexture.loadFromFile(GBL::DIR::textures + "error_2x.png");
-		updateIsAvailable = true; // because there's no way to represent an error yet, we just mark it for needing to be redownloaded
+		updateIsAvailable = true; // because there's no way to represent an error yet, we just mark it as needing to be redownloaded
 
 		name.setString("missing info for \"" + info.name + "\"");
 		description.setString("missing info.dat; try redownloading");
@@ -448,7 +448,7 @@ int App::downloadIcon()
 	std::cout << "\n" << "downloading icon" << std::endl;
 
 	Download getIcon;
-	getIcon.setInput(".//" + GBL::WEB::APPS + info.name + "//icon.png");
+	getIcon.setInput(GBL::WEB::APPS + info.name + "/icon.png");
 	getIcon.setOutputDir(GBL::DIR::apps + info.name + "//");
 	getIcon.setOutputFilename("icon.png");
 	getIcon.download();
@@ -464,7 +464,7 @@ int App::downloadInfo()
 	std::cout << "\n" << "downloading info" << std::endl;
 
 	Download getInfo;
-	getInfo.setInput(".//" + GBL::WEB::APPS + info.name + "//info.dat");
+	getInfo.setInput(GBL::WEB::APPS + info.name + "/info.dat");
 	getInfo.setOutputDir(GBL::DIR::apps + info.name + "//");
 	getInfo.setOutputFilename("info.dat");
 	getInfo.download();
@@ -480,7 +480,7 @@ int App::downloadFiles()
 	std::cout << "\n" << "downloading files" << std::endl;
 
 	Download getFiles;
-	getFiles.setInput(".//" + GBL::WEB::APPS + info.name + "//release.zip");
+	getFiles.setInput(GBL::WEB::APPS + info.name + "/release.zip");
 	getFiles.setOutputDir(GBL::DIR::apps + info.name + "//");
 	getFiles.setOutputFilename("release.zip");
 	getFiles.download();
@@ -489,62 +489,4 @@ int App::downloadFiles()
 	downloaded = true;
 
 	return 1;
-}
-
-int App::downloadFile(std::string fileName, std::string inPath, std::string outPath)
-{
-	std::cout << "deleting \"" + fileName + "\"" << std::endl;
-
-	std::cout << "\n" << "downloading \"" + fileName + "\"" << std::endl;
-
-	Download getInfo;
-	getInfo.setInput(inPath);
-	getInfo.setOutputDir(outPath);
-	getInfo.setOutputFilename(fileName);
-	getInfo.download();
-	getInfo.save();
-
-	if (fs::exists(outPath + "//" + fileName))
-	{
-		std::cout << "success" << std::endl;
-
-		return 1;
-	}
-	else
-	{
-		std::cerr << "failed to download file" << std::endl;
-
-		return 0;
-	}
-}
-
-int App::deleteFile(std::string fileName, std::string filePath)
-{
-	std::cout << "deleting \"" + fileName + "\"" << std::endl;
-
-	try
-	{
-		fs::remove(filePath + "//" + fileName);
-		std::cout << "verifying" << std::endl;
-
-		if (fs::exists(filePath + "//" = fileName))
-		{
-			std::cerr << "failed to remove file" << std::endl;
-
-			return 0;
-		}
-		else
-		{
-			std::cout << "success" << std::endl;
-
-			return 1;
-		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << "failed to remove file: " << std::endl;
-		std::cerr << e.what() << std::endl;
-
-		return 0;
-	}
 }

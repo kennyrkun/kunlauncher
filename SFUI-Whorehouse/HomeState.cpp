@@ -313,8 +313,21 @@ void HomeState::loadNews(bool &finishedIdicator, int start, int maxLoad)
 void HomeState::updateScrollThumbSize()
 {
 	float contentHeight(25);
-	for (size_t i = 0; i < newses.size(); i++)
-		contentHeight += newses[i]->getLocalHeight() + 25;
+
+	if (!newses.empty())
+	{
+		if (newses.size() >= 2)
+		{
+			contentHeight += newses.back()->getPosition().y - newses.front()->getPosition().y;
+		}
+		else
+		{
+			contentHeight += newses.back()->getLocalHeight();
+		}
+	}
+
+//	for (size_t i = 0; i < newses.size(); i++)
+//		contentHeight += newses[i]->getLocalHeight() + 25;
 
 	scrollbar.update(contentHeight, viewScroller->getSize().y);
 
