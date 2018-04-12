@@ -261,7 +261,6 @@ __pycache__/
 *.pyc
 
 # Custom
-/SFUI-Whorehouse/old launcher class.txt
 /upload
 /notes.txt
 /SFUI-Whorehouse/bin
@@ -270,3 +269,4 @@ __pycache__/
 /SFUI-Whorehouse/kunlaucher.exe.old
 SFUI
 SFML
+a-server
