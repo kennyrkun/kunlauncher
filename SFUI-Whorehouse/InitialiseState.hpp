@@ -4,7 +4,6 @@
 #include "AppState.hpp"
 
 #include <SFML/Graphics.hpp>
-#include <SFUI/Scrollbar.hpp>
 #include <thread>
 
 class LauncherUpdater;
@@ -23,16 +22,7 @@ public:
 	void Update();
 	void Draw();
 
-	static InitialiseState* Instance()
-	{
-		return &IntialiseState_dontfuckwithme;
-	}
-
-protected:
-	InitialiseState() { }
-
 private:
-	static InitialiseState IntialiseState_dontfuckwithme;
 	AppEngine* app;
 	// FIXME: shouldn't need to be a pointer
 
@@ -44,7 +34,7 @@ private:
 	bool isReady = false;
 	bool restartNow = false;
 
-	void initialisise();
+	void initialise();
 
 	int validateFileStructure();
 	int validateResourceFiles();

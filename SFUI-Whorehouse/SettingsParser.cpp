@@ -20,30 +20,26 @@
 
 #include "SettingsParser.hpp"
 
-#include <locale>
+#include <locale> // std::isspace
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <vector>
-
 
 SettingsParser::SettingsParser() : m_isChanged(false)
 {
 
 }
 
-
 SettingsParser::SettingsParser(const std::string& filename) : m_isChanged(false)
 {
 	loadFromFile(filename);
 }
 
-
 SettingsParser::~SettingsParser()
 {
-	saveToFile();
+	// do nothing
 }
-
 
 bool SettingsParser::loadFromFile(const std::string& filename)
 {
@@ -51,18 +47,6 @@ bool SettingsParser::loadFromFile(const std::string& filename)
 	m_filename = filename;
 	return read();
 }
-
-
-bool SettingsParser::saveToFile()
-{
-	if (m_isChanged)
-	{
-		m_isChanged = false;
-		return write();
-	}
-	return true;
-}
-
 
 bool SettingsParser::read()
 {
@@ -91,7 +75,6 @@ bool SettingsParser::read()
 	return true;
 }
 
-
 bool SettingsParser::write() const
 {
 	std::vector<std::pair<std::string, std::string>> fileContents;
@@ -101,7 +84,9 @@ bool SettingsParser::write() const
 	// read the file into a vector and replace the values of the keys that match with our map
 	if (in.is_open())
 	{
-		std::string line;
+		// TODO: make this write new keys
+
+/*		std::string line;
 		while (std::getline(in, line))
 		{
 			// parse line
@@ -115,25 +100,24 @@ bool SettingsParser::write() const
 				{
 					// if so take it's value, otherwise the value from the file is kept
 					keyValuePair.second = it->second;
+					m_data.erase();
 				}
 			}
-			else
+			else // TODO: this should probably just be skipped
 			{
 				// if the line is empty or a comment simply take the whole line as the key
 				keyValuePair.first = line;
 			}
+
 			fileContents.push_back(keyValuePair);
 		}
+		*/
 	}
-	else
-	{
-		// Can't open file for reading. Use only the data from the map
-		for (auto it = m_data.begin(); it != m_data.end(); ++it)
-			fileContents.push_back(std::make_pair(it->first, it->second));
-	}
+
+	for (auto it = m_data.begin(); it != m_data.end(); ++it)
+		fileContents.push_back(std::make_pair(it->first, it->second));
 
 	in.close();
-
 
 	// open the file for writing
 	std::ofstream out(m_filename);
@@ -142,26 +126,33 @@ bool SettingsParser::write() const
 		std::cerr << "unable to open settings file \"" << m_filename << "\" for writing!" << std::endl;
 		return false;
 	}
-	for (auto it = fileContents.begin(); it != fileContents.end(); ++it)
+	else
 	{
-		out << it->first; // write the key
+		for (auto it = fileContents.begin(); it != fileContents.end(); ++it)
+		{
+			out << it->first; // write the key
 
-		if (!it->second.empty())
-			// if this line is not empty or a comment also write the assignment and the value
-			out << " = " << it->second;
+			if (!it->second.empty())
+			{
+				// if this line is not empty or a comment also write the assignment and the value
+				out << " = " << it->second;
+			}
+			else
+			{
+				std::cout << "second: " << it->second << std::endl;
+			}
 
-		out << std::endl;
+			out << std::endl;
+		}
+		out.close();
+
+		return true;
 	}
-	out.close();
-	return true;
 }
 
-
-/**
-* This method parses a line from our format ("key = value") into a std::pair<std::string, std::string>
-* containing the key and the value.
-* If the line is empty or a comment (starts with a '#') an empty pair is returned.
-*/
+// This method parses a line from our format ("key = value") into a std::pair<std::string, std::string>
+// containing the key and the value.
+// If the line is empty or a comment (starts with a '//') an empty pair is returned.
 std::pair<std::string, std::string> SettingsParser::parseLine(const std::string &line) const
 {
 	if (line.size() > 0 && (line[0] != '/' && line[1] != '/'))
@@ -170,6 +161,7 @@ std::pair<std::string, std::string> SettingsParser::parseLine(const std::string 
 		// trim leading whitespace
 		while (std::isspace(line[index], m_locale))
 			index++;
+
 		// get the key string
 		const size_t beginKeyString = index;
 		while (!std::isspace(line[index], m_locale) && line[index] != '=')
@@ -191,17 +183,10 @@ std::pair<std::string, std::string> SettingsParser::parseLine(const std::string 
 	return std::make_pair(std::string(), std::string());
 }
 
-
 void SettingsParser::print() const
 {
+	std::cout << std::endl << "Size: " << m_data.size() << std::endl;
+
 	for (auto& element : m_data)
 		std::cout << element.first << " = " << element.second << std::endl;
-
-	std::cout << std::endl << "Size: " << m_data.size() << std::endl;
-}
-
-
-bool SettingsParser::isChanged() const
-{
-	return m_isChanged;
 }

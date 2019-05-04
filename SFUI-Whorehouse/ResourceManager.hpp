@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 
+// TODO: template resource class
+
 class ResourceManager
 {
 public:
@@ -12,10 +14,10 @@ public:
 	~ResourceManager();
 
 	void loadTexture(std::string resourceName, std::string fileLocation);
-	void freeTexture(std::string filename);
+	void freeTexture(std::string resourceName);
 	void freeAllTextures();
-	bool isTextureLoaded(std::string filename);
-	sf::Texture* getTexture(std::string filename);
+	bool isTextureLoaded(std::string resourceName);
+	sf::Texture* getTexture(std::string resourceName);
 
 	void freeAll();
 

@@ -1,80 +1,64 @@
-#ifndef ITEM_HPP
-#define ITEM_HPP
+#ifndef STORE_APP_HPP
+#define STORE_APP_HPP
+
+#include "App.hpp"
+#include "AppWindow.hpp"
 
 #include <SFML/Graphics.hpp>
-#include <SFUI/TextButton.hpp>
 
-struct ItemInfo
-{
-	std::string name;
-	std::string description;
-	std::string version;
-	std::string author;
-	std::string github;
-	int release;
-};
-
-class StoreApp
+class StoreApp : public App
 {
 public:
-	//StoreApp(std::string itemName_, sf::RenderWindow* target_window, float xPos);
-	StoreApp(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos);
+	StoreApp(int appid, float xSize, float ySize, float xPos, float yPos);
 	~StoreApp();
-
-	sf::RectangleShape cardShape;
-	sf::RectangleShape downloadButton;
-	sf::CircleShape    redownloadButton;
-	sf::RectangleShape removeButton;
-	sf::RectangleShape launchButton;
-//	sf::RectangleShape controlBar;
 
 	ItemInfo info;
 
-	float totalHeight;
+	sf::RectangleShape cardShape;
+	sf::CircleShape    infoButton;
+	sf::RectangleShape openInMyAppsListButton;
 
-	int cardNumber; // used to store depth
-	bool missing;
-	bool downloaded;
-	bool isDownloading;
-//	bool isRunning();
-	bool updateIsAvailable;
+	void setPosition(const sf::Vector2f& pos);
+	sf::Vector2f getPosition() { return cardShape.getPosition(); }
 
+	sf::FloatRect getLocalBounds() { return cardShape.getLocalBounds(); }
+
+	int onClick(sf::Event &e, sf::Vector2f clickPos);
+
+	bool deleteFilesPrompt();
 	void deleteFiles();
-	bool checkForUpdate();
-	void updateItem();
+//	bool checkForUpdate();
+//	void updateItem();
 	void download();
 	void openItem();
 
-	void updateSize(float xSize, float ySize, float xPos, float yPos);
-	void draw();
+	// TODO: void openItemInMyAppsList();
+
+	void updateSizeAndPosition(float xSize, float ySize, float xPos, float yPos);
+
+	void update() override;
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+	VisualItemInfo infoPanel;
 
 private:
-	sf::RenderWindow* targetWindow;
-
 	sf::Texture		   iconTexture;
 	sf::RectangleShape icon;
 
-	sf::Texture downloadButtonTexture;
-	sf::Texture redownloadButtonTexture;
-	sf::Texture removeButtonTexture;
-	sf::Texture launchButtonTexture;
+	sf::Texture openInMyAppsListTexture;
 
+	std::string itemCacheDir;
 	std::string itemInstallDir;
-	sf::Font	font;
 	sf::Text	name;
-	sf::Text	description;
-	sf::Text	version;
-
-	std::ifstream& GotoLine(std::ifstream& file, unsigned int line);
 
 	void parseInfo(std::string dir);
 
+	// upload the app icon to the appcache folder
 	int downloadIcon();
+	// upload the info icon to the appcache folder
 	int downloadInfo();
+	// copy the app's files to the apps folder
 	int downloadFiles();
-
-	int downloadFile(std::string fileName, std::string inPath, std::string outPath);
-	int deleteFile(std::string fileName, std::string filePath);
 };
 
-#endif
+#endif // !STORE_APP_HPP

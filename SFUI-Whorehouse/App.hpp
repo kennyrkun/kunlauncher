@@ -2,81 +2,64 @@
 #define APP_HPP
 
 #include <SFML/Graphics.hpp>
-#include <SFUI/TextButton.hpp>
 
 struct ItemInfo
 {
 	std::string name;
 	std::string description;
-	std::string version;
+	// TODO: put end marker character at the end so we know how far the string should go
+	// TODO: replace this with a version of GBL::Version
+	float version;
 	std::string author;
 	std::string github;
 	int release;
+	int appid;
+
+	bool downloaded;
+	bool downloading;
+	bool missingInfo;
+
+	// TODO: appAPIVersion
 };
 
-class App
+class App : public sf::Drawable
 {
 public:
-	//App(std::string itemName_, sf::RenderWindow* target_window, float xPos);
-	App(std::string itemName_, sf::RenderWindow* target_window, float xSize, float ySize, float xPos, float yPos);
-	~App();
-
-	void setPosition(const sf::Vector2f& pos);
-
-	sf::RectangleShape cardShape;
-	sf::RectangleShape downloadButton;
-	sf::CircleShape    redownloadButton;
-	sf::RectangleShape removeButton;
-	sf::RectangleShape launchButton;
-//	sf::RectangleShape controlBar;
+	// returns an int event code on click
+	virtual int onClick(sf::Event &e, sf::Vector2f clickPos) = 0;
 
 	ItemInfo info;
 
-	float totalHeight;
-
-	int cardNumber; // used to store depth
-	bool missing;
-	bool downloaded;
-	bool isDownloading;
-//	bool isRunning();
-	bool updateIsAvailable;
-
-	void deleteFiles();
-	bool checkForUpdate();
-	void updateItem();
-	void download();
-	void openItem();
-
-	void updateSize(float xSize, float ySize, float xPos, float yPos);
-	void draw();
-
-private:
-	sf::RenderWindow* targetWindow;
-
-	sf::Texture		   iconTexture;
-	sf::RectangleShape icon;
-
-	sf::Texture downloadButtonTexture;
-	sf::Texture redownloadButtonTexture;
-	sf::Texture removeButtonTexture;
-	sf::Texture launchButtonTexture;
-
+	std::string itemCacheDir;
 	std::string itemInstallDir;
-	sf::Font	font;
-	sf::Text	name;
-	sf::Text	description;
-	sf::Text	version;
+
+	virtual void setPosition(const sf::Vector2f& pos) = 0;
+	virtual sf::Vector2f getPosition() = 0;
+
+	sf::RectangleShape cardShape;
+	virtual sf::FloatRect getLocalBounds() = 0;
+
+	virtual void updateSizeAndPosition(float xSize, float ySize, float xPos, float yPos) = 0;
+
+	virtual void update() = 0;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const = 0;
+
+protected:
+	bool mouseIsOver(const sf::Shape& shape, const sf::Vector2f& position)
+	{
+		if (shape.getGlobalBounds().contains(position))
+			return true;
+
+		return false;
+	}
 
 	std::ifstream& GotoLine(std::ifstream& file, unsigned int line);
 
-	void parseInfo(std::string dir);
+	virtual void parseInfo(std::string dir) = 0;
 
-	int downloadIcon();
-	int downloadInfo();
-	int downloadFiles();
-
-	int downloadFile(std::string fileName, std::string inPath, std::string outPath);
-	int deleteFile(std::string fileName, std::string filePath);
+	virtual int downloadIcon() = 0;
+	virtual int downloadInfo() = 0;
+	virtual int downloadFiles() = 0;
 };
 
 #endif // !APP_HPP

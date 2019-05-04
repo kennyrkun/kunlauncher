@@ -2,22 +2,24 @@
 #define THREAD_MANAGER_HPP
 
 #include <vector>
-#include <thread>
+#include <future>
 #include <functional>
 
-// HACK: std::function<void (void)> make sure at least one variable is specified or compile errors will occur
-
-class ThreadedOperation
+enum class TaskPriority
 {
-	ThreadedOperation(std::function<void (void)> function);
-	~ThreadedOperation();
+	Anywhere,
+	ThisState,
+	Now
+};
 
-	int percent;
-	int id;
-	bool done;
+class AsyncTask
+{
+public:
+	~AsyncTask();
 
-	std::thread *thread;
-	std::function<void (void)> *function;
+	bool finished();
+
+	std::future<void> future;
 };
 
 class ThreadManager
@@ -26,16 +28,21 @@ public:
 	ThreadManager();
 	~ThreadManager();
 
-	void newOperation(std::function<void (void)> function);
-	void newThread();
+	void addTask(AsyncTask* task);
 
-	// add action to queue
-	// remove action from queue
-	// get action status
+	// checks for finished tasks, and clears them
+	void update();
+
+	// number of tasks currently active
+	size_t tasks();
+	// whether or not the task pool is empty
+	bool empty();
+
+	// TODO: add action to queue
+	// TODO: remove action from queue
 
 private:
-	std::vector<ThreadedOperation*> threadQueue;
-//	std::vector<std::thread*> threadQueue;
+	std::vector<AsyncTask*> threadQueue;
 };
 
-#endif
+#endif // !THREAD_MANAGER_HPP

@@ -5,8 +5,6 @@
 
 #include <string>
 
-// TODO: exists(s): check if folder exists
-// this will be used to make sure apps exist and aren't just in the index
 // TODO: replace setOutputFilename and setOutputDir with setOutput
 // TODO: add "localserver" thing, instead of goign to kunlauncher.com go to a specific file path which emulates webserver
 
@@ -15,12 +13,14 @@ class Download
 public:
 	enum Status
 	{
+		Ok,
 		Fail,
-		Success,
-
+		LocalFileNotFound,
+		RemoteFileNotFound,
 		ConnectionFailed,
 		ConnectionTimedOut,
 		ConnectionRejected,
+		SaveFailed
 	};
 
 public:
@@ -51,24 +51,19 @@ public:
 	void clearCache();
 	void cleanup();
 
-	// TODO: resusable FTP object in class, or single use per function
+	// TODO: do we want this here? or elswhere
 	// sf::Ftp ftp;
-
-	// TODO: download objects into a void* data
-	// don't save to cache until necessary
 
 	int htmlReturnCode;
 	std::string fileBuffer;
 	uintmax_t fileSize;
-	bool downloaded;
-	// this is used to make sure that all the file's contents were downloaded
-	// it is not perfect, but it's much better than none.
 	bool sizeVerified;
+	bool downloaded;
 
 private:
 	std::string input;
 
-	std::string saveDir = ".//bin//cache";
+	std::string saveDir = "";
 	std::string saveFile = "";
 
 	std::string remoteDirectory = "";

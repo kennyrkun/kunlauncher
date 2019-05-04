@@ -1,6 +1,5 @@
 #include "LauncherUpdater.hpp"
 
-#include "Globals.hpp"
 #include "Download.hpp"
 #include "SettingsParser.hpp"
 
@@ -10,24 +9,32 @@
 
 namespace fs = std::experimental::filesystem;
 
-int LauncherUpdater::getRemoteVersion()
+GBL::Version LauncherUpdater::getRemoteVersion()
 {
 	Download getHoHouse;
 	getHoHouse.setInput(GBL::WEB::LATEST::DIR + "version.info");
 	getHoHouse.download();
 
 	SettingsParser getVersion;
-	getVersion.loadFromFile(GBL::DIR::cache + "/launcher/version/latest/version.info");
+	getVersion.loadFromFile(GBL::DIR::cache + "/version/latest/version.info");
 
-	getVersion.get("version", remoteVersion);
+	GBL::Version version;
+
+	getVersion.get("major", version.major);
+	getVersion.get("minor", version.minor);
+	getVersion.get("patch", version.patch);
+	getVersion.get("prerel", version.prerel);
+
+	getVersion.get("release", version.release);
+
 	getVersion.get("required", requiredUpdate);
 
-	return remoteVersion;
+	return remoteVersion = version;
 }
 
-int LauncherUpdater::getLocalVersion()
+GBL::Version& LauncherUpdater::getLocalVersion()
 {
-	return localVersion = GBL::VERSION;
+	return localVersion = GBL::version;
 }
 
 int LauncherUpdater::checkForUpdates()
@@ -35,21 +42,24 @@ int LauncherUpdater::checkForUpdates()
 	getRemoteVersion();
 	getLocalVersion();
 
-	std::cout << "r" << remoteVersion << " : " << "l" << localVersion << std::endl;
+	std::cout << "[UPD] " <<
+		"r" << remoteVersion.major << "." << remoteVersion.minor << "." << remoteVersion.patch << 
+		" : " << 
+		"l" << localVersion.major << "." << localVersion.minor << "." << localVersion.patch << std::endl;
 
-	if (remoteVersion > localVersion)
-	{
-		if (requiredUpdate)
-			return Status::RequiredUpdate;
+	if (requiredUpdate)
+		return Status::RequiredUpdate;
 
-		std::cout << "launcher is out of date" << std::endl;
+	if (remoteVersion.major > localVersion.major)
 		return Status::UpdateAvailable;
-	}
-	else
-	{
-		std::cout << "launcher is up to date or broken" << std::endl;
-		return Status::NoUpdateAvailable;
-	}
+
+	if (remoteVersion.minor > localVersion.minor)
+		return Status::UpdateAvailable;
+
+	if (remoteVersion.patch > localVersion.patch)
+		return Status::UpdateAvailable;
+
+	return Status::NoUpdateAvailable;
 }
 
 int LauncherUpdater::downloadUpdate()
@@ -79,7 +89,7 @@ int LauncherUpdater::replaceOldExecutable()
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		std::cerr << "failed to replace old executable" << std::endl;
+		std::cerr << "[UPD] failed to replace old executable" << std::endl;
 
 		return Status::Failure;
 	}
@@ -87,19 +97,19 @@ int LauncherUpdater::replaceOldExecutable()
 
 int LauncherUpdater::removeOldExecutable()
 {
-	std::cout << "removing old executable" << std::endl;
+	std::cout << "[UPD] removing old executable" << std::endl;
 
 	if (fs::exists("kunlauncher.exe.old"))
 	{
 		try
 		{
 			fs::remove("kunlauncher.exe.old");
-			std::cout << "removed old executable" << std::endl;
+			std::cout << "[UPD] removed old executable" << std::endl;
 			return Status::Success;
 		}
 		catch (const std::exception& e)
 		{
-			std::cout << "could not remvoe old executable:" << std::endl;
+			std::cout << "[UPD] could not remvoe old executable:" << std::endl;
 			std::cout << e.what() << std::endl;
 
 			return Status::Failure;

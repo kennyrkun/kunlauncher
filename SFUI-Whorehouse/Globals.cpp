@@ -1,7 +1,11 @@
 #include "Globals.hpp"
+#include "MessageBox.hpp"
 
 namespace GBL
 {
+	Theme theme;
+	ThreadManager threadManager;
+
 	namespace COLOR
 	{
 		sf::Color BACKGROUND = sf::Color(50, 50, 50);
@@ -9,6 +13,7 @@ namespace GBL
 
 		sf::Color PRIMARY = sf::Color(100, 100, 100);
 		sf::Color SECONDARY = sf::Color(150, 150, 150);
+		sf::Color TERTIARY = sf::Color(50, 50, 50);
 
 		namespace SCROLLBAR
 		{
@@ -18,20 +23,43 @@ namespace GBL
 			sf::Color SCROLLTHUMB_HOLD = sf::Color(239, 235, 239);
 		}
 
-		namespace ITEM
+		namespace APP
 		{
 			sf::Color CARD = sf::Color(100, 100, 100);
+			sf::Color CARD2 = sf::Color(255, 255, 255);
+			sf::Color IMAGE = sf::Color(255, 255, 255);
 			sf::Color ICON = sf::Color(255, 255, 255);
-			sf::Color REDOWLOAD = sf::Color(255, 255, 255);
-			sf::Color UPDATE_IS_AVAILABLE = sf::Color(255, 200, 0);
-			sf::Color DOWNLOAD = sf::Color(255, 255, 255);
+			sf::Color ICON_HOVER = sf::Color(255, 255, 255);
+			sf::Color ICON_PRESS = sf::Color(255, 255, 255);
+			sf::Color ICON_FAIL = sf::Color(255, 255, 255);
+			sf::Color ICON_FAIL_HOVER = sf::Color(255, 255, 255);
+			sf::Color ICON_FAIL_PRESS = sf::Color(255, 255, 255);
+			sf::Color ICON_WARN = sf::Color(255, 200, 0);
+			sf::Color ICON_WARN_HOVER = sf::Color(255, 255, 255);
+			sf::Color ICON_WARN_PRESS = sf::Color(255, 255, 255);
 		}
 
 		namespace LINK
 		{
 			sf::Color CARD = sf::Color(100, 100, 100);
+			sf::Color CARD2 = sf::Color(255, 255, 255);
 			sf::Color FOLLOW = sf::Color(255, 255, 255);
 			sf::Color TEXT = sf::Color(0, 170, 232);
+			sf::Color ICON = sf::Color(255, 255, 255);
+			sf::Color ICON_HOVER = sf::Color(255, 255, 255);
 		}
 	}
+}
+
+void GBL::MESSAGES::cantOpenNotWindows()
+{
+	std::cerr << "KunLauncher doesn't know how to open things on this operating system." << std::endl;
+
+	MessageBox::Options modOptions;
+	modOptions.title = "Unsupported Platform";
+	modOptions.text = "KunLauncher doesn't know how to open files on this operating system.\nCurrently only Windows is supported.";
+	modOptions.settings = { "Sad" };
+
+	MessageBox platformAlert(modOptions);
+	platformAlert.runBlocking();
 }

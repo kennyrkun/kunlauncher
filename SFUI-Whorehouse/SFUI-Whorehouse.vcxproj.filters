@@ -20,29 +20,26 @@
     <Filter Include="Source Files\Launcher\States">
       <UniqueIdentifier>{849e70b2-49f7-4852-9ad7-bae2d05af7e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Launcher\States\Home">
-      <UniqueIdentifier>{967f3594-d6e8-4e87-8fd5-bf62cce0831f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Launcher\States\Init">
+    <Filter Include="Source Files\Launcher\States\InitialiseState">
       <UniqueIdentifier>{7fb316ba-a8c9-4dad-8643-ffe261ae48ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Launcher\States\Settings">
+    <Filter Include="Source Files\Launcher\States\SettingsState">
       <UniqueIdentifier>{f54b5d0c-686b-4e3e-b850-6a7a389580ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Launcher\States\AppLists">
+    <Filter Include="Source Files\Launcher\States\HomeState">
+      <UniqueIdentifier>{967f3594-d6e8-4e87-8fd5-bf62cce0831f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Launcher\States\HomeState\News">
+      <UniqueIdentifier>{da74b8a4-ca2c-45fc-9f26-69cc0814352c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Launcher\States\AppListStates">
       <UniqueIdentifier>{e9bd4a02-f3ff-4774-a9ec-eec52e0e48a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Launcher\States\AppLists\AllAppsList">
+    <Filter Include="Source Files\Launcher\States\AppListStates\AllAppsListState">
       <UniqueIdentifier>{137c3aa3-2768-439f-869a-c9343cff8549}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Launcher\States\AppLists\MyAppList">
+    <Filter Include="Source Files\Launcher\States\AppListStates\MyAppListState">
       <UniqueIdentifier>{12a224ad-429e-4800-a713-ea9138b7adfe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Launcher\States\Home\Navbar">
-      <UniqueIdentifier>{004c9d5e-4469-4c23-a2c8-06e5c25f56cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Launcher\States\Home\News">
-      <UniqueIdentifier>{da74b8a4-ca2c-45fc-9f26-69cc0814352c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -59,7 +56,7 @@
       <Filter>Source Files\Backend\Base</Filter>
     </ClCompile>
     <ClCompile Include="HomeState.cpp">
-      <Filter>Source Files\Launcher\States\Home</Filter>
+      <Filter>Source Files\Launcher\States\HomeState</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Backend</Filter>
@@ -71,13 +68,13 @@
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="InitialiseState.cpp">
-      <Filter>Source Files\Launcher\States\Init</Filter>
+      <Filter>Source Files\Launcher\States\InitialiseState</Filter>
     </ClCompile>
     <ClCompile Include="LauncherUpdater.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
     <ClCompile Include="SettingsState.cpp">
-      <Filter>Source Files\Launcher\States\Settings</Filter>
+      <Filter>Source Files\Launcher\States\SettingsState</Filter>
     </ClCompile>
     <ClCompile Include="SettingsParser.cpp">
       <Filter>Source Files\Backend</Filter>
@@ -85,32 +82,41 @@
     <ClCompile Include="Globals.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
-    <ClCompile Include="VisualChangeLog.cpp">
-      <Filter>Source Files\Backend\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="MyAppListState.cpp">
-      <Filter>Source Files\Launcher\States\AppLists\MyAppList</Filter>
+      <Filter>Source Files\Launcher\States\AppListStates\MyAppListState</Filter>
     </ClCompile>
     <ClCompile Include="AllAppsListState.cpp">
-      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
-    </ClCompile>
-    <ClCompile Include="Link.cpp">
-      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
-    </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>Source Files\Launcher\States\AppLists\MyAppList</Filter>
+      <Filter>Source Files\Launcher\States\AppListStates\AllAppsListState</Filter>
     </ClCompile>
     <ClCompile Include="StoreApp.cpp">
-      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
+      <Filter>Source Files\Launcher\States\AppListStates\AllAppsListState</Filter>
     </ClCompile>
     <ClCompile Include="News.cpp">
-      <Filter>Source Files\Launcher\States\Home\News</Filter>
+      <Filter>Source Files\Launcher\States\HomeState\News</Filter>
+    </ClCompile>
+    <ClCompile Include="VerticalScrollbar.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorInputBox.cpp">
+      <Filter>Source Files\Launcher\States\SettingsState</Filter>
+    </ClCompile>
+    <ClCompile Include="Theme.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="AppWindow.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyApp.cpp">
+      <Filter>Source Files\Launcher\States\AppListStates\MyAppListState</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Version.cpp">
+      <Filter>Source Files\Backend</Filter>
     </ClCompile>
     <ClCompile Include="Navbar.cpp">
-      <Filter>Source Files\Launcher\States\Home\Navbar</Filter>
-    </ClCompile>
-    <ClCompile Include="NavbarSection.cpp">
-      <Filter>Source Files\Launcher\States\Home\Navbar</Filter>
+      <Filter>Source Files\Backend\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,7 +136,7 @@
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
     <ClInclude Include="HomeState.hpp">
-      <Filter>Source Files\Launcher\States\Home</Filter>
+      <Filter>Source Files\Launcher\States\HomeState</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.hpp">
       <Filter>Source Files\Backend</Filter>
@@ -142,43 +148,52 @@
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="InitialiseState.hpp">
-      <Filter>Source Files\Launcher\States\Init</Filter>
-    </ClInclude>
-    <ClInclude Include="LauncherUpdater.hpp">
-      <Filter>Source Files\Backend</Filter>
+      <Filter>Source Files\Launcher\States\InitialiseState</Filter>
     </ClInclude>
     <ClInclude Include="SettingsState.hpp">
-      <Filter>Source Files\Launcher\States\Settings</Filter>
+      <Filter>Source Files\Launcher\States\SettingsState</Filter>
     </ClInclude>
     <ClInclude Include="SettingsParser.hpp">
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
-    <ClInclude Include="VisualChangeLog.hpp">
-      <Filter>Source Files\Backend\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="MyAppListState.hpp">
-      <Filter>Source Files\Launcher\States\AppLists\MyAppList</Filter>
+      <Filter>Source Files\Launcher\States\AppListStates\MyAppListState</Filter>
     </ClInclude>
     <ClInclude Include="AllAppsListState.hpp">
-      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
-    </ClInclude>
-    <ClInclude Include="Link.hpp">
-      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
-    </ClInclude>
-    <ClInclude Include="App.hpp">
-      <Filter>Source Files\Launcher\States\AppLists\MyAppList</Filter>
+      <Filter>Source Files\Launcher\States\AppListStates\AllAppsListState</Filter>
     </ClInclude>
     <ClInclude Include="StoreApp.hpp">
-      <Filter>Source Files\Launcher\States\AppLists\AllAppsList</Filter>
+      <Filter>Source Files\Launcher\States\AppListStates\AllAppsListState</Filter>
     </ClInclude>
     <ClInclude Include="News.hpp">
-      <Filter>Source Files\Launcher\States\Home\News</Filter>
+      <Filter>Source Files\Launcher\States\HomeState\News</Filter>
+    </ClInclude>
+    <ClInclude Include="LauncherUpdater.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="VerticalScrollbar.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorInputBox.hpp">
+      <Filter>Source Files\Launcher\States\SettingsState</Filter>
+    </ClInclude>
+    <ClInclude Include="Theme.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="AppWindow.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyApp.hpp">
+      <Filter>Source Files\Launcher\States\AppListStates\MyAppListState</Filter>
+    </ClInclude>
+    <ClInclude Include="App.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Version.hpp">
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
     <ClInclude Include="Navbar.hpp">
-      <Filter>Source Files\Launcher\States\Home\Navbar</Filter>
-    </ClInclude>
-    <ClInclude Include="NavbarSection.hpp">
-      <Filter>Source Files\Launcher\States\Home\Navbar</Filter>
+      <Filter>Source Files\Backend\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

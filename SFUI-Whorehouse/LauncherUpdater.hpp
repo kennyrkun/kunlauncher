@@ -1,7 +1,15 @@
 #ifndef LAUNCHER_UPDATER_HPP
 #define LAUNCHER_UPDATER_HPP
 
-#include <string>
+// TODO: changed_files files with a list of files needing to be updated
+
+// KunLaucher uses something like semantic versioning.
+// MAJOR . MINOR . PATCH
+// major is big new features
+// minor is small, QoL features
+// patch is bug fixes and such
+
+#include "Globals.hpp"
 
 class LauncherUpdater
 {
@@ -17,10 +25,10 @@ public:
 		Success
 	};
 
-	int getRemoteVersion();
-	int remoteVersion;
-	int getLocalVersion();
-	int localVersion;
+	GBL::Version getRemoteVersion();
+	GBL::Version remoteVersion;
+	GBL::Version& getLocalVersion();
+	GBL::Version localVersion;
 
 	int checkForUpdates();
 	int downloadUpdate();

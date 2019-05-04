@@ -4,35 +4,48 @@
 #include "Globals.hpp"
 #include "Download.hpp"
 
+#include <SFUI/Theme.hpp>
 #include <iostream>
+#include <ctime>
+
+// TODO: load program icon
 
 void AppEngine::Init(std::string title_, AppSettings settings_)
 {
+	std::cout << "AppEngine Init" << std::endl;
+
 	settings = settings_;
 
 	window = new sf::RenderWindow;
-	window->setVerticalSyncEnabled(settings.verticalSync);
-	window->setKeyRepeatEnabled(false);
-	running = true;
+	window->setVerticalSyncEnabled(settings.window.verticalSync);
 
-	multithreaded_process_indicator_tex.loadFromFile(GBL::DIR::textures + "settings_2x.png");
 	multithreaded_process_indicator.setRadius(20);
 	multithreaded_process_indicator.setOrigin(sf::Vector2f(20, 20));
-	multithreaded_process_indicator.setTexture(&multithreaded_process_indicator_tex);
+//	SetMultiThreadedIndicatorIcon(GBL::theme.getTexture("settings_2x.png")); // eventually this needs to be done in IntialiseState, but right now it refuses to work there.
 
-	std::cout << "AppEngine Init" << std::endl;
+	/*
+	SFUI::Theme::loadFont(GBL::DIR::fonts + "Arial.ttf");
+	SFUI::Theme::loadTexture(GBL::DIR::textures + "interface_square.png");
+	SFUI::Theme::textCharacterSize = 11;
+	SFUI::Theme::click.textColor = SFUI::Theme::hexToRgb("#fff");
+	SFUI::Theme::click.textColorHover = SFUI::Theme::hexToRgb("#fff");
+	SFUI::Theme::click.textColorFocus = SFUI::Theme::hexToRgb("#fff");
+	SFUI::Theme::input.textColor = SFUI::Theme::hexToRgb("#fff");
+	SFUI::Theme::input.textColorHover = SFUI::Theme::hexToRgb("#fff");
+	SFUI::Theme::input.textColorFocus = SFUI::Theme::hexToRgb("#fff");
+	SFUI::Theme::windowBgColor = GBL::theme.palatte.TERTIARY;
+	SFUI::Theme::PADDING = 2.f;
+	*/
+
+	running = true;
 }
 
 void AppEngine::Cleanup()
 {
 	std::cout << "Cleaning up AppEngine." << std::endl;
 	
-	// cleanup the all states
-	while (!states.empty())
-	{
-		states.back()->Cleanup();
-		states.pop_back();
-	}
+	for (size_t i = 0; i < states.size(); i++)
+		PopState();
 
 	window->close();
 	delete window;
@@ -40,67 +53,92 @@ void AppEngine::Cleanup()
 	Download clearCache;
 	clearCache.clearCache();
 
-	std::cin.get();
-
 	std::cout << "AppEngine cleaned up." << std::endl;
 }
 
 void AppEngine::ChangeState(AppState* state)
 {
-	if (!states.empty()) 
-	{
-		states.back()->Cleanup();
-		states.pop_back();
-	}
-
-	// store and init the new state
-	states.push_back(state);
-	states.back()->Init(this);
+	queuedEvents.push_back(std::pair<EventType, AppState*>(EventType::ChangeState, state));
 }
 
 void AppEngine::PushState(AppState* state)
 {
-	// pause current state
-	if (!states.empty())
-		states.back()->Pause();
-
-	// store and init the new state
-	states.push_back(state);
-	states.back()->Init(this);
+	queuedEvents.push_back(std::pair<EventType, AppState*>(EventType::PushState, state));
 }
 
 void AppEngine::PopState()
 {
-	// cleanup the current state
-	if (!states.empty())
-	{
-		states.back()->Cleanup();
-		states.pop_back();
-	}
-
-	// resume previous state
-	if (!states.empty())
-		states.back()->Resume();
+	queuedEvents.push_back(std::pair<EventType, AppState*>(EventType::PopState, nullptr));
 }
 
 void AppEngine::HandleEvents()
 {
-	states.back()->HandleEvents();
+	if (running && !states.empty())
+		states.back()->HandleEvents();
+
+	for (size_t i = 0; i < queuedEvents.size(); i++)
+	{
+		if (queuedEvents[i].first == EventType::ChangeState)
+		{
+			if (!states.empty())
+			{
+				states.back()->Cleanup();
+
+				delete states.back();
+				states.pop_back();
+			}
+
+			states.push_back(queuedEvents[i].second);
+			states.back()->Init(this);
+		}
+		else if (queuedEvents[i].first == EventType::PushState)
+		{
+			if (!states.empty())
+				states.back()->Pause();
+
+			states.push_back(queuedEvents[i].second);
+			states.back()->Init(this);
+		}
+		else if (queuedEvents[i].first == EventType::PopState)
+		{
+			if (!states.empty())
+			{
+				states.back()->Cleanup();
+
+				delete states.back();
+				states.pop_back();
+			}
+
+			if (!states.empty())
+				states.back()->Resume();
+		}
+		else if (queuedEvents[i].first == EventType::Quit)
+		{
+			Quit();
+		}
+
+		// this might break things, but I'm not sure.
+		// I am confident it will work.
+		queuedEvents.pop_back();
+	}
 }
 
 void AppEngine::Update()
 {
-	// let the state update the game
-	states.back()->Update();
+	// clean up threads if they are done
+	GBL::threadManager.update();
+
+	if (running)
+		states.back()->Update();
 }
 
 void AppEngine::Draw()
 {
-	// let the state draw the screen
-	states.back()->Draw();
+	if (running)
+		states.back()->Draw();
 }
 
-void AppEngine::UpdateViewSize(const sf::Vector2f & size)
+void AppEngine::UpdateViewSize(const sf::Vector2f& size)
 {
 	std::cout << "new width: " << size.x << std::endl;
 	std::cout << "new height: " << size.y << std::endl;
@@ -115,11 +153,11 @@ void AppEngine::UpdateViewSize(const sf::Vector2f & size)
 	}
 	else
 	{
-		if (size.x <= settings.width)
-			newSize.x = settings.width;
+		if (size.x <= settings.window.width)
+			newSize.x = settings.window.width;
 
-		if (size.x <= settings.height)
-			newSize.y = settings.height;
+		if (size.x <= settings.window.height)
+			newSize.y = settings.window.height;
 
 		window->setSize(newSize);
 	}
@@ -133,7 +171,38 @@ void AppEngine::ShowMultiThreadedIndicator()
 	window->draw(multithreaded_process_indicator);
 }
 
-void AppEngine::SetMultiThreadedIndicatorPosition(const sf::Vector2f & pos)
+void AppEngine::SetMultiThreadedIndicatorPosition(const sf::Vector2f& pos)
 {
 	multithreaded_process_indicator.setPosition(pos);
+}
+
+void AppEngine::SetMultiThreadedIndicatorIcon(sf::Texture* texture)
+{
+	multithreaded_process_indicator.setTexture(texture);
+}
+
+// https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c/10467633#10467633
+const std::string AppEngine::currentDateTime() 
+{
+	time_t     now = time(0);
+	struct tm  timeinfo;
+	char       buf[80];
+	localtime_s(&timeinfo, &now);
+	strftime(buf, sizeof(buf), "%F.%H-%M-%S", &timeinfo);
+
+	return buf;
+}
+
+void AppEngine::Quit()
+{
+	for (size_t i = 0; i < states.size(); i++)
+	{
+		states.back()->Cleanup();
+		delete states.back();
+		states.pop_back();
+	}
+
+	states.clear();
+
+	running = false;
 }

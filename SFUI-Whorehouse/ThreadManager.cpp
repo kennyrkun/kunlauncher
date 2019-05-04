@@ -2,13 +2,16 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
-ThreadedOperation::ThreadedOperation(std::function<void (void)> function)
+AsyncTask::~AsyncTask()
 {
+	std::cout << "AsyncTask destroyed." << std::endl;
 }
 
-ThreadedOperation::~ThreadedOperation()
+bool AsyncTask::finished()
 {
+	return future.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
 }
 
 // THREADMANAGER
@@ -21,13 +24,37 @@ ThreadManager::ThreadManager()
 ThreadManager::~ThreadManager()
 {
 	std::cout << "threadmanager deconstructed" << std::endl;
+
+	for (size_t i = 0; i < threadQueue.size(); i++)
+		delete threadQueue[i];
+
+	threadQueue.clear();
 }
 
-void ThreadManager::newOperation(std::function<void (void)> function)
+void ThreadManager::addTask(AsyncTask* task)
 {
-
+	threadQueue.push_back(task);
 }
 
-void ThreadManager::newThread()
+void ThreadManager::update()
 {
+	for (size_t i = 0; i < threadQueue.size(); i++)
+	{
+		if (threadQueue[i]->finished())
+		{
+			AsyncTask* task = threadQueue[i];
+			threadQueue.erase(std::remove(threadQueue.begin(), threadQueue.end(), threadQueue[i]), threadQueue.end());
+			delete task;
+		}
+	}
+}
+
+size_t ThreadManager::tasks()
+{
+	return threadQueue.size();
+}
+
+bool ThreadManager::empty()
+{
+	return threadQueue.empty();
 }

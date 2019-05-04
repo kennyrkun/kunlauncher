@@ -3,12 +3,18 @@
 
 #include "AppState.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <SFUI/Scrollbar.hpp>
-#include <thread>
-#include <vector>
+#include "Navbar.hpp"
+#include "VerticalScrollbar.hpp"
 
-class App;
+#include <SFML/Graphics.hpp>
+#include <future>
+#include <vector>
+#include <iostream>
+
+// TODO: separate pages for apps
+// 
+
+class MyApp;
 
 class MyAppListState : public AppState
 {
@@ -23,42 +29,34 @@ public:
 	void Update();
 	void Draw();
 
-	static MyAppListState* Instance() 
-	{
-		return &MyAppListState_dontfuckwithme;
-	}
-
-protected:
-	MyAppListState() { }
-
 private:
-	static MyAppListState MyAppListState_dontfuckwithme;
 	AppEngine* app;
 
+	Navbar* navbar;
+
 	sf::View *mainView;
-	sf::View *cardScroller;
-	SFUI::Scrollbar scrollbar;
+	sf::View *viewScroller;
+	VerticalScrollbar scrollbar;
 
-	sf::RectangleShape tracker1;
-	sf::RectangleShape tracker2;
-	sf::RectangleShape tracker3;
+	// TODO: not a pointer
+	std::vector<MyApp*> apps;
 
-	std::vector<std::thread> threads;
-	std::vector<App*> apps;
-
-	void loadApps(bool &finishedIndicator);
-
-	void updateScrollThumbSize();
 	// TODO: viewable arae class
 	float scrollerTopPosition;
 	float scrollerBottomPosition;
 	float scrollerMinPosition;
 	float scrollerMaxPosition;
+	void updateScrollThumbSize();
 	void updateScrollLimits();
+	void testScrollBounds();
+
+	void loadApps(bool &finishedIndicator);
+	void deleteApp(MyApp* whatApp);
 
 	bool mouseIsOver(const sf::Shape &object);
 	bool mouseIsOver(const sf::Shape &object, const sf::View* view);
 	bool mouseIsOver(const sf::Text &object);
+	bool mouseIsOver(const sf::Text &object, const sf::View* view);
 
 	std::vector<std::string> get_directories(const std::string& s);
 };

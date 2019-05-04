@@ -11,7 +11,7 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
-	freeAllTextures();
+	freeAll();
 
 	std::cout << "ResourceManager deconstructed." << std::endl;
 }
@@ -28,12 +28,12 @@ void ResourceManager::loadTexture(std::string resourceName, std::string fileLoca
 	}
 }
 
-void ResourceManager::freeTexture(std::string filename)
+void ResourceManager::freeTexture(std::string resourceName)
 {
-	delete loadedTextures[filename];
-	loadedTextures[filename] = nullptr;
+	delete loadedTextures[resourceName];
+	loadedTextures[resourceName] = nullptr;
 
-	std::cout << "Freed texture \"" + filename + "\"" << std::endl;
+	std::cout << "Freed texture \"" + resourceName + "\"" << std::endl;
 }
 
 void ResourceManager::freeAllTextures()
@@ -50,20 +50,20 @@ void ResourceManager::freeAllTextures()
 	std::cout << "Freed all textures." << std::endl;
 }
 
-bool ResourceManager::isTextureLoaded(std::string filename)
+bool ResourceManager::isTextureLoaded(std::string resourceName)
 {
 	// how does this even what
 
-	if (loadedTextures.find(filename) == loadedTextures.end())
+	if (loadedTextures.find(resourceName) == loadedTextures.end())
 		return false;
 	else
 		return true;
 }
 
-sf::Texture* ResourceManager::getTexture(std::string filename)
+sf::Texture* ResourceManager::getTexture(std::string resourceName)
 {
 //	loadTexture(filename); // no
-	return loadedTextures[filename];
+	return loadedTextures[resourceName];
 }
 
 void ResourceManager::freeAll()
@@ -72,5 +72,5 @@ void ResourceManager::freeAll()
 
 	freeAllTextures();
 
-	std::cout << "Freed all textures." << std::endl;
+	std::cout << "Freed all resources." << std::endl;
 }
