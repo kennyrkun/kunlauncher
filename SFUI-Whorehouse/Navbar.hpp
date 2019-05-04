@@ -1,11 +1,14 @@
 #ifndef NAVBAR_HPP
 #define NAVBAR_HPP
 
-#include "NavbarSection.hpp"
+#include "AppEngine.hpp"
 
 #include <SFML\Graphics.hpp>
 #include <vector>
+#include <map>
 
+// TODO: extends sf::Drawable
+// TODO: add progress bar to navbar
 class Navbar
 {
 public:
@@ -14,18 +17,27 @@ public:
 
 	sf::RectangleShape bar;
 
-	std::vector<NavbarSection*> sections;
+	// TODO: simplify the navbar
+//	std::map<std::string, sf::Text> sections;
+	std::vector<sf::Text> sections;
 
-	void addSection(std::string text);
-	void removeSection(int sectionNum);
+	sf::Text& addSection(std::string text);
+	sf::Text& getSection(std::string sectionName);
+	void removeSection(int sectionNum); // TODO: get rid of this
+	void removeSection(std::string sectionName); // TODO: get rid of this
 
+//	void HandleEvents(const sf::RenderWindow* window, const sf::View& view, const sf::Event& event);
 	void HandleEvents(const sf::Event& event);
 	void Update();
-	void Draw();
+	void Draw(); // TODO: render to rendertarget
+
+	bool mouseIsOver(sf::Shape &object);
+	bool mouseIsOver(sf::Text &object);
 
 private:
 	sf::RenderWindow* window;
-	sf::Font font;
+
+//	sf::RectangleShape divider;
 };
 
 #endif // !NAVBAR_HPP
