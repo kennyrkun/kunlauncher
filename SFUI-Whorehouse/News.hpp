@@ -4,7 +4,13 @@
 #include <string>
 #include <SFML\Graphics.hpp>
 
-class News
+// TODO: links to the news and ratings and stuff
+// TODO: much better news system
+// TODO: decrease news parse time
+
+// give each news piece an ID
+
+class News : public sf::Drawable
 {
 public:
 	News(std::string title, std::string text, sf::RenderWindow* window);
@@ -20,15 +26,16 @@ public:
 
 	void HandleEvents(const sf::Event& event);
 	void Update();
-	void Draw();
+
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
-	std::string titlestr;
-	std::string textstr;
+	// TODO: wrap title
+	std::string titlestr; // TODO: what's this for?
+	std::string textstr; // TODO: what's this for?
 
-	sf::Font font;
-
-	sf::RenderWindow* window;
+	std::string display_TextString;
+	const std::string original_TextString;
 };
 
 #endif // !NEWS_HPP
