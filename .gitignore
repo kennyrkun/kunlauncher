@@ -270,3 +270,7 @@ __pycache__/
 SFUI
 SFML
 a-server
+/appmanager/Debug no Console
+/Debug no Console
+/SFUI-Whorehouse/Debug no Console
+/appmanager/appmanagerbin
