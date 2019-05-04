@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\AppEngine">
+      <UniqueIdentifier>{3d369f3a-e2da-4028-b2f9-2420933b7d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States">
+      <UniqueIdentifier>{78f714d5-1b00-41ab-846b-61e3a4a8c4ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States\HomeState">
+      <UniqueIdentifier>{2db41245-04fc-4b6d-9cbe-faf2e2b47c98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States\InitialiseState">
+      <UniqueIdentifier>{735284cf-9dd5-4441-adad-a9dba3484278}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Backend">
+      <UniqueIdentifier>{8ff5d3ac-bd7b-494e-a3bf-675df84f9d0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States\AppStates">
+      <UniqueIdentifier>{4e13dad5-0abf-4b1c-ac49-bb591b4c851b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States\AppStates\AppEditState">
+      <UniqueIdentifier>{86fd9323-339b-41fd-8664-2b68f9f44f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States\AppStates\AppUploadState">
+      <UniqueIdentifier>{40705831-cfc2-4c56-a938-13a5702c8004}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HomeState.cpp">
+      <Filter>Source Files\States\HomeState</Filter>
+    </ClCompile>
+    <ClCompile Include="InitialiseState.cpp">
+      <Filter>Source Files\States\InitialiseState</Filter>
+    </ClCompile>
+    <ClCompile Include="Download.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SFUI-Whorehouse\ProgressBar.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files\States\AppStates\AppUploadState</Filter>
+    </ClCompile>
+    <ClCompile Include="AppUploadState.cpp">
+      <Filter>Source Files\States\AppStates\AppUploadState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SFUI-Whorehouse\SettingsParser.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageBox.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="AppEngine.cpp">
+      <Filter>Source Files\AppEngine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\SFUI-Whorehouse\AppState.hpp">
+      <Filter>Source Files\AppEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="HomeState.hpp">
+      <Filter>Source Files\States\HomeState</Filter>
+    </ClInclude>
+    <ClInclude Include="InitialiseState.hpp">
+      <Filter>Source Files\States\InitialiseState</Filter>
+    </ClInclude>
+    <ClInclude Include="Download.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SFUI-Whorehouse\ProgressBar.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="AppUploadState.hpp">
+      <Filter>Source Files\States\AppStates\AppUploadState</Filter>
+    </ClInclude>
+    <ClInclude Include="App.hpp">
+      <Filter>Source Files\States\AppStates\AppUploadState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SFUI-Whorehouse\SettingsParser.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageBox.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="AppEngine.hpp">
+      <Filter>Source Files\AppEngine</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
