@@ -23,9 +23,6 @@ GBL::Version LauncherUpdater::getRemoteVersion()
 	getVersion.get("major", version.major);
 	getVersion.get("minor", version.minor);
 	getVersion.get("patch", version.patch);
-	getVersion.get("prerel", version.prerel);
-
-	getVersion.get("release", version.release);
 
 	getVersion.get("required", requiredUpdate);
 

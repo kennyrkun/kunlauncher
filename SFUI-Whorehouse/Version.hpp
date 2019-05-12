@@ -10,15 +10,24 @@ struct Version
 	uint64_t major = 17;
 	uint64_t minor = 0;
 	uint64_t patch = 0;
+	uint64_t build = 0;
 
-	// TODO: LauncherAPIVersion
+	struct Snapshot
+	{
+		uint64_t year;
+		uint64_t week;
+		uint64_t revision;
+	} snapshot;
 
-	// enum beta, alpha, etc
-	// uint release type
+	enum class Type
+	{
+		Alpha,
+		Beta,
+		Snapshot,
+		Pre,
+		Release
 
-	uint64_t prerel = 0;
-
-	uint64_t release;
+	} prerel = Type::Release;
 
 	bool required = false;
 
