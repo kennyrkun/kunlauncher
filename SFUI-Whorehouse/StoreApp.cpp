@@ -98,7 +98,7 @@ StoreApp::StoreApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	name.setFont(*GBL::theme.getFont("Arial.ttf"));
 	name.setCharacterSize(24);
 	name.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10), static_cast<int>(cardShape.getPosition().y + 10));
-	name.setFillColor(GBL::theme.palatte.TEXT_DARK);
+	name.setFillColor(GBL::theme.palatte.TEXT_SECONDARY);
 
 	infoButton.setFillColor(GBL::theme.palatte.APP_ICON);
 	infoButton.setRadius(12);

@@ -56,6 +56,8 @@ sf::Text& Navbar::addSection(std::string text)
 	else
 		newSection.setPosition(sections.back().getPosition().x + sections.back().getLocalBounds().width + 42, 0);
 
+	newSection.setFillColor(GBL::theme.palatte.TEXT);
+
 	/*(
 	// TODO: adapt size and positioning of items so that the bar can accomodate any amount of entries.
 	if (newSection->text.getPosition())

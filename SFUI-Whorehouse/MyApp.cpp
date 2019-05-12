@@ -90,15 +90,15 @@ MyApp::MyApp(int appid, float xSize, float ySize, float xPos, float yPos)
 
 	name.setFont(font);
 	name.setCharacterSize(24);
-	name.setFillColor(GBL::theme.palatte.TEXT_DARK);
+	name.setFillColor(GBL::theme.palatte.TEXT_SECONDARY);
 
 	description.setFont(font);
 	description.setCharacterSize(16);
-	description.setFillColor(GBL::theme.palatte.TEXT_DARK);
+	description.setFillColor(GBL::theme.palatte.TEXT_SECONDARY);
 
 	version.setFont(font);
 	version.setCharacterSize(18);
-	version.setFillColor(GBL::theme.palatte.TEXT_DARK);
+	version.setFillColor(GBL::theme.palatte.TEXT_SECONDARY);
 
 	downloadButton.setFillColor(GBL::theme.palatte.APP_ICON);
 	downloadButton.setTexture(GBL::theme.getTexture("get_app_1x.png"));

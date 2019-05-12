@@ -57,8 +57,8 @@ public:
 		sf::Color SECONDARY;
 		sf::Color TERTIARY;
 
-		sf::Color TEXT_DARK;
-		sf::Color TEXT_LIGHT;
+		sf::Color TEXT;
+		sf::Color TEXT_SECONDARY;
 
 		sf::Color SCROLLBAR;
 		sf::Color SCROLLTHUMB;

@@ -362,21 +362,21 @@ void SettingsState::HandleEvents()
 				{
 					navbar->bar.setFillColor(editor.theme.palatte.PRIMARY);
 					for (auto& x : navbar->sections)
-						x.setFillColor(editor.theme.palatte.TEXT_LIGHT);
+						x.setFillColor(editor.theme.palatte.TEXT);
 
-					SFUI::Theme::click.textColor = editor.theme.palatte.TEXT_DARK;
-					SFUI::Theme::click.textColorHover = editor.theme.palatte.TEXT_DARK;
-					SFUI::Theme::click.textColorFocus = editor.theme.palatte.TEXT_DARK;
-					SFUI::Theme::input.textColor = editor.theme.palatte.TEXT_DARK;
-					SFUI::Theme::input.textColorHover = editor.theme.palatte.TEXT_DARK;
-					SFUI::Theme::input.textColorFocus = editor.theme.palatte.TEXT_DARK;
+					SFUI::Theme::click.textColor = editor.theme.palatte.TEXT_SECONDARY;
+					SFUI::Theme::click.textColorHover = editor.theme.palatte.TEXT_SECONDARY;
+					SFUI::Theme::click.textColorFocus = editor.theme.palatte.TEXT_SECONDARY;
+					SFUI::Theme::input.textColor = editor.theme.palatte.TEXT_SECONDARY;
+					SFUI::Theme::input.textColorHover = editor.theme.palatte.TEXT_SECONDARY;
+					SFUI::Theme::input.textColorFocus = editor.theme.palatte.TEXT_SECONDARY;
 
 					editor.theme.palatte.PRIMARY = editor.primaryColor->getColor();
 					editor.theme.palatte.SECONDARY = editor.secondaryColor->getColor();
 					editor.theme.palatte.TERTIARY = editor.tertiaryColor->getColor();
 
-					editor.theme.palatte.TEXT_DARK = editor.text->getColor();
-					editor.theme.palatte.TEXT_LIGHT = editor.textSecondary->getColor();
+					editor.theme.palatte.TEXT = editor.text->getColor();
+					editor.theme.palatte.TEXT_SECONDARY = editor.textSecondary->getColor();
 
 					editor.theme.palatte.SCROLLBAR = editor.scrolltrack->getColor();
 					scrollbar.scrollTrack.setFillColor(editor.theme.palatte.SCROLLBAR);
@@ -875,8 +875,8 @@ void SettingsState::buildThemeEditor(bool editingCurrentTheme)
 		editor.secondaryColor->setColor(GBL::theme.palatte.SECONDARY);
 		editor.tertiaryColor->setColor(GBL::theme.palatte.TERTIARY);
 
-		editor.text->setColor(GBL::theme.palatte.TEXT_DARK);
-		editor.textSecondary->setColor(GBL::theme.palatte.TEXT_LIGHT);
+		editor.text->setColor(GBL::theme.palatte.TEXT);
+		editor.textSecondary->setColor(GBL::theme.palatte.TEXT_SECONDARY);
 
 		editor.scrolltrack->setColor(GBL::theme.palatte.SCROLLBAR);
 		editor.scrollthumb->setColor(GBL::theme.palatte.SCROLLTHUMB);
@@ -1064,15 +1064,15 @@ void SettingsState::applyTheme()
 
 		navbar->bar.setFillColor(GBL::theme.palatte.PRIMARY);
 		for (auto& x : navbar->sections)
-			x.setFillColor(GBL::theme.palatte.TEXT_LIGHT);
+			x.setFillColor(GBL::theme.palatte.TEXT);
 
 		// set the SFUI specific themes
-		SFUI::Theme::click.textColor = GBL::theme.palatte.TEXT_DARK;
-		SFUI::Theme::click.textColorHover = GBL::theme.palatte.TEXT_DARK;
-		SFUI::Theme::click.textColorFocus = GBL::theme.palatte.TEXT_DARK;
-		SFUI::Theme::input.textColor = GBL::theme.palatte.TEXT_DARK;
-		SFUI::Theme::input.textColorHover = GBL::theme.palatte.TEXT_DARK;
-		SFUI::Theme::input.textColorFocus = GBL::theme.palatte.TEXT_DARK;
+		SFUI::Theme::click.textColor = GBL::theme.palatte.TEXT_SECONDARY;
+		SFUI::Theme::click.textColorHover = GBL::theme.palatte.TEXT_SECONDARY;
+		SFUI::Theme::click.textColorFocus = GBL::theme.palatte.TEXT_SECONDARY;
+		SFUI::Theme::input.textColor = GBL::theme.palatte.TEXT_SECONDARY;
+		SFUI::Theme::input.textColorHover = GBL::theme.palatte.TEXT_SECONDARY;
+		SFUI::Theme::input.textColorFocus = GBL::theme.palatte.TEXT_SECONDARY;
 
 		scrollbar.scrollTrack.setFillColor(GBL::theme.palatte.SCROLLBAR);
 		scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB);

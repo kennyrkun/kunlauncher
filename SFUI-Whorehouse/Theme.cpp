@@ -38,10 +38,10 @@ bool Theme::loadFromFile(std::string file)
 
 
 			if (themeParser.get("text", colors))
-				palatte.TEXT_DARK = sf::Color(colors[0], colors[1], colors[2]);
+				palatte.TEXT = sf::Color(colors[0], colors[1], colors[2]);
 
 			if (themeParser.get("text_secondary", colors))
-				palatte.TEXT_LIGHT = sf::Color(colors[0], colors[1], colors[2]);
+				palatte.TEXT_SECONDARY = sf::Color(colors[0], colors[1], colors[2]);
 
 
 			if (themeParser.get("scrollbar", colors))
@@ -197,12 +197,12 @@ bool Theme::loadFromFile(std::string file)
 		if (isResourceOverriden("interface_square.png"))
 			SFUI::Theme::loadTexture(getTexture("interface_square.png"));
 
-		SFUI::Theme::click.textColor = palatte.TEXT_DARK;
-		SFUI::Theme::click.textColorHover = palatte.TEXT_DARK;
-		SFUI::Theme::click.textColorFocus = palatte.TEXT_DARK;
-		SFUI::Theme::input.textColor = palatte.TEXT_DARK;
-		SFUI::Theme::input.textColorHover = palatte.TEXT_DARK;
-		SFUI::Theme::input.textColorFocus = palatte.TEXT_DARK;
+		SFUI::Theme::click.textColor = palatte.TEXT_SECONDARY;
+		SFUI::Theme::click.textColorHover = palatte.TEXT_SECONDARY;
+		SFUI::Theme::click.textColorFocus = palatte.TEXT_SECONDARY;
+		SFUI::Theme::input.textColor = palatte.TEXT_SECONDARY;
+		SFUI::Theme::input.textColorHover = palatte.TEXT_SECONDARY;
+		SFUI::Theme::input.textColorFocus = palatte.TEXT_SECONDARY;
 	}
 	else
 	{
@@ -235,8 +235,8 @@ bool Theme::saveToFile(std::string file)
 		themeParser.set("secondary", colorAsString(palatte.SECONDARY));
 		themeParser.set("tertiary", colorAsString(palatte.TERTIARY));
 
-		themeParser.set("text", colorAsString(palatte.TEXT_DARK));
-		themeParser.set("text_secondary", colorAsString(palatte.TEXT_LIGHT));
+		themeParser.set("text", colorAsString(palatte.TEXT));
+		themeParser.set("text_secondary", colorAsString(palatte.TEXT_SECONDARY));
 
 		themeParser.set("scrollbar", colorAsString(palatte.SCROLLBAR));
 		themeParser.set("scrollthumb", colorAsString(palatte.SCROLLTHUMB));
