@@ -286,6 +286,7 @@ void SettingsState::HandleEvents()
 				{
 					applyTheme();
 					buildDefaultMenu();
+					menu->focusWidget(main.selectedThemeOptions);
 					break;
 				}
 				case CALLBACK::VERTICAL_SYNC:
@@ -563,8 +564,6 @@ void SettingsState::HandleEvents()
 
 					if (scrollerBottomPosition > scrollerMaxPosition)
 						menuMove(sf::Vector2f(0, -scrollbar.scrollJump));
-					else
-						std::cerr << "cannot scroll menu down (" << scrollerBottomPosition << " > " << scrollerMaxPosition << ")" << std::endl;
 				}
 				else if (event.mouseWheel.delta > 0) // scroll up, or move apps down
 				{
@@ -572,8 +571,6 @@ void SettingsState::HandleEvents()
 
 					if (scrollerTopPosition < scrollerMinPosition)
 						menuMove(sf::Vector2f(0, scrollbar.scrollJump));
-					else
-						std::cerr << "cannot scroll menu up (" << scrollerTopPosition << " < " << scrollerMinPosition << ")" << std::endl;
 				}
 				
 				testScrollBounds();
@@ -586,8 +583,6 @@ void SettingsState::HandleEvents()
 
 					if (scrollerBottomPosition > scrollerMaxPosition)
 						menuMove(sf::Vector2f(0, -scrollbar.scrollStep)); // static cast to avoid pixel-imperfect placement of text
-					else
-						std::cerr << "cannot step menu down (" << scrollerBottomPosition << " > " << scrollerMaxPosition << ")" << std::endl;
 				}
 				else if (event.key.code == sf::Keyboard::Key::Up)
 				{
@@ -595,8 +590,6 @@ void SettingsState::HandleEvents()
 
 					if (scrollerTopPosition < scrollerMinPosition)
 						menuMove(sf::Vector2f(0, scrollbar.scrollStep)); // static cast to avoid pixel-imperfect placement of text
-					else
-						std::cerr << "cannot step menu up (" << scrollerTopPosition << " < " << scrollerMinPosition << ")" << std::endl;
 				}
 				else if (event.key.code == sf::Keyboard::Key::Home)
 				{
@@ -658,6 +651,8 @@ void SettingsState::Draw()
 
 void SettingsState::buildDefaultMenu()
 {
+	std::cout << "building default menu" << std::endl;
+
 	delete menu;
 	menu = new SFUI::Menu(*app->window);
 	menu->setPosition(sf::Vector2f(10, navbar->bar.getSize().y + 10));
@@ -1027,20 +1022,15 @@ void SettingsState::updateScrollLimits()
 
 void SettingsState::testScrollBounds()
 {
-	// TODO: improve clamps
-
 	updateScrollLimits();
 
 	if (scrollerBottomPosition < scrollerMaxPosition)
 	{
-		std::cerr << "menu went too far down (" << scrollerBottomPosition - scrollerMaxPosition << "), clamping..." << std::endl;
 		menu->setPosition(sf::Vector2f(10, -menu->getSize().y + app->window->getSize().y - 10));
 		updateScrollLimits();
 	}
-
-	if (scrollerTopPosition > scrollerMinPosition)
+	else if (scrollerTopPosition > scrollerMinPosition)
 	{
-		std::cerr << "menu went too far up (" << scrollerMinPosition - scrollerTopPosition << "), clamping..." << std::endl;
 		menu->setPosition(sf::Vector2f(10, navbar->bar.getSize().y + 10));
 		updateScrollLimits();
 	}
@@ -1069,8 +1059,8 @@ void SettingsState::applyTheme()
 		sp.loadFromFile(GBL::CONFIG::config);
 		sp.set(GBL::CONFIG::selectedTheme, app->settings.selectedTheme);
 
-		if (GBL::theme.isResourceOverriden("interface_square.png"))
-			SFUI::Theme::loadTexture(GBL::theme.getTexture("interface_square.png"));
+		//if (GBL::theme.isResourceOverriden("interface_square.png"))
+			//SFUI::Theme::loadTexture(GBL::theme.getTexture("interface_square.png"));
 
 		navbar->bar.setFillColor(GBL::theme.palatte.PRIMARY);
 		for (auto& x : navbar->sections)
