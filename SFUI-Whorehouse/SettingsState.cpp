@@ -299,14 +299,30 @@ void SettingsState::HandleEvents()
 				{
 					std::string s = main.widthBox->getText();
 					app->settings.window.width = std::stoi(s);
+
+					if (app->settings.window.width < 525)
+					{
+						app->settings.window.width = 525;
+						main.heightBox->setText("325");
+					}
+
 					parser.set(GBL::CONFIG::Window::width, app->settings.window.width);
+					app->window->setSize(sf::Vector2u(app->settings.window.width, app->settings.window.height));
 					break;
 				}
 				case CALLBACK::HEIGHT:
 				{
 					std::string s = main.heightBox->getText();
 					app->settings.window.height = std::stoi(s);
+
+					if (app->settings.window.height < 325)
+					{
+						app->settings.window.height = 325;
+						main.heightBox->setText("325");
+					}
+
 					parser.set(GBL::CONFIG::Window::height, app->settings.window.height);
+					app->window->setSize(sf::Vector2u(app->settings.window.width, app->settings.window.height));
 					break;
 				}
 				case CALLBACK::APP_UPDATE_LIST_ON_START:
