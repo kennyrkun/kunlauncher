@@ -6,6 +6,9 @@
 
 #include <SFUI/Theme.hpp>
 #include <iostream>
+#include <ctime>
+
+// TODO: load program icon
 
 void AppEngine::Init(std::string title_, AppSettings settings_)
 {
@@ -16,11 +19,11 @@ void AppEngine::Init(std::string title_, AppSettings settings_)
 	window = new sf::RenderWindow;
 	window->setVerticalSyncEnabled(settings.window.verticalSync);
 
-//	LoadMultiThreadedIcon("../SFUI-Whorehouse/" + GBL::DIR::textures + "settings_2x.png"); // eventually this needs to be done in IntialiseState, but right now it refuses to work there.
 	multithreaded_process_indicator.setRadius(20);
 	multithreaded_process_indicator.setOrigin(sf::Vector2f(20, 20));
-	multithreaded_process_indicator.setTexture(&multithreaded_process_indicator_tex);
+//	SetMultiThreadedIndicatorIcon(GBL::theme.getTexture("settings_2x.png")); // eventually this needs to be done in IntialiseState, but right now it refuses to work there.
 
+	/*
 	SFUI::Theme::loadFont(GBL::DIR::fonts + "Arial.ttf");
 	SFUI::Theme::loadTexture(GBL::DIR::textures + "interface_square.png");
 	SFUI::Theme::textCharacterSize = 11;
@@ -30,7 +33,9 @@ void AppEngine::Init(std::string title_, AppSettings settings_)
 	SFUI::Theme::input.textColor = SFUI::Theme::hexToRgb("#fff");
 	SFUI::Theme::input.textColorHover = SFUI::Theme::hexToRgb("#fff");
 	SFUI::Theme::input.textColorFocus = SFUI::Theme::hexToRgb("#fff");
+	SFUI::Theme::windowBgColor = GBL::theme.palatte.TERTIARY;
 	SFUI::Theme::PADDING = 2.f;
+	*/
 
 	running = true;
 }
@@ -109,7 +114,7 @@ void AppEngine::HandleEvents()
 		}
 		else if (queuedEvents[i].first == EventType::Quit)
 		{
-			// TODO: implement bobwars appengine quit
+			Quit();
 		}
 
 		// this might break things, but I'm not sure.
@@ -168,7 +173,33 @@ void AppEngine::SetMultiThreadedIndicatorPosition(const sf::Vector2f& pos)
 	multithreaded_process_indicator.setPosition(pos);
 }
 
-void AppEngine::LoadMultiThreadedIcon(std::string iconPosition)
+void AppEngine::SetMultiThreadedIndicatorIcon(sf::Texture* texture)
 {
-	multithreaded_process_indicator_tex.loadFromFile(iconPosition);
+	multithreaded_process_indicator.setTexture(texture);
+}
+
+// https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c/10467633#10467633
+const std::string AppEngine::currentDateTime() 
+{
+	time_t     now = time(0);
+	struct tm  timeinfo;
+	char       buf[80];
+	localtime_s(&timeinfo, &now);
+	strftime(buf, sizeof(buf), "%F.%H-%M-%S", &timeinfo);
+
+	return buf;
+}
+
+void AppEngine::Quit()
+{
+	for (size_t i = 0; i < states.size(); i++)
+	{
+		states.back()->Cleanup();
+		delete states.back();
+		states.pop_back();
+	}
+
+	states.clear();
+
+	running = false;
 }

@@ -1,5 +1,5 @@
-#ifndef PROGRAM_ENGINE_HPP
-#define PROGRAM_ENGINE_HPP
+#ifndef APP_ENGINE_HPP
+#define APP_ENGINE_HPP
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -8,12 +8,13 @@
 
 class AppState;
 
-//TODO: don't set these if they've been overriden via command line arugements
+// TODO: don't set these if they've been overriden via command line arugements
 struct AppSettings
 {
-	//	bool offline = false
+//	bool offline = false
 
 	bool updateOnStart = false;
+	// bool restartAfterUpdate = false;
 	bool logDownloads = true;
 	bool newsEnabled = true;
 	bool SFUIDebug = false;
@@ -26,7 +27,7 @@ struct AppSettings
 	struct Window
 	{
 		bool verticalSync = true;
-		//		bool useSFUIDecorations = false;
+//		bool useSFUIDecorations = false;
 		int width = 525;
 		int	height = 375;
 	} window;
@@ -36,8 +37,14 @@ struct AppSettings
 		bool updateStoreOnStart = false;
 		bool autoUpdate = false;
 		bool checkForUpdates = false;
-		//  bool showInstalledAppsInAllAppsList
+	//  bool showInstalledAppsInAllAppsList
 	} apps;
+
+	// find a way to change the base directory
+	// perhaps a portable boolean
+	// maybe a string with the base directory that can be changed
+	// ./kunlauncher.exe -basedir "./"
+	// ./kunlauncher.exe -basedir "C:/Program Files (x86)/KunLauncher"
 };
 
 class AppEngine
@@ -46,12 +53,13 @@ public:
 	void Init(std::string title, AppSettings settings_);
 	void Cleanup();
 
-	// THE ACTIVE STATE IS NOT SWITCHED UNTIL HandleEvents() HAS RETURNED
+	// THE ACTIVE STATE IS NOT SWITCHED UNTIL THE CALLER FUNCTION HAS RETURNED
 	void ChangeState(AppState* state);
-	// THE ACTIVE STATE IS NOT SWITCHED UNTIL HandleEvents() HAS RETURNED
+	// THE ACTIVE STATE IS NOT SWITCHED UNTIL THE CALLER FUNCTION HAS RETURNED
 	void PushState(AppState* state);
-	// THE ACTIVE STATE IS NOT SWITCHED UNTIL HandleEvents() HAS RETURNED
+	// THE ACTIVE STATE IS NOT SWITCHED UNTIL THE CALLER FUNCTION HAS RETURNED
 	void PopState();
+
 	AppState* GetCurrentState() { return states.back(); };
 
 	void HandleEvents();
@@ -59,8 +67,9 @@ public:
 	void Draw();
 
 	bool Running() { return running; }
+
 	// THE ACTIVE STATE IS NOT SWITCHED UNTIL HandleEvents() HAS RETURNED
-	void Quit() { running = false; }
+	void Quit();
 
 	void UpdateViewSize(const sf::Vector2f& size);
 
@@ -68,9 +77,11 @@ public:
 	bool multithreaded_process_finished;
 	void ShowMultiThreadedIndicator();
 	void SetMultiThreadedIndicatorPosition(const sf::Vector2f& pos);
-	void LoadMultiThreadedIcon(std::string iconPath);
+	void SetMultiThreadedIndicatorIcon(sf::Texture* texture);
 	std::thread *multithread;
 	/// should be deleted by Update method of State in which it is used.
+
+	const std::string currentDateTime();
 
 	sf::RenderWindow* window;
 	AppSettings settings;
@@ -95,4 +106,4 @@ private:
 	sf::Texture multithreaded_process_indicator_tex;
 };
 
-#endif // !PROGRAM_ENGINE_HPP
+#endif // !APP_ENGINE_HPP
