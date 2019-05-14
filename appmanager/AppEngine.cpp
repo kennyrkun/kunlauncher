@@ -192,14 +192,18 @@ const std::string AppEngine::currentDateTime()
 
 void AppEngine::Quit()
 {
+	std::cout << "Shutting down AppEngine" << std::endl;
+
+	running = false;
+
 	for (size_t i = 0; i < states.size(); i++)
 	{
+		std::cout << "cleaning up state " << i << std::endl;
+
 		states.back()->Cleanup();
 		delete states.back();
 		states.pop_back();
 	}
 
 	states.clear();
-
-	running = false;
 }

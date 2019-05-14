@@ -27,6 +27,8 @@ void HomeState::Init(AppEngine* app_)
 
 	app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 
+	std::cout << "creating menu" << std::endl;
+
 	menu = new SFUI::Menu(*app->window);
 
 	SFUI::HorizontalBoxLayout* hbox1 = menu->addHorizontalBoxLayout();
@@ -39,7 +41,7 @@ void HomeState::Init(AppEngine* app_)
 
 	menu->setPosition(sf::Vector2f((app->window->getSize().x / 2) - menu->getSize().x / 2, (app->window->getSize().y / 2) - menu->getSize().y / 2));
 
-	std::cout << "HomeState ready" << std::endl;
+	std::cout << "HomeState ready." << std::endl;
 }
 
 void HomeState::Cleanup()
@@ -57,7 +59,7 @@ void HomeState::Cleanup()
 
 	delete menu;
 
-	std::cout << "HomeState Cleanup" << std::endl;
+	std::cout << "Cleaned up HomeState." << std::endl;
 }
 
 void HomeState::Pause()
@@ -78,7 +80,10 @@ void HomeState::HandleEvents()
 	{
 		if (event.type == sf::Event::EventType::Closed)
 		{
+			std::cout << "quitting" << std::endl;
+
 			app->Quit();
+			return;
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
@@ -117,6 +122,7 @@ void HomeState::HandleEvents()
 			break;
 		case MenuCallbacks::QUIT:
 			app->Quit();
+			return;
 			break;
 		}
 	}
