@@ -12,6 +12,8 @@ namespace fs = std::experimental::filesystem;
 
 bool Theme::loadFromFile(std::string file)
 {
+	std::cout << "loading theme from file " << file << std::endl;
+
 	// load all colours
 	// interate over all files in the resources folder and check if they're being overriden
 
@@ -97,20 +99,18 @@ bool Theme::loadFromFile(std::string file)
 		// TODO: improve this
 
 		// Check for any overriden files
-		SettingsParser getResources;
-		if (getResources.loadFromFile(GBL::DIR::resources + "resources.dat") && 
+		SettingsParser resourceParser;
+		if (resourceParser.loadFromFile(GBL::DIR::resources + "resources.dat") &&
 			themeParser.loadFromFile(GBL::DIR::themes + name + "/" + name + ".sfuitheme"))
 		{
 			std::vector<std::string> textureList;
 			std::vector<std::string> fontList;
 
-			getResources.get("textures", textureList);
-			getResources.get("fonts", fontList);
+			resourceParser.get("textures", textureList);
+			resourceParser.get("fonts", fontList);
 
-			// if files 
-			bool filesAreOverriden(false);
-			if (themeParser.get("overriden_files", overriden_files))
-				filesAreOverriden = true;
+			// if files are overriden
+			bool filesAreOverriden = themeParser.get("overriden_files", overriden_files);
 
 			for (size_t i = 0; i < textureList.size(); i++)
 			{
@@ -126,12 +126,13 @@ bool Theme::loadFromFile(std::string file)
 					}
 					catch (const std::exception& e)
 					{
+						std::cerr << "failed to add texture to list" << std::endl;
 						std::cerr << e.what() << std::endl;
 
 						MessageBox::Options modOptions;
 						modOptions.title = "Error";
 						modOptions.text = e.what();
-						modOptions.settings = { "Ok"};
+						modOptions.settings = { "Ok" };
 
 						MessageBox failedToSave(modOptions);
 						failedToSave.runBlocking();
@@ -147,7 +148,7 @@ bool Theme::loadFromFile(std::string file)
 					if (fs::exists(GBL::DIR::themes + name + "/" + textureList[i]))
 					{
 						std::cout << "overriding \"" + textureList[i] + "\"" << std::endl;
-						
+
 						// load it into the overriden textures map
 						sf::Texture* tex = new sf::Texture;
 						tex->loadFromFile(GBL::DIR::themes + name + "/" + textureList[i]);
@@ -197,16 +198,19 @@ bool Theme::loadFromFile(std::string file)
 		if (isResourceOverriden("interface_square.png"))
 			SFUI::Theme::loadTexture(getTexture("interface_square.png"));
 
-		SFUI::Theme::click.textColor = palatte.TEXT_SECONDARY;
-		SFUI::Theme::click.textColorHover = palatte.TEXT_SECONDARY;
-		SFUI::Theme::click.textColorFocus = palatte.TEXT_SECONDARY;
-		SFUI::Theme::input.textColor = palatte.TEXT_SECONDARY;
-		SFUI::Theme::input.textColorHover = palatte.TEXT_SECONDARY;
-		SFUI::Theme::input.textColorFocus = palatte.TEXT_SECONDARY;
+		SFUI::Theme::click.textColor = palatte.TEXT;
+		SFUI::Theme::click.textColorHover = palatte.TEXT;
+		SFUI::Theme::click.textColorFocus = palatte.TEXT;
+		SFUI::Theme::input.textColor = palatte.TEXT;
+		SFUI::Theme::input.textColorHover = palatte.TEXT;
+		SFUI::Theme::input.textColorFocus = palatte.TEXT;
+		SFUI::Theme::label.textColor = palatte.TEXT;
+		SFUI::Theme::label.textColorHover = palatte.TEXT;
+		SFUI::Theme::label.textColorFocus = palatte.TEXT;
 	}
 	else
 	{
-		std::cerr << "failed to load theme file" << std::endl;
+		std::cerr << "failed to load file " << file << std::endl;
 		return false;
 	}
 

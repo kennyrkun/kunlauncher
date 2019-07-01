@@ -41,14 +41,14 @@ public:
 	// original: if true, returns original font.
 	//			if false, and the font is overriden
 	//			the overriden font will be returned
-	// nullptr: will return nullptr if the texture does not exist
+	// return: nullptr if font is not loaded
 	sf::Font* getFont(std::string font, bool original = false);
 
 	// returns a texture from resources
 	// original: if true, returns original texture.
 	//			if false, and the texture is overriden
 	//			the overriden texture will be returned
-	// nullptr: will return nullptr if the texture does not exist
+	// return: nullptr if texture is not loaded
 	sf::Texture* getTexture(std::string texture, bool original = false);
 
 	struct ColorPalette
