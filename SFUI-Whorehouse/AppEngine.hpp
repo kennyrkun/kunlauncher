@@ -13,7 +13,7 @@ struct AppSettings
 {
 //	bool offline = false
 
-	bool updateOnStart = false;
+	bool updateOnStart = true;
 	// bool restartAfterUpdate = false;
 	bool logDownloads = true;
 	bool newsEnabled = true;
