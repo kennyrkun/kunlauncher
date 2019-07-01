@@ -35,6 +35,7 @@
 // I don't know why this happens, but it should always load correctly.
 
 // TODO: end keys if they have comments in them mid way
+// TODO: SettingsParser::exists(std::string key);
 
 // TODO: clean up this file.
 // there are so many conversions it's really nasty

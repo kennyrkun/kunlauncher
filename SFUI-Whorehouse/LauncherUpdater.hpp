@@ -9,6 +9,10 @@
 // minor is small, QoL features
 // patch is bug fixes and such
 
+// todo: update channels
+// buildtype = release
+// only download updates with "release" in them
+
 #include "Globals.hpp"
 
 class LauncherUpdater
