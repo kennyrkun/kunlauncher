@@ -65,6 +65,7 @@ void HomeState::Init(AppEngine* app_)
 
 		newsInteraction.setString("enable");
 		newsInteraction.setStyle(sf::Text::Style::Underlined);
+		// TODO: define this style in Theme
 		newsInteraction.setFillColor(sf::Color(0, 170, 232));
 		newsInteraction.setOrigin(newsInteraction.getLocalBounds().width / 2, newsInteraction.getLocalBounds().height / 2);
 		newsInteraction.setPosition(sf::Vector2f(mainView->getCenter().x, static_cast<int>(mainView->getCenter().y + 30)));
@@ -121,6 +122,7 @@ void HomeState::HandleEvents()
 		if (event.type == sf::Event::EventType::Closed)
 		{
 			app->Quit();
+			return;
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
@@ -137,6 +139,19 @@ void HomeState::HandleEvents()
 
 				viewScroller->setSize(sf::Vector2f(event.size.width, event.size.height));
 				viewScroller->setCenter(sf::Vector2f(viewScroller->getSize().x / 2, viewScroller->getSize().y / 2));
+
+				bool scroll = scrollbar.isEnabled;
+
+				scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getLocalBounds().height);
+				scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, navbar->bar.getLocalBounds().height));
+				updateScrollThumbSize();
+
+				if (scroll != scrollbar.isEnabled)
+				{
+					// TODO: update wrapSfText for texts
+				}
+
+				app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 			}
 			else
 			{
@@ -148,19 +163,6 @@ void HomeState::HandleEvents()
 
 				app->window->setSize(newSize);
 			}
-			
-			bool scroll = scrollbar.isEnabled;
-
-			scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getLocalBounds().height);
-			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, navbar->bar.getLocalBounds().height));
-			updateScrollThumbSize();
-			
-			if (scroll != scrollbar.isEnabled)
-			{
-				// TODO: update wrapSfText for texts
-			}
-
-			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 		}
 		else if (event.type == sf::Event::EventType::MouseButtonReleased && !app->multithreaded_process_running)
 		{
@@ -393,28 +395,24 @@ void HomeState::loadNews(bool &finishedIndicator, int loadFrom, int loadTo)
 		delete newses[i];
 	newses.clear();
 
-	// redownload the news if it doesn't exist
-	if (!fs::exists(GBL::DIR::installDir + "news.txt"))
+	setStatusText("Downloading news...");
+
+	Download getNews;
+	getNews.setInput("./" + GBL::WEB::NEWS + "/news.txt");
+	getNews.setOutputDir(GBL::DIR::installDir);
+	getNews.setOutputFilename("/news.txt");
+
+	if (getNews.download() == Download::Status::Success)
 	{
-		setStatusText("Downloading news...");
+		getNews.save();
+	}
+	else
+	{
+		std::cerr << "failed to download news" << std::endl;
+		setStatusText("Failed to download news.");
 
-		Download getNews;
-		getNews.setInput("./" + GBL::WEB::NEWS + "/news.txt");
-		getNews.setOutputDir(GBL::DIR::installDir);
-		getNews.setOutputFilename("/news.txt");
-
-		if (getNews.download() == Download::Status::Success)
-		{
-			getNews.save();
-		}
-		else
-		{
-			std::cerr << "failed to download news" << std::endl;
-			setStatusText("Failed to download news.");
-
-			finishedIndicator = true;
-			return;
-		}
+		finishedIndicator = true;
+		return;
 	}
 
 	setStatusText("Parsing News...");

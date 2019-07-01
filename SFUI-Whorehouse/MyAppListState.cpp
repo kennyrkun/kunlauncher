@@ -107,6 +107,7 @@ void MyAppListState::HandleEvents()
 		if (event.type == sf::Event::EventType::Closed)
 		{
 			app->Quit();
+			return;
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
