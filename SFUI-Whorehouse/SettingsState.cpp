@@ -94,7 +94,7 @@ void SettingsState::Init(AppEngine* app_)
 	scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getLocalBounds().height);
 	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, navbar->bar.getSize().y));
 
-	parser.loadFromFile(GBL::CONFIG::config);
+	configParser.loadFromFile(GBL::CONFIG::config);
 
 	buildDefaultMenu();
 }
@@ -130,6 +130,7 @@ void SettingsState::HandleEvents()
 		if (event.type == sf::Event::EventType::Closed)
 		{
 			app->Quit();
+			return;
 		}
 		else if (event.type == sf::Event::EventType::Resized)
 		{
@@ -251,35 +252,35 @@ void SettingsState::HandleEvents()
 				{
 				case CALLBACK::UPDATE_ON_START:
 					app->settings.updateOnStart = main.updateOnStartCheck->isChecked();
-					parser.set(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
+					configParser.set(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
 					break;
 				case CALLBACK::LOG_DOWNLOADS:
 					app->settings.logDownloads = main.logDownloadsCheck->isChecked();
-					parser.set(GBL::CONFIG::logDownloads, app->settings.logDownloads);
+					configParser.set(GBL::CONFIG::logDownloads, app->settings.logDownloads);
 					break;
 				case CALLBACK::NEWS_ENABLED:
 					app->settings.newsEnabled = main.newsEnabledCheck->isChecked();
-					parser.set(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
+					configParser.set(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
 					break;
 				case CALLBACK::SFUI_DEBUG_TEXTURE:
 					// TODO: don't use solid string here
 					SFUI::Theme::loadTexture(GBL::DIR::textures + "interface_square.png", main.debugTextureCheck->isChecked());
 					app->settings.SFUIDebug = main.debugTextureCheck->isChecked();
-					parser.set(GBL::CONFIG::SFUIDebug, main.debugTextureCheck->isChecked());
+					configParser.set(GBL::CONFIG::SFUIDebug, main.debugTextureCheck->isChecked());
 					break;
 				case CALLBACK::ALLOW_STAT_TRACKING:
 					app->settings.allowStatTracking = main.allowStatTrackingCheck->isChecked();
-					parser.set(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
+					configParser.set(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
 					break;
 				case CALLBACK::USE_ANIMATIONS:
 					app->settings.useAnimations = main.useAnimationsCheck->isChecked();
-					parser.set(GBL::CONFIG::useAnimations, app->settings.useAnimations ? "TRUE" : "FALSE");
+					configParser.set(GBL::CONFIG::useAnimations, app->settings.useAnimations ? "TRUE" : "FALSE");
 					break;
 				case CALLBACK::ANIMATION_SCALE:
 				{
 					std::string s = main.animationScaleBox->getText();
 					app->settings.animationScale = std::stoi(s);
-					parser.set(GBL::CONFIG::animationScale, app->settings.animationScale);
+					configParser.set(GBL::CONFIG::animationScale, app->settings.animationScale);
 					break;
 				}
 				case CALLBACK::SELECTED_THEME:
@@ -293,7 +294,7 @@ void SettingsState::HandleEvents()
 					std::cout << "vsync" << std::endl;
 					app->settings.window.verticalSync = main.verticalSyncCheck->isChecked();
 					app->window->setVerticalSyncEnabled(app->settings.window.verticalSync);
-					parser.set(GBL::CONFIG::Window::verticalSync, app->settings.window.verticalSync ? "TRUE" : "FALSE");
+					configParser.set(GBL::CONFIG::Window::verticalSync, app->settings.window.verticalSync ? "TRUE" : "FALSE");
 					break;
 				case CALLBACK::WIDTH:
 				{
@@ -306,7 +307,7 @@ void SettingsState::HandleEvents()
 						main.heightBox->setText("325");
 					}
 
-					parser.set(GBL::CONFIG::Window::width, app->settings.window.width);
+					configParser.set(GBL::CONFIG::Window::width, app->settings.window.width);
 					app->window->setSize(sf::Vector2u(app->settings.window.width, app->settings.window.height));
 					break;
 				}
@@ -321,21 +322,21 @@ void SettingsState::HandleEvents()
 						main.heightBox->setText("325");
 					}
 
-					parser.set(GBL::CONFIG::Window::height, app->settings.window.height);
+					configParser.set(GBL::CONFIG::Window::height, app->settings.window.height);
 					app->window->setSize(sf::Vector2u(app->settings.window.width, app->settings.window.height));
 					break;
 				}
 				case CALLBACK::APP_UPDATE_LIST_ON_START:
 					app->settings.apps.updateStoreOnStart = main.apps_updateListOnStartCheck->isChecked();
-					parser.set(GBL::CONFIG::Apps::updateStoreOnStart, app->settings.apps.updateStoreOnStart);
+					configParser.set(GBL::CONFIG::Apps::updateStoreOnStart, app->settings.apps.updateStoreOnStart);
 					break;
 				case CALLBACK::APP_AUTO_UPDATE:
 					app->settings.apps.autoUpdate = main.apps_autoUpdate->isChecked();
-					parser.set(GBL::CONFIG::Apps::autoUpdate, app->settings.apps.autoUpdate);
+					configParser.set(GBL::CONFIG::Apps::autoUpdate, app->settings.apps.autoUpdate);
 					break;
 				case CALLBACK::APP_CHECK_FOR_UPDATES:
 					app->settings.apps.checkForUpdates = main.apps_checkForUpdates->isChecked();
-					parser.set(GBL::CONFIG::Apps::checkForUpdates, app->settings.apps.checkForUpdates);
+					configParser.set(GBL::CONFIG::Apps::checkForUpdates, app->settings.apps.checkForUpdates);
 					break;
 
 				case CALLBACK::TO_THEME_EDITOR:
@@ -962,25 +963,25 @@ void SettingsState::buildIssueReporter()
 
 void SettingsState::saveAllSettings()
 {
-	if (parser.loadFromFile(GBL::CONFIG::config))
+	if (configParser.loadFromFile(GBL::CONFIG::config))
 	{
-		parser.set(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
-		parser.set(GBL::CONFIG::logDownloads, app->settings.logDownloads);
-		parser.set(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
-		parser.set(GBL::CONFIG::SFUIDebug, app->settings.SFUIDebug);
-		parser.set(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
-		parser.set(GBL::CONFIG::useAnimations, app->settings.useAnimations);
-		parser.set(GBL::CONFIG::animationScale, app->settings.animationScale);
+		configParser.set(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
+		configParser.set(GBL::CONFIG::logDownloads, app->settings.logDownloads);
+		configParser.set(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
+		configParser.set(GBL::CONFIG::SFUIDebug, app->settings.SFUIDebug);
+		configParser.set(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
+		configParser.set(GBL::CONFIG::useAnimations, app->settings.useAnimations);
+		configParser.set(GBL::CONFIG::animationScale, app->settings.animationScale);
 
-		parser.set(GBL::CONFIG::selectedTheme, app->settings.selectedTheme);
+		configParser.set(GBL::CONFIG::selectedTheme, app->settings.selectedTheme);
 
-		parser.set(GBL::CONFIG::Window::verticalSync, app->settings.window.verticalSync);
-		parser.set(GBL::CONFIG::Window::width, app->settings.window.width);
-		parser.set(GBL::CONFIG::Window::height, app->settings.window.height);
+		configParser.set(GBL::CONFIG::Window::verticalSync, app->settings.window.verticalSync);
+		configParser.set(GBL::CONFIG::Window::width, app->settings.window.width);
+		configParser.set(GBL::CONFIG::Window::height, app->settings.window.height);
 
-		parser.set(GBL::CONFIG::Apps::updateStoreOnStart, app->settings.apps.updateStoreOnStart);
-		parser.set(GBL::CONFIG::Apps::autoUpdate, app->settings.apps.autoUpdate);
-		parser.set(GBL::CONFIG::Apps::checkForUpdates, app->settings.apps.checkForUpdates);
+		configParser.set(GBL::CONFIG::Apps::updateStoreOnStart, app->settings.apps.updateStoreOnStart);
+		configParser.set(GBL::CONFIG::Apps::autoUpdate, app->settings.apps.autoUpdate);
+		configParser.set(GBL::CONFIG::Apps::checkForUpdates, app->settings.apps.checkForUpdates);
 	}
 	else
 	{
@@ -991,25 +992,25 @@ void SettingsState::saveAllSettings()
 
 void SettingsState::loadSettings()
 {
-	if (parser.loadFromFile(GBL::CONFIG::config))
+	if (configParser.loadFromFile(GBL::CONFIG::config))
 	{
-		parser.get(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
-		parser.get(GBL::CONFIG::logDownloads, app->settings.logDownloads);
-		parser.get(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
-		parser.get(GBL::CONFIG::SFUIDebug, app->settings.SFUIDebug);
-		parser.get(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
-		parser.get(GBL::CONFIG::useAnimations, app->settings.useAnimations);
-		parser.get(GBL::CONFIG::animationScale, app->settings.animationScale);
+		configParser.get(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
+		configParser.get(GBL::CONFIG::logDownloads, app->settings.logDownloads);
+		configParser.get(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
+		configParser.get(GBL::CONFIG::SFUIDebug, app->settings.SFUIDebug);
+		configParser.get(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
+		configParser.get(GBL::CONFIG::useAnimations, app->settings.useAnimations);
+		configParser.get(GBL::CONFIG::animationScale, app->settings.animationScale);
 
-		parser.get(GBL::CONFIG::selectedTheme, app->settings.selectedTheme);
+		configParser.get(GBL::CONFIG::selectedTheme, app->settings.selectedTheme);
 
-		parser.get(GBL::CONFIG::Window::verticalSync, app->settings.window.verticalSync);
-		parser.get(GBL::CONFIG::Window::width, app->settings.window.width);
-		parser.get(GBL::CONFIG::Window::height, app->settings.window.height);
+		configParser.get(GBL::CONFIG::Window::verticalSync, app->settings.window.verticalSync);
+		configParser.get(GBL::CONFIG::Window::width, app->settings.window.width);
+		configParser.get(GBL::CONFIG::Window::height, app->settings.window.height);
 
-		parser.get(GBL::CONFIG::Apps::updateStoreOnStart, app->settings.apps.updateStoreOnStart);
-		parser.get(GBL::CONFIG::Apps::autoUpdate, app->settings.apps.autoUpdate);
-		parser.get(GBL::CONFIG::Apps::checkForUpdates, app->settings.apps.checkForUpdates);
+		configParser.get(GBL::CONFIG::Apps::updateStoreOnStart, app->settings.apps.updateStoreOnStart);
+		configParser.get(GBL::CONFIG::Apps::autoUpdate, app->settings.apps.autoUpdate);
+		configParser.get(GBL::CONFIG::Apps::checkForUpdates, app->settings.apps.checkForUpdates);
 	}
 	else
 	{

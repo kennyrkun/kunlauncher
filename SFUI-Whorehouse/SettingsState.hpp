@@ -48,7 +48,7 @@ private:
 		menu->setPosition(sf::Vector2f(menu->getAbsolutePosition().x + offset.x, menu->getAbsolutePosition().y + offset.y));
 	}
 
-	SettingsParser parser;
+	SettingsParser configParser;
 
 	void buildDefaultMenu();
 	void buildIntersitial();
