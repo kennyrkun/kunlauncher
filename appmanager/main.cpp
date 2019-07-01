@@ -26,6 +26,9 @@ int main(int argc, char *argv[])
 	SFUI::Theme::input.textColor = SFUI::Theme::hexToRgb("#ffffff");
 	SFUI::Theme::input.textColorHover = SFUI::Theme::hexToRgb("#ffffff");
 	SFUI::Theme::input.textColorFocus = SFUI::Theme::hexToRgb("#ffffff");
+	SFUI::Theme::label.textColor = SFUI::Theme::hexToRgb("#ffffff");
+	SFUI::Theme::label.textColorHover = SFUI::Theme::hexToRgb("#ffffff");
+	SFUI::Theme::label.textColorFocus = SFUI::Theme::hexToRgb("#ffffff");
 	SFUI::Theme::windowBgColor = sf::Color(40, 40, 40);
 	SFUI::Theme::PADDING = 2.f;
 
