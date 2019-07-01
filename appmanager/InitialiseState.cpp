@@ -56,7 +56,6 @@ void InitialiseState::Init(AppEngine* app_)
 
 	setTaskText("You can't see me!");
 
-
 	helperThread = new std::thread(&InitialiseState::initialise, this);
 	helperRunning = true;
 	helperRunning = false;

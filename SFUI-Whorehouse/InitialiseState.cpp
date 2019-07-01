@@ -135,6 +135,7 @@ void InitialiseState::HandleEvents()
 		if (event.type == sf::Event::EventType::Closed)
 		{
 			app->Quit();
+			return;
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed)
 		{
@@ -239,8 +240,8 @@ void InitialiseState::initialise()
 	// make sure we have at least the default themes
 	getThemeConfiguration();
 
-	GBL::theme.loadFromFile(app->settings.selectedTheme); 
-	app->SetMultiThreadedIndicatorIcon(GBL::theme.getTexture("settings_2x.png"));
+	if (GBL::theme.loadFromFile(app->settings.selectedTheme))
+		app->SetMultiThreadedIndicatorIcon(GBL::theme.getTexture("settings_2x.png"));
 
 	SFUI::Theme::loadFont(GBL::theme.getFont("Arial.ttf"));
 	SFUI::Theme::loadTexture(GBL::theme.getTexture("interface_square.png"));
@@ -708,53 +709,54 @@ int InitialiseState::getThemeConfiguration()
 			try
 			{
 				fs::create_directory(GBL::DIR::themes + "dark");
+
+				std::cout << "creating dark theme file" << std::endl;
+				std::ofstream darkTheme(GBL::DIR::themes + "dark/dark.sfuitheme");
+
+				darkTheme << "// default 'dark' theme for kunlauncher" << std::endl;
+				darkTheme << std::endl;
+				darkTheme << "name = dark" << std::endl;
+				darkTheme << "author = kennyrkun" << std::endl;
+				darkTheme << "version = 1" << std::endl;
+				darkTheme << "launcherversion = 17" << std::endl;
+				darkTheme << std::endl;
+				darkTheme << "// globals" << std::endl;
+				darkTheme << "primary = 100, 100, 100" << std::endl;
+				darkTheme << "secondary = 150, 150, 150" << std::endl;
+				darkTheme << "tertiary = 50, 50, 50" << std::endl;
+				darkTheme << "text = 255, 255, 255" << std::endl;
+				darkTheme << "text_secondary = 255, 255, 255" << std::endl;
+				darkTheme << std::endl;
+				darkTheme << "// scrollbar" << std::endl;
+				darkTheme << "scrollbar = 80, 80, 80" << std::endl;
+				darkTheme << "scrollthumb = 110, 110, 110" << std::endl;
+				darkTheme << "scrollthumb_hover = 158, 158, 158" << std::endl;
+				darkTheme << "scrollthumb_hold = 239, 235, 239" << std::endl;
+				darkTheme << std::endl;
+				darkTheme << "// apps" << std::endl;
+				darkTheme << "app_card = 100, 100, 100" << std::endl;
+				darkTheme << "app_card2 = 100, 100, 100" << std::endl;
+				darkTheme << "app_image = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon_hover = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon_press = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon_fail = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon_fail_hover = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon_fail_press = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon_warn = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon_warn_hover = 255, 255, 255" << std::endl;
+				darkTheme << "app_icon_warn_press = 255, 255, 255" << std::endl;
+
+				// create the interfaces by making a bunch of squares, taking a screenshot, and saving
+
+				darkTheme.close();
 			}
 			catch (const std::exception& e)
 			{
+				std::cerr << "failed to create dark theme directory" << std::endl;
 				std::cerr << e.what() << std::endl;
 			}
 		}
-
-		std::cout << "creating dark theme file" << std::endl;
-		std::ofstream darkTheme(GBL::DIR::themes + "dark/dark.sfuitheme");
-
-		darkTheme << "// default 'dark' theme for kunlauncher" << std::endl;
-		darkTheme << std::endl;
-		darkTheme << "name = dark" << std::endl;
-		darkTheme << "author = kennyrkun" << std::endl;
-		darkTheme << "version = 1" << std::endl;
-		darkTheme << "launcherversion = 17" << std::endl;
-		darkTheme << std::endl;
-		darkTheme << "// globals" << std::endl;
-		darkTheme << "primary = 100, 100, 100" << std::endl;
-		darkTheme << "secondary = 150, 150, 150" << std::endl;
-		darkTheme << "tertiary = 50, 50, 50" << std::endl;
-		darkTheme << "text = 255, 255, 255" << std::endl;
-		darkTheme << "text_secondary = 0, 0, 0" << std::endl;
-		darkTheme << std::endl;
-		darkTheme << "// scrollbar" << std::endl;
-		darkTheme << "scrollbar = 80, 80, 80" << std::endl;
-		darkTheme << "scrollthumb = 110, 110, 110" << std::endl;
-		darkTheme << "scrollthumb_hover = 158, 158, 158" << std::endl;
-		darkTheme << "scrollthumb_hold = 239, 235, 239" << std::endl;
-		darkTheme << std::endl;
-		darkTheme << "// apps" << std::endl;
-		darkTheme << "app_card = 100, 100, 100" << std::endl;
-		darkTheme << "app_card2 = 100, 100, 100" << std::endl;
-		darkTheme << "app_image = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon_hover = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon_press = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon_fail = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon_fail_hover = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon_fail_press = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon_warn = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon_warn_hover = 255, 255, 255" << std::endl;
-		darkTheme << "app_icon_warn_press = 255, 255, 255" << std::endl;
-
-		// create the interfaces by making a bunch of squares, taking a screenshot, and saving
-
-		darkTheme.close();
 	}
 
 	if (!fs::exists(GBL::DIR::themes + "light/light.sfuitheme"))
@@ -764,51 +766,52 @@ int InitialiseState::getThemeConfiguration()
 			try
 			{
 				fs::create_directory(GBL::DIR::themes + "light");
+
+				std::cout << "creating light theme file" << std::endl;
+				std::ofstream lightTheme(GBL::DIR::themes + "light/light.sfuitheme");
+
+				lightTheme << "// default 'light' theme for kunlauncher" << std::endl;
+				lightTheme << std::endl;
+				lightTheme << "name = light" << std::endl;
+				lightTheme << "author = kennyrkun" << std::endl;
+				lightTheme << "version = 1" << std::endl;
+				lightTheme << "launcherversion = 17" << std::endl;
+				lightTheme << std::endl;
+				lightTheme << "// globals" << std::endl;
+				lightTheme << "primary = 150, 150, 150" << std::endl;
+				lightTheme << "secondary = 180, 180, 180" << std::endl;
+				lightTheme << "tertiary = 220, 220, 220" << std::endl;
+				lightTheme << "text = 0, 0, 0" << std::endl;
+				lightTheme << "text_secondary = 255, 255, 255" << std::endl;
+				lightTheme << std::endl;
+				lightTheme << "// scrollbar" << std::endl;
+				lightTheme << "scrollbar = 241, 241, 241" << std::endl;
+				lightTheme << "scrollthumb = 110, 110, 192" << std::endl;
+				lightTheme << "scrollthumb_hover = 168, 168, 168" << std::endl;
+				lightTheme << "scrollthumb_hold = 120, 120, 120" << std::endl;
+				lightTheme << std::endl;
+				lightTheme << "// apps" << std::endl;
+				lightTheme << "app_card = 100, 100, 100" << std::endl;
+				lightTheme << "app_card2 = 100, 100, 100" << std::endl;
+				lightTheme << "app_image = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon_hover = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon_press = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon_fail = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon_fail_hover = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon_fail_press = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon_warn = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon_warn_hover = 255, 255, 255" << std::endl;
+				lightTheme << "app_icon_warn_press = 255, 255, 255" << std::endl;
+
+				lightTheme.close();
 			}
 			catch (const std::exception& e)
 			{
+				std::cerr << "failed to create light theme directory" << std::endl;
 				std::cerr << e.what() << std::endl;
 			}
 		}
-
-		std::cout << "creating light theme file" << std::endl;
-		std::ofstream lightTheme(GBL::DIR::themes + "light/light.sfuitheme");
-
-		lightTheme << "// default 'light' theme for kunlauncher" << std::endl;
-		lightTheme << std::endl;
-		lightTheme << "name = light" << std::endl;
-		lightTheme << "author = kennyrkun" << std::endl;
-		lightTheme << "version = 1" << std::endl;
-		lightTheme << "launcherversion = 17" << std::endl;
-		lightTheme << std::endl;
-		lightTheme << "// globals" << std::endl;
-		lightTheme << "primary = 150, 150, 150" << std::endl;
-		lightTheme << "secondary = 180, 180, 180" << std::endl;
-		lightTheme << "tertiary = 220, 220, 220" << std::endl;
-		lightTheme << "text = 0, 0, 0" << std::endl;
-		lightTheme << "text_secondary = 255, 255, 255" << std::endl;
-		lightTheme << std::endl;
-		lightTheme << "// scrollbar" << std::endl;
-		lightTheme << "scrollbar = 241, 241, 241" << std::endl;
-		lightTheme << "scrollthumb = 110, 110, 192" << std::endl;
-		lightTheme << "scrollthumb_hover = 168, 168, 168" << std::endl;
-		lightTheme << "scrollthumb_hold = 120, 120, 120" << std::endl;
-		lightTheme << std::endl;
-		lightTheme << "// apps" << std::endl;
-		lightTheme << "app_card = 100, 100, 100" << std::endl;
-		lightTheme << "app_card2 = 100, 100, 100" << std::endl;
-		lightTheme << "app_image = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon_hover = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon_press = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon_fail = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon_fail_hover = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon_fail_press = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon_warn = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon_warn_hover = 255, 255, 255" << std::endl;
-		lightTheme << "app_icon_warn_press = 255, 255, 255" << std::endl;
-
-		lightTheme.close();
 	}
 
 	// FIXME: load themes
