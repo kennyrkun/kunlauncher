@@ -198,15 +198,10 @@ bool Theme::loadFromFile(std::string file)
 		if (isResourceOverriden("interface_square.png"))
 			SFUI::Theme::loadTexture(getTexture("interface_square.png"));
 
-		SFUI::Theme::click.textColor = palatte.TEXT;
-		SFUI::Theme::click.textColorHover = palatte.TEXT;
-		SFUI::Theme::click.textColorFocus = palatte.TEXT;
-		SFUI::Theme::input.textColor = palatte.TEXT;
-		SFUI::Theme::input.textColorHover = palatte.TEXT;
-		SFUI::Theme::input.textColorFocus = palatte.TEXT;
-		SFUI::Theme::label.textColor = palatte.TEXT;
-		SFUI::Theme::label.textColorHover = palatte.TEXT;
-		SFUI::Theme::label.textColorFocus = palatte.TEXT;
+		sf::Color white = palatte.TEXT;
+		SFUI::Theme::click = { white, white, white };
+		SFUI::Theme::input = { white, white, white };
+		SFUI::Theme::label = { white, white, white };
 	}
 	else
 	{
