@@ -1,4 +1,5 @@
-#include "../SFUI-Whorehouse/AppEngine.hpp"
+#include "AppEngine.hpp"
+
 #include "HomeState.hpp"
 #include "AppUploadState.hpp"
 
@@ -25,8 +26,6 @@ void HomeState::Init(AppEngine* app_)
 	std::cout << "HomeState Init" << std::endl;
 	app = app_;
 
-	app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
-
 	std::cout << "creating menu" << std::endl;
 
 	menu = new SFUI::Menu(*app->window);
@@ -47,15 +46,6 @@ void HomeState::Init(AppEngine* app_)
 void HomeState::Cleanup()
 {
 	std::cout << "Cleaning up HomeState" << std::endl;
-
-	if (app->multithreaded_process_running)
-	{
-		std::cout << "waiting on helper thread to finish" << std::endl;
-		app->multithread->join();
-		app->multithreaded_process_finished = true;
-		app->multithreaded_process_running = false;
-		delete app->multithread;
-	}
 
 	delete menu;
 
@@ -107,8 +97,6 @@ void HomeState::HandleEvents()
 
 				app->window->setSize(newSize);
 			}
-
-			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 		}
 
 		int id = menu->onEvent(event);
@@ -130,15 +118,6 @@ void HomeState::HandleEvents()
 
 void HomeState::Update()
 {
-	if (app->multithreaded_process_finished)
-	{
-		std::cout << "helper thread finished work, joining" << std::endl;
-		app->multithread->join();
-		app->multithreaded_process_finished = false;
-		app->multithreaded_process_running = false;
-
-		delete app->multithread;
-	}
 }
 
 void HomeState::Draw()
@@ -146,9 +125,6 @@ void HomeState::Draw()
 	app->window->clear(SFUI::Theme::windowBgColor);
 
 	app->window->draw(*menu);
-
-	if (app->multithreaded_process_running)
-		app->ShowMultiThreadedIndicator();
 
 	app->window->display();
 }

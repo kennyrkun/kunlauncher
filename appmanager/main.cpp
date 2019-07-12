@@ -1,4 +1,4 @@
-#include "../SFUI-Whorehouse/AppEngine.hpp"
+#include "AppEngine.hpp"
 #include "../SFUI-Whorehouse/SettingsParser.hpp"
 #include "InitialiseState.hpp"
 
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
 		app.PushState(new InitialiseState);
 
-		while (app.Running())
+		while (app.isRunning())
 		{
 			app.HandleEvents();
 			app.Update();

@@ -1,7 +1,7 @@
 #ifndef INITALISE_STATE_HPP
 #define INITALISE_STATE_HPP
 
-#include "../SFUI-Whorehouse/AppState.hpp"
+#include "AppState.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <thread>

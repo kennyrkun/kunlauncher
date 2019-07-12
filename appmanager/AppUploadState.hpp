@@ -1,7 +1,7 @@
 #ifndef APP_UPLOAD_STATE_HPP
 #define APP_UPLOAD_STATE_HPP
 
-#include "../SFUI-Whorehouse/AppState.hpp"
+#include "AppState.hpp"
 #include "App.hpp"
 #include "ToolTip.hpp"
 

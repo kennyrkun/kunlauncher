@@ -1,4 +1,4 @@
-#include "../SFUI-Whorehouse/AppEngine.hpp"
+#include "AppEngine.hpp"
 #include "InitialiseState.hpp"
 #include "HomeState.hpp"
 
@@ -12,6 +12,8 @@
 #include <iostream>
 #include <fstream>
 #include <experimental/filesystem>
+
+// FIXME: this whole thing is fucking gay. it breaks a lot. i wonder why?
 
 namespace fs = std::experimental::filesystem;
 
@@ -149,7 +151,7 @@ int InitialiseState::validateFileStructure()
 {
 	progressBar->reset();
 	progressBar->addThingsToDo(3); // bin, cache, appcache, config, tpn, apps, apps+index, resources, themes, stats
-	setTaskText("validating files");
+	setTaskText("validating files"); // FIXME: <- something in there is causing a crash on startup
 
 	std::cout << "checking for bin" << std::endl; 
 	{ // 1

@@ -1,4 +1,4 @@
-#include "../SFUI-Whorehouse/AppEngine.hpp"
+#include "AppEngine.hpp"
 #include "AppUploadState.hpp"
 #include "HomeState.hpp"
 
@@ -35,8 +35,6 @@ void AppUploadState::Init(AppEngine* app_)
 	std::cout << "AppUploadState Init" << std::endl;
 	app = app_;
 
-	app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20.0f, app->window->getSize().y - 20.0f));
-
 	menu = new SFUI::Menu(*app->window);
 	menu->setPosition(sf::Vector2f(10, 10));
 
@@ -62,15 +60,6 @@ void AppUploadState::Init(AppEngine* app_)
 void AppUploadState::Cleanup()
 {
 	std::cout << "Cleaning up AppUploadState." << std::endl;
-
-	if (app->multithreaded_process_running)
-	{
-		std::cout << "waiting on helper thread to finish" << std::endl;
-		app->multithread->join();
-		app->multithreaded_process_finished = true;
-		app->multithreaded_process_running = false;
-		delete app->multithread;
-	}
 
 	delete menu;
 
@@ -119,8 +108,6 @@ void AppUploadState::HandleEvents()
 
 				app->window->setSize(newSize);
 			}
-
-			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 		}
 
 		int calledbackWidget = menu->onEvent(event);
@@ -258,15 +245,6 @@ void AppUploadState::HandleEvents()
 
 void AppUploadState::Update()
 {
-	if (app->multithreaded_process_finished)
-	{
-		std::cout << "helper thread finished work, joining" << std::endl;
-		app->multithread->join();
-		app->multithreaded_process_finished = false;
-		app->multithreaded_process_running = false;
-
-		delete app->multithread;
-	}
 }
 
 void AppUploadState::Draw()
@@ -389,9 +367,6 @@ void AppUploadState::Draw()
 		}
 		*/
 	}
-
-	if (app->multithreaded_process_running)
-		app->ShowMultiThreadedIndicator();
 
 	app->window->display();
 }

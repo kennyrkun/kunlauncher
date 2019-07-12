@@ -5,10 +5,14 @@
 #include "Download.hpp"
 
 #include <SFUI/Theme.hpp>
+
 #include <iostream>
 #include <ctime>
+#include <experimental/filesystem>
 
 // TODO: load program icon
+
+namespace fs = std::experimental::filesystem;
 
 void AppEngine::Init(std::string title_, AppSettings settings_)
 {
@@ -18,24 +22,6 @@ void AppEngine::Init(std::string title_, AppSettings settings_)
 
 	window = new sf::RenderWindow;
 	window->setVerticalSyncEnabled(settings.window.verticalSync);
-
-	multithreaded_process_indicator.setRadius(20);
-	multithreaded_process_indicator.setOrigin(sf::Vector2f(20, 20));
-//	SetMultiThreadedIndicatorIcon(GBL::theme.getTexture("settings_2x.png")); // eventually this needs to be done in IntialiseState, but right now it refuses to work there.
-
-	/*
-	SFUI::Theme::loadFont(GBL::DIR::fonts + "Arial.ttf");
-	SFUI::Theme::loadTexture(GBL::DIR::textures + "interface_square.png");
-	SFUI::Theme::textCharacterSize = 11;
-	SFUI::Theme::click.textColor = SFUI::Theme::hexToRgb("#fff");
-	SFUI::Theme::click.textColorHover = SFUI::Theme::hexToRgb("#fff");
-	SFUI::Theme::click.textColorFocus = SFUI::Theme::hexToRgb("#fff");
-	SFUI::Theme::input.textColor = SFUI::Theme::hexToRgb("#fff");
-	SFUI::Theme::input.textColorHover = SFUI::Theme::hexToRgb("#fff");
-	SFUI::Theme::input.textColorFocus = SFUI::Theme::hexToRgb("#fff");
-	SFUI::Theme::windowBgColor = GBL::theme.palatte.TERTIARY;
-	SFUI::Theme::PADDING = 2.f;
-	*/
 
 	running = true;
 }
@@ -135,6 +121,7 @@ void AppEngine::Draw()
 		states.back()->Draw();
 }
 
+/*
 void AppEngine::UpdateViewSize(const sf::Vector2f& size)
 {
 	std::cout << "new width: " << size.x << std::endl;
@@ -158,25 +145,8 @@ void AppEngine::UpdateViewSize(const sf::Vector2f& size)
 
 		window->setSize(newSize);
 	}
-
-	SetMultiThreadedIndicatorPosition(sf::Vector2f(20, window->getSize().y - 20));
 }
-
-void AppEngine::ShowMultiThreadedIndicator()
-{
-	multithreaded_process_indicator.rotate(1);
-	window->draw(multithreaded_process_indicator);
-}
-
-void AppEngine::SetMultiThreadedIndicatorPosition(const sf::Vector2f& pos)
-{
-	multithreaded_process_indicator.setPosition(pos);
-}
-
-void AppEngine::SetMultiThreadedIndicatorIcon(sf::Texture* texture)
-{
-	multithreaded_process_indicator.setTexture(texture);
-}
+*/
 
 // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c/10467633#10467633
 const std::string AppEngine::currentDateTime() 
@@ -206,4 +176,57 @@ void AppEngine::Quit()
 	}
 
 	states.clear();
+}
+
+std::vector<std::string> AppEngine::get_directories(const std::string& s)
+{
+	std::vector<std::string> r;
+	for (auto& p : fs::directory_iterator(s))
+		if (p.status().type() == fs::file_type::directory)
+			r.push_back(p.path().string().substr(s.length(), p.path().string().length()));
+	return r;
+}
+
+bool AppEngine::updateAppIndex()
+{
+	std::cout << "[AppEngine] redownloading app index." << std::endl;
+
+	Download getNewIndex;
+	getNewIndex.setInput("./" + GBL::WEB::APPS + "/index.dat");
+	getNewIndex.setOutputDir(GBL::DIR::appcache);
+	getNewIndex.setOutputFilename("/index.dat");
+
+	int status = getNewIndex.download();
+
+	if (status == Download::Status::Ok)
+	{
+		getNewIndex.save();
+		return true;
+	}
+	else
+	{
+		std::cerr << "[AppEngine] failed to download new index" << std::endl;
+		return false;
+	}
+}
+
+void AppEngine::drawInformationPanel(std::string text)
+{
+	sf::RectangleShape shape(sf::Vector2f(window->getSize().x, window->getSize().y));
+	shape.setFillColor(sf::Color(0, 0, 0, 100));
+
+	sf::RectangleShape middle(sf::Vector2f(window->getSize().x, 100));
+	middle.setFillColor(SFUI::Theme::windowBgColor);
+	middle.setPosition(sf::Vector2f(0, (window->getSize().y / 2) - 50));
+
+	sf::Text t;
+	t.setFont(SFUI::Theme::getFont());
+	t.setCharacterSize(48);
+	t.setString(text);
+	t.setPosition(sf::Vector2f(25, middle.getPosition().y + 18));
+
+	window->draw(shape);
+	window->draw(middle);
+	window->draw(t);
+	window->display();
 }
