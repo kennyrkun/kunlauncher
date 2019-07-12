@@ -152,7 +152,7 @@ int Download::download()
 	if (!response.isOk())
 	{
 		std::cout << "[DL] failed to login to ftp" << std::endl;
-		return Status::Fail | Status::ConnectionRejected;
+		return Status::Fail | Status::LoginFailed;
 	}
 
 	response = ftp.changeDirectory("public_html");

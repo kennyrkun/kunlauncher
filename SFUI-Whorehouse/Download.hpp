@@ -20,7 +20,7 @@ public:
 
 		ConnectionFailed,
 		ConnectionTimedOut,
-		ConnectionRejected,
+		LoginFailed,
 	};
 
 public:

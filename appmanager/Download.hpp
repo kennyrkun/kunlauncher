@@ -19,7 +19,7 @@ public:
 		RemoteFileNotFound,
 		ConnectionFailed,
 		ConnectionTimedOut,
-		ConnectionRejected,
+		LoginFailed,
 		SaveFailed
 	};
 
