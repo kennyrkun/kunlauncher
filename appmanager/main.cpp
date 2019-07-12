@@ -20,15 +20,12 @@ int main(int argc, char *argv[])
 	SFUI::Theme::loadFont("../SFUI-Whorehouse/bin/resources/fonts/Tahoma.ttf");
 	SFUI::Theme::loadTexture("../SFUI-Whorehouse/bin/resources/textures/interface_square.png");
 	SFUI::Theme::textCharacterSize = 11;
-	SFUI::Theme::click.textColor = SFUI::Theme::hexToRgb("#ffffff");
-	SFUI::Theme::click.textColorHover = SFUI::Theme::hexToRgb("#ffffff");
-	SFUI::Theme::click.textColorFocus = SFUI::Theme::hexToRgb("#ffffff");
-	SFUI::Theme::input.textColor = SFUI::Theme::hexToRgb("#ffffff");
-	SFUI::Theme::input.textColorHover = SFUI::Theme::hexToRgb("#ffffff");
-	SFUI::Theme::input.textColorFocus = SFUI::Theme::hexToRgb("#ffffff");
-	SFUI::Theme::label.textColor = SFUI::Theme::hexToRgb("#ffffff");
-	SFUI::Theme::label.textColorHover = SFUI::Theme::hexToRgb("#ffffff");
-	SFUI::Theme::label.textColorFocus = SFUI::Theme::hexToRgb("#ffffff");
+
+	sf::Color white = sf::Color::White;
+	SFUI::Theme::click = { white, white, white };
+	SFUI::Theme::input = { white, white, white };
+	SFUI::Theme::label = { white, white, white };
+
 	SFUI::Theme::windowBgColor = sf::Color(40, 40, 40);
 	SFUI::Theme::PADDING = 2.f;
 
