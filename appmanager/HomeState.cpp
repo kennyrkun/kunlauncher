@@ -2,6 +2,7 @@
 
 #include "HomeState.hpp"
 #include "AppUploadState.hpp"
+#include "AppListState.hpp"
 
 #include "Globals.hpp"
 #include "Download.hpp"
@@ -31,8 +32,8 @@ void HomeState::Init(AppEngine* app_)
 	menu = new SFUI::Menu(*app->window);
 
 	SFUI::HorizontalBoxLayout* hbox1 = menu->addHorizontalBoxLayout();
-	hbox1->addButton("Upload", MenuCallbacks::UPLOAD);
-	hbox1->addButton("Edit", MenuCallbacks::EDIT);
+	hbox1->addButton("Upload New App", MenuCallbacks::UPLOAD);
+	hbox1->addButton("Edit Existing App", MenuCallbacks::EDIT);
 
 	SFUI::HorizontalBoxLayout* hbox2 = menu->addHorizontalBoxLayout();
 	hbox2->addButton("Quit", MenuCallbacks::QUIT);
@@ -103,7 +104,7 @@ void HomeState::HandleEvents()
 		switch (id)
 		{
 		case MenuCallbacks::EDIT:
-//			app->ChangeState(new AppUploadState);
+			app->PushState(new AppListState);
 			break;
 		case MenuCallbacks::UPLOAD:
 			app->ChangeState(new AppUploadState);

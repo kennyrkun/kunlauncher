@@ -59,6 +59,9 @@ public: // these are functions specific to this application, or general utility 
 
 	void drawInformationPanel(std::string text);
 
+	// TODO: this should definitely be improved.
+	int appToEdit;
+
 private:
 	// the stack of states
 	std::vector<AppState*> states;
