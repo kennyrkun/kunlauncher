@@ -61,6 +61,9 @@
     <ClCompile Include="AppEngine.cpp">
       <Filter>Source Files\AppEngine</Filter>
     </ClCompile>
+    <ClCompile Include="ToolTip.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SFUI-Whorehouse\AppState.hpp">
@@ -95,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="AppEngine.hpp">
       <Filter>Source Files\AppEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolTip.hpp">
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
