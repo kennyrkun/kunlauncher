@@ -116,7 +116,7 @@ void AppListState::HandleEvents()
 
 			app->appToEdit = id;
 
-			app->ChangeState(new AppEditState);
+			app->PushState(new AppEditState);
 			return;
 		}
 	}

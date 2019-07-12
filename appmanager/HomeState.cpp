@@ -107,7 +107,7 @@ void HomeState::HandleEvents()
 			app->PushState(new AppListState);
 			break;
 		case MenuCallbacks::UPLOAD:
-			app->ChangeState(new AppUploadState);
+			app->PushState(new AppUploadState);
 			break;
 		case MenuCallbacks::QUIT:
 			app->Quit();
