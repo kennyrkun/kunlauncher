@@ -30,7 +30,7 @@ private:
 
 	SFUI::Menu* menu;
 
-	SettingsParser itemInfo;
+	SettingsParser itemInfoParser;
 
 	SFUI::InputBox* appName;
 	SFUI::InputBox* appDescription;
@@ -40,7 +40,7 @@ private:
 	SFUI::InputBox* iconFilePath;
 	SFUI::InputBox* dataFilePath;
 
-	bool creatingApp = false;
+	bool newApp = false;
 
 	App* appPreview;
 

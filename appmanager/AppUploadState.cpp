@@ -132,7 +132,7 @@ void AppUploadState::HandleEvents()
 			break;
 		} 
 
-		if (creatingApp && event.type == sf::Event::EventType::KeyPressed)
+		if (newApp && event.type == sf::Event::EventType::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Key::Return || event.key.code == SFUI::Theme::nextWidgetKey || event.key.code == SFUI::Theme::previousWidgetKey || event.key.code == sf::Keyboard::Key::Tab)
 			{
@@ -142,32 +142,32 @@ void AppUploadState::HandleEvents()
 					{
 						appPreview->description.setString(appDescription->getText());
 						appPreview->info.description = appDescription->getText();
-						itemInfo.set("description", appPreview->info.description);
+						itemInfoParser.set("description", appPreview->info.description);
 					}
 
 					if (appVersion != nullptr)
 					{
 						appPreview->version.setString(appVersion->getText());
 						appPreview->info.version = appVersion->getText();
-						itemInfo.set("version", appPreview->info.version);
+						itemInfoParser.set("version", appPreview->info.version);
 					}
 
 					if (author != nullptr)
 					{
 						appPreview->info.author = author->getText();
-						itemInfo.set("author", appPreview->info.author);
+						itemInfoParser.set("author", appPreview->info.author);
 					}
 
 					if (github != nullptr)
 					{
 						appPreview->info.github = github->getText();
-						itemInfo.set("github", appPreview->info.github);
+						itemInfoParser.set("github", appPreview->info.github);
 					}
 				}
 			}
 		}
 		
-		if (creatingApp && event.type == sf::Event::EventType::TextEntered)
+		if (newApp && event.type == sf::Event::EventType::TextEntered)
 		{
 			std::cout << "checking files" << std::endl;
 
@@ -436,24 +436,24 @@ void AppUploadState::addNewApp()
 						}
 						else if (mb.exitCode == 1) // yes
 						{
-							if (itemInfo.loadFromFile(GBL::DIR::apps + s + "/info.dat"))
+							if (itemInfoParser.loadFromFile(GBL::DIR::apps + s + "/info.dat"))
 							{
 								std::string desc, auth, ver, git;
 
 								appDescription = new SFUI::InputBox;
-								itemInfo.get("description", desc);
+								itemInfoParser.get("description", desc);
 								appDescription->setText(desc);
 
 								appVersion = new SFUI::InputBox;
-								itemInfo.get("version", ver);
+								itemInfoParser.get("version", ver);
 								appVersion->setText(ver);
 
 								author = new SFUI::InputBox;
-								itemInfo.get("author", auth);
+								itemInfoParser.get("author", auth);
 								author->setText(auth);
 
 								github = new SFUI::InputBox;
-								itemInfo.get("github", git);
+								itemInfoParser.get("github", git);
 								github->setText(git);
 
 								float appid;
@@ -488,7 +488,7 @@ void AppUploadState::addNewApp()
 	appPreview = new App(app->window, app->window->getSize().x - 20, 75, 10, 10);
 	appPreview->name.setString(appname_);
 	appPreview->info.name = appname_;
-	itemInfo.get("appid", appPreview->info.appid);
+	itemInfoParser.get("appid", appPreview->info.appid);
 
 	// add the new app to the index
 	SettingsParser parser;
@@ -548,7 +548,7 @@ void AppUploadState::addNewApp()
 	form->addButton("Upload", MenuCallbacks::UploadApp);
 	form->addButton("Back", MenuCallbacks::Back);
 
-	creatingApp = true;
+	newApp = true;
 
 	return;
 }
@@ -593,7 +593,7 @@ void AppUploadState::prepareNewApp()
 
 			// Possible end file characters
 			std::vector<std::vector<char>> endlines = {
-				{ '\r', '\n' },
+			{ '\r', '\n' },
 			{ '\n' },
 			{ '\r' }
 			};
@@ -650,9 +650,9 @@ void AppUploadState::prepareNewApp()
 		}
 	}
 
-	itemInfo.loadFromFile(GBL::DIR::apps + appName->getText() + "/info.dat");
-	itemInfo.set("name", std::string(appName->getText()));
-	itemInfo.set("appid", appid);
+	itemInfoParser.loadFromFile(GBL::DIR::apps + appName->getText() + "/info.dat");
+	itemInfoParser.set("name", std::string(appName->getText()));
+	itemInfoParser.set("appid", appid);
 
 	std::cout << "created new item" << std::endl;
 }
