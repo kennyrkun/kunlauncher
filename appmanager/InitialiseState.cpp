@@ -24,6 +24,11 @@ void InitialiseState::Init(AppEngine* app_)
 
 	app = app_;
 
+	delete app->window;
+	app->window = new sf::RenderWindow(sf::VideoMode(400, 150), GBL::NAME, sf::Style::None);
+	app->window->setVerticalSyncEnabled(app->settings.window.verticalSync);
+	app->window->setTitle("KunLauncher " + std::to_string(GBL::VERSION) + " initalising");
+
 	if (!font.loadFromFile(GBL::DIR::fonts + "Arial.ttf"))
 	{
 		std::cout << "failed to load provided arial, falling back to windows Arial!" << std::endl;
@@ -35,10 +40,6 @@ void InitialiseState::Init(AppEngine* app_)
 			abort(); // TODO: handle this more gracefully
 		}
 	}
-
-	app->window->create(sf::VideoMode(400, 150), GBL::NAME, sf::Style::None);
-	app->window->setVerticalSyncEnabled(app->settings.window.verticalSync);
-	app->window->setTitle("KunLauncher " + std::to_string(GBL::VERSION) + " initalising");
 
 	initialiseText.setFont(font);
 	initialiseText.setCharacterSize(56);
@@ -60,7 +61,6 @@ void InitialiseState::Init(AppEngine* app_)
 
 	helperThread = new std::thread(&InitialiseState::initialise, this);
 	helperRunning = true;
-	helperRunning = false;
 	isReady = false;
 
 	std::cout << "thread launched" << std::endl;
