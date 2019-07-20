@@ -141,7 +141,7 @@ void AppListState::createMenu(SFUI::Menu& menu)
 
 	menu.addButton("Redownload App List", MenuCallbacks::RedownloadAppsList);
 
-	for (auto const& [appid, appname] : applist)
+	for (const auto& [appid, appname] : applist)
 	{
 		SFUI::HorizontalBoxLayout* hbox = menu.addHorizontalBoxLayout();
 
@@ -168,6 +168,13 @@ void AppListState::populateApplist()
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
+		// don't count this one as an app and stop crashing my damn program
+		if (line.find("nextAppID = ") != std::string::npos)
+		{
+			std::cout << "not an app, skipping" << std::endl;
+			continue;
+		}
+
 		int appid = std::stoi(line.substr(0, 1));
 
 		std::cout << "iteration: " << loopi << ", appid: " << appid << std::endl;
