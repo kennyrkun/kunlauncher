@@ -60,6 +60,15 @@ App::~App()
 	// and i spent all day debugging this one problem but it was just the destructor and wowiee fuck me
 }
 
+void App::setAppInfo(AppInfo appinfo)
+{
+	info = appinfo;
+
+	name.setString(info.name);
+	description.setString(info.description);
+	version.setString(info.version);
+}
+
 void App::draw()
 {
 	targetWindow->draw(cardShape);

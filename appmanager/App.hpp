@@ -16,6 +16,8 @@ public:
 
 	AppInfo info;
 
+	void setAppInfo(AppInfo info);
+
 	void draw();
 
 	float totalHeight;
