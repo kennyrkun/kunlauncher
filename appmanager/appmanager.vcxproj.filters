@@ -20,10 +20,7 @@
     <Filter Include="Source Files\Backend">
       <UniqueIdentifier>{8ff5d3ac-bd7b-494e-a3bf-675df84f9d0c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\States\AppStates">
-      <UniqueIdentifier>{4e13dad5-0abf-4b1c-ac49-bb591b4c851b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\States\AppStates\AppEditState">
+    <Filter Include="Source Files\States\AppEditState">
       <UniqueIdentifier>{86fd9323-339b-41fd-8664-2b68f9f44f13}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\States\AppListState">
@@ -61,6 +58,9 @@
     <ClCompile Include="AppEngine.cpp">
       <Filter>Source Files\AppEngine</Filter>
     </ClCompile>
+    <ClCompile Include="AppEditState.cpp">
+      <Filter>Source Files\States\AppEditState</Filter>
+    </ClCompile>
     <ClCompile Include="AppListState.cpp">
       <Filter>Source Files\States\AppListState</Filter>
     </ClCompile>
@@ -95,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="MessageBox.hpp">
       <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="AppEditState.hpp">
+      <Filter>Source Files\States\AppEditState</Filter>
     </ClInclude>
     <ClInclude Include="AppListState.hpp">
       <Filter>Source Files\States\AppListState</Filter>

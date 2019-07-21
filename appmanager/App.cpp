@@ -67,6 +67,14 @@ void App::setAppInfo(AppInfo appinfo)
 	name.setString(info.name);
 	description.setString(info.description);
 	version.setString(info.version);
+
+	if (!iconTexture.loadFromFile(GBL::DIR::apps + std::to_string(info.appid) + "/icon.png"))
+	{
+		// TODO: give 'em pink squares
+		std::cerr << "failed to load appicon" << std::endl;
+	}
+	else
+		icon.setTexture(&iconTexture);
 }
 
 void App::draw()

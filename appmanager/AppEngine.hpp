@@ -21,7 +21,7 @@ struct AppSettings
 		bool verticalSync = true;
 		bool useSFUIDecorations = false;
 		int width = 525;
-		int	height = 375;
+		int	height = 410;
 	} window;
 };
 

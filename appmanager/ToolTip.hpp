@@ -6,8 +6,16 @@
 class Tooltip : public sf::Drawable
 {
 public:
-	void setPosition(sf::Vector2f pos);
-	void setString(std::string string, float windowSize);
+	Tooltip();
+
+	void setPosition(const sf::Vector2f& pos);
+	void setString(std::string string);
+
+	void setLeft();
+	void setRight();
+
+	sf::Vector2f getSize();
+
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
@@ -15,9 +23,9 @@ private:
 	sf::ConvexShape arrow;
 	sf::RectangleShape box;
 
-	const float padding = 2;
+	bool left = true;
 
-	void wrapSfText(sf::Text& target, const float width);
+	const float padding = 2;
 };
 
 #endif // !TOOL_TIP_HPP

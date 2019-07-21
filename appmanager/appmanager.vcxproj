@@ -133,11 +133,17 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../SFML/include;../SFUI/include;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>../SFML/lib;../SFUI/lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;sfml-audio-s-d.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;sfml-network-s-d.lib;ws2_32.lib;sfui-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug no Console|x64'">
     <ClCompile>
@@ -184,6 +190,7 @@
     <ClCompile Include="..\SFUI-Whorehouse\ProgressBar.cpp" />
     <ClCompile Include="..\SFUI-Whorehouse\SettingsParser.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="AppEditState.cpp" />
     <ClCompile Include="AppEngine.cpp" />
     <ClCompile Include="AppListState.cpp" />
     <ClCompile Include="AppUploadState.cpp" />
@@ -198,6 +205,7 @@
     <ClInclude Include="..\SFUI-Whorehouse\ProgressBar.hpp" />
     <ClInclude Include="..\SFUI-Whorehouse\SettingsParser.hpp" />
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="AppEditState.hpp" />
     <ClInclude Include="AppEngine.hpp" />
     <ClInclude Include="AppInfo.hpp" />
     <ClInclude Include="AppListState.hpp" />

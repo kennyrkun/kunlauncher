@@ -1,15 +1,12 @@
 #ifndef GLOBALS_HPP
 #define GLOBALS_HPP
 
-// Include we want in most places.
-#include <iostream>
-
 // TODO: use path::make_preferred (preferred_separator)
 // do it in KunLauncher too
 
 namespace GBL
 {
-	const float VERSION = 1.2;
+	const float VERSION = 1.3;
 	const std::string NAME = "App Manager";
 
 	namespace DIR
@@ -17,7 +14,7 @@ namespace GBL
 		const std::string installDir = "./appmanagerbin/";
 		const std::string apps = installDir + "apps/";
 		const std::string cache = installDir + "cache/";
-		const std::string appcache = installDir + "appcache/";
+		//const std::string appcache = installDir + "appcache/";
 		const std::string resources = installDir + "resources/";
 		const std::string textures = resources + "textures/";
 		const std::string fonts = resources + "fonts/";

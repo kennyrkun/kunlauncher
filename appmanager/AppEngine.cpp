@@ -193,7 +193,7 @@ bool AppEngine::updateAppIndex()
 
 	Download getNewIndex;
 	getNewIndex.setInput("./" + GBL::WEB::APPS + "/index.dat");
-	getNewIndex.setOutputDir(GBL::DIR::appcache);
+	getNewIndex.setOutputDir(GBL::DIR::apps);
 	getNewIndex.setOutputFilename("/index.dat");
 
 	int status = getNewIndex.download();

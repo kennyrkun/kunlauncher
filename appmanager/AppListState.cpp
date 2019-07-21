@@ -146,7 +146,7 @@ void AppListState::createMenu(SFUI::Menu& menu)
 		SFUI::HorizontalBoxLayout* hbox = menu.addHorizontalBoxLayout();
 
 		hbox->addButton("Edit " + std::to_string(appid), appid);
-		hbox->addLabel(appname == "n0_aPp_nAm3" ? "App Has No Name" : appname);
+		hbox->addLabel(appname == "n0_aPp_nAm3" ? "App has no name" : appname);
 	}
 
 	menu.addButton("Back", MenuCallbacks::BACK);
@@ -159,10 +159,10 @@ void AppListState::populateApplist()
 
 	applist.clear();
 
-	std::ifstream readIndex(GBL::DIR::appcache + "index.dat", std::ios::in);
+	std::ifstream readIndex(GBL::DIR::apps + "index.dat", std::ios::in);
 
 	SettingsParser indexParser;
-	indexParser.loadFromFile(GBL::DIR::appcache + "index.dat");
+	indexParser.loadFromFile(GBL::DIR::apps + "index.dat");
 
 	std::string line; // each line of index.dat
 	int loopi(0);
@@ -175,7 +175,7 @@ void AppListState::populateApplist()
 			continue;
 		}
 
-		int appid = std::stoi(line.substr(0, 1));
+		int appid = std::stoi(line.substr(0, line.find_first_of('=') - 1));
 
 		std::cout << "iteration: " << loopi << ", appid: " << appid << std::endl;
 

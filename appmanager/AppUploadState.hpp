@@ -15,6 +15,8 @@
 class AppUploadState : public AppState
 {
 public:
+	AppUploadState(AppInfo app, bool ignoreIcon, bool ignoreData, bool copylocalfiles/*, bool newApp*/);
+
 	void Init(AppEngine* app_);
 	void Cleanup();
 
@@ -28,43 +30,21 @@ public:
 private:
 	AppEngine* app;
 
-	SFUI::Menu* menu;
+	AppInfo appToUpload;
 
-	SettingsParser itemInfoParser;
+	std::vector<std::string> messages;
 
-	SFUI::InputBox* appName;
-	SFUI::InputBox* appDescription;
-	SFUI::InputBox* appVersion;
-	SFUI::InputBox* author;
-	SFUI::InputBox* github;
-	SFUI::InputBox* iconFilePath;
-	SFUI::InputBox* dataFilePath;
+	bool copylocalfiles = false;
+	bool ignoreIcon = false;
+	bool ignoreData = false;
+//	bool updateAppName = false;
 
-	bool newApp = false;
-
-	App* appPreview;
-
-	sf::ConvexShape triangle;
-	Tooltip *toolTip;
-
-	std::string iconTipString = "Icon file path is inavlid.";
-	std::string dataTipString = "Data file path is invalid.";
-
-	bool infoUploadFailed;
-	bool uploadComplete = false;
-
-	bool iconUploadFailed;
-	bool iconPathValid = false; 
-
-	bool dataUploadFailed;
-	bool dataPathValid = false;
-
-	void addNewApp();
-	void prepareNewApp();
 	void uploadApp();
 
-	bool mouseIsOver(sf::Shape &object);
-	bool mouseIsOver(sf::Text &object);
+	bool uploadComplete = false;
+	bool iconUploadFailed = false;
+	bool infoUploadFailed = false;
+	bool dataUploadFailed = false;
 };
 
 #endif // !APP_UPLOAD_STATE_HPP
