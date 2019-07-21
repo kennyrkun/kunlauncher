@@ -27,8 +27,12 @@ Navbar::Navbar(sf::RenderWindow* window) : window(window)
 {
 	std::cout << "creating navbar" << std::endl;
 
-	bar.setSize(sf::Vector2f(window->getSize().x, 40));
+	bar.setSize(sf::Vector2f(window->getSize().x, 40 - 1));
 	bar.setFillColor(GBL::theme.palatte.PRIMARY);
+
+	divider.setSize(sf::Vector2f(bar.getSize().x, 1));
+	divider.setPosition(sf::Vector2f(0, bar.getSize().y));
+	divider.setFillColor(sf::Color::Black);
 
 //	border.setSize(sf::Vector2f(window->getSize().x, 1));
 //	border.move(sf::Vector2f(0, bar.getSize().y));
@@ -118,6 +122,7 @@ void Navbar::Update()
 void Navbar::Draw()
 {
 	window->draw(bar);
+	window->draw(divider);
 
 	for (auto& x : sections)
 		window->draw(x);

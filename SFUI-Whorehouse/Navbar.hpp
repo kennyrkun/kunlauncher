@@ -37,6 +37,8 @@ public:
 private:
 	sf::RenderWindow* window;
 
+	sf::RectangleShape divider;
+
 //	sf::RectangleShape divider;
 };
 
