@@ -485,6 +485,46 @@ void AppEditState::prepareToEdit(size_t appid)
 		else
 		{
 			std::cout << "app info does not exist" << std::endl;
+
+			Download download;
+			download.setInput(GBL::WEB::APPS + appid_s + "/info.dat");
+			download.setOutputDir(GBL::DIR::apps);
+			download.setOutputFilename("info.dat");
+
+			int status = download.download();
+
+			if (status == Download::Status::Ok)
+			{
+				std::cout << "downloaded info successfully" << std::endl;
+
+				download.save();
+			}
+			else
+			{
+				std::cerr << "failed to download app info, creating an empty file" << std::endl;
+
+				std::ofstream newInfo(path + "info.dat");
+
+				if (newInfo.is_open())
+				{
+					newInfo << std::endl;
+
+					newInfo.close();
+
+					if (newInfo.bad())
+					{
+						std::cerr << "failed to save default config file (it may be corrupt)" << std::endl;
+						abort();
+					}
+					else
+						itemInfoParser.loadFromFile(path + "info.dat");
+				}
+				else
+				{
+					std::cerr << "failed to create empty app info file" << std::endl;
+					abort();
+				}
+			}
 		}
 
 		if (!newApp) // if it's not new, get the icon
@@ -546,6 +586,28 @@ void AppEditState::prepareToEdit(size_t appid)
 
 			app.name = "Failed to download app info.";
 			app.description = "App must not have been saved to the master app server.";
+
+			std::ofstream newInfo(path + "info.dat");
+
+			if (newInfo.is_open())
+			{
+				newInfo << std::endl;
+
+				newInfo.close();
+
+				if (newInfo.bad())
+				{
+					std::cerr << "failed to save default config file (it may be corrupt)" << std::endl;
+					abort();
+				}
+				else
+					itemInfoParser.loadFromFile(path + "info.dat");
+			}
+			else
+			{
+				std::cerr << "failed to create empty app info file" << std::endl;
+				abort();
+			}
 		}
 	}
 }
