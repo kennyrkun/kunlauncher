@@ -20,19 +20,20 @@ class LauncherUpdater
 public:
 	enum Status
 	{
-		DownloadFailed,
 		RequiredUpdate,
 		UpdateAvailable,
 		NoUpdateAvailable,
 
+		DownloadFailed,
 		Failure,
+
 		Success
 	};
 
-	GBL::Version getRemoteVersion();
-	GBL::Version remoteVersion;
-	GBL::Version& getLocalVersion();
-	GBL::Version localVersion;
+	LauncherUpdater();
+
+	GBL::LauncherVersion remoteVersion;
+	GBL::LauncherVersion localVersion = GBL::version;
 
 	int checkForUpdates();
 	int downloadUpdate();
@@ -43,6 +44,9 @@ public:
 	bool restartAfterUpdate = false;
 	
 	bool requiredUpdate;
+
+private:
+	GBL::LauncherVersion getRemoteVersion();
 };
 
 #endif // !LAUNCHER_UPDATER_HPP

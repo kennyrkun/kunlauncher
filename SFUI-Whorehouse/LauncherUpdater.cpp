@@ -9,51 +9,42 @@
 
 namespace fs = std::experimental::filesystem;
 
-GBL::Version LauncherUpdater::getRemoteVersion()
+LauncherUpdater::LauncherUpdater()
 {
-	Download getHoHouse;
-	getHoHouse.setInput(GBL::WEB::LATEST::DIR + "version.info");
-	getHoHouse.download();
+	getRemoteVersion();
+}
 
-	SettingsParser getVersion;
-	getVersion.loadFromFile(GBL::DIR::cache + "/version/latest/version.info");
+GBL::LauncherVersion LauncherUpdater::getRemoteVersion()
+{
+	Download getVersion;
+	getVersion.setInput(GBL::WEB::LATEST::DIR + "version.info");
+	getVersion.download();
 
-	GBL::Version version;
+	SettingsParser parseVersion;
+	parseVersion.loadFromFile(GBL::DIR::cache + "/version/latest/version.info");
 
-	getVersion.get("major", version.major);
-	getVersion.get("minor", version.minor);
-	getVersion.get("patch", version.patch);
+	GBL::LauncherVersion version;
 
-	getVersion.get("required", requiredUpdate);
+	parseVersion.get("major", version.major);
+	parseVersion.get("minor", version.minor);
+	parseVersion.get("patch", version.patch);
+
+	parseVersion.get("required", requiredUpdate);
 
 	return remoteVersion = version;
 }
 
-GBL::Version& LauncherUpdater::getLocalVersion()
-{
-	return localVersion = GBL::version;
-}
-
 int LauncherUpdater::checkForUpdates()
 {
-	getRemoteVersion();
-	getLocalVersion();
-
 	std::cout << "[UPD] " <<
-		"r" << remoteVersion.major << "." << remoteVersion.minor << "." << remoteVersion.patch << 
+		"r" << remoteVersion.major << "." << remoteVersion.minor << "." << remoteVersion.patch <<
 		" : " << 
 		"l" << localVersion.major << "." << localVersion.minor << "." << localVersion.patch << std::endl;
 
 	if (requiredUpdate)
-		return Status::RequiredUpdate;
+		return Status::RequiredUpdate | Status::UpdateAvailable;
 
-	if (remoteVersion.major > localVersion.major)
-		return Status::UpdateAvailable;
-
-	if (remoteVersion.minor > localVersion.minor)
-		return Status::UpdateAvailable;
-
-	if (remoteVersion.patch > localVersion.patch)
+	if (remoteVersion > localVersion)
 		return Status::UpdateAvailable;
 
 	return Status::NoUpdateAvailable;
@@ -65,10 +56,16 @@ int LauncherUpdater::downloadUpdate()
 	getNewWhorehouse.setInput(GBL::WEB::LATEST::EXECUTABLE);
 	getNewWhorehouse.setOutputDir(".//");
 	getNewWhorehouse.setOutputFilename("latest_kunlauncher.exe");
-	getNewWhorehouse.download();
-	getNewWhorehouse.save();
 
-	return getNewWhorehouse.htmlReturnCode;
+	int status = getNewWhorehouse.download();
+
+	if (status == Download::Status::Success)
+	{
+		getNewWhorehouse.save();
+		return Status::Success;
+	}
+	else
+		return Status::DownloadFailed | Status::Failure;
 }
 
 int LauncherUpdater::replaceOldExecutable()
@@ -115,27 +112,3 @@ int LauncherUpdater::removeOldExecutable()
 
 	return 0;
 }
-
-/* method to seperate version numbers
-
-std::string newpatchs, newminors, newmajors;
-int newpatch, newminor, newmajor;
-
-const std::string old = remoteVersion;
-
-newmajors = remoteVersion.erase(remoteVersion.find_first_of('.'), remoteVersion.back());
-newmajor = std::stoi(newmajors);
-
-remoteVersion = old;
-
-remoteVersion.erase(0, remoteVersion.find_first_of('.') + 1);
-remoteVersion.erase(remoteVersion.find_first_of('.'), remoteVersion.back());
-newminors = remoteVersion;
-newminor= std::stoi(newminors);
-
-remoteVersion = old;
-
-remoteVersion.erase(0, remoteVersion.find_last_of('.') + 1);
-newpatchs = remoteVersion;
-newpatch = std::stoi(newpatchs);
-*/

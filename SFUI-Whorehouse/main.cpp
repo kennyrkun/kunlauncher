@@ -1,10 +1,7 @@
 #include "AppEngine.hpp"
 #include "InitialiseState.hpp"
-#include "AllAppsListState.hpp"
 
-#include <SFML/Graphics.hpp>
 #include <iostream>
-#include <fstream>
 
 // FIXME: cog icon not loading after download
 // TODO: optimise file includes
@@ -111,66 +108,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
-/*
-#include "StoreApp.hpp"
-#include "AppWindow.hpp"
-
-int smain()
-{
-	sf::RenderWindow window(sf::VideoMode(800, 600), "creator");
-
-	StoreApp app(0, 0, 0, 0, 0); // bobwars
-
-	VisualItemInfo vinf();
-
-	while (vinf.isOpen())
-	{
-		sf::Event e;
-		if (window.isOpen())
-		{
-			while (window.pollEvent(e))
-			{
-				switch (e.type)
-				{
-				case sf::Event::EventType::MouseMoved:
-				case sf::Event::EventType::MouseEntered:
-				case sf::Event::EventType::MouseLeft:
-				case sf::Event::EventType::GainedFocus:
-				case sf::Event::EventType::LostFocus:
-					break;
-				default:
-				{
-					std::cout << e.type << std::endl;
-					vinf.focus();
-				}
-				}
-
-			}
-		}
-
-		vinf.HandleEvents();
-		vinf.Update();
-		vinf.Draw();
-	}
-
-	while (window.isOpen())
-	{
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (vinf.isOpen())
-				break;
-
-			if (event.type == sf::Event::EventType::Closed)
-				window.close();
-		}
-
-		window.clear(sf::Color::White);
-
-		window.display();
-	}
-
-	return 0;
-}
-*/
