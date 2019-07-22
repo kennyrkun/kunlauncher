@@ -323,16 +323,16 @@ void StoreApp::update()
 
 void StoreApp::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(cardShape);
+	target.draw(cardShape, states);
 	//	targetWindow->draw(controlBar);
-	target.draw(icon);
+	target.draw(icon, states);
 
-	target.draw(name);
+	target.draw(name, states);
 
-	target.draw(infoButton);
+	target.draw(infoButton, states);
 
 	if (info.downloaded)
-		target.draw(openInMyAppsListButton);
+		target.draw(openInMyAppsListButton, states);
 }
 
 // private

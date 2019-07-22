@@ -47,7 +47,7 @@ App::App(int appid, float xSize, float ySize, float xPos, float yPos)
 
 void App::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(cardShape);
+	target.draw(cardShape, states);
 }
 
 // private

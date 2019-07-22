@@ -329,27 +329,27 @@ void MyApp::update()
 
 void MyApp::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
-	target.draw(cardShape);
+	target.draw(cardShape, states);
 
-//	target.draw(controlBar);
-	target.draw(icon);
+//	target.draw(controlBar, states);
+	target.draw(icon, states);
 
-	target.draw(name);
-	target.draw(description);
-	target.draw(version);
+	target.draw(name, states);
+	target.draw(description, states);
+	target.draw(version, states);
 
 	if (info.downloading)
-		target.draw(redownloadButton);
+		target.draw(redownloadButton, states);
 	else // not downloading
 		if (info.downloaded)
 		{
-			target.draw(redownloadButton);
-			target.draw(removeButton);
-			target.draw(launchButton);
+			target.draw(redownloadButton, states);
+			target.draw(removeButton, states);
+			target.draw(launchButton, states);
 		}
 		else
 			if (!info.missingInfo)
-				target.draw(downloadButton);
+				target.draw(downloadButton, states);
 }
 
 // private

@@ -56,7 +56,7 @@ void MyAppListState::Cleanup()
 	sf::Text downloading;
 	downloading.setFont(*GBL::theme.getFont("Arial.ttf"));
 	downloading.setCharacterSize(16);
-	downloading.setPosition(sf::Vector2f(45, app->window->getSize().y - 30));
+	downloading.setPosition(sf::Vector2f(45.0f, app->window->getSize().y - 30.0f));
 
 	while (!GBL::threadManager.empty())
 	{

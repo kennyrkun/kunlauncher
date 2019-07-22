@@ -27,7 +27,7 @@ Navbar::Navbar(sf::RenderWindow* window) : window(window)
 {
 	std::cout << "creating navbar" << std::endl;
 
-	bar.setSize(sf::Vector2f(window->getSize().x, 40 - 1));
+	bar.setSize(sf::Vector2f(window->getSize().x, 40.0f - 1.0f));
 	bar.setFillColor(GBL::theme.palatte.PRIMARY);
 
 	divider.setSize(sf::Vector2f(bar.getSize().x, 1));
@@ -100,7 +100,7 @@ void Navbar::HandleEvents(const sf::Event& event)
 {
 	if (event.type == sf::Event::EventType::Resized)
 	{
-		bar.setSize(sf::Vector2f(event.size.width, 40));
+		bar.setSize(sf::Vector2f(event.size.width, 40.0f));
 	}
 	else if (event.type == sf::Event::EventType::MouseButtonPressed)
 	{

@@ -259,8 +259,8 @@ bool VerticalScrollbar::boundsCheck()
 
 void VerticalScrollbar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(scrollTrack);
-	target.draw(scrollThumb);
+	target.draw(scrollTrack, states);
+	target.draw(scrollThumb, states);
 }
 
 // PRIVATE

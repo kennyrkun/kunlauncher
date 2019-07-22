@@ -11,6 +11,8 @@
 #include <SFUI/SFUI.hpp>
 #include <SFML/Graphics.hpp>
 
+// TODO: add button to reset settings
+
 class SettingsState : public AppState
 {
 public:
