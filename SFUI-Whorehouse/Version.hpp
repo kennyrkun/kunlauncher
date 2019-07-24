@@ -37,18 +37,12 @@ namespace versions
 
 		bool operator < (const Semantic& other)
 		{
-			if (versionCompare(this->asString(), other.asString()) == -1)
-				return true;
-
-			return false;
+			return (versionCompare(this->asString(), other.asString()) == -1);
 		}
 
 		bool operator > (const Semantic& other)
 		{
-			if (versionCompare(this->asString(), other.asString()) == 1)
-				return true;
-
-			return false;
+			return (versionCompare(this->asString(), other.asString()) == 1);
 		}
 
 		bool operator == (const Semantic& other)
@@ -74,7 +68,7 @@ namespace versions
 			//  vnum stores each numeric part of version 
 			int vnum1 = 0, vnum2 = 0;
 
-			//  loop untill both string are processed 
+			//  loop until both string are processed 
 			for (int i = 0, j = 0; (i < v1.length() || j < v2.length()); )
 			{
 				//  storing numeric part of version 1 in vnum1 
