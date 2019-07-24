@@ -22,11 +22,11 @@ struct AppInfo
 	int release;
 	int appid;
 
-	bool loadByAppID(int appid)
+	bool loadByAppID(int id)
 	{
 		SettingsParser parser;
 
-		if (parser.loadFromFile(GBL::DIR::apps + std::to_string(appid) + "/info.dat"))
+		if (parser.loadFromFile(GBL::DIR::apps + std::to_string(id) + "/info.dat"))
 		{
 			parser.get("name", name);
 			parser.get("description", description);
@@ -34,13 +34,13 @@ struct AppInfo
 			parser.get("author", author);
 			parser.get("github", github);
 			parser.get("release", release);
-			parser.get("appid", appid);
+			parser.get("appid", id);
 
 			return true;
 		}
 		else
 		{
-			std::cerr << "failed to load app info at " << appid << std::endl;
+			std::cerr << "failed to load app info at " << id << std::endl;
 			return false;
 		}
 	}

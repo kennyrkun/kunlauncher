@@ -75,7 +75,7 @@ void AppListState::HandleEvents()
 
 			if (newSize.x >= 525 && newSize.y >= 325)
 			{
-				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+				sf::FloatRect visibleArea(0.0f, 0.0f, event.size.width, event.size.height);
 				app->window->setView(sf::View(visibleArea));
 			}
 			else

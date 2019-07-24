@@ -6,7 +6,7 @@
 
 namespace GBL
 {
-	const float VERSION = 1.3;
+	const float VERSION = 1.3f;
 	const std::string NAME = "App Manager";
 
 	namespace DIR

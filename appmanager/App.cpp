@@ -31,9 +31,9 @@ App::App(sf::RenderWindow* target_window, float xSize, float ySize, float xPos, 
 	description.setCharacterSize(16);
 	version.setCharacterSize(18);
 
-	name.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10), static_cast<int>(cardShape.getPosition().y));
-	description.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10), static_cast<int>(cardShape.getPosition().y) + 26);
-	version.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10), static_cast<int>(cardShape.getPosition().y) + 46);
+	name.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10.0f), static_cast<int>(cardShape.getPosition().y));
+	description.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10.0f), static_cast<int>(cardShape.getPosition().y) + 26.0f);
+	version.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10.0f), static_cast<int>(cardShape.getPosition().y) + 46.0f);
 
 	name.setFillColor(sf::Color(255, 255, 255));
 	description.setFillColor(sf::Color(255, 255, 255));

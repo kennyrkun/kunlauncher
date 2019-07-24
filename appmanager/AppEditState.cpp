@@ -66,9 +66,9 @@ void AppEditState::Init(AppEngine* app_)
 	float width = 14.0f;
 	triangle.setFillColor(sf::Color::Red);
 	triangle.setPointCount(3);
-	triangle.setPoint(0.0f, sf::Vector2f(width / 2.0f, 0.0f));
-	triangle.setPoint(1.0f, sf::Vector2f(0.0f, width));
-	triangle.setPoint(2.0f, sf::Vector2f(width, width));
+	triangle.setPoint(0, sf::Vector2f(width / 2.0f, 0.0f));
+	triangle.setPoint(1, sf::Vector2f(0.0f, width));
+	triangle.setPoint(2, sf::Vector2f(width, width));
 	triangle.setOutlineThickness(1);
 	triangle.setOutlineColor(sf::Color::Black);
 
@@ -114,7 +114,7 @@ void AppEditState::HandleEvents()
 
 			if (newSize.x >= 525 && newSize.y >= 325)
 			{
-				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+				sf::FloatRect visibleArea(0.0f, 0.0f, event.size.width, event.size.height);
 				appEngine->window->setView(sf::View(visibleArea));
 			}
 			else

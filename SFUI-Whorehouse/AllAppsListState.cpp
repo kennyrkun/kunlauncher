@@ -156,7 +156,7 @@ void AllAppsListState::HandleEvents()
 			scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getSize().y);
 			updateScrollThumbSize();
 
-			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
+			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20.0f, app->window->getSize().y - 20.0f));
 		}
 		else if (event.type == sf::Event::EventType::KeyPressed && scrollbar.isEnabled)
 		{
