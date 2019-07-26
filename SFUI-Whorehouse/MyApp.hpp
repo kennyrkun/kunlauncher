@@ -24,7 +24,7 @@ public:
 		OpenFiles
 	};
 
-	int onClick(sf::Event &e, sf::Vector2f clickPos);
+	int onClick(sf::Vector2f clickPos);
 
 	// TODO: switch cardhshape to vertex
 	sf::RectangleShape cardShape;

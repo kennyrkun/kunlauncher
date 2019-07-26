@@ -1,9 +1,12 @@
 #ifndef APP_ENGINE_HPP
 #define APP_ENGINE_HPP
 
-#include <SFML/Graphics.hpp>
-#include <vector>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
 #include <string>
+#include <vector>
 #include <thread>
 
 class AppState;
@@ -15,14 +18,19 @@ struct AppSettings
 
 	bool updateOnStart = true;
 	// bool restartAfterUpdate = false;
+	bool debugLogging = false;
 	bool logDownloads = true;
-	bool newsEnabled = true;
 	bool SFUIDebug = false;
 	bool allowStatTracking = false;
 	bool useAnimations = false;
 	int animationScale = 1;
 
 	std::string selectedTheme = "dark";
+
+	struct News
+	{
+		bool enabled = true;
+	} news;
 
 	struct Window
 	{

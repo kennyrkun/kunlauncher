@@ -72,6 +72,8 @@ void News::HandleEvents(const sf::Event& event)
 {
 	if (event.type == sf::Event::EventType::Resized)
 	{
+		// TODO: don't resize if the width doesn't change
+
 		text.setString(original_TextString);
 		float height = getLocalHeight(); // old height so we can see if we need to reposition the texts
 

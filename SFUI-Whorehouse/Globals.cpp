@@ -51,14 +51,14 @@ namespace GBL
 	}
 }
 
-void GBL::MESSAGES::cantOpenNotWindows()
+void GBL::MESSAGE_BOXES::cantOpenNotWindows()
 {
 	std::cerr << "KunLauncher doesn't know how to open things on this operating system." << std::endl;
 
 	MessageBox::Options modOptions;
 	modOptions.title = "Unsupported Platform";
-	modOptions.text = "KunLauncher doesn't know how to open files on this operating system.\nCurrently only Windows is supported.";
-	modOptions.settings = { "Sad" };
+	modOptions.text = "KunLauncher has only been taught how to operate fully on the following platforms:\n\n- Windows";
+	modOptions.settings = { "Sad", "Very Unfortunate" };
 
 	MessageBox platformAlert(modOptions);
 	platformAlert.runBlocking();

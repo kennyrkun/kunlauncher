@@ -132,7 +132,7 @@ void MyApp::setPosition(const sf::Vector2f& pos)
 	updateSizeAndPosition(cardShape.getSize().x, cardShape.getSize().y, pos.x, pos.y);
 }
 
-int MyApp::onClick(sf::Event &event, sf::Vector2f clickPos)
+int MyApp::onClick(sf::Vector2f clickPos)
 {
 	if (info.downloaded)
 	{
