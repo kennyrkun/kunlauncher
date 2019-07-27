@@ -220,7 +220,7 @@ void AppEditState::HandleEvents()
 					if (appDescription != nullptr)
 					{
 						app.description = appDescription->getText();
-						itemInfoParser.set("description", app.name);
+						itemInfoParser.set("description", app.description);
 					}
 
 					if (appVersion != nullptr)
