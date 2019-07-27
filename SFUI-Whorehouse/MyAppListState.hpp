@@ -5,6 +5,7 @@
 
 #include "Navbar.hpp"
 #include "VerticalScrollbar.hpp"
+#include "animate/AnimationManager.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <future>
@@ -40,6 +41,8 @@ private:
 
 	// TODO: not a pointer
 	std::vector<MyApp*> apps;
+
+	PhysicalAnimator am;
 
 	// TODO: viewable arae class
 	float scrollerTopPosition;

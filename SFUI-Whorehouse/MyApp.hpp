@@ -8,11 +8,11 @@
 class MyApp : public App
 {
 public:
-	MyApp(int appid, float xSize, float ySize, float xPos, float yPos);
+	MyApp(int appid, float xSize, float ySize, const sf::Vector2f& position);
 	~MyApp();
 
-	void setPosition(const sf::Vector2f& pos);
-	sf::Vector2f getPosition() { return cardShape.getPosition(); }
+	void setPosition(const sf::Vector2f& pos) override;
+	sf::Vector2f getPosition() override { return cardShape.getPosition(); }
 
 	sf::FloatRect getLocalBounds() { return cardShape.getLocalBounds(); }
 

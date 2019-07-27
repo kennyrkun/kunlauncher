@@ -124,9 +124,6 @@ void MyAppListState::HandleEvents()
 
 				viewScroller->setSize(sf::Vector2f(event.size.width, event.size.height));
 				viewScroller->setCenter(sf::Vector2f(viewScroller->getSize().x / 2, viewScroller->getSize().y / 2));
-
-				// set the scrollTrack size
-				updateScrollThumbSize();
 			}
 			else
 			{
@@ -138,6 +135,10 @@ void MyAppListState::HandleEvents()
 
 				app->window->setSize(newSize);
 			}
+
+			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, navbar->bar.getSize().y));
+			scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getSize().y);
+			updateScrollThumbSize();
 
 			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 		}
@@ -369,6 +370,8 @@ void MyAppListState::Update()
 		else // call update like normal
 			apps[i]->update();
 	}
+
+	am.Update();
 }
 
 void MyAppListState::Draw()
@@ -422,29 +425,41 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 				// they are identified using only numbers
 				appList.erase(appList.begin() + i);
 				i--; // move back one (because we shortened the vector)
-				break; // restart
+				// TODO: make sure this doesn't cause any bugs
+				break; // move on to the next app
 			}
 
 	std::cout << std::endl; // for a line break
 
+	sf::Vector2f nextPosition = { padding, navbar->bar.getSize().y + padding };
+	sf::Vector2f lastPosition;
+
 	for (size_t i = 0; i < appList.size(); i++)
 	{
 		MyApp* newItem;
+		int appid = std::stoi(appList[i]);
 
 		if (apps.empty())
-			newItem = new MyApp(std::stoi(appList[i]),
-			app->window->getSize().x - (padding - scrollbar.scrollTrack.getSize().x),
-			75,
-			padding, 
-			navbar->bar.getSize().y + padding);
+			newItem = new MyApp(appid,
+				app->window->getSize().x - (padding - scrollbar.scrollTrack.getSize().x),
+				75,
+				nextPosition);
 		else
-			newItem = new MyApp(std::stoi(appList[i]),
-			app->window->getSize().x - (padding - scrollbar.scrollTrack.getSize().x),
-			75,
-			padding,
-			apps.back()->getPosition().y + apps.back()->getLocalBounds().height + padding);
+		{
+			newItem = new MyApp(appid,
+				app->window->getSize().x - (padding - scrollbar.scrollTrack.getSize().x),
+				75,
+				nextPosition);
+
+			nextPosition.y = ((75 + padding) * i) + navbar->bar.getSize().y + padding;
+		}
+
+		newItem->setPosition(sf::Vector2f(padding, 0));
 
 		apps.push_back(newItem);
+		am.addAppTranslationTask(apps[i], nextPosition, EaseType::CubicEaseOut, 1000);
+
+
 		std::cout << std::endl;
 
 		// TODO: apps that have updates available

@@ -13,7 +13,7 @@
 
 namespace fs = std::experimental::filesystem;
 
-MyApp::MyApp(int appid, float xSize, float ySize, float xPos, float yPos)
+MyApp::MyApp(int appid, float xSize, float ySize, const sf::Vector2f& position)
 {
 	sf::Clock itemCreateTimer;
 
@@ -78,7 +78,7 @@ MyApp::MyApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	}
 
 	cardShape.setSize(sf::Vector2f(xSize, ySize));
-	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
+	cardShape.setPosition(sf::Vector2f(position.x, position.y)); // probably not the best
 	cardShape.setFillColor(GBL::theme.palatte.APP_CARD);
 
 	icon.setSize(sf::Vector2f(cardShape.getSize().y, cardShape.getSize().y)); // a square
@@ -116,7 +116,7 @@ MyApp::MyApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	launchButton.setTexture(GBL::theme.getTexture("launch_1x.png"));
 	launchButton.setSize(sf::Vector2f(20, 20));
 	
-	updateSizeAndPosition(xSize, ySize, xPos, yPos);
+	updateSizeAndPosition(xSize, ySize, position.x, position.y);
 
 	std::cout << "card is ready (took " << itemCreateTimer.getElapsedTime().asSeconds() << " seconds)" << std::endl;
 }
