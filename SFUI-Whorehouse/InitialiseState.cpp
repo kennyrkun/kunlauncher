@@ -207,11 +207,12 @@ void InitialiseState::initialise()
 		{
 			settings.get(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
 			settings.get(GBL::CONFIG::logDownloads, app->settings.logDownloads);
-			settings.get(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
 			settings.get(GBL::CONFIG::SFUIDebug, app->settings.SFUIDebug);
 			settings.get(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
 			settings.get(GBL::CONFIG::useAnimations, app->settings.useAnimations);
 			settings.get(GBL::CONFIG::animationScale, app->settings.animationScale);
+
+			settings.get(GBL::CONFIG::News::newsEnabled, app->settings.news.enabled);
 
 			settings.get(GBL::CONFIG::selectedTheme, app->settings.selectedTheme);
 
@@ -441,11 +442,12 @@ int InitialiseState::validateFileStructure()
 
 				createConfigurationFile << GBL::CONFIG::updateOnStart << " = " << (app->settings.updateOnStart ? "TRUE" : "FALSE") << std::endl;
 				createConfigurationFile << GBL::CONFIG::logDownloads << " = " << (app->settings.logDownloads ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::newsEnabled << " = " << (app->settings.newsEnabled ? "TRUE" : "FALSE") << std::endl;
 				createConfigurationFile << GBL::CONFIG::SFUIDebug << " = " << (app->settings.SFUIDebug ? "TRUE" : "FALSE") << std::endl;
 				createConfigurationFile << GBL::CONFIG::allowStatTracking << " = " << (app->settings.allowStatTracking ? "TRUE" : "FALSE") << std::endl;
 				createConfigurationFile << GBL::CONFIG::useAnimations << " = " << (app->settings.useAnimations ? "TRUE" : "FALSE") << std::endl;
 				createConfigurationFile << GBL::CONFIG::animationScale << " = " << app->settings.animationScale << std::endl;
+
+				createConfigurationFile << GBL::CONFIG::News::newsEnabled << " = " << (app->settings.news.enabled ? "TRUE" : "FALSE") << std::endl;
 
 				createConfigurationFile << GBL::CONFIG::selectedTheme<< " = " << app->settings.selectedTheme << std::endl;
 

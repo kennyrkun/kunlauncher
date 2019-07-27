@@ -259,8 +259,8 @@ void SettingsState::HandleEvents()
 					configParser.set(GBL::CONFIG::logDownloads, app->settings.logDownloads);
 					break;
 				case CALLBACK::NEWS_ENABLED:
-					app->settings.newsEnabled = main.newsEnabledCheck->isChecked();
-					configParser.set(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
+					app->settings.news.enabled = main.newsEnabledCheck->isChecked();
+					configParser.set(GBL::CONFIG::News::newsEnabled, app->settings.news.enabled);
 					break;
 				case CALLBACK::SFUI_DEBUG_TEXTURE:
 					// TODO: don't use solid string here
@@ -686,7 +686,7 @@ void SettingsState::buildDefaultMenu()
 	main.logDownloadsCheck = new SFUI::CheckBox(app->settings.logDownloads);
 	form->addRow("Log Downloads", main.logDownloadsCheck, CALLBACK::LOG_DOWNLOADS);
 
-	main.newsEnabledCheck = new SFUI::CheckBox(app->settings.newsEnabled);
+	main.newsEnabledCheck = new SFUI::CheckBox(app->settings.news.enabled);
 	form->addRow("Enable News", main.newsEnabledCheck, CALLBACK::NEWS_ENABLED);
 
 	main.debugTextureCheck = new SFUI::CheckBox(app->settings.SFUIDebug);
@@ -967,11 +967,12 @@ void SettingsState::saveAllSettings()
 	{
 		configParser.set(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
 		configParser.set(GBL::CONFIG::logDownloads, app->settings.logDownloads);
-		configParser.set(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
 		configParser.set(GBL::CONFIG::SFUIDebug, app->settings.SFUIDebug);
 		configParser.set(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
 		configParser.set(GBL::CONFIG::useAnimations, app->settings.useAnimations);
 		configParser.set(GBL::CONFIG::animationScale, app->settings.animationScale);
+
+		configParser.set(GBL::CONFIG::News::newsEnabled, app->settings.news.enabled);
 
 		configParser.set(GBL::CONFIG::selectedTheme, app->settings.selectedTheme);
 
@@ -996,11 +997,12 @@ void SettingsState::loadSettings()
 	{
 		configParser.get(GBL::CONFIG::updateOnStart, app->settings.updateOnStart);
 		configParser.get(GBL::CONFIG::logDownloads, app->settings.logDownloads);
-		configParser.get(GBL::CONFIG::newsEnabled, app->settings.newsEnabled);
 		configParser.get(GBL::CONFIG::SFUIDebug, app->settings.SFUIDebug);
 		configParser.get(GBL::CONFIG::allowStatTracking, app->settings.allowStatTracking);
 		configParser.get(GBL::CONFIG::useAnimations, app->settings.useAnimations);
 		configParser.get(GBL::CONFIG::animationScale, app->settings.animationScale);
+
+		configParser.get(GBL::CONFIG::News::newsEnabled, app->settings.news.enabled);
 
 		configParser.get(GBL::CONFIG::selectedTheme, app->settings.selectedTheme);
 

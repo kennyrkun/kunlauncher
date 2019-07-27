@@ -69,12 +69,16 @@ namespace GBL
 
 		const std::string updateOnStart = "updateOnStart";
 		const std::string logDownloads = "logDownloads";
-		const std::string newsEnabled = "newsEnabled";
 		const std::string SFUIDebug = "SFUIDebug";
 		const std::string allowStatTracking = "allowStatTracking";
 		const std::string useAnimations = "useAnimations";
 		const std::string animationScale = "animationScale";
 		const std::string selectedTheme = "selectedTheme";
+
+		namespace News
+		{
+			const std::string newsEnabled = "news.enabled";
+		}
 		
 		namespace Window
 		{
@@ -91,7 +95,7 @@ namespace GBL
 		}
 	}
 
-	namespace MESSAGES
+	namespace MESSAGE_BOXES
 	{
 		void cantOpenNotWindows();
 	}

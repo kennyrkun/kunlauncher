@@ -50,7 +50,7 @@ void HomeState::Init(AppEngine* app_)
 
 	app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 
-	if (app->settings.newsEnabled)
+	if (app->settings.news.enabled)
 	{
 		setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, navbar->bar.getPosition().y + 60));
 
@@ -190,9 +190,9 @@ void HomeState::HandleEvents()
 				{
 					if (mouseIsOver(newsInteraction, viewScroller))
 					{
-						if (!app->settings.newsEnabled)
+						if (!app->settings.news.enabled)
 						{
-							app->settings.newsEnabled = true;
+							app->settings.news.enabled= true;
 
 							// TODO: save this setting
 
