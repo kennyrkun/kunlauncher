@@ -124,7 +124,7 @@ void StoreApp::setPosition(const sf::Vector2f& pos)
 	updateSizeAndPosition(cardShape.getSize().x, cardShape.getSize().y, pos.x, pos.y);
 }
 
-int StoreApp::onClick(sf::Event &e, sf::Vector2f clickPos)
+int StoreApp::onClick(sf::Vector2f clickPos)
 {
 	if (mouseIsOver(infoButton, clickPos) && !info.downloading)
 	{

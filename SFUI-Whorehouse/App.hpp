@@ -26,7 +26,7 @@ class App : public sf::Drawable
 {
 public:
 	// returns an int event code on click
-	virtual int onClick(sf::Event &e, sf::Vector2f clickPos) = 0;
+	virtual int onClick(sf::Vector2f clickPos) = 0;
 
 	ItemInfo info;
 

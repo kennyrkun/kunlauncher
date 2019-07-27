@@ -167,7 +167,7 @@ void MyAppListState::HandleEvents()
 				{
 					if (mouseIsOver(apps[i]->cardShape, viewScroller))
 					{
-						int id = apps[i]->onClick(event, app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *viewScroller));
+						int id = apps[i]->onClick(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *viewScroller));
 
 						if (id == MyApp::CLICKBACK::DeleteFiles)
 						{

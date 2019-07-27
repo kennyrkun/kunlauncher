@@ -252,7 +252,7 @@ void AllAppsListState::HandleEvents()
 				{
 					if (mouseIsOver(apps[i]->cardShape, viewScroller))
 					{
-						apps[i]->onClick(event, app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *viewScroller));
+						apps[i]->onClick(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *viewScroller));
 					}
 				}
 			}

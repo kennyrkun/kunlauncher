@@ -23,7 +23,7 @@ public:
 
 	sf::FloatRect getLocalBounds() { return cardShape.getLocalBounds(); }
 
-	int onClick(sf::Event &e, sf::Vector2f clickPos);
+	int onClick(sf::Vector2f clickPos);
 
 	bool deleteFilesPrompt();
 	void deleteFiles();
