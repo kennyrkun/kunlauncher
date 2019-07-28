@@ -58,7 +58,7 @@ private:
 	bool mouseIsOver(const sf::Text &object);
 	bool mouseIsOver(const sf::Text &object, const sf::View* view);
 
-	std::vector<std::string> get_directories(const std::string& s);
+	std::vector<std::string> getDirectories(const std::string& s);
 };
 
 #endif // !APPLIST_STATE_HPP

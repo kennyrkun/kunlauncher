@@ -178,7 +178,7 @@ void AppEngine::Quit()
 	states.clear();
 }
 
-std::vector<std::string> AppEngine::get_directories(const std::string& s)
+std::vector<std::string> AppEngine::getDirectories(const std::string& s)
 {
 	std::vector<std::string> r;
 	for (auto& p : fs::directory_iterator(s))
