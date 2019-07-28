@@ -173,7 +173,7 @@ void MyAppListState::HandleEvents()
 						if (id == MyApp::CLICKBACK::DeleteFiles)
 						{
 							AsyncTask* tt = new AsyncTask;
-							tt->future = std::async(std::launch::async, &MyAppListState::deleteApp, this, apps[i]);
+							tt->future = std::async(std::launch::async, &MyAppListState::removeAppFromList, this, apps[i]);
 							GBL::threadManager.addTask(tt);
 						}
 						else if (id == MyApp::CLICKBACK::OpenFiles)
@@ -198,6 +198,8 @@ void MyAppListState::HandleEvents()
 			{
 				std::cout << "refreshing myappslist" << std::endl;
 
+				am.clearTasks();
+
 				for (size_t i = 0; i < apps.size(); i++)
 					delete apps[i];
 				apps.clear();
@@ -215,7 +217,6 @@ void MyAppListState::HandleEvents()
 						std::cerr << e.what() << std::endl;
 					}
 				}
-
 
 				app->multithreaded_process_finished = false;
 				app->multithreaded_process_running = true;
@@ -364,7 +365,7 @@ void MyAppListState::Update()
 		{
 			app->multithreaded_process_finished = false;
 			app->multithreaded_process_running = true;
-			app->multithread = new std::thread(&MyAppListState::deleteApp, this, apps[i]);
+			app->multithread = new std::thread(&MyAppListState::removeAppFromList, this, apps[i]);
 			i--;
 		}
 		else // call update like normal
@@ -432,7 +433,6 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 	std::cout << std::endl; // for a line break
 
 	sf::Vector2f nextPosition = { padding, navbar->bar.getSize().y + padding };
-	sf::Vector2f lastPosition;
 
 	for (size_t i = 0; i < appList.size(); i++)
 	{
@@ -454,11 +454,11 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 			nextPosition.y = ((75 + padding) * i) + navbar->bar.getSize().y + padding;
 		}
 
-		newItem->setPosition(sf::Vector2f(padding, 0));
-
 		apps.push_back(newItem);
-		am.addAppTranslationTask(apps[i], nextPosition, EaseType::CubicEaseOut, 1000);
 
+		newItem->setPosition(sf::Vector2f(app->window->getSize().x + padding, nextPosition.y));
+
+		am.addAppTranslationTask(newItem, nextPosition, EaseType::CubicEaseOut, 1000);
 
 		std::cout << std::endl;
 
@@ -495,7 +495,7 @@ void MyAppListState::updateScrollThumbSize()
 	for (size_t i = 0; i < apps.size(); i++)
 		apps[i]->updateSizeAndPosition(app->window->getSize().x - (padding * 2) - scrollbar.scrollTrack.getSize().x,
 									   75, 
-									   padding, 
+									   apps[i]->getPosition().x, 
 									   apps[i]->getPosition().y);
 
 	updateScrollLimits();
@@ -528,10 +528,16 @@ void MyAppListState::testScrollBounds()
 	}
 }
 
-void MyAppListState::deleteApp(MyApp* whatApp)
+void MyAppListState::removeAppFromList(MyApp* whatApp)
 {
 	std::vector<MyApp*>::iterator it = std::find(apps.begin(), apps.end(), whatApp);
 	int index = std::distance(apps.begin(), it);
+
+	/*
+	sf::Vector2f newpos = { app->window->getSize().x + padding, whatApp->getPosition().y };
+	am.addAppTranslationTask(whatApp, newpos, EaseType::CubicEaseOut, 1000);
+	sf::sleep(sf::seconds(1)); // wait to delete until the thing is actually gone
+	*/
 
 	apps.erase(std::remove(apps.begin(), apps.end(), whatApp), apps.end());
 
@@ -539,6 +545,7 @@ void MyAppListState::deleteApp(MyApp* whatApp)
 	delete whatApp;
 
 	for (size_t i = index; i < apps.size(); i++)
+		//am.addAppTranslationTask(apps[i], sf::Vector2f(padding, ((75 + padding) * i) + navbar->bar.getSize().y + padding), EaseType::CubicEaseOut, 1000);
 		apps[i]->setPosition(sf::Vector2f(padding, (apps[i]->getPosition().y - apps[i]->getLocalBounds().height - padding)));
 
 	updateScrollThumbSize();

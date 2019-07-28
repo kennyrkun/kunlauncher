@@ -8,6 +8,7 @@
 #include "animate/AnimationManager.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <future>
 #include <vector>
 #include <iostream>
@@ -54,7 +55,8 @@ private:
 	void testScrollBounds();
 
 	void loadApps(bool &finishedIndicator);
-	void deleteApp(MyApp* whatApp);
+
+	void removeAppFromList(MyApp* whatApp);
 
 	bool mouseIsOver(const sf::Shape &object);
 	bool mouseIsOver(const sf::Shape &object, const sf::View* view);

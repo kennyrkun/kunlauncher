@@ -40,7 +40,6 @@ AnimatedNumber::AnimatedNumber(size_t original, size_t& target, std::function<fl
 
 AnimatedNumber::~AnimatedNumber()
 {
-	std::cout << "danum " << animationID << std::endl;
 }
 
 bool AnimatedNumber::pastTime()
@@ -115,8 +114,6 @@ AnimatedTranslation::AnimatedTranslation(sf::Transformable &shape, sf::Vector2f 
 AnimatedTranslation::~AnimatedTranslation()
 {
 	shape.setPosition(targetPosition);
-
-	std::cout << "datran " << animationID << std::endl;
 }
 
 bool AnimatedTranslation::pastTime()
@@ -138,8 +135,6 @@ void AnimatedTranslation::Update()
 	y = easeFunction(t1.asMilliseconds(), originalPosition.y, changeInPosition.y, duration);
 
 	shape.setPosition(sf::Vector2f(x, y));
-
-//	std::cout << t1.asMilliseconds() << ", " << duration << "(" << x << ", " << y << ")" << std::endl;
 };
 
 
@@ -175,8 +170,6 @@ AnimatedAppTranslation::AnimatedAppTranslation(MyApp* shape, sf::Vector2f destin
 AnimatedAppTranslation::~AnimatedAppTranslation()
 {
 	app->setPosition(targetPosition);
-
-	std::cout << "datran " << animationID << std::endl;
 }
 
 bool AnimatedAppTranslation::pastTime()
@@ -188,6 +181,9 @@ void AnimatedAppTranslation::Update()
 {
 	sf::Time t1 = tick.getElapsedTime();
 
+	if (app == nullptr)
+		return;
+
 	// we've gone past the time it should have taken
 	if (t1.asMilliseconds() > duration)
 		t1 = sf::milliseconds(duration);
@@ -198,8 +194,6 @@ void AnimatedAppTranslation::Update()
 	y = easeFunction(t1.asMilliseconds(), originalPosition.y, changeInPosition.y, duration);
 
 	app->setPosition(sf::Vector2f(x, y));
-
-	//	std::cout << t1.asMilliseconds() << ", " << duration << "(" << x << ", " << y << ")" << std::endl;
 };
 
 
