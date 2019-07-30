@@ -32,7 +32,7 @@ Navbar::Navbar(sf::RenderWindow* window, PhysicalAnimator& animator) : window(wi
 	bar.setFillColor(GBL::theme.palatte.PRIMARY);
 
 	selectedThing.setFillColor(sf::Color(GBL::theme.palatte.TERTIARY.r, GBL::theme.palatte.TERTIARY.g, GBL::theme.palatte.TERTIARY.b, 100));
-	selectedThing.setSize(sf::Vector2f(40, bar.getSize().y));
+	selectedThing.setSize(sf::Vector2f(0, bar.getSize().y));
 
 	sf::Vector2f position = { 0, 40 };
 	int width = window->getSize().x;
@@ -65,8 +65,6 @@ bool Navbar::select(const std::string& section)
 	if (sections.find(section) != sections.end())
 	{
 		sf::Text text = sections.find(section)->second;
-
-		//selectedThing.setSize(sf::Vector2f(text.getGlobalBounds().width + 18, bar.getSize().y));
 
 		animator.addRectangleSizeTask(selectedThing, sf::Vector2f(text.getGlobalBounds().width + 18, bar.getSize().y), EaseType::CubicEaseOut, 500);
 		animator.addTranslationTask(selectedThing, sf::Vector2f(text.getPosition().x - 8, text.getPosition().y), EaseType::CubicEaseOut, 500);

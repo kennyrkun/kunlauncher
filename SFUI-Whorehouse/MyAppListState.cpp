@@ -80,7 +80,6 @@ void MyAppListState::Cleanup()
 	delete viewScroller;
 	delete mainView;
 
-
 	std::cout << "MyAppListState cleaned up." << std::endl;
 }
 
@@ -533,18 +532,17 @@ void MyAppListState::removeAppFromList(MyApp* whatApp)
 
 	/*
 	sf::Vector2f newpos = { app->window->getSize().x + padding, whatApp->getPosition().y };
-	am.addAppTranslationTask(whatApp, newpos, EaseType::CubicEaseOut, 1000);
-	sf::sleep(sf::seconds(1)); // wait to delete until the thing is actually gone
+	int id = app->am.addAppTranslationTask(whatApp, newpos, EaseType::CubicEaseOut, 500);
+	sf::sleep(sf::seconds(1.2)); // wait to delete until the thing is actually gone
 	*/
 
-	apps.erase(std::remove(apps.begin(), apps.end(), whatApp), apps.end());
+	apps.erase(it);
 
 	whatApp->deleteFiles();
 	delete whatApp;
 
 	for (size_t i = index; i < apps.size(); i++)
-		//am.addAppTranslationTask(apps[i], sf::Vector2f(padding, ((75 + padding) * i) + app->navbar->bar.getSize().y + padding), EaseType::CubicEaseOut, 1000);
-		apps[i]->setPosition(sf::Vector2f(padding, (apps[i]->getPosition().y - apps[i]->getLocalBounds().height - padding)));
+		app->am.addAppTranslationTask(apps[i], sf::Vector2f(padding, ((75 + padding) * i) + app->navbar->bar.getSize().y + padding), EaseType::CubicEaseOut, 600);
 
 	updateScrollThumbSize();
 	viewScroller->setCenter(mainView->getCenter());
