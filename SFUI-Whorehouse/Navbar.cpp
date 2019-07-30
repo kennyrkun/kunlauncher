@@ -27,15 +27,30 @@ Navbar::Navbar(sf::RenderWindow* window) : window(window)
 {
 	std::cout << "creating navbar" << std::endl;
 
-	bar.setSize(sf::Vector2f(window->getSize().x, 40.0f - 1.0f));
+	bar.setSize(sf::Vector2f(window->getSize().x, 40.0f));
 	bar.setFillColor(GBL::theme.palatte.PRIMARY);
-
-	divider.setSize(sf::Vector2f(bar.getSize().x, 1));
-	divider.setPosition(sf::Vector2f(0, bar.getSize().y));
-	divider.setFillColor(sf::Color::Black);
 
 //	border.setSize(sf::Vector2f(window->getSize().x, 1));
 //	border.move(sf::Vector2f(0, bar.getSize().y));
+
+//	shadow[0].color = sf::Color(0, 0, 0, 100);
+//	shadow[1].color = sf::Color(0, 0, 0, 100);
+//	shadow[2].color = sf::Color(0, 0, 0, 0);
+//	shadow[3].color = sf::Color(0, 0, 0, 0);
+
+	sf::Vector2f position = { 0, 40 };
+	int width = window->getSize().x;
+	int height = 20;
+
+	shadow[0].color = sf::Color(0, 0, 0, 100);
+	shadow[1].color = sf::Color(0, 0, 0, 100);
+	shadow[2].color = sf::Color(0, 0, 0, 0);
+	shadow[3].color = sf::Color(0, 0, 0, 0);
+
+	shadow[0].position = sf::Vector2f(position.x, position.y);
+	shadow[1].position = sf::Vector2f(position.x + width, position.y);
+	shadow[3].position = sf::Vector2f(position.x, position.y + height);
+	shadow[2].position = sf::Vector2f(position.x + width, position.y + height);
 
 	std::cout << "navbar ready" << std::endl;
 }
@@ -122,7 +137,7 @@ void Navbar::Update()
 void Navbar::Draw()
 {
 	window->draw(bar);
-	window->draw(divider);
+	window->draw(shadow, 4, sf::Quads);
 
 	for (auto& x : sections)
 		window->draw(x);

@@ -37,9 +37,7 @@ public:
 private:
 	sf::RenderWindow* window;
 
-	sf::RectangleShape divider;
-
-//	sf::RectangleShape divider;
+	sf::Vertex shadow[4];
 };
 
 #endif // !NAVBAR_HPP
