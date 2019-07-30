@@ -13,6 +13,9 @@
 // buildtype = release
 // only download updates with "release" in them
 
+// TODO: if we are unable to recognise the version format, try to update anyway
+// rename old executable to allow people to go back if it fucks itself up
+
 #include "Globals.hpp"
 
 class LauncherUpdater

@@ -409,7 +409,7 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 	apps.clear();
 	updateScrollThumbSize();
 
-	std::vector<std::string> appList = get_directories(GBL::DIR::apps);
+	std::vector<std::string> appList = getDirectories(GBL::DIR::apps);
 
 	// check for invalid appids
 	for (size_t i = 0; i < appList.size(); i++)
@@ -590,7 +590,7 @@ bool MyAppListState::mouseIsOver(const sf::Text &object, const sf::View* view)
 	return false;
 }
 
-std::vector<std::string> MyAppListState::get_directories(const std::string& s)
+std::vector<std::string> MyAppListState::getDirectories(const std::string& s)
 {
 	// we don't use the app names in their folders anymore, instead the numerical appids
 	// since this is the case, should this function be return a vector of integers?

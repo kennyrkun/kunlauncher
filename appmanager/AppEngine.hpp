@@ -50,7 +50,7 @@ public:
 public: // these are functions specific to this application, or general utility functions. not required for the appengine itself.
 	const std::string currentDateTime();
 
-	std::vector<std::string> get_directories(const std::string& s);
+	std::vector<std::string> getDirectories(const std::string& s);
 
 	sf::RenderWindow* window;
 	AppSettings settings;

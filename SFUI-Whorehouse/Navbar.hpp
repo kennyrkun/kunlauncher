@@ -38,7 +38,7 @@ public:
 private:
 	sf::RenderWindow* window;
 
-	sf::RectangleShape divider;
+	sf::Vertex shadow[4];
 	sf::RectangleShape selectedThing;
 
 	std::string selectedSection;

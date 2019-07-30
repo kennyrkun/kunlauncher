@@ -148,7 +148,7 @@ private:
 	bool promptExitWithoutSavingChanges();
 	bool failedToSaveDialog();
 
-	std::vector<std::string> get_directories(const std::string& s);
+	std::vector<std::string> getDirectories(const std::string& s);
 
 	bool mouseIsOver(const sf::Shape &object);
 	bool mouseIsOver(const sf::Shape &object, const sf::View* view);

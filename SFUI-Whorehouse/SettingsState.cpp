@@ -700,7 +700,7 @@ void SettingsState::buildDefaultMenu()
 
 	main.selectedThemeOptions = new SFUI::OptionsBox<std::string>;
 	// each theme has it's own directory in the themes folder
-	std::vector<std::string> themes = get_directories(GBL::DIR::themes);
+	std::vector<std::string> themes = getDirectories(GBL::DIR::themes);
 	for (size_t i = 0; i < themes.size(); i++)
 	{
 		if (themes[i] == app->settings.selectedTheme)
@@ -1114,7 +1114,7 @@ bool SettingsState::promptExitWithoutSavingChanges()
 		return false;
 }
 
-std::vector<std::string> SettingsState::get_directories(const std::string& s)
+std::vector<std::string> SettingsState::getDirectories(const std::string& s)
 {
 	std::vector<std::string> r;
 	for (auto& p : fs::directory_iterator(s))
