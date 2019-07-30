@@ -3,7 +3,6 @@
 
 #include "AppState.hpp"
 #include "ColorInputBox.hpp"
-#include "Navbar.hpp"
 #include "SettingsParser.hpp"
 #include "VerticalScrollbar.hpp"
 #include "Theme.hpp"
@@ -28,8 +27,6 @@ public:
 
 private:
 	AppEngine* app;
-
-	Navbar* navbar;
 
 	// TODO: retain scroll position after menu changes
 	VerticalScrollbar scrollbar;

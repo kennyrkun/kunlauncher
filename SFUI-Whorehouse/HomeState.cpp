@@ -24,19 +24,14 @@ void HomeState::Init(AppEngine* app_)
 	std::cout << "HomeState Init" << std::endl;
 	app = app_;
 
-	navbar = new Navbar(app->window);
-	navbar->addSection("home").setStyle(sf::Text::Style::Bold);
-	navbar->addSection("my apps");
-	navbar->addSection("all apps");
-	navbar->addSection("settings");
-	navbar->addSection("");
+	app->navbar->select("home");
 
 	viewScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 
 	scrollbar.create(app->window);
-	scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getLocalBounds().height);
-	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, navbar->bar.getSize().y));
+	scrollbar.setTrackHeight(app->window->getSize().y - app->navbar->bar.getLocalBounds().height);
+	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, app->navbar->bar.getSize().y));
 	scrollbar.scrollTrack.setFillColor(GBL::theme.palatte.SCROLLBAR);
 	scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB);
 
@@ -52,7 +47,7 @@ void HomeState::Init(AppEngine* app_)
 
 	if (app->settings.news.enabled)
 	{
-		setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, navbar->bar.getPosition().y + 60));
+		setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, app->navbar->bar.getPosition().y + 60));
 
 		app->multithreaded_process_running = true;
 		app->multithreaded_process_finished = false;
@@ -93,7 +88,6 @@ void HomeState::Cleanup()
 
 	delete viewScroller;
 	delete mainView;
-	delete navbar;
 
 	std::cout << "HomeState Cleanup" << std::endl;
 }
@@ -105,6 +99,7 @@ void HomeState::Pause()
 
 void HomeState::Resume()
 {
+	app->navbar->select("home");
 	std::cout << "HomeState resumed" << std::endl;
 }
 
@@ -114,7 +109,7 @@ void HomeState::HandleEvents()
 
 	while (app->window->pollEvent(event))
 	{
-		navbar->HandleEvents(event);
+		app->navbar->HandleEvents(event);
 
 		for (size_t i = 0; i < newses.size(); i++)
 			newses[i]->HandleEvents(event);
@@ -142,8 +137,8 @@ void HomeState::HandleEvents()
 
 				bool scroll = scrollbar.isEnabled;
 
-				scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getLocalBounds().height);
-				scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, navbar->bar.getLocalBounds().height));
+				scrollbar.setTrackHeight(app->window->getSize().y - app->navbar->bar.getLocalBounds().height);
+				scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, app->navbar->bar.getLocalBounds().height));
 				updateScrollThumbSize();
 
 				if (scroll != scrollbar.isEnabled)
@@ -168,17 +163,17 @@ void HomeState::HandleEvents()
 		{
 			if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
-				if (mouseIsOver(navbar->bar))
+				if (mouseIsOver(app->navbar->bar))
 				{
-					for (auto& x : navbar->sections)
-						if (mouseIsOver(x))
-							if (x.getString() != "home" && mouseIsOver(x))
+					for (const auto [name, text] : app->navbar->sections)
+						if (mouseIsOver(text))
+							if (name != "home" && mouseIsOver(text))
 							{
-								if (x.getString() == "my apps")
+								if (name == "my apps")
 									app->ChangeState(new MyAppListState);
-								else if (x.getString() == "all apps")
+								else if (name == "all apps")
 									app->ChangeState(new AllAppsListState);
-								else if (x.getString() == "settings")
+								else if (name == "settings")
 									app->ChangeState(new SettingsState);
 
 								std::cout << "state will be switched" << std::endl;
@@ -196,7 +191,7 @@ void HomeState::HandleEvents()
 
 							// TODO: save this setting
 
-							setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, navbar->bar.getPosition().y + 60));
+							setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, app->navbar->bar.getPosition().y + 60));
 
 							newsInteraction.setString("");
 							newsInteraction.setOrigin(sf::Vector2f(0, 0));
@@ -207,7 +202,7 @@ void HomeState::HandleEvents()
 						}
 						else if (newsInteraction.getString() == "Load more...")
 						{
-							setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, navbar->bar.getPosition().y + 60));
+							setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, app->navbar->bar.getPosition().y + 60));
 
 							app->multithreaded_process_running = true;
 							app->multithreaded_process_finished = false;
@@ -303,7 +298,7 @@ void HomeState::HandleEvents()
 				else if (event.key.code == sf::Keyboard::Key::Home)
 				{
 					scrollbar.moveToTop();
-					viewScroller->setCenter(viewScroller->getCenter().x, (scrollerMinPosition + viewScroller->getSize().y / 2) - navbar->bar.getSize().y);
+					viewScroller->setCenter(viewScroller->getCenter().x, (scrollerMinPosition + viewScroller->getSize().y / 2) - app->navbar->bar.getSize().y);
 				}
 				else if (event.key.code == sf::Keyboard::Key::End)
 				{
@@ -351,7 +346,7 @@ void HomeState::Update()
 		delete app->multithread;
 	}
 
-	navbar->Update();
+	app->navbar->Update();
 
 	for (size_t i = 0; i < newses.size(); i++)
 		newses[i]->Update();
@@ -371,7 +366,7 @@ void HomeState::Draw()
 	// non-moving items
 	app->window->setView(*mainView);
 
-	navbar->Draw();
+	app->navbar->Draw();
 	app->window->draw(scrollbar);
 
 	// FIXME: fix this little piece of shit
@@ -513,7 +508,7 @@ void HomeState::updateScrollThumbSize()
 
 	// the second parameter of this should be something like `viewScroller->getSize().y
 	// however, since the viewport is 40 pixels shorter, we will add a - 40
-	scrollbar.update(contentHeight, viewScroller->getSize().y - navbar->bar.getSize().y);
+	scrollbar.update(contentHeight, viewScroller->getSize().y - app->navbar->bar.getSize().y);
 
 	// TODO: update scroll limits separately
 	updateScrollLimits();
@@ -521,10 +516,10 @@ void HomeState::updateScrollThumbSize()
 
 void HomeState::updateScrollLimits()
 {
-	scrollerTopPosition = viewScroller->getCenter().y - viewScroller->getSize().y / 2 + navbar->bar.getSize().y; // is 40 pixels lower
+	scrollerTopPosition = viewScroller->getCenter().y - viewScroller->getSize().y / 2 + app->navbar->bar.getSize().y; // is 40 pixels lower
 	scrollerBottomPosition = viewScroller->getCenter().y + viewScroller->getSize().y / 2;
-	scrollerMinPosition = navbar->bar.getSize().y; // navbar
-	scrollerMaxPosition = scrollbar.contentSize + navbar->bar.getSize().y;
+	scrollerMinPosition = app->navbar->bar.getSize().y; // navbar
+	scrollerMaxPosition = scrollbar.contentSize + app->navbar->bar.getSize().y;
 }
 
 void HomeState::testScrollBounds()
@@ -541,7 +536,7 @@ void HomeState::testScrollBounds()
 	if (scrollerTopPosition < scrollerMinPosition) // clamp viewScroller
 	{
 		std::cout << "viewScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
-		viewScroller->setCenter(viewScroller->getCenter().x, (scrollerMinPosition + viewScroller->getSize().y / 2) - navbar->bar.getSize().y);
+		viewScroller->setCenter(viewScroller->getCenter().x, (scrollerMinPosition + viewScroller->getSize().y / 2) - app->navbar->bar.getSize().y);
 		updateScrollLimits();
 	}
 }
@@ -570,7 +565,7 @@ bool HomeState::mouseIsOver(sf::Text &object, sf::View* view)
 		return false;
 }
 
-bool HomeState::mouseIsOver(sf::Text &object)
+bool HomeState::mouseIsOver(const sf::Text &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window))))
 		return true;

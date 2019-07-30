@@ -137,6 +137,53 @@ void AnimatedTranslation::Update()
 	shape.setPosition(sf::Vector2f(x, y));
 };
 
+AnimatedRectangleSize::AnimatedRectangleSize(sf::RectangleShape &shape, sf::Vector2f destinationSize, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID)
+	: shape(shape), targetSize(destinationSize), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
+{
+	std::cout << "atran " << animationID << std::endl;
+
+	originalSize = shape.getSize();
+	changeInSize = targetSize - originalSize;
+
+	int x = targetSize.x - originalSize.x;
+	int y = targetSize.y - originalSize.y;
+
+	changeInSize = sf::Vector2f(x, y);
+
+	std::cout << "destin: " << targetSize.x << ", " << targetSize.y << std::endl;
+	std::cout << "moving: " << changeInSize.x << ", " << changeInSize.y << std::endl;
+
+	tick.restart();
+
+	// TODO: make sure it's not already at this position
+}
+
+AnimatedRectangleSize::~AnimatedRectangleSize()
+{
+	shape.setSize(targetSize);
+}
+
+bool AnimatedRectangleSize::pastTime()
+{
+	return tick.getElapsedTime().asMilliseconds() < duration;
+}
+
+void AnimatedRectangleSize::Update()
+{
+	sf::Time t1 = tick.getElapsedTime();
+
+	// we've gone past the time it should have taken
+	if (t1.asMilliseconds() > duration)
+		t1 = sf::milliseconds(duration);
+
+	float x, y;
+
+	x = easeFunction(t1.asMilliseconds(), originalSize.x, changeInSize.x, duration);
+	y = easeFunction(t1.asMilliseconds(), originalSize.y, changeInSize.y, duration);
+
+	shape.setSize(sf::Vector2f(x, y));
+};
+
 
 // Animated App Translation
 
@@ -302,9 +349,23 @@ int PhysicalAnimator::addTranslationTask(sf::Transformable& shape, sf::Vector2f 
 	return tasks.back()->animationID;
 }
 
+int PhysicalAnimator::addRectangleSizeTask(sf::RectangleShape &shape, sf::Vector2f size, EaseType ease, int duration, bool constant)
+{
+	std::cout << "adding rectangle shape size task" << std::endl;
+
+	AnimatedRectangleSize* task = new AnimatedRectangleSize(shape, size, getEaseFunc(ease), duration, constant, totalAnimations++);
+
+	tasks.push_back(task);
+
+	// animation id needs to be assigned differently, because the
+	// total size of the thing might change and we could end up
+	// with multiple aniimations using the same id
+	return tasks.back()->animationID;
+}
+
 int PhysicalAnimator::addAppTranslationTask(MyApp* app, sf::Vector2f destination, EaseType ease, int duration, bool constant)
 {
-	std::cout << "adding translation task" << std::endl;
+	std::cout << "adding app translation task" << std::endl;
 	
 	if (app == nullptr)
 	{

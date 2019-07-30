@@ -3,7 +3,6 @@
 
 #include "AppState.hpp"
 
-#include "Navbar.hpp"
 #include "VerticalScrollbar.hpp"
 #include "animate/AnimationManager.hpp"
 
@@ -34,8 +33,6 @@ public:
 private:
 	AppEngine* app;
 
-	Navbar* navbar;
-
 	sf::View *mainView;
 	sf::View *viewScroller;
 	VerticalScrollbar scrollbar;
@@ -43,7 +40,6 @@ private:
 	// TODO: not a pointer
 	std::vector<MyApp*> apps;
 
-	PhysicalAnimator am;
 
 	// TODO: viewable arae class
 	float scrollerTopPosition;

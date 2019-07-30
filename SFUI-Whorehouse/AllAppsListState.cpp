@@ -27,18 +27,14 @@ void AllAppsListState::Init(AppEngine* app_)
 
 	app = app_;
 
-	navbar = new Navbar(app->window);
-	navbar->addSection("home");
-	navbar->addSection("my apps");
-	navbar->addSection("all apps").setStyle(sf::Text::Style::Bold);
-	navbar->addSection("settings");
+	app->navbar->select("all apps");
 
 	viewScroller = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 	mainView = new sf::View(app->window->getView().getCenter(), app->window->getView().getSize());
 
 	scrollbar.create(app->window);
-	scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getSize().y);
-	scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, 0.0f + navbar->bar.getSize().y));
+	scrollbar.setTrackHeight(app->window->getSize().y - app->navbar->bar.getSize().y);
+	scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, 0.0f + app->navbar->bar.getSize().y));
 
 	app->multithreaded_process_finished = false;
 	app->multithreaded_process_running = true;
@@ -95,7 +91,6 @@ void AllAppsListState::Cleanup()
 
 	delete mainView;
 	delete viewScroller;
-	delete navbar;
 
 	std::cout << "AllAppsListState cleaned up." << std::endl;
 }
@@ -107,6 +102,7 @@ void AllAppsListState::Pause()
 
 void AllAppsListState::Resume()
 {
+	app->navbar->select("all apps");
 	std::cout << "AllAppsListState Resume" << std::endl;
 }
 
@@ -116,7 +112,7 @@ void AllAppsListState::HandleEvents()
 
 	while (app->window->pollEvent(event))
 	{
-		navbar->HandleEvents(event);
+		app->navbar->HandleEvents(event);
 
 		if (event.type == sf::Event::EventType::Closed)
 		{
@@ -152,8 +148,8 @@ void AllAppsListState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 
-			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, navbar->bar.getSize().y));
-			scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getSize().y);
+			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, app->navbar->bar.getSize().y));
+			scrollbar.setTrackHeight(app->window->getSize().y - app->navbar->bar.getSize().y);
 			updateScrollThumbSize();
 
 			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20.0f, app->window->getSize().y - 20.0f));
@@ -230,17 +226,17 @@ void AllAppsListState::HandleEvents()
 		{
 			if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
-				if (mouseIsOver(navbar->bar))
+				if (mouseIsOver(app->navbar->bar))
 				{
-					for (auto& x : navbar->sections)
-						if (mouseIsOver(x))
-							if (x.getString() != "all apps" && mouseIsOver(x))
+					for (const auto [name, text] : app->navbar->sections)
+						if (mouseIsOver(text))
+							if (name != "all apps" && mouseIsOver(text))
 							{
-								if (x.getString() == "home")
+								if (name == "home")
 									app->ChangeState(new HomeState);
-								else if (x.getString() == "my apps")
+								else if (name == "my apps")
 									app->ChangeState(new MyAppListState);
-								else if (x.getString() == "settings")
+								else if (name == "settings")
 									app->ChangeState(new SettingsState);
 
 								std::cout << "state will be switched" << std::endl;
@@ -340,7 +336,7 @@ void AllAppsListState::HandleEvents()
 				else if (event.key.code == sf::Keyboard::Key::Home)
 				{
 					scrollbar.moveToTop();
-					viewScroller->setCenter(viewScroller->getCenter().x, (scrollerMinPosition + viewScroller->getSize().y / 2) - navbar->bar.getSize().y);
+					viewScroller->setCenter(viewScroller->getCenter().x, (scrollerMinPosition + viewScroller->getSize().y / 2) - app->navbar->bar.getSize().y);
 				}
 				else if (event.key.code == sf::Keyboard::Key::End)
 				{
@@ -403,7 +399,7 @@ void AllAppsListState::Draw()
 	//anchored
 	app->window->setView(*mainView);
 
-	navbar->Draw();
+	app->navbar->Draw();
 
 	if (scrollbar.isEnabled)
 		app->window->draw(scrollbar);
@@ -461,7 +457,7 @@ void AllAppsListState::loadApps(bool &finishedIndicator)
 					app->window->getSize().x - (padding - scrollbar.scrollTrack.getSize().x),
 					50, // FIXME: magic numbers are bad
 					padding, // 10 pixels to the left of the left edge of the screen, minus the size of the scrollTrack
-					navbar->bar.getSize().y + padding);
+					app->navbar->bar.getSize().y + padding);
 			else
 				newItem = new StoreApp(loopi,
 					app->window->getSize().x - (padding - scrollbar.scrollTrack.getSize().x),
@@ -510,7 +506,7 @@ void AllAppsListState::updateScrollThumbSize()
 		contentHeight += padding * 2;
 	}
 
-	scrollbar.update(contentHeight, viewScroller->getSize().y - navbar->bar.getSize().y);
+	scrollbar.update(contentHeight, viewScroller->getSize().y - app->navbar->bar.getSize().y);
 
 	for (size_t i = 0; i < apps.size(); i++)
 		apps[i]->updateSizeAndPosition(
@@ -526,10 +522,10 @@ void AllAppsListState::updateScrollThumbSize()
 
 void AllAppsListState::updateScrollLimits()
 {
-	scrollerTopPosition = viewScroller->getCenter().y - viewScroller->getSize().y / 2 + navbar->bar.getSize().y; // is 40 pixels lower
+	scrollerTopPosition = viewScroller->getCenter().y - viewScroller->getSize().y / 2 + app->navbar->bar.getSize().y; // is 40 pixels lower
 	scrollerBottomPosition = viewScroller->getCenter().y + viewScroller->getSize().y / 2;
-	scrollerMinPosition = navbar->bar.getSize().y; // navbar
-	scrollerMaxPosition = scrollbar.contentSize + navbar->bar.getSize().y;
+	scrollerMinPosition = app->navbar->bar.getSize().y; // navbar
+	scrollerMaxPosition = scrollbar.contentSize + app->navbar->bar.getSize().y;
 }
 
 void AllAppsListState::testScrollBounds()
@@ -546,7 +542,7 @@ void AllAppsListState::testScrollBounds()
 	if (scrollerTopPosition < scrollerMinPosition) // clamp viewScroller
 	{
 		std::cout << "viewScroller went too far up (" << scrollerMaxPosition - scrollerTopPosition << "), clamping..." << std::endl;
-		viewScroller->setCenter(viewScroller->getCenter().x, (scrollerMinPosition + viewScroller->getSize().y / 2) - navbar->bar.getSize().y);
+		viewScroller->setCenter(viewScroller->getCenter().x, (scrollerMinPosition + viewScroller->getSize().y / 2) - app->navbar->bar.getSize().y);
 		updateScrollLimits();
 	}
 }

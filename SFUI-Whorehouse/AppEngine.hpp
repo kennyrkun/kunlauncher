@@ -1,6 +1,9 @@
 #ifndef APP_ENGINE_HPP
 #define APP_ENGINE_HPP
 
+#include "animate/AnimationManager.hpp"
+#include "Navbar.hpp"
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -93,6 +96,10 @@ public:
 
 	sf::RenderWindow* window;
 	AppSettings settings;
+
+	Navbar* navbar;
+
+	PhysicalAnimator am;
 
 private:
 	// the stack of states

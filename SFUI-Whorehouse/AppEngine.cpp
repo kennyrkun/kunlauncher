@@ -52,6 +52,8 @@ void AppEngine::Cleanup()
 	window->close();
 	delete window;
 
+	delete navbar;
+
 	Download clearCache;
 	clearCache.clearCache();
 
@@ -132,6 +134,8 @@ void AppEngine::Update()
 
 	if (running)
 		states.back()->Update();
+
+	am.Update();
 }
 
 void AppEngine::Draw()

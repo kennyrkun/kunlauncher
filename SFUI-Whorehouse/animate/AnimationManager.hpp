@@ -155,6 +155,36 @@ private:
 	std::function<float(float t, float b, float c, float d)> easeFunction;
 };
 
+class AnimatedRectangleSize : public AnimatedTask
+{
+public:
+	AnimatedRectangleSize(sf::RectangleShape &shape, sf::Vector2f targetSize, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
+	~AnimatedRectangleSize();
+
+	int animationID;
+
+	int duration; // miliseconds
+	sf::Clock tick;
+
+	sf::Vector2f getCurrent() { return current; };
+
+	bool pastTime();
+	bool constant = false;
+
+	sf::RectangleShape& shape;
+
+	sf::Vector2f targetSize;
+	sf::Vector2f originalSize;
+
+	void Update();
+
+private:
+	sf::Vector2f changeInSize;
+	sf::Vector2f current;
+
+	std::function<float(float t, float b, float c, float d)> easeFunction;
+};
+
 class AnimatedAppTranslation : public AnimatedTask
 {
 public:
@@ -192,6 +222,7 @@ public:
 	~PhysicalAnimator();
 
 	int addTranslationTask(sf::Transformable& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
+	int addRectangleSizeTask(sf::RectangleShape& shape, sf::Vector2f size, EaseType ease, int duration, bool constant = false);
 	int addAppTranslationTask(MyApp* app, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
 	int addRotationTask(sf::Transformable& shape, float& targetRotation, EaseType ease, int duration, bool constant = false);
 	int addTask(size_t original, size_t& target, EaseType ease, int duration, bool constant = false);

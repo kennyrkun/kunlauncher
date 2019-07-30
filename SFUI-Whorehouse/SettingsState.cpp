@@ -84,15 +84,11 @@ void SettingsState::Init(AppEngine* app_)
 	std::cout << "SettingsState Init" << std::endl;
 	app = app_;
 
-	navbar = new Navbar(app->window);
-	navbar->addSection("home");
-	navbar->addSection("my apps");
-	navbar->addSection("all apps");
-	navbar->addSection("settings").setStyle(sf::Text::Style::Bold);
+	app->navbar->select("settings");
 
 	scrollbar.create(app->window);
-	scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getLocalBounds().height);
-	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, navbar->bar.getSize().y));
+	scrollbar.setTrackHeight(app->window->getSize().y - app->navbar->bar.getLocalBounds().height);
+	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, app->navbar->bar.getSize().y));
 
 	configParser.loadFromFile(GBL::CONFIG::config);
 
@@ -104,7 +100,6 @@ void SettingsState::Cleanup()
 	std::cout << "Cleaning up SettingsState." << std::endl;
 
 	delete menu;
-	delete navbar;
 
 	std::cout << "Cleaned up SettingsState." << std::endl;
 }
@@ -116,6 +111,7 @@ void SettingsState::Pause()
 
 void SettingsState::Resume()
 {
+	app->navbar->select("settings");
 	std::cout << "SettingsState Resume" << std::endl;
 }
 
@@ -125,7 +121,7 @@ void SettingsState::HandleEvents()
 
 	while (app->window->pollEvent(event))
 	{
-		navbar->HandleEvents(event);
+		app->navbar->HandleEvents(event);
 
 		if (event.type == sf::Event::EventType::Closed)
 		{
@@ -155,11 +151,11 @@ void SettingsState::HandleEvents()
 				app->window->setSize(newSize);
 			}
 
-			scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getLocalBounds().height);
-			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, navbar->bar.getLocalBounds().height));
+			scrollbar.setTrackHeight(app->window->getSize().y - app->navbar->bar.getLocalBounds().height);
+			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, app->navbar->bar.getLocalBounds().height));
 			updateScrollThumbSize();
 
-			menu->setPosition(sf::Vector2f(10, navbar->bar.getSize().y + 10));
+			menu->setPosition(sf::Vector2f(10, app->navbar->bar.getSize().y + 10));
 
 			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 		}
@@ -167,20 +163,20 @@ void SettingsState::HandleEvents()
 		{
 			if (event.key.code == sf::Mouse::Button::Left)
 			{
-				if (mouseIsOver(navbar->bar))
+				if (mouseIsOver(app->navbar->bar))
 				{
-					for (auto& x : navbar->sections)
-						if (x.getString() != "settings" && mouseIsOver(x))
+					for (const auto [name, text] : app->navbar->sections)
+						if (name != "settings" && mouseIsOver(text))
 						{
 							if (currentMenu == Menu::ThemeEditor)
 								if (!editor.changesSaved)
 									promptExitWithoutSavingChanges();
 
-							if (x.getString() == "home")
+							if (name == "home")
 								app->ChangeState(new HomeState);
-							else if (x.getString() == "my apps")
+							else if (name == "my apps")
 								app->ChangeState(new MyAppListState);
-							else if (x.getString() == "all apps")
+							else if (name == "all apps")
 								app->ChangeState(new AllAppsListState);
 
 							std::cout << "state will be switched" << std::endl;
@@ -377,9 +373,9 @@ void SettingsState::HandleEvents()
 				// TODO: optimise the shit out of this
 				if (event.type == sf::Event::TextEntered)
 				{
-					navbar->bar.setFillColor(editor.theme.palatte.PRIMARY);
-					for (auto& x : navbar->sections)
-						x.setFillColor(editor.theme.palatte.TEXT);
+					app->navbar->bar.setFillColor(editor.theme.palatte.PRIMARY);
+					for (auto& x : app->navbar->sections)
+						x.second.setFillColor(editor.theme.palatte.TEXT);
 
 					SFUI::Theme::click.textColor = editor.theme.palatte.TEXT_SECONDARY;
 					SFUI::Theme::click.textColorHover = editor.theme.palatte.TEXT_SECONDARY;
@@ -611,7 +607,7 @@ void SettingsState::HandleEvents()
 				else if (event.key.code == sf::Keyboard::Key::Home)
 				{
 					scrollbar.moveToTop();
-					menu->setPosition(sf::Vector2f(10, navbar->bar.getSize().y + 10));
+					menu->setPosition(sf::Vector2f(10, app->navbar->bar.getSize().y + 10));
 				}
 				else if (event.key.code == sf::Keyboard::Key::End)
 				{
@@ -660,7 +656,7 @@ void SettingsState::Draw()
 
 	app->window->draw(*menu);
 
-	navbar->Draw();
+	app->navbar->Draw();
 	app->window->draw(scrollbar);
 
 	app->window->display();
@@ -672,7 +668,7 @@ void SettingsState::buildDefaultMenu()
 
 	delete menu;
 	menu = new SFUI::Menu(*app->window);
-	menu->setPosition(sf::Vector2f(10, navbar->bar.getSize().y + 10));
+	menu->setPosition(sf::Vector2f(10, app->navbar->bar.getSize().y + 10));
 	// TODO: rename this to currentMenuState
 	currentMenu = Menu::Main;
 
@@ -790,7 +786,7 @@ void SettingsState::buildThemeEditor(bool editingCurrentTheme)
 
 	delete menu;
 	menu = new SFUI::Menu(*app->window);
-	menu->setPosition(sf::Vector2f(10, navbar->bar.getSize().y + 10));
+	menu->setPosition(sf::Vector2f(10, app->navbar->bar.getSize().y + 10));
 	currentMenu = Menu::ThemeEditor;
 
 	SFUI::FormLayout* mainForm = menu->addFormLayout();
@@ -936,7 +932,7 @@ void SettingsState::buildIssueReporter()
 
 	delete menu;
 	menu = new SFUI::Menu(*app->window);
-	menu->setPosition(sf::Vector2f(10, navbar->bar.getSize().y + 10));
+	menu->setPosition(sf::Vector2f(10, app->navbar->bar.getSize().y + 10));
 	currentMenu = Menu::IssueReporter;
 	menu->addLabel("Report an Issue");
 	menu->addHorizontalBoxLayout();
@@ -1025,7 +1021,7 @@ void SettingsState::updateScrollThumbSize()
 {
 	const float contentHeight = menu->getSize().y + 20; // padding * 2 = 20
 
-	scrollbar.update(contentHeight, menu->getSize().y - navbar->bar.getSize().y);
+	scrollbar.update(contentHeight, menu->getSize().y - app->navbar->bar.getSize().y);
 
 	// TODO: update scroll limits separately
 	updateScrollLimits();
@@ -1035,7 +1031,7 @@ void SettingsState::updateScrollLimits()
 {
 	scrollerTopPosition = menu->getAbsolutePosition().y;
 	scrollerBottomPosition = menu->getAbsolutePosition().y + menu->getSize().y + 10;
-	scrollerMinPosition = navbar->bar.getSize().y + 10; // navbar & padding
+	scrollerMinPosition = app->navbar->bar.getSize().y + 10; // navbar & padding
 	scrollerMaxPosition = app->window->getSize().y;
 }
 
@@ -1050,7 +1046,7 @@ void SettingsState::testScrollBounds()
 	}
 	else if (scrollerTopPosition > scrollerMinPosition)
 	{
-		menu->setPosition(sf::Vector2f(10, navbar->bar.getSize().y + 10));
+		menu->setPosition(sf::Vector2f(10, app->navbar->bar.getSize().y + 10));
 		updateScrollLimits();
 	}
 }
@@ -1081,9 +1077,9 @@ void SettingsState::applyTheme()
 		//if (GBL::theme.isResourceOverriden("interface_square.png"))
 			//SFUI::Theme::loadTexture(GBL::theme.getTexture("interface_square.png"));
 
-		navbar->bar.setFillColor(GBL::theme.palatte.PRIMARY);
-		for (auto& x : navbar->sections)
-			x.setFillColor(GBL::theme.palatte.TEXT);
+		app->navbar->bar.setFillColor(GBL::theme.palatte.PRIMARY);
+		for (auto& [name, text] : app->navbar->sections)
+			text.setFillColor(GBL::theme.palatte.TEXT);
 
 		// set the SFUI specific themes
 		SFUI::Theme::click.textColor = GBL::theme.palatte.TEXT_SECONDARY;

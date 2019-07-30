@@ -4,7 +4,6 @@
 #include "AppState.hpp"
 
 #include "News.hpp"
-#include "Navbar.hpp"
 #include "VerticalScrollbar.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -32,8 +31,6 @@ private:
 	std::vector<News*> newses;
 	std::pair<int, int> newsLoadedDist {0 , 2};
 
-	Navbar* navbar;
-
 	// TODO: little shape around this like android's screentips
 	sf::Text homeStatus;
 	sf::Text newsInteraction;
@@ -60,7 +57,7 @@ private:
 	bool mouseIsOver(sf::Shape &object);
 	// view: runs the test relative to a view
 	bool mouseIsOver(sf::Shape &object, sf::View* view);
-	bool mouseIsOver(sf::Text &object);
+	bool mouseIsOver(const sf::Text &object);
 	bool mouseIsOver(sf::Text &object, sf::View* view);
 
 	// Sets the string of the homeStatus object.

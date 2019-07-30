@@ -118,11 +118,11 @@
     <ClCompile Include="Navbar.cpp">
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="animate\Interpolate.cpp">
-      <Filter>Source Files\Launcher\States\AppListStates\MyAppListState</Filter>
-    </ClCompile>
     <ClCompile Include="animate\AnimationManager.cpp">
-      <Filter>Source Files\Launcher\States\AppListStates\MyAppListState</Filter>
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="animate\Interpolate.cpp">
+      <Filter>Source Files\Backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,10 +202,10 @@
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="animate\Interpolate.hpp">
-      <Filter>Source Files\Launcher\States\AppListStates\MyAppListState</Filter>
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
     <ClInclude Include="animate\AnimationManager.hpp">
-      <Filter>Source Files\Launcher\States\AppListStates\MyAppListState</Filter>
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
