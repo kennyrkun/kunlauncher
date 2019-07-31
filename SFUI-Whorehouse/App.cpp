@@ -53,7 +53,17 @@ bool App::checkForUpdate(sf::Ftp& ftp)
 	if (response.isOk())
 	{
 		size_t remoteFileSize = std::stoi(response.getMessage());
-		size_t fileSize = fs::file_size(GBL::DIR::apps + std::to_string(info.appid) + "/release.zip");
+		size_t fileSize = -1;
+
+		try
+		{
+			fileSize = fs::file_size(GBL::DIR::apps + std::to_string(info.appid) + "/release.zip");
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "failed to retrieve size of local files" << std::endl;
+			std::cerr << e.what() << std::endl;
+		}
 
 		if (fileSize != remoteFileSize)
 		{
