@@ -194,7 +194,7 @@ void InitialiseState::setTaskText(std::string text)
 
 		//TODO: text scaling
 
-		//		currentLauncherTask.setCharacterSize(currentLauncherTask.getCharacterSize() / 2);
+//		currentLauncherTask.setCharacterSize(currentLauncherTask.getCharacterSize() / 2);
 	}
 	else
 	{
@@ -203,6 +203,15 @@ void InitialiseState::setTaskText(std::string text)
 
 	currentLauncherTask.setOrigin(sf::Vector2f(static_cast<int>(currentLauncherTask.getLocalBounds().width / 2), static_cast<int>(currentLauncherTask.getLocalBounds().height - 20)));
 	currentLauncherTask.setPosition(sf::Vector2f(static_cast<int>(app->window->getView().getCenter().x), static_cast<int>(initialiseText.getPosition().y + 50.0f)));
+
+	app->window->clear(sf::Color(50, 50, 50));
+	app->window->draw(initialiseText);
+	app->window->draw(currentLauncherTask);
+	app->window->draw(thingthatdoesntripoffvisualstudio);
+	app->window->draw(*progressBar);
+	app->window->display();
+
+	//	std::cin.get();
 }
 
 // TODO: move theme stuff out of validateFileStructure
