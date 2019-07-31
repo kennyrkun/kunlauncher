@@ -74,6 +74,8 @@ private:
 	// returns the newly allocated appid
 	int registerNewApp();
 
+	void saveAppData();
+
 	// creates local files for a new app
 	// these are what will be uploaded to the server when the app is completed
 	void createNewAppFiles(int appid);
