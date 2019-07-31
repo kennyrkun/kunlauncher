@@ -168,6 +168,8 @@ void AppListState::populateApplist()
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
+		std::cout << std::endl;
+
 		// don't count this one as an app and stop crashing my damn program
 		if (line.find("nextAppID = ") != std::string::npos)
 		{
@@ -182,24 +184,26 @@ void AppListState::populateApplist()
 		std::string item_name; // the name of the app
 		if (indexParser.get(line.substr(0, 1), item_name))
 		{
-			applist.emplace(appid, getAppName(appid));
-
 			if (!fs::exists(GBL::DIR::apps + std::to_string(appid)) ||
 				!fs::exists(GBL::DIR::apps + std::to_string(appid) + "/info.dat"))
 			{
 				downloadApp(appid);
 				std::cout << "downloaded info for app " << appid << std::endl;
 			}
+
+			applist.emplace(appid, getAppName(appid));
 		}
 		else
 		{
-			std::cerr << "some kind of error happened. line 197 in file AppListState.cpp" << std::endl;
+			std::cerr << "some kind of error happened. line 198 in file AppListState.cpp" << std::endl;
 		}
 
 		loopi += 1;
 	}
 
 	readIndex.close();
+
+	std::cout << std::endl;
 }
 
 void AppListState::redownloadAppsList()
@@ -284,7 +288,7 @@ int AppListState::downloadIcon(int appid)
 
 int AppListState::downloadInfo(int appid)
 {
-	std::cout << "\n" << "downloading info" << std::endl;
+	std::cout << "downloading info" << std::endl;
 
 	Download getInfo;
 	getInfo.setInput(GBL::WEB::APPS + std::to_string(appid) + "/info.dat");
