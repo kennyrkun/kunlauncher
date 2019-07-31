@@ -18,6 +18,7 @@ struct ItemInfo
 	bool downloaded;
 	bool downloading;
 	bool missingInfo;
+	bool updateAvailable = false;
 
 	// TODO: appAPIVersion
 };

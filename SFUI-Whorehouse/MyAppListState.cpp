@@ -369,6 +369,12 @@ void MyAppListState::Update()
 		else // call update like normal
 			apps[i]->update();
 	}
+
+	if (keepAliveClock.getElapsedTime().asSeconds() > 10)
+	{
+		keepAliveClock.restart();
+		ftp.keepAlive();
+	}
 }
 
 void MyAppListState::Draw()
@@ -408,6 +414,8 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 	apps.clear();
 	updateScrollThumbSize();
 
+	prepFtp();
+
 	std::vector<std::string> appList = get_directories(GBL::DIR::apps);
 
 	// check for invalid appids
@@ -444,6 +452,12 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 			padding,
 			apps.back()->getPosition().y + apps.back()->getLocalBounds().height + padding);
 
+		if (newItem->checkForUpdate(ftp))
+		{
+			newItem->info.updateAvailable = true;
+			newItem->updateReady();
+		}
+
 		apps.push_back(newItem);
 		std::cout << std::endl;
 
@@ -465,6 +479,23 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 	app->window->requestFocus();
 
 	finishedIndicator = true;
+}
+
+void MyAppListState::prepFtp()
+{
+	// Connect to the server
+	sf::Ftp::Response response = ftp.connect("files.000webhost.com");
+	if (response.isOk())
+		std::cout << "[FTP] Connected" << std::endl;
+
+	// Log in
+	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
+	if (response.isOk())
+		std::cout << "[FTP] Logged in" << std::endl;
+
+	response = ftp.changeDirectory("public_html");
+	if (response.isOk())
+		std::cout << "[FTP] Changed to public_html directory" << std::endl;
 }
 
 void MyAppListState::updateScrollThumbSize()

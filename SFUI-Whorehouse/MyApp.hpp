@@ -4,6 +4,7 @@
 #include "App.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
 class MyApp : public App
 {
@@ -37,14 +38,15 @@ public:
 	ItemInfo info;
 
 	//	bool isRunning();
-	bool updateIsAvailable;
 
 	bool deleteFilesPrompt();
 	void deleteFiles();
-	bool checkForUpdate();
+	bool checkForUpdate(sf::Ftp& ftp);
 	void redownload();
 	void download();
 	void openItem();
+
+	void updateReady();
 
 	// TODO: void openItemInStore();
 

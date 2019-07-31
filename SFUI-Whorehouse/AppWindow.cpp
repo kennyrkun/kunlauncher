@@ -150,8 +150,15 @@ void VisualItemInfo::buildMenu()
 
 	menu->addLabel("Name: " + info.name);
 	menu->addLabel("AppID: " + std::to_string(info.appid));
-	menu->addLabel("Version: " + std::to_string(info.version));
+
+	if (info.updateAvailable)
+		menu->addLabel("Version: " + std::to_string(info.version) + "(Update is available)");
+	else
+		menu->addLabel("Version: " + std::to_string(info.version));
+
 	// TODO: wrap label if it's too long
+	// if text box ends up longer than the main window, wrap the text
+	// otherwise just expand the window
 	menu->addLabel("Description: " + info.description);
 	menu->addLabel("Author: " + info.author);
 

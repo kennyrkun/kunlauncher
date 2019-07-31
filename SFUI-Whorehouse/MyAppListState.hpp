@@ -41,6 +41,12 @@ private:
 	// TODO: not a pointer
 	std::vector<MyApp*> apps;
 
+	sf::Ftp ftp;
+	bool ftpBusy = false;
+	sf::Clock keepAliveClock;
+
+	void prepFtp();
+
 	// TODO: viewable arae class
 	float scrollerTopPosition;
 	float scrollerBottomPosition;

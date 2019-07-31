@@ -200,40 +200,23 @@ void MyApp::deleteFiles()
 	}
 }
 
-bool MyApp::checkForUpdate()
+bool MyApp::checkForUpdate(sf::Ftp& ftp)
 {
 	std::cout << "checking for updates" << std::endl;
 
-	Download getRemoteVersion;
-	getRemoteVersion.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/info.dat");
-	getRemoteVersion.download();
-
-	int rRelease = 0, lRelease = info.release;
-
-	SettingsParser getVersion;
-	if (getVersion.loadFromFile("./" + GBL::DIR::cache + "apps/" + std::to_string(info.appid) + "/info.dat"))
-		getVersion.get("release", rRelease);
-	else
+	sf::Ftp::Response response = ftp.sendCommand("SIZE", GBL::WEB::APPS + std::to_string(info.appid) + "/release.zip");
+	if (response.isOk())
 	{
-		std::cerr << "failed to get remote app version" << std::endl;
-		return false;
-	}
+		size_t remoteFileSize = std::stoi(response.getMessage());
+		size_t fileSize = fs::file_size(GBL::DIR::apps + std::to_string(info.appid) + "/release.zip");
 
-	if (lRelease < rRelease)
-	{
-		std::cout << "item is out of date! (local: " << lRelease << " : remote: " << rRelease << ")" << std::endl;
-
-		updateIsAvailable = true;
-		redownloadButton.setFillColor(sf::Color::Yellow);
-
-		return true;
+		if (fileSize != remoteFileSize)
+			return true;
 	}
 	else
-	{
-		std::cout << "item is up to date or newer! :D (local: " << lRelease << " : remote: " << rRelease << ")" << std::endl;
+		std::cerr << response.getMessage() << std::endl;
 
-		return false;
-	}
+	return false;
 }
 
 void MyApp::redownload()
@@ -245,6 +228,8 @@ void MyApp::redownload()
 
 void MyApp::download()
 {
+	bool failure = false;
+
 	info.downloading = true;
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
@@ -252,35 +237,36 @@ void MyApp::download()
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 37.f));
 	info.missingInfo = true;
 
-	if (fs::exists(itemInstallDir + "/release.zip"))
-	{
-		std::cout << "downloading " << info.name << std::endl;
+	std::cout << "downloading " << info.name << std::endl;
 
-		downloadIcon();
-		downloadInfo();
-		downloadFiles();
+	if (!downloadInfo())
+		failure = true;
 
-		std::cout << "\n" << "finished downloading " << info.name << std::endl;
-	}
+	if (!downloadIcon())
+		failure = true;
 	else
-	{
-		std::cout << "downloading " << info.name << std::endl;
-
-		downloadInfo();
-
-		downloadIcon();
 		iconTexture.loadFromFile(itemInstallDir + "icon.png");
 
-		downloadFiles();
-
-		std::cout << "\n" << "downloading update " << info.name << std::endl;
-	}
+	if (!downloadFiles())
+		failure = true;
 
 	info.downloading = false;
 
-	redownloadButton.setRotation(30);
-	redownloadButton.setOrigin(sf::Vector2f(0, 0));
-	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition + 7, cardShape.getPosition().y + 10));
+	if (!failure)
+	{
+		info.updateAvailable = false;
+
+		redownloadButton.setFillColor(sf::Color::White);
+		redownloadButton.setRotation(30);
+		redownloadButton.setOrigin(sf::Vector2f(0, 0));
+		redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition + 7, cardShape.getPosition().y + 10));
+		redownloadButtonTexture.loadFromFile(GBL::DIR::textures + "auto_renew_1x.png");
+	}
+	else
+	{
+		std::cout << "download failed" << std::endl;
+		redownloadButton.setFillColor(sf::Color::Red);
+	}
 }
 
 void MyApp::openItem()
@@ -294,6 +280,16 @@ void MyApp::openItem()
 #else
 	GBL::MESSAGES::cantOpenNotWindows();
 #endif
+}
+
+void MyApp::updateReady()
+{
+	info.updateAvailable = true;
+
+	redownloadButton.setFillColor(sf::Color::Yellow);
+	redownloadButton.setRotation(0);
+	redownloadButtonTexture.loadFromFile(GBL::DIR::textures + "error_1x.png");
+	redownloadButton.setTexture(&redownloadButtonTexture, true);
 }
 
 void MyApp::updateSizeAndPosition(float xSize, float ySize, float xPos, float yPos)
@@ -331,7 +327,6 @@ void MyApp::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(cardShape, states);
 
-//	target.draw(controlBar, states);
 	target.draw(icon, states);
 
 	target.draw(name, states);
@@ -347,8 +342,8 @@ void MyApp::draw(sf::RenderTarget& target, sf::RenderStates states) const
 			target.draw(removeButton, states);
 			target.draw(launchButton, states);
 		}
-		else
-			if (!info.missingInfo)
+		else // not downloaded
+			if (!info.missingInfo) // not missing info
 				target.draw(downloadButton, states);
 }
 
@@ -408,8 +403,10 @@ void MyApp::parseInfo(std::string dir) // a lot easier than I thought it would b
 	{
 		std::cerr << "info file is empty or missing" << std::endl;
 
+		updateReady();
+
 		iconTexture.loadFromFile(GBL::DIR::textures + "error_2x.png");
-		updateIsAvailable = true; // because there's no way to represent an error yet, we just mark it for needing to be redownloaded
+		icon.setTexture(&iconTexture, true);
 
 		name.setString("missing info for \"" + std::to_string(info.appid) + "\"");
 		description.setString("missing info.dat; try redownloading");
@@ -433,6 +430,7 @@ int MyApp::downloadIcon()
 	if (fs::exists(itemInstallDir + "icon.png"))
 	{
 		iconTexture.loadFromFile(itemInstallDir + "icon.png");
+		icon.setTexture(&iconTexture, true);
 
 		return 1;
 	}
@@ -462,14 +460,35 @@ int MyApp::downloadFiles()
 {
 	std::cout << "\n" << "downloading files" << std::endl;
 
+	std::string appPath = GBL::DIR::apps + std::to_string(info.appid) + "/";
+
 	Download getFiles;
 	getFiles.setInput(GBL::WEB::APPS + std::to_string(info.appid) + "/release.zip");
-	getFiles.setOutputDir(GBL::DIR::apps + std::to_string(info.appid) + "//");
+	getFiles.setOutputDir(appPath);
 	getFiles.setOutputFilename("release.zip");
-	getFiles.download();
-	getFiles.save();
 
-	info.downloaded = true;
+	if (getFiles.download() == Download::Status::Success)
+	{
+		if (fs::exists(appPath + "release.zip"))
+		{
+			try
+			{
+				fs::remove(appPath + "release.zip");
+			}
+			catch (const fs::filesystem_error& e)
+			{
+				std::cerr << "failed to remove old release files:" << std::endl;
+				std::cerr << e.what() << std::endl;
+				return -1;
+			}
+		}
 
-	return 1;
+		info.downloaded = true;
+		getFiles.save();
+		return 1;
+	}
+	else
+	{
+		return -1;
+	}
 }
