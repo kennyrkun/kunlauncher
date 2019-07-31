@@ -234,38 +234,37 @@ void MyApp::download()
 	float fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 37.f));
-	info.missingInfo = true;
 
 	std::cout << "downloading " << info.name << std::endl;
 
-	if (!downloadInfo())
+	if (downloadInfo() == -1)
 		failure = true;
 
-	if (!downloadIcon())
+	if (downloadIcon() == -1)
 		failure = true;
 	else
 		iconTexture.loadFromFile(itemInstallDir + "icon.png");
 
-	if (!downloadFiles())
+	if (downloadFiles() == -1)
 		failure = true;
 
 	info.downloading = false;
 
-	if (!failure)
+	if (failure)
 	{
-		info.updateAvailable = false;
-
-		redownloadButton.setFillColor(sf::Color::White);
-		redownloadButton.setRotation(30);
-		redownloadButton.setOrigin(sf::Vector2f(0, 0));
-		redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition + 7, cardShape.getPosition().y + 10));
-		redownloadButtonTexture.loadFromFile(GBL::DIR::textures + "auto_renew_1x.png");
+		std::cerr << "download failed" << std::endl;
+		redownloadButton.setFillColor(sf::Color::Red);
 	}
 	else
 	{
-		std::cout << "download failed" << std::endl;
-		redownloadButton.setFillColor(sf::Color::Red);
+		info.updateAvailable = false;
+		redownloadButton.setFillColor(sf::Color::White);
 	}
+
+	fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
+	redownloadButton.setRotation(30);
+	redownloadButton.setOrigin(sf::Vector2f(0, 0));
+	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition + 7, cardShape.getPosition().y + 10));
 }
 
 void MyApp::openItem()
