@@ -124,9 +124,6 @@ void MyAppListState::HandleEvents()
 
 				viewScroller->setSize(sf::Vector2f(event.size.width, event.size.height));
 				viewScroller->setCenter(sf::Vector2f(viewScroller->getSize().x / 2, viewScroller->getSize().y / 2));
-
-				// set the scrollTrack size
-				updateScrollThumbSize();
 			}
 			else
 			{
@@ -138,6 +135,10 @@ void MyAppListState::HandleEvents()
 
 				app->window->setSize(newSize);
 			}
+
+			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, navbar->bar.getSize().y));
+			scrollbar.setTrackHeight(app->window->getSize().y - navbar->bar.getSize().y);
+			updateScrollThumbSize();
 
 			app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 		}
