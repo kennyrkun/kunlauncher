@@ -184,7 +184,8 @@ void AppListState::populateApplist()
 		{
 			applist.emplace(appid, getAppName(appid));
 
-			if (!fs::exists(GBL::DIR::apps + std::to_string(appid)))
+			if (!fs::exists(GBL::DIR::apps + std::to_string(appid)) ||
+				!fs::exists(GBL::DIR::apps + std::to_string(appid) + "/info.dat"))
 			{
 				downloadApp(appid);
 				std::cout << "downloaded info for app " << appid << std::endl;
