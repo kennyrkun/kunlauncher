@@ -70,6 +70,8 @@ public:
 
 	AppState* GetCurrentState() { return states.back(); };
 
+	bool UpdateAppIndex();
+
 	void HandleEvents();
 	void Update();
 	void Draw();
