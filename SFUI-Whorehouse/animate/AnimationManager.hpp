@@ -9,6 +9,8 @@
 #include <iostream>
 #include <vector>
 
+class AppEngine;
+
 enum EaseType
 {
 	BackEaseIn,
@@ -218,14 +220,13 @@ private:
 class PhysicalAnimator
 {
 public:
-	PhysicalAnimator();
+	PhysicalAnimator(AppEngine* app);
 	~PhysicalAnimator();
 
 	int addTranslationTask(sf::Transformable& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
 	int addRectangleSizeTask(sf::RectangleShape& shape, sf::Vector2f size, EaseType ease, int duration, bool constant = false);
 	int addAppTranslationTask(MyApp* app, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
 	int addRotationTask(sf::Transformable& shape, float& targetRotation, EaseType ease, int duration, bool constant = false);
-	int addTask(size_t original, size_t& target, EaseType ease, int duration, bool constant = false);
 
 	void updateTaskTarget(size_t taskID, size_t newTarget);
 	void updateTaskTarget(size_t taskID, sf::Vector2f newTarget);
@@ -237,6 +238,8 @@ public:
 	std::vector<AnimatedTask*> tasks;
 
 private:
+	AppEngine* app;
+
 	size_t totalAnimations;
 };
 

@@ -1,6 +1,7 @@
 #include "AnimationManager.hpp"
 
 #include "Interpolate.hpp"
+#include "../AppEngine.hpp"
 
 // animation task
 
@@ -246,7 +247,7 @@ void AnimatedAppTranslation::Update()
 
 // animation manager
 
-PhysicalAnimator::PhysicalAnimator()
+PhysicalAnimator::PhysicalAnimator(AppEngine* app) : app(app)
 {
 	std::cout << "aman" << std::endl;
 }
@@ -339,74 +340,84 @@ int PhysicalAnimator::addTranslationTask(sf::Transformable& shape, sf::Vector2f 
 {
 	std::cout << "adding translation task" << std::endl;
 
-	AnimatedTranslation* task = new AnimatedTranslation(shape, destination, getEaseFunc(ease), duration, constant, totalAnimations++);
+	if (app->settings.useAnimations)
+	{
+		AnimatedTranslation* task = new AnimatedTranslation(shape, destination, getEaseFunc(ease), duration * app->settings.animationScale, constant, totalAnimations++);
 
-	tasks.push_back(task);
+		tasks.push_back(task);
 
-	// animation id needs to be assigned differently, because the
-	// total size of the thing might change and we could end up
-	// with multiple aniimations using the same id
-	return tasks.back()->animationID;
+		// animation id needs to be assigned differently, because the
+		// total size of the thing might change and we could end up
+		// with multiple aniimations using the same id
+		return tasks.back()->animationID;
+	}
+	else
+	{
+		shape.setPosition(destination);
+		return -1;
+	}
 }
 
 int PhysicalAnimator::addRectangleSizeTask(sf::RectangleShape &shape, sf::Vector2f size, EaseType ease, int duration, bool constant)
 {
 	std::cout << "adding rectangle shape size task" << std::endl;
 
-	AnimatedRectangleSize* task = new AnimatedRectangleSize(shape, size, getEaseFunc(ease), duration, constant, totalAnimations++);
-
-	tasks.push_back(task);
-
-	// animation id needs to be assigned differently, because the
-	// total size of the thing might change and we could end up
-	// with multiple aniimations using the same id
-	return tasks.back()->animationID;
-}
-
-int PhysicalAnimator::addAppTranslationTask(MyApp* app, sf::Vector2f destination, EaseType ease, int duration, bool constant)
-{
-	std::cout << "adding app translation task" << std::endl;
-	
-	if (app == nullptr)
+	if (app->settings.useAnimations)
 	{
-		std::cerr << "app provided was null" << std::endl;
-		abort();
+		AnimatedRectangleSize* task = new AnimatedRectangleSize(shape, size, getEaseFunc(ease), duration * app->settings.animationScale, constant, totalAnimations++);
+
+		tasks.push_back(task);
+
+		// animation id needs to be assigned differently, because the
+		// total size of the thing might change and we could end up
+		// with multiple aniimations using the same id
+		return tasks.back()->animationID;
 	}
 	else
 	{
-		std::cout << "app provided is good (" << app->info.name << ")" << std::endl;
+		shape.setSize(size);
+		return -1;
 	}
+}
 
-	AnimatedAppTranslation* task = new AnimatedAppTranslation(app, destination, getEaseFunc(ease), duration, constant, totalAnimations++);
+int PhysicalAnimator::addAppTranslationTask(MyApp* myapp, sf::Vector2f destination, EaseType ease, int duration, bool constant)
+{
+	std::cout << "adding app translation task" << std::endl;
+	
+	if (app->settings.useAnimations)
+	{
+		AnimatedAppTranslation* task = new AnimatedAppTranslation(myapp, destination, getEaseFunc(ease), duration * app->settings.animationScale, constant, totalAnimations++);
 
-	tasks.push_back(task);
+		tasks.push_back(task);
 
-	// animation id needs to be assigned differently, because the
-	// total size of the thing might change and we could end up
-	// with multiple aniimations using the same id
-	return tasks.back()->animationID;
+		// animation id needs to be assigned differently, because the
+		// total size of the thing might change and we could end up
+		// with multiple aniimations using the same id
+		return tasks.back()->animationID;
+	}
+	else
+	{
+		myapp->setPosition(destination);
+		return -1;
+	}
 }
 
 int PhysicalAnimator::addRotationTask(sf::Transformable& shape, float& targetRotation, EaseType ease, int duration, bool constant)
 {
 	std::cout << "adding rotation task" << std::endl;
 
-	AnimatedRotation* task = new AnimatedRotation(shape, targetRotation, getEaseFunc(ease), duration, constant, totalAnimations++);
+	if (app->settings.useAnimations)
+	{
+		AnimatedRotation* task = new AnimatedRotation(shape, targetRotation, getEaseFunc(ease), duration * app->settings.animationScale, constant, totalAnimations++);
 
-	tasks.push_back(task);
+		tasks.push_back(task);
 
-	return tasks.back()->animationID;
-}
-
-int PhysicalAnimator::addTask(size_t original, size_t& target, EaseType ease, int duration, bool constant)
-{
-	std::cout << "adding number task" << std::endl;
-
-	AnimatedNumber* task = new AnimatedNumber(original, target, getEaseFunc(ease), duration, constant, totalAnimations++);
-
-	tasks.push_back(task);
-
-	return tasks.back()->animationID;
+		return tasks.back()->animationID;
+	}
+	else
+	{
+		shape.setRotation(targetRotation);
+	}
 }
 
 void PhysicalAnimator::clearTasks()

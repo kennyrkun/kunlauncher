@@ -691,12 +691,12 @@ void SettingsState::buildDefaultMenu()
 	main.allowStatTrackingCheck = new SFUI::CheckBox(app->settings.allowStatTracking);
 	form->addRow("Allow Stat Tracking", main.allowStatTrackingCheck, CALLBACK::ALLOW_STAT_TRACKING);
 
-//	main.useAnimationsCheck = new SFUI::CheckBox(app->settings.useAnimations);
-//	form->addRow("Use Animations", main.useAnimationsCheck, CALLBACK::USE_ANIMATIONS);
+	main.useAnimationsCheck = new SFUI::CheckBox(app->settings.useAnimations);
+	form->addRow("Use Animations", main.useAnimationsCheck, CALLBACK::USE_ANIMATIONS);
 
-//	main.animationScaleBox = new SFUI::InputBox(50);
-//	main.animationScaleBox->setText(std::to_string(app->settings.animationScale));
-//	form->addRow("Animation Scale", main.animationScaleBox, CALLBACK::ANIMATION_SCALE);
+	main.animationScaleBox = new SFUI::InputBox(50);
+	main.animationScaleBox->setText(std::to_string(app->settings.animationScale));
+	form->addRow("Animation Scale", main.animationScaleBox, CALLBACK::ANIMATION_SCALE);
 
 	main.selectedThemeOptions = new SFUI::OptionsBox<std::string>;
 	// each theme has it's own directory in the themes folder

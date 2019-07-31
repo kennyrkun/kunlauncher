@@ -61,6 +61,11 @@ struct AppSettings
 class AppEngine
 {
 public:
+	AppEngine() : am(this)
+	{
+
+	}
+
 	void Init(std::string title, AppSettings settings_);
 	void Cleanup();
 
