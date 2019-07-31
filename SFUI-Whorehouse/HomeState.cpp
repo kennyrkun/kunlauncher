@@ -63,7 +63,7 @@ void HomeState::Init(AppEngine* app_)
 		homeStatus.setCharacterSize(26);
 		setStatusText("News disabled.");
 
-		newsInteraction.setString("enable");
+		newsInteraction.setString("enable once");
 		newsInteraction.setStyle(sf::Text::Style::Underlined);
 		// TODO: define this style in Theme
 		newsInteraction.setFillColor(sf::Color(0, 170, 232));
