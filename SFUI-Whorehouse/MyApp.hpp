@@ -41,7 +41,6 @@ public:
 
 	bool deleteFilesPrompt();
 	void deleteFiles();
-	bool checkForUpdate(sf::Ftp& ftp);
 	void redownload();
 	void download();
 	void openItem();

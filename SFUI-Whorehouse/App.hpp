@@ -2,6 +2,7 @@
 #define APP_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
 struct ItemInfo
 {
@@ -39,6 +40,8 @@ public:
 
 	sf::RectangleShape cardShape;
 	virtual sf::FloatRect getLocalBounds() = 0;
+
+	bool checkForUpdate(sf::Ftp& ftp);
 
 	virtual void updateSizeAndPosition(float xSize, float ySize, float xPos, float yPos) = 0;
 

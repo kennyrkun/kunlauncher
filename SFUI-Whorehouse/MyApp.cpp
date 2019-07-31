@@ -200,25 +200,6 @@ void MyApp::deleteFiles()
 	}
 }
 
-bool MyApp::checkForUpdate(sf::Ftp& ftp)
-{
-	std::cout << "checking for updates" << std::endl;
-
-	sf::Ftp::Response response = ftp.sendCommand("SIZE", GBL::WEB::APPS + std::to_string(info.appid) + "/release.zip");
-	if (response.isOk())
-	{
-		size_t remoteFileSize = std::stoi(response.getMessage());
-		size_t fileSize = fs::file_size(GBL::DIR::apps + std::to_string(info.appid) + "/release.zip");
-
-		if (fileSize != remoteFileSize)
-			return true;
-	}
-	else
-		std::cerr << response.getMessage() << std::endl;
-
-	return false;
-}
-
 void MyApp::redownload()
 {
 	std::cout << "updating item" << std::endl;

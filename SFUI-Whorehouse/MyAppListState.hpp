@@ -7,6 +7,7 @@
 #include "VerticalScrollbar.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include <future>
 #include <vector>
 #include <iostream>

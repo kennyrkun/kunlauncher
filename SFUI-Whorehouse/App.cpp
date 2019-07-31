@@ -45,6 +45,28 @@ App::App(int appid, float xSize, float ySize, float xPos, float yPos)
 }
 */
 
+bool App::checkForUpdate(sf::Ftp& ftp)
+{
+	std::cout << "checking for updates" << std::endl;
+
+	sf::Ftp::Response response = ftp.sendCommand("SIZE", GBL::WEB::APPS + std::to_string(info.appid) + "/release.zip");
+	if (response.isOk())
+	{
+		size_t remoteFileSize = std::stoi(response.getMessage());
+		size_t fileSize = fs::file_size(GBL::DIR::apps + std::to_string(info.appid) + "/release.zip");
+
+		if (fileSize != remoteFileSize)
+		{
+			std::cout << "update available" << std::endl;
+			return true;
+		}
+	}
+	else
+		std::cerr << response.getMessage() << std::endl;
+
+	return false;
+}
+
 void App::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(cardShape, states);
