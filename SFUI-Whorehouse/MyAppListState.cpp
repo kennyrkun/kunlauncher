@@ -444,6 +444,15 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 			continue;
 		}
 
+		if (app->settings.apps.checkForUpdates) // if we're allowed to check for updates
+			if (newItem->checkForUpdate(ftp)) // if there is an update
+				if (app->settings.apps.autoUpdate) // if we're allowed to auto update
+				{
+					AsyncTask* tt = new AsyncTask;
+					tt->future = std::async(std::launch::async, &MyApp::redownload, newItem);
+					GBL::threadManager.addTask(tt);
+				}
+
 		apps.push_back(newItem);
 		std::cout << std::endl;
 

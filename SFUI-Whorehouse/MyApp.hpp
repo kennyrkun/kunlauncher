@@ -37,13 +37,13 @@ public:
 
 	//	bool isRunning();
 
+	bool checkForUpdate(sf::Ftp& ftp);
+
 	bool deleteFilesPrompt();
 	void deleteFiles();
 	void redownload();
 	void download();
 	void openItem();
-
-	void updateReady();
 
 	// TODO: void openItemInStore();
 

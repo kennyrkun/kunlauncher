@@ -167,6 +167,24 @@ int MyApp::onClick(sf::Vector2f clickPos)
 	return None;
 }
 
+bool MyApp::checkForUpdate(sf::Ftp& ftp)
+{
+	if (!info.downloaded)
+		return false;
+
+	if (App::checkForUpdate(ftp))
+	{
+		info.updateAvailable = true;
+
+		redownloadButton.setFillColor(sf::Color::Yellow);
+		redownloadButton.setRotation(0);
+
+		return true;
+	}
+
+	return false;
+}
+
 bool MyApp::deleteFilesPrompt()
 {
 	MessageBox::Options modOptions = { "Confirm Deletion", "Delete " + info.name + "?", { "No", "Yes" } };
@@ -261,16 +279,6 @@ void MyApp::openItem()
 #else
 	GBL::MESSAGES::cantOpenNotWindows();
 #endif
-}
-
-void MyApp::updateReady()
-{
-	info.updateAvailable = true;
-
-	redownloadButton.setFillColor(sf::Color::Yellow);
-	redownloadButton.setRotation(0);
-	redownloadButtonTexture.loadFromFile(GBL::DIR::textures + "error_1x.png");
-	redownloadButton.setTexture(&redownloadButtonTexture, true);
 }
 
 void MyApp::updateSizeAndPosition(float xSize, float ySize, float xPos, float yPos)
@@ -384,7 +392,10 @@ void MyApp::parseInfo(std::string dir) // a lot easier than I thought it would b
 	{
 		std::cerr << "info file is empty or missing" << std::endl;
 
-		updateReady();
+		redownloadButton.setFillColor(sf::Color::Red);
+		redownloadButton.setRotation(0);
+		redownloadButtonTexture.loadFromFile(GBL::DIR::textures + "error_1x.png");
+		redownloadButton.setTexture(&redownloadButtonTexture, true);
 
 		iconTexture.loadFromFile(GBL::DIR::textures + "error_2x.png");
 		icon.setTexture(&iconTexture, true);
