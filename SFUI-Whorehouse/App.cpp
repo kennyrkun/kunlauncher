@@ -62,7 +62,10 @@ bool App::checkForUpdate(sf::Ftp& ftp)
 		}
 	}
 	else
+	{
+		std::cout << "failed to get release filesize" << std::endl;
 		std::cerr << response.getMessage() << std::endl;
+	}
 
 	return false;
 }

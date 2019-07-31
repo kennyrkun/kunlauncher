@@ -12,8 +12,6 @@ public:
 	StoreApp(int appid, float xSize, float ySize, float xPos, float yPos);
 	~StoreApp();
 
-	ItemInfo info;
-
 	sf::RectangleShape cardShape;
 	sf::CircleShape    infoButton;
 	sf::RectangleShape openInMyAppsListButton;

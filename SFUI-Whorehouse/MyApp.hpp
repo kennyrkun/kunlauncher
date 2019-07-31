@@ -35,8 +35,6 @@ public:
 	sf::RectangleShape launchButton;
 	//	sf::RectangleShape controlBar;
 
-	ItemInfo info;
-
 	//	bool isRunning();
 
 	bool deleteFilesPrompt();
