@@ -354,22 +354,6 @@ void MyAppListState::Update()
 		delete app->multithread;
 	}
 
-	// if an app has been deleted, remove it from the list.
-	// this is here because we can remove apps from outside of the state
-	for (size_t i = 0; i < apps.size(); i++)
-	{
-		// TODO: move this into a sort of event queue
-		if (!apps[i]->info.downloaded)
-		{
-			app->multithreaded_process_finished = false;
-			app->multithreaded_process_running = true;
-			app->multithread = new std::thread(&MyAppListState::deleteApp, this, apps[i]);
-			i--;
-		}
-		else // call update like normal
-			apps[i]->update();
-	}
-
 	if (keepAliveClock.getElapsedTime().asSeconds() > 10)
 	{
 		keepAliveClock.restart();
@@ -452,10 +436,12 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 			padding,
 			apps.back()->getPosition().y + apps.back()->getLocalBounds().height + padding);
 
-		if (newItem->checkForUpdate(ftp))
+		// don't bother with an app that is not installed
+		if (!newItem->info.downloaded)
 		{
-			newItem->info.updateAvailable = true;
-			newItem->updateReady();
+			std::cout << newItem->info.name << " is not installed, skipping" << std::endl;
+			delete newItem;
+			continue;
 		}
 
 		apps.push_back(newItem);
