@@ -108,6 +108,10 @@ uintmax_t Download::getFileSize()
 		if (response.isOk())
 			std::cout << "[DL] Logged in" << std::endl;
 
+		response = ftp.changeDirectory("public_html");
+		if (response.isOk())
+			std::cout << "[DL] Changed to public_html directory" << std::endl;
+
 		std::cout << "[DL] remote directory + remote filename: " << remoteDirectory + remoteFilename << std::endl;
 
 		response = ftp.sendCommand("SIZE", remoteDirectory + remoteFilename);
