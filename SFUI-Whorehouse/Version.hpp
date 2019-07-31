@@ -65,6 +65,9 @@ namespace versions
 	private:
 		int versionCompare(std::string v1, std::string v2)
 		{
+			if (v1 == v2)
+				return 0;
+
 			//  vnum stores each numeric part of version 
 			int vnum1 = 0, vnum2 = 0;
 
