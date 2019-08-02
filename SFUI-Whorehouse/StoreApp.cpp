@@ -376,7 +376,7 @@ bool StoreApp::downloadIcon()
 	getIcon.setOutputFilename("icon.png");
 	getIcon.download();
 
-	if (fs::exists(itemCacheDir + "info.dat"))
+	if (fs::exists(itemCacheDir + "icon.dat"))
 		return true;
 	else
 		return false;
