@@ -16,10 +16,6 @@ struct ItemInfo
 	int release;
 	int appid;
 
-	bool downloaded;
-	bool downloading;
-	bool missingInfo;
-	bool updateAvailable = false;
 	struct Status
 	{
 		bool checkingForUpdate = false;
@@ -77,9 +73,9 @@ protected:
 
 	virtual void parseInfo(std::string dir) = 0;
 
-	virtual int downloadIcon() = 0;
-	virtual int downloadInfo() = 0;
-	virtual int downloadFiles() = 0;
+	virtual bool downloadIcon() = 0;
+	virtual bool downloadInfo() = 0;
+	virtual bool downloadFiles() = 0;
 };
 
 #endif // !APP_HPP

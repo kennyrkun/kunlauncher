@@ -58,9 +58,6 @@
     <ClCompile Include="HomeState.cpp">
       <Filter>Source Files\Launcher\States\HomeState</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Source Files\Backend</Filter>
-    </ClCompile>
     <ClCompile Include="ProgressBar.cpp">
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClCompile>
@@ -118,6 +115,9 @@
     <ClCompile Include="Navbar.cpp">
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Download.hpp">
@@ -137,9 +137,6 @@
     </ClInclude>
     <ClInclude Include="HomeState.hpp">
       <Filter>Source Files\Launcher\States\HomeState</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.hpp">
-      <Filter>Source Files\Backend</Filter>
     </ClInclude>
     <ClInclude Include="ProgressBar.hpp">
       <Filter>Source Files\Backend\Graphics</Filter>
@@ -193,6 +190,9 @@
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
     <ClInclude Include="Navbar.hpp">
+      <Filter>Source Files\Backend\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.hpp">
       <Filter>Source Files\Backend\Graphics</Filter>
     </ClInclude>
   </ItemGroup>

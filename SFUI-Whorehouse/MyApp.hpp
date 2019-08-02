@@ -69,9 +69,9 @@ private:
 
 	void parseInfo(std::string dir);
 
-	int downloadIcon();
-	int downloadInfo();
-	int downloadFiles();
+	bool downloadIcon();
+	bool downloadInfo();
+	bool downloadFiles();
 };
 
 #endif // !APP_HPP

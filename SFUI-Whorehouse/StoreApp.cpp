@@ -63,17 +63,17 @@ StoreApp::StoreApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	{
 		std::cout << "icon was not found, downloading" << std::endl;
 
-		if (!downloadIcon())
-			iconTexture = *GBL::theme.getTexture("missing_icon_icon.png");
-		else
+		if (downloadIcon())
 			iconTexture.loadFromFile(itemCacheDir + "icon.png");
+		else
+			iconTexture = *GBL::theme.getTexture("missing_icon_icon.png");
 	}
 
 	if (fs::exists(itemInstallDir + "release.zip"))
 	{
 		std::cout << "release was found, installed" << std::endl;
 
-		info.downloaded = true;
+		info.status.downloaded = true;
 
 		// TODO: check for update
 //		checkForUpdate();
@@ -82,7 +82,7 @@ StoreApp::StoreApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	{
 		std::cout << "release was not found, not installed" << std::endl;
 
-		info.downloaded = false;
+		info.status.downloaded = false;
 	}
 
 	cardShape.setSize(sf::Vector2f(xSize, ySize));
@@ -126,20 +126,39 @@ void StoreApp::setPosition(const sf::Vector2f& pos)
 
 int StoreApp::onClick(sf::Vector2f clickPos)
 {
-	if (mouseIsOver(infoButton, clickPos) && !info.downloading)
+	if (info.status.downloading)
+		return -1;
+	else if (mouseIsOver(infoButton, clickPos))
 	{
 		infoPanel.open(info);
 	}
-	if (info.downloaded)
+	else if (mouseIsOver(openInMyAppsListButton, clickPos))
 	{
-		if (mouseIsOver(openInMyAppsListButton, clickPos))
+		if (info.status.downloaded)
 		{
 			// TODO: open item in myappslist
 			openItem();
 		}
 	}
 
-	return 0;
+	return -1;
+}
+
+bool StoreApp::checkForUpdate(sf::Ftp& ftp)
+{
+	if (!info.status.downloaded)
+		return false;
+
+	if (App::checkForUpdate(ftp))
+	{
+		info.status.updateAvailable = true;
+
+		infoButton.setFillColor(sf::Color::Yellow);
+
+		return true;
+	}
+
+	return false;
 }
 
 bool StoreApp::deleteFilesPrompt()
@@ -164,97 +183,65 @@ void StoreApp::deleteFiles()
 		fs::remove_all(itemInstallDir);
 
 		std::cout << "done" << std::endl;
-		info.downloaded = false;
+		info.status.downloaded = false;
 		infoPanel.updateMenu(info);
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "\n" << "failed to delete files: " << std::endl;
-		std::cerr << "\n" << e.what() << std::endl;
-	}
-
-}
-
-/*
-bool StoreApp::checkForUpdate()
-{
-	// TODO: give apps a variable in info.dat called release
-	// compare release to current, as the launcher updater does
-
-	std::cout << "checking for updates" << std::endl;
-
-	Download getRemoteVersion;
-	getRemoteVersion.setInput(".//" + GBL::WEB::APPS + info.name + "//info.dat");
-	getRemoteVersion.download();
-
-	float rVersion, lVersion = info.version;
-
-	SettingsParser getVersion;
-	if (getVersion.loadFromFile(".//" + GBL::WEB::APPS + info.name + "//info.dat"))
-		getVersion.get("version", rVersion);
-	else
-	{
-		rVersion = lVersion;
-		std::cerr << "failed to get remote app version" << std::endl;
-	}
-
-	if (lVersion != rVersion)
-	{
-		std::cout << "update for " << info.name << " is available. (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
-
-		updateIsAvailable = true;
-		infoButton.setFillColor(sf::Color::Yellow);
-
-		return true;
-	}
-	else
-	{
-		std::cout << info.name << " up to date! :D (local: " << lVersion << " : remote: " << rVersion << ")" << std::endl;
-
-		return false;
+		std::cerr << "failed to delete files: " << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
 }
-
-void StoreApp::updateItem()
-{
-	std::cout << "updating item" << std::endl;
-
-	download();
-}
-*/
 
 void StoreApp::download()
 {
+	info.status.redownloadRequired = false; // because we're downloading, it is no longer required
+
 	float fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
 	infoButton.setTexture(GBL::theme.getTexture("auto_renew_1x.png"));
 
-	info.downloading = true;
+	info.status.downloading = true;
 
 	if (infoPanel.isOpen())
 		infoPanel.updateMenu(info);
 
 	std::cout << "downloading " << info.name << std::endl;
 
-	downloadInfo();
+	if (!downloadInfo())
+		info.status.redownloadRequired = true;
 
-	if (downloadIcon())
-		iconTexture.loadFromFile(itemInstallDir + "icon.png");
+	if (!downloadIcon())
+		info.status.redownloadRequired = true;
 	else
-		iconTexture.loadFromFile(itemCacheDir + "icon.png");
+		iconTexture.loadFromFile(itemInstallDir + "icon.png");
 
-	downloadFiles();
+	if (!downloadFiles())
+		info.status.redownloadRequired = true;
+
+	info.status.downloading = false;
+
+	if (info.status.redownloadRequired)
+	{
+		std::cerr << "download failed" << std::endl;
+		infoButton.setRotation(0);
+		infoButton.setFillColor(sf::Color::Red);
+	}
+	else
+	{
+		info.status.updateAvailable = false;
+		info.status.redownloadRequired = false;
+		info.status.downloaded = true;
+
+		infoButton.setRotation(0);
+		infoButton.setFillColor(sf::Color::White);
+	}
+
+	infoButton.setTexture(GBL::theme.getTexture("info_1x.png"));
 
 	std::cout << "finished downloading " << info.name << std::endl;
 
-	infoButton.setRotation(0);
-	infoButton.setTexture(GBL::theme.getTexture("info_1x.png"));
-
-	info.downloading = false;
-
 	if (infoPanel.isOpen())
 		infoPanel.updateMenu(info);
-
-	std::cout << "download done" << std::endl;
 }
 
 void StoreApp::openItem()
@@ -305,9 +292,11 @@ void StoreApp::update()
 					GBL::threadManager.addTask(tt);
 				}
 			}
-			else if (infoPanel.eventQueue.back() == infoPanel.Download)
+			else if (infoPanel.eventQueue.back() == infoPanel.Download ||
+					 infoPanel.eventQueue.back() == infoPanel.Redownload ||
+					 infoPanel.eventQueue.back() == infoPanel.UpdateApp)
 			{
-				if (!info.downloading)
+				if (!info.status.downloading)
 				{
 					AsyncTask* tt = new AsyncTask;
 					tt->future = std::async(std::launch::async, &StoreApp::download, this);
@@ -317,7 +306,7 @@ void StoreApp::update()
 		}
 	}
 
-	if (info.downloading)
+	if (info.status.downloading)
 		infoButton.rotate(1);
 }
 
@@ -331,7 +320,7 @@ void StoreApp::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 	target.draw(infoButton, states);
 
-	if (info.downloaded)
+	if (info.status.downloaded)
 		target.draw(openInMyAppsListButton, states);
 }
 
@@ -375,11 +364,11 @@ void StoreApp::parseInfo(std::string dir)
 		iconTexture.loadFromFile(GBL::DIR::textures + "error_2x.png");
 
 		name.setString("missing info for \"" + info.name + "\"");
-		info.missingInfo = true;
+		info.status.missinginfo = true;
 	}
 }
 
-int StoreApp::downloadIcon()
+bool StoreApp::downloadIcon()
 {
 	Download getIcon;
 	getIcon.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/icon.png");
@@ -387,13 +376,13 @@ int StoreApp::downloadIcon()
 	getIcon.setOutputFilename("icon.png");
 	getIcon.download();
 
-	if (getIcon.save() == Download::Status::Success)
+	if (fs::exists(itemCacheDir + "info.dat"))
 		return true;
-
-	return false;
+	else
+		return false;
 }
 
-int StoreApp::downloadInfo()
+bool StoreApp::downloadInfo()
 {
 	std::cout << "\n" << "downloading info" << std::endl;
 
@@ -405,17 +394,12 @@ int StoreApp::downloadInfo()
 	getInfo.save();
 
 	if (fs::exists(itemCacheDir + "info.dat"))
-	{
 		return true;
-	}
 	else
-	{
 		return false;
-	}
-
 }
 
-int StoreApp::downloadFiles()
+bool StoreApp::downloadFiles()
 {
 	std::cout << "\n" << "downloading item" << std::endl;
 
@@ -425,7 +409,7 @@ int StoreApp::downloadFiles()
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "failed to copy item, redownloading." << std::endl;
+		std::cerr << "failed to copy cached app into apps directory, the files will be downloaded directely into the apps directory:" << std::endl;
 		std::cerr << e.what() << std::endl;
 
 		Download getIcon;
@@ -442,20 +426,83 @@ int StoreApp::downloadFiles()
 		getInfo.download();
 		getInfo.save();
 
-		parseInfo(itemCacheDir);
+		parseInfo(itemInstallDir);
 	}
 
-	if (!fs::exists(itemInstallDir + "release.zip"))
+	std::cout << "\n" << "downloading files" << std::endl;
+
+	std::string appPath = GBL::DIR::apps + std::to_string(info.appid) + "/";
+
+	Download getFiles;
+	getFiles.setInput(GBL::WEB::APPS + std::to_string(info.appid) + "/release.zip");
+	getFiles.setOutputDir(appPath);
+	getFiles.setOutputFilename("release.zip");
+
+	int status = getFiles.download();
+
+	if (status == Download::Status::Success)
 	{
-		Download getFiles;
-		getFiles.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/release.zip");
-		getFiles.setOutputDir(GBL::DIR::apps + std::to_string(info.appid) + "/");
-		getFiles.setOutputFilename("release.zip");
-		getFiles.download();
-		getFiles.save();
+		// if the files already exist, try to remove them
+		if (fs::exists(appPath + "release.zip"))
+		{
+			try
+			{
+				fs::remove(appPath + "release.zip");
+			}
+			catch (const fs::filesystem_error& e)
+			{
+				// if we can't remove them, give up and die
+				std::cerr << "failed to remove old release files:" << std::endl;
+				std::cerr << e.what() << std::endl;
+				return false;
+			}
+		}
 
-		info.downloaded = true;
+		if (getFiles.save())
+		{
+			info.status.downloaded = true;
+			return true;
+		}
+		else
+		{
+			std::cout << "failed to save files" << std::endl;
+			return false;
+		}
+	}
+	else
+	{
+		std::cout << "failed to download files: " << status << std::endl;
+		return false;
+	}
+}
+
+int StoreApp::install()
+{
+	try
+	{
+		fs::copy(itemCacheDir, itemInstallDir);
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "failed to copy info and files, downloading direct." << std::endl;
+		std::cerr << e.what() << std::endl;
+
+		Download getIcon;
+		getIcon.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/icon.png");
+		getIcon.setOutputDir(GBL::DIR::apps + std::to_string(info.appid) + "/");
+		getIcon.setOutputFilename("icon.png");
+		getIcon.download();
+		getIcon.save();
+
+		Download getInfo;
+		getInfo.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/info.dat");
+		getInfo.setOutputDir(GBL::DIR::apps + std::to_string(info.appid) + "/");
+		getInfo.setOutputFilename("info.dat");
+		getInfo.download();
+		getInfo.save();
+
+		parseInfo(itemInstallDir);
 	}
 
-	return true;
+	return 0;
 }

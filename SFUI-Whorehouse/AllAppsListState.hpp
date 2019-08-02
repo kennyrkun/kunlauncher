@@ -7,6 +7,7 @@
 #include "VerticalScrollbar.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include <future>
 #include <vector>
 #include <iostream>
@@ -36,6 +37,12 @@ private:
 	VerticalScrollbar scrollbar;
 
 	std::vector<StoreApp*> apps;
+
+	sf::Ftp ftp;
+	bool ftpBusy = false;
+	sf::Clock keepAliveClock;
+
+	void prepFtp();
 
 	void loadApps(bool &finisehdIndicator);
 

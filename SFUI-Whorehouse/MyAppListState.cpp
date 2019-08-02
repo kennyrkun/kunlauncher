@@ -354,6 +354,9 @@ void MyAppListState::Update()
 		delete app->multithread;
 	}
 
+	for (size_t i = 0; i < apps.size(); i++)
+		apps[i]->update();
+
 	if (keepAliveClock.getElapsedTime().asSeconds() > 10)
 	{
 		keepAliveClock.restart();
@@ -437,21 +440,22 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 			apps.back()->getPosition().y + apps.back()->getLocalBounds().height + padding);
 
 		// don't bother with an app that is not installed
-		if (!newItem->info.downloaded)
+		if (!newItem->info.status.downloaded)
 		{
 			std::cout << newItem->info.name << " is not installed, skipping" << std::endl;
 			delete newItem;
 			continue;
 		}
 
-		if (app->settings.apps.checkForUpdates) // if we're allowed to check for updates
-			if (newItem->checkForUpdate(ftp)) // if there is an update
-				if (app->settings.apps.autoUpdate) // if we're allowed to auto update
-				{
-					AsyncTask* tt = new AsyncTask;
-					tt->future = std::async(std::launch::async, &MyApp::redownload, newItem);
-					GBL::threadManager.addTask(tt);
-				}
+		if (newItem->info.status.downloaded)
+			if (app->settings.apps.checkForUpdates) // if we're allowed to check for updates
+				if (newItem->checkForUpdate(ftp)) // if there is an update
+					if (app->settings.apps.autoUpdate) // if we're allowed to auto update
+					{
+						AsyncTask* tt = new AsyncTask;
+						tt->future = std::async(std::launch::async, &MyApp::download, newItem);
+						GBL::threadManager.addTask(tt);
+					}
 
 		apps.push_back(newItem);
 		std::cout << std::endl;
@@ -482,15 +486,21 @@ void MyAppListState::prepFtp()
 	sf::Ftp::Response response = ftp.connect("files.000webhost.com");
 	if (response.isOk())
 		std::cout << "[FTP] Connected" << std::endl;
+	else
+		std::cerr << "[FTP] failed to connect to FTP" << std::endl;
 
 	// Log in
 	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
 	if (response.isOk())
 		std::cout << "[FTP] Logged in" << std::endl;
+	else
+		std::cerr << "[FTP] failed to login to ftp" << std::endl;
 
 	response = ftp.changeDirectory("public_html");
 	if (response.isOk())
 		std::cout << "[FTP] Changed to public_html directory" << std::endl;
+	else
+		std::cerr << "[FTP] failed to change ftp directories" << std::endl;
 }
 
 void MyAppListState::updateScrollThumbSize()

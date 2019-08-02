@@ -13,8 +13,11 @@ public:
 	~StoreApp();
 
 	sf::RectangleShape cardShape;
+
 	sf::CircleShape    infoButton;
 	sf::RectangleShape openInMyAppsListButton;
+
+	VisualItemInfo infoPanel;
 
 	void setPosition(const sf::Vector2f& pos);
 	sf::Vector2f getPosition() { return cardShape.getPosition(); }
@@ -23,10 +26,10 @@ public:
 
 	int onClick(sf::Vector2f clickPos);
 
+	bool checkForUpdate(sf::Ftp& ftp);
+
 	bool deleteFilesPrompt();
 	void deleteFiles();
-//	bool checkForUpdate();
-//	void updateItem();
 	void download();
 	void openItem();
 
@@ -36,8 +39,6 @@ public:
 
 	void update() override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
-	VisualItemInfo infoPanel;
 
 private:
 	sf::Texture		   iconTexture;
@@ -51,12 +52,11 @@ private:
 
 	void parseInfo(std::string dir);
 
-	// upload the app icon to the appcache folder
-	int downloadIcon();
-	// upload the info icon to the appcache folder
-	int downloadInfo();
-	// copy the app's files to the apps folder
-	int downloadFiles();
+	bool downloadIcon();
+	bool downloadInfo();
+	bool downloadFiles();
+
+	int install();
 };
 
 #endif // !STORE_APP_HPP

@@ -66,7 +66,7 @@ MyApp::MyApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	{
 		std::cout << "release was found, installed" << std::endl;
 
-		info.downloaded = true;
+		info.status.downloaded = true;
 
 		//		checkForUpdate();
 	}
@@ -74,7 +74,7 @@ MyApp::MyApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	{
 		std::cout << "release was not found, not installed" << std::endl;
 
-		info.downloaded = false;
+		info.status.downloaded = false;
 	}
 
 	cardShape.setSize(sf::Vector2f(xSize, ySize));
@@ -134,7 +134,7 @@ void MyApp::setPosition(const sf::Vector2f& pos)
 
 int MyApp::onClick(sf::Vector2f clickPos)
 {
-	if (info.downloaded)
+	if (info.status.downloaded)
 	{
 		if (mouseIsOver(removeButton, clickPos))
 		{
@@ -169,12 +169,12 @@ int MyApp::onClick(sf::Vector2f clickPos)
 
 bool MyApp::checkForUpdate(sf::Ftp& ftp)
 {
-	if (!info.downloaded)
+	if (!info.status.downloaded)
 		return false;
 
 	if (App::checkForUpdate(ftp))
 	{
-		info.updateAvailable = true;
+		info.status.updateAvailable = true;
 
 		redownloadButton.setFillColor(sf::Color::Yellow);
 		redownloadButton.setRotation(0);
@@ -209,7 +209,7 @@ void MyApp::deleteFiles()
 
 		fs::remove_all(itemInstallDir);
 		std::cout << "done" << std::endl;
-		info.downloaded = false;
+		info.status.downloaded = false;
 	}
 	catch (const std::exception& e)
 	{
@@ -229,7 +229,7 @@ void MyApp::download()
 {
 	bool failure = false;
 
-	info.downloading = true;
+	info.status.downloading = true;
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
@@ -248,16 +248,17 @@ void MyApp::download()
 	if (downloadFiles() == -1)
 		failure = true;
 
-	info.downloading = false;
+	info.status.downloading = false;
 
 	if (failure)
 	{
 		std::cerr << "download failed" << std::endl;
 		redownloadButton.setFillColor(sf::Color::Red);
+		info.status.updateAvailable = true;
 	}
 	else
 	{
-		info.updateAvailable = false;
+		info.status.updateAvailable = false;
 		redownloadButton.setFillColor(sf::Color::White);
 	}
 
@@ -307,7 +308,7 @@ void MyApp::updateSizeAndPosition(float xSize, float ySize, float xPos, float yP
 
 void MyApp::update()
 {
-	if (info.downloading)
+	if (info.status.downloading)
 		redownloadButton.rotate(1);
 }
 
@@ -321,17 +322,17 @@ void MyApp::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(description, states);
 	target.draw(version, states);
 
-	if (info.downloading)
+	if (info.status.downloading)
 		target.draw(redownloadButton, states);
 	else // not downloading
-		if (info.downloaded)
+		if (info.status.downloaded)
 		{
 			target.draw(redownloadButton, states);
 			target.draw(removeButton, states);
 			target.draw(launchButton, states);
 		}
 		else // not downloaded
-			if (!info.missingInfo) // not missing info
+			if (!info.status.missinginfo) // not missing info
 				target.draw(downloadButton, states);
 }
 
@@ -402,11 +403,11 @@ void MyApp::parseInfo(std::string dir) // a lot easier than I thought it would b
 		name.setString("missing info for \"" + std::to_string(info.appid) + "\"");
 		description.setString("missing info.dat; try redownloading");
 
-		info.missingInfo = true;
+		info.status.missinginfo = true;
 	}
 }
 
-int MyApp::downloadIcon()
+bool MyApp::downloadIcon()
 {
 	std::cout << "\n" << "downloading icon" << std::endl;
 
@@ -423,15 +424,13 @@ int MyApp::downloadIcon()
 		iconTexture.loadFromFile(itemInstallDir + "icon.png");
 		icon.setTexture(&iconTexture, true);
 
-		return 1;
+		return true;
 	}
 	else
-	{
-		return 0;
-	}
+		return false;
 }
 
-int MyApp::downloadInfo()
+bool MyApp::downloadInfo()
 {
 	std::cout << "\n" << "downloading info" << std::endl;
 
@@ -444,10 +443,10 @@ int MyApp::downloadInfo()
 
 	parseInfo(itemInstallDir);
 
-	return 1;
+	return true;
 }
 
-int MyApp::downloadFiles()
+bool MyApp::downloadFiles()
 {
 	std::cout << "\n" << "downloading files" << std::endl;
 
@@ -470,16 +469,16 @@ int MyApp::downloadFiles()
 			{
 				std::cerr << "failed to remove old release files:" << std::endl;
 				std::cerr << e.what() << std::endl;
-				return -1;
+				return false;
 			}
 		}
 
-		info.downloaded = true;
+		info.status.downloaded = true;
 		getFiles.save();
-		return 1;
+		return true;
 	}
 	else
 	{
-		return -1;
+		return false;
 	}
 }
