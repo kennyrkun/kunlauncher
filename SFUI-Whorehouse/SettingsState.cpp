@@ -73,6 +73,8 @@ enum CALLBACK_THEME_EDITOR
 	SAVE_CURRENT_THEME,
 };
 
+// This should just be Feedback sender,
+// with a tick box for "Is this an issue?"
 enum ISSUE_REPORTER_CALLBACK
 {
 	CANCEL,

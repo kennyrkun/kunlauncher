@@ -30,14 +30,6 @@ Navbar::Navbar(sf::RenderWindow* window) : window(window)
 	bar.setSize(sf::Vector2f(window->getSize().x, 40.0f));
 	bar.setFillColor(GBL::theme.palatte.PRIMARY);
 
-//	border.setSize(sf::Vector2f(window->getSize().x, 1));
-//	border.move(sf::Vector2f(0, bar.getSize().y));
-
-//	shadow[0].color = sf::Color(0, 0, 0, 100);
-//	shadow[1].color = sf::Color(0, 0, 0, 100);
-//	shadow[2].color = sf::Color(0, 0, 0, 0);
-//	shadow[3].color = sf::Color(0, 0, 0, 0);
-
 	sf::Vector2f position = { 0, 40 };
 	int width = window->getSize().x;
 	int height = 20;

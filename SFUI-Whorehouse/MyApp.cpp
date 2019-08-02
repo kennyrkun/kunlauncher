@@ -401,7 +401,7 @@ void MyApp::parseInfo(std::string dir) // a lot easier than I thought it would b
 		{
 			name.setString("Unable to load item info!");
 			description.setString("Try redownloading the app.");
-			version.setString("PARSE-" + std::to_string(info.appid));
+			version.setString("APPID: -" + std::to_string(info.appid));
 		}
 	}
 	else
