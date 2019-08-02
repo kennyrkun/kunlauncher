@@ -227,9 +227,9 @@ void MyApp::redownload()
 
 void MyApp::download()
 {
-	bool failure = false;
-
 	info.status.downloading = true;
+	info.status.updateAvailable = false;
+	info.status.redownloadRequired = false;
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
@@ -237,28 +237,36 @@ void MyApp::download()
 
 	std::cout << "downloading " << info.name << std::endl;
 
-	if (downloadInfo() == -1)
-		failure = true;
+	if (!downloadInfo())
+	{
+		info.status.redownloadRequired = true;
+		std::cout << "failed to download info" << std::endl;
+	}
 
-	if (downloadIcon() == -1)
-		failure = true;
+	if (!downloadIcon())
+	{
+		info.status.redownloadRequired = true;
+		std::cout << "failed to download icon" << std::endl;
+	}
 	else
 		iconTexture.loadFromFile(itemInstallDir + "icon.png");
 
-	if (downloadFiles() == -1)
-		failure = true;
+	if (!downloadFiles())
+	{
+		info.status.redownloadRequired = true;
+		std::cout << "failed to download files" << std::endl;
+	}
 
 	info.status.downloading = false;
 
-	if (failure)
+	if (info.status.redownloadRequired)
 	{
 		std::cerr << "download failed" << std::endl;
 		redownloadButton.setFillColor(sf::Color::Red);
-		info.status.updateAvailable = true;
 	}
 	else
 	{
-		info.status.updateAvailable = false;
+		info.status.redownloadRequired = false;
 		redownloadButton.setFillColor(sf::Color::White);
 	}
 
