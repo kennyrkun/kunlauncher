@@ -20,6 +20,22 @@ struct ItemInfo
 	bool downloading;
 	bool missingInfo;
 	bool updateAvailable = false;
+	struct Status
+	{
+		bool checkingForUpdate = false;
+		bool updateAvailable = false;
+
+		bool downloaded = false;
+		bool downloading = false;
+
+		bool missinginfo = false;
+		bool missingicon = false;
+		bool missingdata = false;
+
+		bool redownloadRequired = false;
+
+		bool isRunning = false;
+	} status;
 
 	// TODO: appAPIVersion
 };
