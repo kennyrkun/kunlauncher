@@ -473,6 +473,12 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 		updateScrollThumbSize();
 	}
 
+	/*
+	AsyncTask* tt = new AsyncTask;
+	tt->future = std::async(std::launch::async, &MyAppListState::checkForAppUpdates, this);
+	GBL::threadManager.addTask(tt);
+	*/
+
 	std::cout << "finished loading apps" << " (" << apps.size() << " apps in " << appLoadTime.getElapsedTime().asSeconds() << " seconds)" << std::endl;
 
 	app->window->requestFocus();
