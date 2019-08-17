@@ -130,7 +130,19 @@ int StoreApp::onClick(sf::Vector2f clickPos)
 		return -1;
 	else if (mouseIsOver(infoButton, clickPos))
 	{
-		infoPanel.open(info);
+		if (info.status.redownloadRequired)
+		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
+				infoPanel.open(info);
+			else
+			{
+				AsyncTask* tt = new AsyncTask;
+				tt->future = std::async(std::launch::async, &StoreApp::download, this);
+				GBL::threadManager.addTask(tt);
+			}
+		}
+		else
+			infoPanel.open(info);
 	}
 	else if (mouseIsOver(openInMyAppsListButton, clickPos))
 	{
@@ -208,15 +220,35 @@ void StoreApp::download()
 	std::cout << "downloading " << info.name << std::endl;
 
 	if (!downloadInfo())
+	{
+		std::cerr << "failed to download info" << std::endl;
 		info.status.redownloadRequired = true;
+	}
+	else
+	{
+		std::cout << "downloaded info success" << std::endl;
+	}
 
 	if (!downloadIcon())
+	{
+		std::cerr << "failed to download icon" << std::endl;
 		info.status.redownloadRequired = true;
+	}
 	else
+	{
 		iconTexture.loadFromFile(itemInstallDir + "icon.png");
+		std::cout << "downloaded icon success" << std::endl;
+	}
 
 	if (!downloadFiles())
+	{
+		std::cerr << "failed to download info" << std::endl;
 		info.status.redownloadRequired = true;
+	}
+	else
+	{
+		std::cout << "downloaded files success" << std::endl;
+	}
 
 	info.status.downloading = false;
 
@@ -225,6 +257,7 @@ void StoreApp::download()
 		std::cerr << "download failed" << std::endl;
 		infoButton.setRotation(0);
 		infoButton.setFillColor(sf::Color::Red);
+		infoButton.setTexture(GBL::theme.getTexture("refresh_1x.png"));
 	}
 	else
 	{
@@ -234,9 +267,9 @@ void StoreApp::download()
 
 		infoButton.setRotation(0);
 		infoButton.setFillColor(sf::Color::White);
+		infoButton.setTexture(GBL::theme.getTexture("info_1x.png"));
 	}
 
-	infoButton.setTexture(GBL::theme.getTexture("info_1x.png"));
 
 	std::cout << "finished downloading " << info.name << std::endl;
 
@@ -372,14 +405,21 @@ bool StoreApp::downloadIcon()
 {
 	Download getIcon;
 	getIcon.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/icon.png");
-	getIcon.setOutputDir(GBL::DIR::appcache + std::to_string(info.appid) + "/");
+	getIcon.setOutputDir(itemCacheDir);
 	getIcon.setOutputFilename("icon.png");
-	getIcon.download();
 
-	if (fs::exists(itemCacheDir + "icon.dat"))
+	int status = getIcon.download();
+
+	if (status == Download::Status::Success)
+	{
+		getIcon.save();
 		return true;
+	}
 	else
+	{
+		std::cerr << "failed to download icon: " << status << std::endl;
 		return false;
+	}
 }
 
 bool StoreApp::downloadInfo()
@@ -388,15 +428,22 @@ bool StoreApp::downloadInfo()
 
 	Download getInfo;
 	getInfo.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/info.dat");
-	getInfo.setOutputDir(GBL::DIR::appcache + std::to_string(info.appid) + "/");
+	getInfo.setOutputDir(itemCacheDir);
 	getInfo.setOutputFilename("info.dat");
-	getInfo.download();
-	getInfo.save();
 
-	if (fs::exists(itemCacheDir + "info.dat"))
+	int status = getInfo.download();
+	
+	if (status == Download::Status::Success)
+	{
+		getInfo.save();
 		return true;
+	}
 	else
+	{
+		std::cerr << "failed to download info: " << status << std::endl;
 		return false;
+	}
+
 }
 
 bool StoreApp::downloadFiles()
@@ -405,6 +452,7 @@ bool StoreApp::downloadFiles()
 
 	try
 	{
+		fs::remove_all(itemInstallDir);
 		fs::copy(itemCacheDir, itemInstallDir);
 	}
 	catch (const std::exception& e)
@@ -425,6 +473,12 @@ bool StoreApp::downloadFiles()
 		getInfo.setOutputFilename("info.dat");
 		getInfo.download();
 		getInfo.save();
+
+		if (!fs::exists(itemInstallDir + "info.dat"))
+			return false;
+
+		if (!fs::exists(itemInstallDir + "icon.dat"))
+			return false;
 
 		parseInfo(itemInstallDir);
 	}
