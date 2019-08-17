@@ -453,6 +453,7 @@ bool StoreApp::downloadFiles()
 	try
 	{
 		fs::remove_all(itemInstallDir);
+		fs::create_directory(itemInstallDir);
 		fs::copy(itemCacheDir, itemInstallDir);
 	}
 	catch (const std::exception& e)
@@ -464,21 +465,31 @@ bool StoreApp::downloadFiles()
 		getIcon.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/icon.png");
 		getIcon.setOutputDir(GBL::DIR::apps + std::to_string(info.appid) + "/");
 		getIcon.setOutputFilename("icon.png");
-		getIcon.download();
+
+		int iconStatus = getIcon.download();
+
+		if (iconStatus != Download::Status::Success)
+		{
+			std::cerr << "failed to download icon: " << iconStatus << std::endl;
+			return false;
+		}
+
 		getIcon.save();
 
 		Download getInfo;
 		getInfo.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/info.dat");
 		getInfo.setOutputDir(GBL::DIR::apps + std::to_string(info.appid) + "/");
 		getInfo.setOutputFilename("info.dat");
-		getInfo.download();
+
+		int infoStatus = getInfo.download();
+
+		if (infoStatus != Download::Status::Success)
+		{
+			std::cerr << "failed to download info: " << infoStatus << std::endl;
+			return false;
+		}
+
 		getInfo.save();
-
-		if (!fs::exists(itemInstallDir + "info.dat"))
-			return false;
-
-		if (!fs::exists(itemInstallDir + "icon.dat"))
-			return false;
 
 		parseInfo(itemInstallDir);
 	}
