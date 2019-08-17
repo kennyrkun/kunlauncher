@@ -277,7 +277,7 @@ void SettingsState::HandleEvents()
 				case CALLBACK::ANIMATION_SCALE:
 				{
 					std::string s = main.animationScaleBox->getText();
-					app->settings.animationScale = std::stoi(s);
+					app->settings.animationScale = std::stof(s);
 					configParser.set(GBL::CONFIG::animationScale, app->settings.animationScale);
 					break;
 				}
@@ -696,7 +696,7 @@ void SettingsState::buildDefaultMenu()
 	main.useAnimationsCheck = new SFUI::CheckBox(app->settings.useAnimations);
 	form->addRow("Use Animations", main.useAnimationsCheck, CALLBACK::USE_ANIMATIONS);
 
-	main.animationScaleBox = new SFUI::InputBox(50);
+	main.animationScaleBox = new SFUI::InputBox(75);
 	main.animationScaleBox->setText(std::to_string(app->settings.animationScale));
 	form->addRow("Animation Scale", main.animationScaleBox, CALLBACK::ANIMATION_SCALE);
 

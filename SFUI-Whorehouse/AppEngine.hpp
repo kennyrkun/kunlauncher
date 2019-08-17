@@ -26,7 +26,7 @@ struct AppSettings
 	bool SFUIDebug = false;
 	bool allowStatTracking = false;
 	bool useAnimations = false;
-	int animationScale = 1;
+	float animationScale = 1;
 
 	std::string selectedTheme = "dark";
 

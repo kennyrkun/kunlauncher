@@ -40,6 +40,8 @@ void MyAppListState::Cleanup()
 {
 	std::cout << "Cleaning up MyAppListState." << std::endl;
 
+	app->am.clearTasks();
+
 	if (app->multithreaded_process_running)
 	{
 		std::cout << "waiting on helper thread to finish" << std::endl;
@@ -67,8 +69,6 @@ void MyAppListState::Cleanup()
 	}
 
 	std::cout << "everything is done" << std::endl;
-
-	app->am.clearTasks();
 
 	// TODO: instead of clearing the applist, let's keep it as a cache,
 	// and just check to see if the remote has changed, and if it has, then reload it

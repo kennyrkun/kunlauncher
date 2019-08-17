@@ -84,6 +84,15 @@ void AppEngine::HandleEvents()
 	{
 		if (queuedEvents[i].first == EventType::ChangeState)
 		{
+			if (multithreaded_process_running)
+			{
+				std::cout << "waiting on helper thread to finish" << std::endl;
+				multithread->join();
+				multithreaded_process_finished = true;
+				multithreaded_process_running = false;
+				delete multithread;
+			}
+
 			if (!states.empty())
 			{
 				states.back()->Cleanup();
