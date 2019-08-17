@@ -18,6 +18,8 @@
 #include <ctime>
 #include <experimental/filesystem>
 
+// TODO: run the save thing when the state is cleaned up
+
 namespace fs = std::experimental::filesystem;
 
 std::string RGBtoStr(sf::Color rgb)

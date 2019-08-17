@@ -380,6 +380,9 @@ void MyAppListState::Draw()
 	for (size_t i = 0; i < apps.size(); i++)
 		app->window->draw(*apps[i]);
 
+	for (auto& x : apps)
+		app->window->draw(*x);
+
 	//anchored
 	app->window->setView(*mainView);
 
@@ -450,9 +453,9 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 			nextPosition.y = ((75 + padding) * i) + app->navbar->bar.getSize().y + padding;
 		}
 
-		apps.push_back(newItem);
-
 		newItem->setPosition(sf::Vector2f(app->window->getSize().x + padding, nextPosition.y));
+
+		apps.push_back(newItem);
 
 		// TODO: don't update apps if they're not on screen
 		app->am.addAppTranslationTask(newItem, nextPosition, EaseType::CubicEaseOut, 1000);
@@ -491,9 +494,9 @@ void MyAppListState::updateScrollThumbSize()
 
 	for (size_t i = 0; i < apps.size(); i++)
 		apps[i]->updateSizeAndPosition(app->window->getSize().x - (padding * 2) - scrollbar.scrollTrack.getSize().x,
-									   75, 
-									   apps[i]->getPosition().x, 
-									   apps[i]->getPosition().y);
+		75, 
+		apps[i]->getPosition().x, 
+		apps[i]->getPosition().y);
 
 	updateScrollLimits();
 }

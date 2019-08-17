@@ -188,7 +188,7 @@ void AnimatedRectangleSize::Update()
 
 // Animated App Translation
 
-AnimatedAppTranslation::AnimatedAppTranslation(MyApp* shape, sf::Vector2f destinationPosition, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID)
+AnimatedAppTranslation::AnimatedAppTranslation(App* shape, sf::Vector2f destinationPosition, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID)
 	: app(shape), targetPosition(destinationPosition), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
 {
 	std::cout << "atran " << animationID << std::endl;
@@ -380,7 +380,7 @@ int PhysicalAnimator::addRectangleSizeTask(sf::RectangleShape &shape, sf::Vector
 	}
 }
 
-int PhysicalAnimator::addAppTranslationTask(MyApp* myapp, sf::Vector2f destination, EaseType ease, int duration, bool constant)
+int PhysicalAnimator::addAppTranslationTask(App* myapp, sf::Vector2f destination, EaseType ease, int duration, bool constant)
 {
 	std::cout << "adding app translation task" << std::endl;
 	

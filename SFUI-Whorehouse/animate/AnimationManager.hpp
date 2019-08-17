@@ -1,7 +1,7 @@
 #ifndef ANIMATION_MANAGER_HPP
 #define ANIMATION_MANAGER_HPP
 
-#include "../MyApp.hpp"
+#include "../App.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -190,7 +190,7 @@ private:
 class AnimatedAppTranslation : public AnimatedTask
 {
 public:
-	AnimatedAppTranslation(MyApp* app, sf::Vector2f targetPosition, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
+	AnimatedAppTranslation(App* app, sf::Vector2f targetPosition, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
 	~AnimatedAppTranslation();
 
 	int animationID;
@@ -203,7 +203,7 @@ public:
 	bool pastTime();
 	bool constant = false;
 
-	MyApp* app;
+	App* app;
 
 	sf::Vector2f targetPosition;
 	sf::Vector2f originalPosition;
@@ -225,7 +225,7 @@ public:
 
 	int addTranslationTask(sf::Transformable& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
 	int addRectangleSizeTask(sf::RectangleShape& shape, sf::Vector2f size, EaseType ease, int duration, bool constant = false);
-	int addAppTranslationTask(MyApp* app, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
+	int addAppTranslationTask(App* app, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
 	int addRotationTask(sf::Transformable& shape, float& targetRotation, EaseType ease, int duration, bool constant = false);
 
 	void updateTaskTarget(size_t taskID, size_t newTarget);
@@ -240,7 +240,7 @@ public:
 private:
 	AppEngine* app;
 
-	size_t totalAnimations;
+	size_t totalAnimations = 0;
 };
 
 #endif // !ANIMATION_MANAGER_HPP

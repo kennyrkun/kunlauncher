@@ -47,6 +47,8 @@ void AllAppsListState::Cleanup()
 {
 	std::cout << "Cleaning up AllAppsListState." << std::endl;
 
+	app->am.clearTasks();
+
 	if (app->multithreaded_process_running)
 	{
 		std::cout << "waiting on helper thread to finish" << std::endl;
@@ -79,7 +81,7 @@ void AllAppsListState::Cleanup()
 
 		GBL::threadManager.update();
 	}
-
+	
 	std::cout << "everything is done" << std::endl;
 
 	// TODO: instead of clearing the applist, let's keep it as a cache,
@@ -427,6 +429,7 @@ void AllAppsListState::loadApps(bool &finishedIndicator)
 	std::string line; // each line of index.dat;
 
 	// TODO: check for index updates
+	// TODO: use appengine thing
 	if (!fs::exists(GBL::DIR::appcache + "index.dat"))
 	{
 		Download getNewIndex;
@@ -442,6 +445,8 @@ void AllAppsListState::loadApps(bool &finishedIndicator)
 	SettingsParser getApp;
 	getApp.loadFromFile(GBL::DIR::appcache + "index.dat");
 
+	sf::Vector2f nextPosition = { padding, app->navbar->bar.getSize().y + padding };
+
 	int loopi(0);
 	while (std::getline(readIndex, line))
 	{
@@ -455,32 +460,40 @@ void AllAppsListState::loadApps(bool &finishedIndicator)
 			if (apps.empty())
 				newItem = new StoreApp(loopi,
 					app->window->getSize().x - (padding - scrollbar.scrollTrack.getSize().x),
-					50, // FIXME: magic numbers are bad
-					padding, // 10 pixels to the left of the left edge of the screen, minus the size of the scrollTrack
-					app->navbar->bar.getSize().y + padding);
+					50,
+					sf::Vector2f(app->window->getSize().x, app->navbar->bar.getSize().y + padding));
 			else
+			{
 				newItem = new StoreApp(loopi,
 					app->window->getSize().x - (padding - scrollbar.scrollTrack.getSize().x),
-					50, // FIXME: magic numbers are bad
-					padding,
-					apps.back()->getPosition().y + apps.back()->getLocalBounds().height + padding);
+					50,
+					sf::Vector2f(app->window->getSize().x, app->navbar->bar.getSize().y + padding));
+
+				nextPosition.y = ((50 + padding) * loopi) + app->navbar->bar.getSize().y + padding;
+			}
+
+			newItem->setPosition(sf::Vector2f(app->window->getSize().x + padding, nextPosition.y));
 
 			apps.push_back(newItem);
+
+			// TODO: don't update apps if they're not on screen
+			app->am.addAppTranslationTask(newItem, nextPosition, EaseType::CubicEaseOut, 1000);
+
 			std::cout << std::endl;
+
+			// TODO: apps that have updates available
+			// should be moved to the top of the list
+			// with a nice lil notification for them
+	//		if (apps.back()->updateIsAvailable)
+	//		{
+	//			StoreApp *updateItem = apps.back; // temporary copy
+	//			apps.pop_back(); // remove from applist
+	//			apps.insert(apps.begin(), updateItem); // put in front of applist
+	//		}
+
+			updateScrollThumbSize();
+			loopi += 1;
 		}
-
-		// TODO: apps that have updates available
-		// should be moved to the top of the list
-		// with a nice lil notification for them
-//		if (apps.back()->updateIsAvailable)
-//		{
-//			StoreApp *updateItem = apps.back; // temporary copy
-//			apps.pop_back(); // remove from applist
-//			apps.insert(apps.begin(), updateItem); // put in front of applist
-//		}
-
-		updateScrollThumbSize();
-		loopi += 1;
 	}
 
 	readIndex.close();
@@ -509,13 +522,10 @@ void AllAppsListState::updateScrollThumbSize()
 	scrollbar.update(contentHeight, viewScroller->getSize().y - app->navbar->bar.getSize().y);
 
 	for (size_t i = 0; i < apps.size(); i++)
-		apps[i]->updateSizeAndPosition(
-//			padding * 2 because this makes it the size of the window - 10, 
-//			then later it goes moved 10 pixels to the left, negating this
-			app->window->getSize().x - (padding * 2) - scrollbar.scrollTrack.getSize().x,
-			apps[i]->cardShape.getSize().y,
-			padding,
-			apps[i]->cardShape.getPosition().y);
+		apps[i]->updateSizeAndPosition(app->window->getSize().x - (padding * 2) - scrollbar.scrollTrack.getSize().x,
+			50,
+			apps[i]->getPosition().x,
+			apps[i]->getPosition().y);
 
 	updateScrollLimits();
 }
