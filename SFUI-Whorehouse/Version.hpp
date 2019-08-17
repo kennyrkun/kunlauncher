@@ -118,7 +118,7 @@ namespace versions
 class LauncherVersion : public versions::Semantic
 {
 public:
-	LauncherVersion() : Semantic(17, 0, 0)
+	LauncherVersion() : Semantic(18, 0, 0)
 	{
 
 	}

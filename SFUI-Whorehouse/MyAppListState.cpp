@@ -507,6 +507,8 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 
 	std::cout << "finished loading apps" << " (" << apps.size() << " apps in " << appLoadTime.getElapsedTime().asSeconds() << " seconds)" << std::endl;
 
+	// FIXME: a crash around here
+
 	app->window->requestFocus();
 
 	finishedIndicator = true;

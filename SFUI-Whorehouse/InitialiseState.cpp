@@ -319,7 +319,12 @@ void InitialiseState::initialise()
 			progressBar->addThingsToDo(2); // update and replace exe
 
 			setTaskText("downloading update");
-			updater.downloadUpdate();
+
+			if (!updater.downloadUpdate())
+			{
+				std::cerr << "UPDATE FAILED" << std::endl;
+				abort();
+			}
 			progressBar->oneThingDone(); // update
 
 			setTaskText("finishing update");
