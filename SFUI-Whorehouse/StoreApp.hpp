@@ -9,7 +9,7 @@
 class StoreApp : public App
 {
 public:
-	StoreApp(int appid, float xSize, float ySize, float xPos, float yPos);
+	StoreApp(int appid, float xSize, float ySize, const sf::Vector2f& position);
 	~StoreApp();
 
 	sf::RectangleShape cardShape;

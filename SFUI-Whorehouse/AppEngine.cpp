@@ -52,6 +52,8 @@ void AppEngine::Cleanup()
 	window->close();
 	delete window;
 
+	delete navbar;
+
 	Download clearCache;
 	clearCache.clearCache();
 
@@ -105,6 +107,15 @@ void AppEngine::HandleEvents()
 	{
 		if (queuedEvents[i].first == EventType::ChangeState)
 		{
+			if (multithreaded_process_running)
+			{
+				std::cout << "waiting on helper thread to finish" << std::endl;
+				multithread->join();
+				multithreaded_process_finished = true;
+				multithreaded_process_running = false;
+				delete multithread;
+			}
+
 			if (!states.empty())
 			{
 				states.back()->Cleanup();
@@ -155,6 +166,8 @@ void AppEngine::Update()
 
 	if (running)
 		states.back()->Update();
+
+	am.Update();
 }
 
 void AppEngine::Draw()

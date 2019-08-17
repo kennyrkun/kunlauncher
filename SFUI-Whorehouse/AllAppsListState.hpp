@@ -3,11 +3,11 @@
 
 #include "AppState.hpp"
 
-#include "Navbar.hpp"
 #include "VerticalScrollbar.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
+
 #include <future>
 #include <vector>
 #include <iostream>
@@ -29,8 +29,6 @@ public:
 
 private:
 	AppEngine* app;
-
-	Navbar* navbar;
 
 	sf::View *mainView;
 	sf::View *viewScroller;

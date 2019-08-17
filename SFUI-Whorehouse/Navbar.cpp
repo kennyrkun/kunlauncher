@@ -1,5 +1,6 @@
-#include "Navbar.hpp"
+#include "AppEngine.hpp"
 
+#include "Navbar.hpp"
 #include "Globals.hpp"
 
 #include <iostream>
@@ -23,12 +24,15 @@ bool mouseIsOverText(sf::Text &object, sf::RenderWindow *window)
 		return false;
 }
 
-Navbar::Navbar(sf::RenderWindow* window) : window(window)
+Navbar::Navbar(sf::RenderWindow* window, PhysicalAnimator& animator) : window(window), animator(animator)
 {
 	std::cout << "creating navbar" << std::endl;
 
 	bar.setSize(sf::Vector2f(window->getSize().x, 40.0f));
 	bar.setFillColor(GBL::theme.palatte.PRIMARY);
+
+	selectedThing.setFillColor(sf::Color(GBL::theme.palatte.TERTIARY.r, GBL::theme.palatte.TERTIARY.g, GBL::theme.palatte.TERTIARY.b, 100));
+	selectedThing.setSize(sf::Vector2f(0, bar.getSize().y));
 
 	sf::Vector2f position = { 0, 40 };
 	int width = window->getSize().x;
@@ -56,51 +60,62 @@ Navbar::~Navbar()
 	std::cout << "navbar destroyed" << std::endl;
 }
 
-sf::Text& Navbar::addSection(std::string text)
+bool Navbar::select(const std::string& section)
 {
-	std::cout << "adding section \"" << text << "\"" << std::endl;
+	if (sections.find(section) != sections.end())
+	{
+		sf::Text text = sections.find(section)->second;
 
-	sf::Text newSection(sf::String(text), *GBL::theme.getFont("Arial.ttf"), 28);
+		animator.addRectangleSizeTask(selectedThing, sf::Vector2f(text.getGlobalBounds().width + 18, bar.getSize().y), EaseType::CubicEaseOut, 500);
+		animator.addTranslationTask(selectedThing, sf::Vector2f(text.getPosition().x - 8, text.getPosition().y), EaseType::CubicEaseOut, 500);
 
-	if (sections.empty())
-		newSection.setPosition(sf::Vector2f(10, 0));
-	else
-		newSection.setPosition(sections.back().getPosition().x + sections.back().getLocalBounds().width + 42, 0);
+		selectedSection = section;
 
+		std::cout << "selected " << section << std::endl;
+
+		return true;
+	}
+
+	return false;
+}
+
+sf::Text& Navbar::addSection(const std::string& section)
+{
+	if (sections.find(section) != sections.end())
+	{
+		std::cerr << "section already exists (" << sections.find(section)->first << ")" << std::endl;
+
+		// just because we can't return null
+		abort();
+	}
+
+	std::cout << "adding section \"" << section << "\"" << std::endl;
+
+	sf::Text newSection(sf::String(section), *GBL::theme.getFont("Arial.ttf"), 28);
 	newSection.setFillColor(GBL::theme.palatte.TEXT);
 
-	/*(
-	// TODO: adapt size and positioning of items so that the bar can accomodate any amount of entries.
-	if (newSection->text.getPosition())
+	if (sections.empty())
+		newSection.setPosition(sf::Vector2f(8, 0));
+	else
 	{
-			
+		std::map<std::string, sf::Text>::reverse_iterator it = sections.rbegin();
+
+		sf::Text back = it->second;
+		std::cout << "section before " << section << " is " << it->first << std::endl;
+		newSection.setPosition(sf::Vector2f(nextXPositon, 0));
 	}
-	*/
 
-	sections.push_back(newSection);
-	return sections.back();
+	nextXPositon = newSection.getPosition().x + newSection.getGlobalBounds().width + 42;
+
+	// TODO: adapt size and positioning of items so that the bar can accomodate any amount of entries.
+
+	sections.emplace(section, newSection);
+	return sections.at(section);
 }
 
-sf::Text& Navbar::getSection(std::string sectionName)
+void Navbar::removeSection(const std::string& section)
 {
-	for (size_t i = 0; i < sections.size(); i++)
-		if (sections[i].getString() == sectionName)
-			return sections[i];
-}
-
-void Navbar::removeSection(int sectionNum)
-{
-	sections.erase(sections.begin() + sectionNum);
-}
-
-void Navbar::removeSection(std::string sectionName)
-{
-	for (size_t i = 0; i < sections.size(); i++)
-		if (sections[i].getString() == sectionName)
-		{
-			sections.erase(sections.begin() + i);
-			break;
-		}
+	sections.erase(section);
 }
 
 void Navbar::HandleEvents(const sf::Event& event)
@@ -113,12 +128,14 @@ void Navbar::HandleEvents(const sf::Event& event)
 	{
 		// TODO: if mouse is over the bar, see if it's over any of the items on the bar
 
+		/*
 		for (auto& x : sections)
 		{
 			if (mouseIsOverText(x, window))
 			{
 			}
 		}
+		*/
 	}
 }
 
@@ -131,8 +148,10 @@ void Navbar::Draw()
 	window->draw(bar);
 	window->draw(shadow, 4, sf::Quads);
 
+	window->draw(selectedThing);
+
 	for (auto& x : sections)
-		window->draw(x);
+		window->draw(x.second);
 
 //	window->draw(border);
 }

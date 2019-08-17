@@ -3,11 +3,13 @@
 
 #include "AppState.hpp"
 
-#include "Navbar.hpp"
 #include "VerticalScrollbar.hpp"
+#include "animate/AnimationManager.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
+#include <SFML/System.hpp>
+
 #include <future>
 #include <vector>
 #include <iostream>
@@ -33,8 +35,6 @@ public:
 private:
 	AppEngine* app;
 
-	Navbar* navbar;
-
 	sf::View *mainView;
 	sf::View *viewScroller;
 	VerticalScrollbar scrollbar;
@@ -58,7 +58,8 @@ private:
 	void testScrollBounds();
 
 	void loadApps(bool &finishedIndicator);
-	void deleteApp(MyApp* whatApp);
+
+	void removeAppFromList(MyApp* whatApp);
 
 	bool mouseIsOver(const sf::Shape &object);
 	bool mouseIsOver(const sf::Shape &object, const sf::View* view);

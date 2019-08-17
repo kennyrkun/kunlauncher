@@ -18,7 +18,7 @@ namespace fs = std::experimental::filesystem;
 
 // TODO: remove origin from icons
 // TODO: call update size and position in here
-StoreApp::StoreApp(int appid, float xSize, float ySize, float xPos, float yPos)
+StoreApp::StoreApp(int appid, float xSize, float ySize, const sf::Vector2f& position)
 {
 	sf::Clock itemCreateTimer;
 
@@ -86,31 +86,27 @@ StoreApp::StoreApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	}
 
 	cardShape.setSize(sf::Vector2f(xSize, ySize));
-	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
+	cardShape.setPosition(sf::Vector2f(position.x, position.y)); // probably not the best
 	cardShape.setFillColor(GBL::theme.palatte.APP_CARD);
 
 	icon.setSize(sf::Vector2f(cardShape.getSize().y, cardShape.getSize().y)); // a square
-	icon.setPosition(cardShape.getPosition());
 	icon.setFillColor(GBL::theme.palatte.APP_IMAGE);
 	icon.setTexture(&iconTexture);
 	iconTexture.setSmooth(true);
 
 	name.setFont(*GBL::theme.getFont("Arial.ttf"));
 	name.setCharacterSize(24);
-	name.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10), static_cast<int>(cardShape.getPosition().y + 10));
 	name.setFillColor(GBL::theme.palatte.TEXT_SECONDARY);
 
 	infoButton.setFillColor(GBL::theme.palatte.APP_ICON);
 	infoButton.setRadius(12);
-	infoButton.setOrigin(sf::Vector2f(infoButton.getLocalBounds().width / 2, infoButton.getLocalBounds().height / 2));
-	infoButton.setPosition(sf::Vector2f(ICON_X_POS, ICON_Y_POS));
 	infoButton.setTexture(GBL::theme.getTexture("info_1x.png"));
 
 	openInMyAppsListButton.setFillColor(GBL::theme.palatte.APP_ICON);
 	openInMyAppsListButton.setSize(sf::Vector2f(24, 24));
-	openInMyAppsListButton.setOrigin(sf::Vector2f(openInMyAppsListButton.getLocalBounds().width / 2, openInMyAppsListButton.getLocalBounds().height / 2));
-	openInMyAppsListButton.setPosition(sf::Vector2f(ICON_X_POS, ICON_Y_POS));
 	openInMyAppsListButton.setTexture(GBL::theme.getTexture("input_1x.png"));
+
+	updateSizeAndPosition(xSize, ySize, position.x, position.y);
 
 	std::cout << "card is ready (took " << itemCreateTimer.getElapsedTime().asSeconds() << " seconds)" << std::endl;
 }

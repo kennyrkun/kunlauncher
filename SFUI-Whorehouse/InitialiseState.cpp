@@ -107,8 +107,15 @@ void InitialiseState::Cleanup()
 
 	app->window->close();
 	delete app->window;
+
 	app->window = newWindow;
-	newWindow->requestFocus();
+	app->window->requestFocus();
+
+	app->navbar = new Navbar(app->window, app->am);
+	app->navbar->addSection("home");
+	app->navbar->addSection("my apps");
+	app->navbar->addSection("all apps");
+	app->navbar->addSection("settings");
 
 	std::cout << "Initalisation took " << initTime.getElapsedTime().asSeconds() << "s" << std::endl;
 	std::cout << "Cleaned up IntialiseState" << std::endl;

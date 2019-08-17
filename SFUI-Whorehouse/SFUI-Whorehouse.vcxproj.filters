@@ -117,6 +117,11 @@
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Backend\Graphics</Filter>
+    <ClCompile Include="animate\AnimationManager.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="animate\Interpolate.cpp">
+      <Filter>Source Files\Backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +199,11 @@
     </ClInclude>
     <ClInclude Include="ResourceManager.hpp">
       <Filter>Source Files\Backend\Graphics</Filter>
+    <ClInclude Include="animate\Interpolate.hpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="animate\AnimationManager.hpp">
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

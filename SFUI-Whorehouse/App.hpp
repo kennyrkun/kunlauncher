@@ -36,7 +36,7 @@ struct ItemInfo
 	// TODO: appAPIVersion
 };
 
-class App : public sf::Drawable
+class App : public sf::Drawable, public sf::Transformable
 {
 public:
 	// returns an int event code on click
