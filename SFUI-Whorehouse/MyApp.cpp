@@ -48,6 +48,7 @@ MyApp::MyApp(int appid, float xSize, float ySize, const sf::Vector2f& position)
 		std::cout << "icon was not found" << std::endl;
 
 		// TODO: try to find the icon
+		info.status.missingicon = true;
 
 		iconTexture.loadFromFile(GBL::DIR::textures + "missing_icon_icon.png");
 	}
@@ -59,6 +60,7 @@ MyApp::MyApp(int appid, float xSize, float ySize, const sf::Vector2f& position)
 	else // info is not downloaded
 	{
 		std::cout << "info was not found" << std::endl;
+		info.status.missinginfo = true;
 	}
 	parseInfo(itemInstallDir);
 
@@ -81,10 +83,13 @@ MyApp::MyApp(int appid, float xSize, float ySize, const sf::Vector2f& position)
 	cardShape.setPosition(sf::Vector2f(position.x, position.y)); // probably not the best
 	cardShape.setFillColor(GBL::theme.palatte.APP_CARD);
 
-	icon.setSize(sf::Vector2f(cardShape.getSize().y, cardShape.getSize().y)); // a square
-	icon.setPosition(cardShape.getPosition());
-	icon.setTexture(&iconTexture);
-	iconTexture.setSmooth(true);
+	if (!info.status.missingicon)
+	{
+		icon.setSize(sf::Vector2f(cardShape.getSize().y, cardShape.getSize().y)); // a square
+		icon.setPosition(cardShape.getPosition());
+		icon.setTexture(&iconTexture);
+		iconTexture.setSmooth(true);
+	}
 
 	font = *GBL::theme.getFont("Arial.ttf");
 
@@ -294,12 +299,16 @@ void MyApp::updateSizeAndPosition(float xSize, float ySize, float xPos, float yP
 	cardShape.setPosition(sf::Vector2f(xPos, yPos)); // probably not the best
 	cardShape.setSize(sf::Vector2f(xSize, ySize));
 
-	icon.setPosition(sf::Vector2f(cardShape.getPosition()));
+	if (!info.status.missingicon)
+	{
+		icon.setPosition(sf::Vector2f(cardShape.getPosition()));
+		icon.setSize(sf::Vector2f(ySize, ySize));
+	}
 
 	const int isize = icon.getSize().x;
-	name.setPosition(static_cast<int>(icon.getPosition().x + isize + 10), static_cast<int>(cardShape.getPosition().y));
-	description.setPosition(static_cast<int>(icon.getPosition().x + isize + 10), static_cast<int>(cardShape.getPosition().y + 25));
-	version.setPosition(static_cast<int>(icon.getPosition().x + isize + 10), static_cast<int>(cardShape.getPosition().y + 50));
+	name.setPosition(static_cast<int>(cardShape.getPosition().x + isize + 10), static_cast<int>(cardShape.getPosition().y));
+	description.setPosition(static_cast<int>(cardShape.getPosition().x + isize + 10), static_cast<int>(cardShape.getPosition().y + 25));
+	version.setPosition(static_cast<int>(cardShape.getPosition().x + isize + 10), static_cast<int>(cardShape.getPosition().y + 50));
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
 
