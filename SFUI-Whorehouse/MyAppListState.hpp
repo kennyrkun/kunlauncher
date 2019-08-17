@@ -7,6 +7,7 @@
 #include "VerticalScrollbar.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include <future>
 #include <vector>
 #include <iostream>
@@ -40,6 +41,12 @@ private:
 
 	// TODO: not a pointer
 	std::vector<MyApp*> apps;
+
+	sf::Ftp ftp;
+	bool ftpBusy = false;
+	sf::Clock keepAliveClock;
+
+	void prepFtp();
 
 	// TODO: viewable arae class
 	float scrollerTopPosition;

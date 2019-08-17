@@ -2,6 +2,7 @@
 #define APP_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
 struct ItemInfo
 {
@@ -15,9 +16,22 @@ struct ItemInfo
 	int release;
 	int appid;
 
-	bool downloaded;
-	bool downloading;
-	bool missingInfo;
+	struct Status
+	{
+		bool checkingForUpdate = false;
+		bool updateAvailable = false;
+
+		bool downloaded = false;
+		bool downloading = false;
+
+		bool missinginfo = false;
+		bool missingicon = false;
+		bool missingdata = false;
+
+		bool redownloadRequired = false;
+
+		bool isRunning = false;
+	} status;
 
 	// TODO: appAPIVersion
 };
@@ -39,6 +53,8 @@ public:
 	sf::RectangleShape cardShape;
 	virtual sf::FloatRect getLocalBounds() = 0;
 
+	bool checkForUpdate(sf::Ftp& ftp);
+
 	virtual void updateSizeAndPosition(float xSize, float ySize, float xPos, float yPos) = 0;
 
 	virtual void update() = 0;
@@ -57,9 +73,9 @@ protected:
 
 	virtual void parseInfo(std::string dir) = 0;
 
-	virtual int downloadIcon() = 0;
-	virtual int downloadInfo() = 0;
-	virtual int downloadFiles() = 0;
+	virtual bool downloadIcon() = 0;
+	virtual bool downloadInfo() = 0;
+	virtual bool downloadFiles() = 0;
 };
 
 #endif // !APP_HPP

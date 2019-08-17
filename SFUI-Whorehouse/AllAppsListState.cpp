@@ -416,6 +416,23 @@ void AllAppsListState::Draw()
 
 const float padding = 10.0f;
 
+void AllAppsListState::prepFtp()
+{
+	// Connect to the server
+	sf::Ftp::Response response = ftp.connect("files.000webhost.com");
+	if (response.isOk())
+		std::cout << "[FTP] Connected" << std::endl;
+
+	// Log in
+	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
+	if (response.isOk())
+		std::cout << "[FTP] Logged in" << std::endl;
+
+	response = ftp.changeDirectory("public_html");
+	if (response.isOk())
+		std::cout << "[FTP] Changed to public_html directory" << std::endl;
+}
+
 void AllAppsListState::loadApps(bool &finishedIndicator)
 {
 	finishedIndicator = false;
@@ -426,19 +443,35 @@ void AllAppsListState::loadApps(bool &finishedIndicator)
 
 	apps.clear();
 	updateScrollThumbSize();
+
+	prepFtp();
+
 	std::cout << std::endl; // for a line break
 
 	std::string line; // each line of index.dat;
 
 	// TODO: check for index updates
 	if (!fs::exists(GBL::DIR::appcache + "index.dat"))
+		app->UpdateAppIndex();
+	else // it does exist, and if it didn't, we don't need to update it because we just downloaded a fresh one
 	{
-		Download getNewIndex;
-		getNewIndex.setInput("./" + GBL::WEB::APPS + "/index.dat");
-		getNewIndex.setOutputDir(GBL::DIR::appcache);
-		getNewIndex.setOutputFilename("/index.dat");
-		getNewIndex.download();
-		getNewIndex.save();
+		sf::Ftp::Response response = ftp.sendCommand("SIZE", GBL::WEB::APPS + "/index.dat");
+		if (response.isOk())
+		{
+			size_t remoteFileSize = std::stoi(response.getMessage());
+			size_t fileSize = fs::file_size(GBL::DIR::appcache + "/index.dat");
+
+			if (fileSize != remoteFileSize)
+			{
+				std::cout << "index update available" << std::endl;
+				app->UpdateAppIndex();
+			}
+		}
+		else
+		{
+			std::cout << "failed to get index filesize" << std::endl;
+			std::cerr << response.getMessage() << std::endl;
+		}
 	}
 
 	std::ifstream readIndex(GBL::DIR::appcache + "index.dat", std::ios::in);
@@ -468,6 +501,16 @@ void AllAppsListState::loadApps(bool &finishedIndicator)
 					50, // FIXME: magic numbers are bad
 					padding,
 					apps.back()->getPosition().y + apps.back()->getLocalBounds().height + padding);
+
+			if (newItem->info.status.downloaded)
+				if (app->settings.apps.checkForUpdates) // if we're allowed to check for updates
+					if (newItem->checkForUpdate(ftp)) // if there is an update
+						if (app->settings.apps.autoUpdate) // if we're allowed to auto update
+						{
+							AsyncTask* tt = new AsyncTask;
+							tt->future = std::async(std::launch::async, &StoreApp::download, newItem);
+							GBL::threadManager.addTask(tt);
+						}
 
 			apps.push_back(newItem);
 			std::cout << std::endl;

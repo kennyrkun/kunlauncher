@@ -4,6 +4,7 @@
 #include "App.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
 class MyApp : public App
 {
@@ -34,14 +35,12 @@ public:
 	sf::RectangleShape launchButton;
 	//	sf::RectangleShape controlBar;
 
-	ItemInfo info;
-
 	//	bool isRunning();
-	bool updateIsAvailable;
+
+	bool checkForUpdate(sf::Ftp& ftp);
 
 	bool deleteFilesPrompt();
 	void deleteFiles();
-	bool checkForUpdate();
 	void redownload();
 	void download();
 	void openItem();
@@ -70,9 +69,9 @@ private:
 
 	void parseInfo(std::string dir);
 
-	int downloadIcon();
-	int downloadInfo();
-	int downloadFiles();
+	bool downloadIcon();
+	bool downloadInfo();
+	bool downloadFiles();
 };
 
 #endif // !APP_HPP

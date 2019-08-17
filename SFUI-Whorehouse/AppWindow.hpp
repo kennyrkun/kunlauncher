@@ -31,6 +31,8 @@ public:
 	enum PANEL_CALLBACK
 	{
 		Download,
+		Redownload,
+		UpdateApp,
 		Delete,
 		OpenLocal
 	};

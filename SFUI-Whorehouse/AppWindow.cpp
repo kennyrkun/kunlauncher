@@ -150,8 +150,15 @@ void VisualItemInfo::buildMenu()
 
 	menu->addLabel("Name: " + info.name);
 	menu->addLabel("AppID: " + std::to_string(info.appid));
-	menu->addLabel("Version: " + std::to_string(info.version));
+
+	if (info.status.updateAvailable && !info.status.redownloadRequired)
+		menu->addLabel("Version: " + std::to_string(info.version) + " (Update is available)");
+	else
+		menu->addLabel("Version: " + std::to_string(info.version));
+
 	// TODO: wrap label if it's too long
+	// if text box ends up longer than the main window, wrap the text
+	// otherwise just expand the window
 	menu->addLabel("Description: " + info.description);
 	menu->addLabel("Author: " + info.author);
 
@@ -161,23 +168,32 @@ void VisualItemInfo::buildMenu()
 
 	menu->addHorizontalBoxLayout();
 
-	if (info.downloading)
+	if (info.status.downloading)
 		menu->addLabel("Downloading...");
 	else
 	{
 		SFUI::HorizontalBoxLayout* hbox = menu->addHorizontalBoxLayout();
 
-		if (!info.downloaded)
+		if (info.status.downloaded)
 		{
-			hbox->addButton("Download", PANEL_CALLBACK::Download);
-		}
-		else
-		{
+			if (info.status.checkingForUpdate)
+				return;
+
+			if (info.status.redownloadRequired)
+				hbox->addButton("Redownload", PANEL_CALLBACK::Redownload);
+			else if (info.status.updateAvailable)
+				hbox->addButton("Update", PANEL_CALLBACK::UpdateApp);
+
 			hbox->addButton("Delete Files", PANEL_CALLBACK::Delete);
+
 			// TODO: add this button
 			// this is going to require creation of a
 			// small library type thing that will work with windows
 //			hbox->addButton("Browse Local Files", PANEL_CALLBACK::OpenLocal);
+		}
+		else
+		{
+			hbox->addButton("Download", PANEL_CALLBACK::Download);
 		}
 	}
 

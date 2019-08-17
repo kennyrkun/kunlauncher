@@ -66,7 +66,7 @@ MyApp::MyApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	{
 		std::cout << "release was found, installed" << std::endl;
 
-		info.downloaded = true;
+		info.status.downloaded = true;
 
 		//		checkForUpdate();
 	}
@@ -74,7 +74,7 @@ MyApp::MyApp(int appid, float xSize, float ySize, float xPos, float yPos)
 	{
 		std::cout << "release was not found, not installed" << std::endl;
 
-		info.downloaded = false;
+		info.status.downloaded = false;
 	}
 
 	cardShape.setSize(sf::Vector2f(xSize, ySize));
@@ -134,7 +134,7 @@ void MyApp::setPosition(const sf::Vector2f& pos)
 
 int MyApp::onClick(sf::Vector2f clickPos)
 {
-	if (info.downloaded)
+	if (info.status.downloaded)
 	{
 		if (mouseIsOver(removeButton, clickPos))
 		{
@@ -167,6 +167,24 @@ int MyApp::onClick(sf::Vector2f clickPos)
 	return None;
 }
 
+bool MyApp::checkForUpdate(sf::Ftp& ftp)
+{
+	if (!info.status.downloaded)
+		return false;
+
+	if (App::checkForUpdate(ftp))
+	{
+		info.status.updateAvailable = true;
+
+		redownloadButton.setFillColor(sf::Color::Yellow);
+		redownloadButton.setRotation(0);
+
+		return true;
+	}
+
+	return false;
+}
+
 bool MyApp::deleteFilesPrompt()
 {
 	MessageBox::Options modOptions = { "Confirm Deletion", "Delete " + info.name + "?", { "No", "Yes" } };
@@ -191,48 +209,12 @@ void MyApp::deleteFiles()
 
 		fs::remove_all(itemInstallDir);
 		std::cout << "done" << std::endl;
-		info.downloaded = false;
+		info.status.downloaded = false;
 	}
 	catch (const std::exception& e)
 	{
 		std::cerr << "\n" << "failed to delete files: " << std::endl;
 		std::cerr << "\n" << e.what() << std::endl;
-	}
-}
-
-bool MyApp::checkForUpdate()
-{
-	std::cout << "checking for updates" << std::endl;
-
-	Download getRemoteVersion;
-	getRemoteVersion.setInput("./" + GBL::WEB::APPS + std::to_string(info.appid) + "/info.dat");
-	getRemoteVersion.download();
-
-	int rRelease = 0, lRelease = info.release;
-
-	SettingsParser getVersion;
-	if (getVersion.loadFromFile("./" + GBL::DIR::cache + "apps/" + std::to_string(info.appid) + "/info.dat"))
-		getVersion.get("release", rRelease);
-	else
-	{
-		std::cerr << "failed to get remote app version" << std::endl;
-		return false;
-	}
-
-	if (lRelease < rRelease)
-	{
-		std::cout << "item is out of date! (local: " << lRelease << " : remote: " << rRelease << ")" << std::endl;
-
-		updateIsAvailable = true;
-		redownloadButton.setFillColor(sf::Color::Yellow);
-
-		return true;
-	}
-	else
-	{
-		std::cout << "item is up to date or newer! :D (local: " << lRelease << " : remote: " << rRelease << ")" << std::endl;
-
-		return false;
 	}
 }
 
@@ -245,39 +227,50 @@ void MyApp::redownload()
 
 void MyApp::download()
 {
-	info.downloading = true;
+	info.status.downloading = true;
+	info.status.updateAvailable = false;
+	info.status.redownloadRequired = false;
 
 	float fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
 	redownloadButton.setOrigin(sf::Vector2f(redownloadButton.getLocalBounds().width / 2, redownloadButton.getLocalBounds().height / 2));
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition, cardShape.getPosition().y + 37.f));
-	info.missingInfo = true;
 
-	if (fs::exists(itemInstallDir + "/release.zip"))
+	std::cout << "downloading " << info.name << std::endl;
+
+	if (!downloadInfo())
 	{
-		std::cout << "downloading " << info.name << std::endl;
+		info.status.redownloadRequired = true;
+		std::cout << "failed to download info" << std::endl;
+	}
 
-		downloadIcon();
-		downloadInfo();
-		downloadFiles();
+	if (!downloadIcon())
+	{
+		info.status.redownloadRequired = true;
+		std::cout << "failed to download icon" << std::endl;
+	}
+	else
+		iconTexture.loadFromFile(itemInstallDir + "icon.png");
 
-		std::cout << "\n" << "finished downloading " << info.name << std::endl;
+	if (!downloadFiles())
+	{
+		info.status.redownloadRequired = true;
+		std::cout << "failed to download files" << std::endl;
+	}
+
+	info.status.downloading = false;
+
+	if (info.status.redownloadRequired)
+	{
+		std::cerr << "download failed" << std::endl;
+		redownloadButton.setFillColor(sf::Color::Red);
 	}
 	else
 	{
-		std::cout << "downloading " << info.name << std::endl;
-
-		downloadInfo();
-
-		downloadIcon();
-		iconTexture.loadFromFile(itemInstallDir + "icon.png");
-
-		downloadFiles();
-
-		std::cout << "\n" << "downloading update " << info.name << std::endl;
+		info.status.redownloadRequired = false;
+		redownloadButton.setFillColor(sf::Color::White);
 	}
 
-	info.downloading = false;
-
+	fuckedUpXPosition = (cardShape.getPosition().x + cardShape.getLocalBounds().width) - 30;
 	redownloadButton.setRotation(30);
 	redownloadButton.setOrigin(sf::Vector2f(0, 0));
 	redownloadButton.setPosition(sf::Vector2f(fuckedUpXPosition + 7, cardShape.getPosition().y + 10));
@@ -323,7 +316,7 @@ void MyApp::updateSizeAndPosition(float xSize, float ySize, float xPos, float yP
 
 void MyApp::update()
 {
-	if (info.downloading)
+	if (info.status.downloading)
 		redownloadButton.rotate(1);
 }
 
@@ -331,24 +324,23 @@ void MyApp::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(cardShape, states);
 
-//	target.draw(controlBar, states);
 	target.draw(icon, states);
 
 	target.draw(name, states);
 	target.draw(description, states);
 	target.draw(version, states);
 
-	if (info.downloading)
+	if (info.status.downloading)
 		target.draw(redownloadButton, states);
 	else // not downloading
-		if (info.downloaded)
+		if (info.status.downloaded)
 		{
 			target.draw(redownloadButton, states);
 			target.draw(removeButton, states);
 			target.draw(launchButton, states);
 		}
-		else
-			if (!info.missingInfo)
+		else // not downloaded
+			if (!info.status.missinginfo) // not missing info
 				target.draw(downloadButton, states);
 }
 
@@ -408,17 +400,22 @@ void MyApp::parseInfo(std::string dir) // a lot easier than I thought it would b
 	{
 		std::cerr << "info file is empty or missing" << std::endl;
 
+		redownloadButton.setFillColor(sf::Color::Red);
+		redownloadButton.setRotation(0);
+		redownloadButtonTexture.loadFromFile(GBL::DIR::textures + "error_1x.png");
+		redownloadButton.setTexture(&redownloadButtonTexture, true);
+
 		iconTexture.loadFromFile(GBL::DIR::textures + "error_2x.png");
-		updateIsAvailable = true; // because there's no way to represent an error yet, we just mark it for needing to be redownloaded
+		icon.setTexture(&iconTexture, true);
 
 		name.setString("missing info for \"" + std::to_string(info.appid) + "\"");
 		description.setString("missing info.dat; try redownloading");
 
-		info.missingInfo = true;
+		info.status.missinginfo = true;
 	}
 }
 
-int MyApp::downloadIcon()
+bool MyApp::downloadIcon()
 {
 	std::cout << "\n" << "downloading icon" << std::endl;
 
@@ -433,16 +430,15 @@ int MyApp::downloadIcon()
 	if (fs::exists(itemInstallDir + "icon.png"))
 	{
 		iconTexture.loadFromFile(itemInstallDir + "icon.png");
+		icon.setTexture(&iconTexture, true);
 
-		return 1;
+		return true;
 	}
 	else
-	{
-		return 0;
-	}
+		return false;
 }
 
-int MyApp::downloadInfo()
+bool MyApp::downloadInfo()
 {
 	std::cout << "\n" << "downloading info" << std::endl;
 
@@ -455,21 +451,42 @@ int MyApp::downloadInfo()
 
 	parseInfo(itemInstallDir);
 
-	return 1;
+	return true;
 }
 
-int MyApp::downloadFiles()
+bool MyApp::downloadFiles()
 {
 	std::cout << "\n" << "downloading files" << std::endl;
 
+	std::string appPath = GBL::DIR::apps + std::to_string(info.appid) + "/";
+
 	Download getFiles;
 	getFiles.setInput(GBL::WEB::APPS + std::to_string(info.appid) + "/release.zip");
-	getFiles.setOutputDir(GBL::DIR::apps + std::to_string(info.appid) + "//");
+	getFiles.setOutputDir(appPath);
 	getFiles.setOutputFilename("release.zip");
-	getFiles.download();
-	getFiles.save();
 
-	info.downloaded = true;
+	if (getFiles.download() == Download::Status::Success)
+	{
+		if (fs::exists(appPath + "release.zip"))
+		{
+			try
+			{
+				fs::remove(appPath + "release.zip");
+			}
+			catch (const fs::filesystem_error& e)
+			{
+				std::cerr << "failed to remove old release files:" << std::endl;
+				std::cerr << e.what() << std::endl;
+				return false;
+			}
+		}
 
-	return 1;
+		info.status.downloaded = true;
+		getFiles.save();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

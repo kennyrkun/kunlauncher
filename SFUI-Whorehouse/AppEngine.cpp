@@ -73,6 +73,29 @@ void AppEngine::PopState()
 	queuedEvents.push_back(std::pair<EventType, AppState*>(EventType::PopState, nullptr));
 }
 
+bool AppEngine::UpdateAppIndex()
+{
+	std::cout << "[AppEngine] redownloading app index." << std::endl;
+
+	Download getNewIndex;
+	getNewIndex.setInput("./" + GBL::WEB::APPS + "/index.dat");
+	getNewIndex.setOutputDir(GBL::DIR::appcache);
+	getNewIndex.setOutputFilename("/index.dat");
+
+	int status = getNewIndex.download();
+
+	if (status == Download::Status::Success)
+	{
+		getNewIndex.save();
+		return true;
+	}
+	else
+	{
+		std::cerr << "[AppEngine] failed to download new index" << std::endl;
+		return false;
+	}
+}
+
 void AppEngine::HandleEvents()
 {
 	if (running && !states.empty())

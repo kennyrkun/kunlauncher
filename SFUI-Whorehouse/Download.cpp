@@ -10,7 +10,7 @@ namespace fs = std::experimental::filesystem;
 
 Download::Download()
 {
-	std::cout << "[DL] downloader created" << std::endl;
+	setupFTP();
 }
 
 Download::~Download()
@@ -108,6 +108,10 @@ uintmax_t Download::getFileSize()
 		if (response.isOk())
 			std::cout << "[DL] Logged in" << std::endl;
 
+		response = ftp.changeDirectory("public_html");
+		if (response.isOk())
+			std::cout << "[DL] Changed to public_html directory" << std::endl;
+
 		std::cout << "[DL] remote directory + remote filename: " << remoteDirectory + remoteFilename << std::endl;
 
 		response = ftp.sendCommand("SIZE", remoteDirectory + remoteFilename);
@@ -136,31 +140,10 @@ int Download::download()
 //	std::cout << "remoteDirectory: " << remoteDirectory << std::endl;
 //	std::cout << "remoteFilename : " << remoteFilename << std::endl;
 
-	sf::Ftp ftp;
-
 	downloaded = false;
 	sizeVerified = false;
 
-	sf::Ftp::Response response = ftp.connect("files.000webhost.com", 21, sf::milliseconds(10000));
-	if (!response.isOk())
-	{
-		std::cerr << "[DL] failed to connect to ftp (" << response.getMessage() << " (" << response.getStatus() << "))" << std::endl;
-		return Status::Fail | Status::ConnectionFailed;
-	}
-
-	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
-	if (!response.isOk())
-	{
-		std::cout << "[DL] failed to login to ftp" << std::endl;
-		return Status::Fail | Status::LoginFailed;
-	}
-
-	response = ftp.changeDirectory("public_html");
-	if (!response.isOk())
-	{
-		std::cerr << "[DL] failed to set ftp directory" << std::endl;
-		return Status::Fail;
-	}
+	sf::Ftp::Response response;
 
 	// TODO: sometimes this, we fail to download and get 500 RETR.
 	// since the download happens after this, there will be no resource
@@ -305,6 +288,30 @@ void Download::clearCache()
 }
 
 // private:
+
+int Download::setupFTP()
+{
+	sf::Ftp::Response response = ftp.connect("files.000webhost.com", 21, sf::milliseconds(10000));
+	if (!response.isOk())
+	{
+		std::cerr << "[DL] failed to connect to ftp (" << response.getMessage() << " (" << response.getStatus() << "))" << std::endl;
+		return Status::Fail | Status::ConnectionFailed;
+	}
+
+	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
+	if (!response.isOk())
+	{
+		std::cout << "[DL] failed to login to ftp" << std::endl;
+		return Status::Fail | Status::LoginFailed;
+	}
+
+	response = ftp.changeDirectory("public_html");
+	if (!response.isOk())
+	{
+		std::cerr << "[DL] failed to set ftp directory" << std::endl;
+		return Status::Fail;
+	}
+}
 
 void Download::createDirectory(std::string dir) // recursively
 {

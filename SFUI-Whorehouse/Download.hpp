@@ -74,6 +74,10 @@ private:
 	std::string remoteDirectory = "";
 	std::string remoteFilename = "";
 
+	sf::Ftp ftp;
+
+	int setupFTP();
+
 	void createDirectory(std::string dir);
 };
 

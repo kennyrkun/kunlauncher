@@ -355,20 +355,13 @@ void MyAppListState::Update()
 		delete app->multithread;
 	}
 
-	// if an app has been deleted, remove it from the list.
-	// this is here because we can remove apps from outside of the state
 	for (size_t i = 0; i < apps.size(); i++)
+		apps[i]->update();
+
+	if (keepAliveClock.getElapsedTime().asSeconds() > 10)
 	{
-		// TODO: move this into a sort of event queue
-		if (!apps[i]->info.downloaded)
-		{
-			app->multithreaded_process_finished = false;
-			app->multithreaded_process_running = true;
-			app->multithread = new std::thread(&MyAppListState::deleteApp, this, apps[i]);
-			i--;
-		}
-		else // call update like normal
-			apps[i]->update();
+		keepAliveClock.restart();
+		ftp.keepAlive();
 	}
 }
 
@@ -409,6 +402,8 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 	apps.clear();
 	updateScrollThumbSize();
 
+	prepFtp();
+
 	std::vector<std::string> appList = getDirectories(GBL::DIR::apps);
 
 	// check for invalid appids
@@ -445,6 +440,24 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 			padding,
 			apps.back()->getPosition().y + apps.back()->getLocalBounds().height + padding);
 
+		// don't bother with an app that is not installed
+		if (!newItem->info.status.downloaded)
+		{
+			std::cout << newItem->info.name << " is not installed, skipping" << std::endl;
+			delete newItem;
+			continue;
+		}
+
+		if (newItem->info.status.downloaded)
+			if (app->settings.apps.checkForUpdates) // if we're allowed to check for updates
+				if (newItem->checkForUpdate(ftp)) // if there is an update
+					if (app->settings.apps.autoUpdate) // if we're allowed to auto update
+					{
+						AsyncTask* tt = new AsyncTask;
+						tt->future = std::async(std::launch::async, &MyApp::download, newItem);
+						GBL::threadManager.addTask(tt);
+					}
+
 		apps.push_back(newItem);
 		std::cout << std::endl;
 
@@ -461,11 +474,40 @@ void MyAppListState::loadApps(bool &finishedIndicator)
 		updateScrollThumbSize();
 	}
 
+	/*
+	AsyncTask* tt = new AsyncTask;
+	tt->future = std::async(std::launch::async, &MyAppListState::checkForAppUpdates, this);
+	GBL::threadManager.addTask(tt);
+	*/
+
 	std::cout << "finished loading apps" << " (" << apps.size() << " apps in " << appLoadTime.getElapsedTime().asSeconds() << " seconds)" << std::endl;
 
 	app->window->requestFocus();
 
 	finishedIndicator = true;
+}
+
+void MyAppListState::prepFtp()
+{
+	// Connect to the server
+	sf::Ftp::Response response = ftp.connect("files.000webhost.com");
+	if (response.isOk())
+		std::cout << "[FTP] Connected" << std::endl;
+	else
+		std::cerr << "[FTP] failed to connect to FTP" << std::endl;
+
+	// Log in
+	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
+	if (response.isOk())
+		std::cout << "[FTP] Logged in" << std::endl;
+	else
+		std::cerr << "[FTP] failed to login to ftp" << std::endl;
+
+	response = ftp.changeDirectory("public_html");
+	if (response.isOk())
+		std::cout << "[FTP] Changed to public_html directory" << std::endl;
+	else
+		std::cerr << "[FTP] failed to change ftp directories" << std::endl;
 }
 
 void MyAppListState::updateScrollThumbSize()

@@ -42,10 +42,10 @@ void AppEditState::Init(AppEngine* app_)
 
 	if (appEngine->appToEdit == -1)
 	{
-		std::cout << "not editing an existing app" << std::endl;
+		std::cout << "editing a new app" << std::endl;
 
 		newApp = true;
-
+		
 		appEngine->appToEdit = registerNewApp();
 
 		if (appEngine->appToEdit != -1)
@@ -54,6 +54,30 @@ void AppEditState::Init(AppEngine* app_)
 		{
 			std::cerr << "failed to register new appid" << std::endl;
 			abort();
+		}
+	}
+	else
+	{
+		std::cout << "editing existing app" << std::endl;
+
+		if (!fs::exists(GBL::DIR::apps + std::to_string(appEngine->appToEdit)))
+		{
+			std::cerr << "app info for this app does not exist, we will attempt to download it" << std::endl;
+
+			Download getInfo;
+			getInfo.setInput(GBL::WEB::APPS + std::to_string(appEngine->appToEdit) + "/info.dat");
+			getInfo.setOutputDir(GBL::DIR::apps + std::to_string(appEngine->appToEdit) + "//");
+			getInfo.setOutputFilename("info.dat");
+
+			int status = getInfo.download();
+
+			if (status == Download::Status::Ok)
+				getInfo.save();
+			else
+			{
+				std::cerr << "failed to download app info, not saving file" << std::endl;
+				abort();
+			}
 		}
 	}
 
@@ -197,6 +221,8 @@ void AppEditState::HandleEvents()
 					app.datapath = dataFilePath->getText();
 			}
 
+			saveAppData();
+
 			appEngine->PushState(new AppUploadState(app, ignoreIcon, ignoreData, copyLocalFiles));
 			return;
 		}
@@ -209,40 +235,7 @@ void AppEditState::HandleEvents()
 		{
 			if (event.key.code == sf::Keyboard::Key::Return || event.key.code == SFUI::Theme::nextWidgetKey || event.key.code == SFUI::Theme::previousWidgetKey || event.key.code == sf::Keyboard::Key::Tab)
 			{
-				if (appPreview != nullptr)
-				{
-					if (appName != nullptr)
-					{
-						app.name = appName->getText();
-						itemInfoParser.set("name", app.name);
-					}
-
-					if (appDescription != nullptr)
-					{
-						app.description = appDescription->getText();
-						itemInfoParser.set("description", app.description);
-					}
-
-					if (appVersion != nullptr)
-					{
-						app.version = appVersion->getText();
-						itemInfoParser.set("version", app.version);
-					}
-
-					if (author != nullptr)
-					{
-						app.author = author->getText();
-						itemInfoParser.set("author", app.author);
-					}
-
-					if (github != nullptr)
-					{
-						app.github = github->getText();
-						itemInfoParser.set("github", app.github);
-					}
-
-					appPreview->setAppInfo(app);
-				}
+				saveAppData();
 			}
 		}
 
@@ -474,21 +467,13 @@ void AppEditState::prepareToEdit(size_t appid)
 	{
 		std::cout << "app folder exists" << std::endl;
 
-		if (fs::exists(path + "info.dat"))
-		{
-			std::cout << "app info exists" << std::endl;
-
-			app.loadByAppID(appid);
-
-			itemInfoParser.loadFromFile(path + "info.dat");
-		}
-		else
+		if (!fs::exists(path + "info.dat"))
 		{
 			std::cout << "app info does not exist" << std::endl;
 
 			Download download;
 			download.setInput(GBL::WEB::APPS + appid_s + "/info.dat");
-			download.setOutputDir(GBL::DIR::apps);
+			download.setOutputDir(GBL::DIR::apps + appid_s + "//");
 			download.setOutputFilename("info.dat");
 
 			int status = download.download();
@@ -525,6 +510,10 @@ void AppEditState::prepareToEdit(size_t appid)
 					abort();
 				}
 			}
+
+			app.loadByAppID(appid);
+
+			itemInfoParser.loadFromFile(path + "info.dat");
 		}
 
 		if (!newApp) // if it's not new, get the icon
@@ -732,6 +721,44 @@ int AppEditState::registerNewApp()
 
 	std::cout << "new appid " << newAppID << std::endl;
 	return newAppID;
+}
+
+void AppEditState::saveAppData()
+{
+	if (appPreview != nullptr)
+	{
+		if (appName != nullptr)
+		{
+			app.name = appName->getText();
+			itemInfoParser.set("name", app.name);
+		}
+
+		if (appDescription != nullptr)
+		{
+			app.description = appDescription->getText();
+			itemInfoParser.set("description", app.name);
+		}
+
+		if (appVersion != nullptr)
+		{
+			app.version = appVersion->getText();
+			itemInfoParser.set("version", app.version);
+		}
+
+		if (author != nullptr)
+		{
+			app.author = author->getText();
+			itemInfoParser.set("author", app.author);
+		}
+
+		if (github != nullptr)
+		{
+			app.github = github->getText();
+			itemInfoParser.set("github", app.github);
+		}
+
+		appPreview->setAppInfo(app);
+	}
 }
 
 void AppEditState::createNewAppFiles(int appid)
