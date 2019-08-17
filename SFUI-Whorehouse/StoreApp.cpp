@@ -66,7 +66,7 @@ StoreApp::StoreApp(int appid, float xSize, float ySize, const sf::Vector2f& posi
 		if (downloadIcon())
 			iconTexture.loadFromFile(itemCacheDir + "icon.png");
 		else
-			iconTexture = *GBL::theme.getTexture("missing_icon_icon.png");
+			info.status.missingicon = true;
 	}
 
 	if (fs::exists(itemInstallDir + "release.zip"))
@@ -89,10 +89,13 @@ StoreApp::StoreApp(int appid, float xSize, float ySize, const sf::Vector2f& posi
 	cardShape.setPosition(sf::Vector2f(position.x, position.y)); // probably not the best
 	cardShape.setFillColor(GBL::theme.palatte.APP_CARD);
 
-	icon.setSize(sf::Vector2f(cardShape.getSize().y, cardShape.getSize().y)); // a square
-	icon.setFillColor(GBL::theme.palatte.APP_IMAGE);
-	icon.setTexture(&iconTexture);
-	iconTexture.setSmooth(true);
+	if (!info.status.missingicon)
+	{
+		icon.setSize(sf::Vector2f(cardShape.getSize().y, cardShape.getSize().y)); // a square
+		icon.setFillColor(GBL::theme.palatte.APP_IMAGE);
+		icon.setTexture(&iconTexture);
+		iconTexture.setSmooth(true);
+	}
 
 	name.setFont(*GBL::theme.getFont("Arial.ttf"));
 	name.setCharacterSize(24);
@@ -291,9 +294,10 @@ void StoreApp::updateSizeAndPosition(float xSize, float ySize, float xPos, float
 	cardShape.setPosition(sf::Vector2f(xPos, yPos));
 	cardShape.setSize(sf::Vector2f(xSize, ySize));
 
-	icon.setPosition(cardShape.getPosition());
+	if (!info.status.missingicon)
+		icon.setPosition(cardShape.getPosition());
 
-	name.setPosition(static_cast<int>(icon.getPosition().x + icon.getSize().x + 10.0f), static_cast<int>(cardShape.getPosition().y + 10.0f));
+	name.setPosition(static_cast<int>(cardShape.getPosition().x + icon.getSize().x + 10.0f), static_cast<int>(cardShape.getPosition().y + 10.0f));
 
 	infoButton.setOrigin(sf::Vector2f(infoButton.getLocalBounds().width / 2, infoButton.getLocalBounds().height / 2));
 	infoButton.setPosition(sf::Vector2f(ICON_X_POS, ICON_Y_POS));
