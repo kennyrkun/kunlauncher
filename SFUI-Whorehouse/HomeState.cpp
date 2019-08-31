@@ -413,6 +413,9 @@ void HomeState::loadNews(bool &finishedIndicator, int loadFrom, int loadTo)
 	finishedIndicator = false;
 	std::cout << "loading home news" << std::endl << std::endl;
 
+	previousText.setString("");
+	nextText.setString("");
+
 	// clear the newses first
 	for (size_t i = 0; i < newses.size(); i++)
 		delete newses[i];
@@ -504,12 +507,14 @@ void HomeState::loadNews(bool &finishedIndicator, int loadFrom, int loadTo)
 	}
 	readIndex.close();
 
-	nextText.setPosition(newses.back()->getPosition().x, newses.back()->getPosition().y + newses.back()->getLocalHeight() + 10);
+	nextText.setString("next");
 
 	if (loadFrom != 0)
-		previousText.setPosition(newses.back()->getPosition().x + nextText.getGlobalBounds().width + 10, newses.back()->getPosition().y + newses.back()->getLocalHeight() + 10);
-	else
-		previousText.setPosition(sf::Vector2f(-100, -100));
+		previousText.setString("previous");
+
+	previousText.setPosition(newses.back()->getPosition().x, newses.back()->getPosition().y + newses.back()->getLocalHeight() + 10);
+	nextText.setPosition(newses.back()->getPosition().x + previousText.getGlobalBounds().width + 10, newses.back()->getPosition().y + newses.back()->getLocalHeight() + 10);
+
 
 	std::cout << "loaded " << newses.size() << " newses" << std::endl;
 
