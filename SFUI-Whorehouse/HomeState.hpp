@@ -33,7 +33,10 @@ private:
 
 	// TODO: little shape around this like android's screentips
 	sf::Text homeStatus;
-	sf::Text newsInteraction;
+
+	sf::Text nextText;
+	sf::Text previousText;
+	sf::Text enableNews;
 
 	// loadFrom: where it should start loading news (default 0)
 	// loadTo: where it should stop loading news (default 10)

@@ -40,8 +40,25 @@ void HomeState::Init(AppEngine* app_)
 	homeStatus.setOrigin(sf::Vector2f( static_cast<int>(homeStatus.getLocalBounds().width / 2.0f), static_cast<int>(homeStatus.getLocalBounds().height / 2.0f) ));
 	homeStatus.setPosition(mainView->getCenter());
 
-	newsInteraction.setFont(*GBL::theme.getFont("Arial.ttf"));
-	newsInteraction.setCharacterSize(16);
+	// TODO: define this style in Theme
+	sf::Color linkColour = sf::Color(0, 170, 232);
+
+	previousText.setFont(SFUI::Theme::getFont());
+	previousText.setCharacterSize(16);
+	previousText.setStyle(sf::Text::Style::Underlined);
+	previousText.setFillColor(linkColour);
+	previousText.setString("previous");
+
+	nextText.setFont(SFUI::Theme::getFont());
+	nextText.setCharacterSize(16);
+	nextText.setStyle(sf::Text::Style::Underlined);
+	nextText.setFillColor(linkColour);
+	nextText.setString("next");
+
+	enableNews.setFont(SFUI::Theme::getFont());
+	enableNews.setCharacterSize(16);
+	enableNews.setStyle(sf::Text::Style::Underlined);
+	enableNews.setFillColor(linkColour);
 
 	app->SetMultiThreadedIndicatorPosition(sf::Vector2f(20, app->window->getSize().y - 20));
 
@@ -58,12 +75,9 @@ void HomeState::Init(AppEngine* app_)
 		homeStatus.setCharacterSize(26);
 		setStatusText("News disabled.");
 
-		newsInteraction.setString("enable once");
-		newsInteraction.setStyle(sf::Text::Style::Underlined);
-		// TODO: define this style in Theme
-		newsInteraction.setFillColor(sf::Color(0, 170, 232));
-		newsInteraction.setOrigin(newsInteraction.getLocalBounds().width / 2, newsInteraction.getLocalBounds().height / 2);
-		newsInteraction.setPosition(sf::Vector2f(mainView->getCenter().x, static_cast<int>(mainView->getCenter().y + 30)));
+		enableNews.setString("enable once");
+		enableNews.setOrigin(enableNews.getLocalBounds().width / 2, enableNews.getLocalBounds().height / 2);
+		enableNews.setPosition(sf::Vector2f(mainView->getCenter().x, static_cast<int>(mainView->getCenter().y + 30)));
 	}
 
 	std::cout << "HomeState ready" << std::endl;
@@ -183,8 +197,9 @@ void HomeState::HandleEvents()
 
 				if (!app->multithreaded_process_running)
 				{
-					if (mouseIsOver(newsInteraction, viewScroller))
+					if (mouseIsOver(enableNews, viewScroller))
 					{
+						// the news is not enabled, and the newsInteraction probably says "enable once"
 						if (!app->settings.news.enabled)
 						{
 							app->settings.news.enabled= true;
@@ -193,24 +208,34 @@ void HomeState::HandleEvents()
 
 							setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, app->navbar->bar.getPosition().y + 60));
 
-							newsInteraction.setString("");
-							newsInteraction.setOrigin(sf::Vector2f(0, 0));
+							enableNews.setPosition(sf::Vector2f(-999, -999));
 
 							app->multithreaded_process_running = true;
 							app->multithreaded_process_finished = false;
 							app->multithread = new std::thread(&HomeState::loadNews, this, std::ref(app->multithreaded_process_finished), 0, 2);
 						}
-						else if (newsInteraction.getString() == "Load more...")
-						{
-							setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, app->navbar->bar.getPosition().y + 60));
+					}
+					else if (mouseIsOver(nextText, viewScroller))
+					{
+						setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, app->navbar->bar.getPosition().y + 60));
 
-							app->multithreaded_process_running = true;
-							app->multithreaded_process_finished = false;
-							app->multithread = new std::thread(&HomeState::loadNews, this, std::ref(app->multithreaded_process_finished), newsLoadedDist.first += 2, newsLoadedDist.second += 2);
+						app->multithreaded_process_running = true;
+						app->multithreaded_process_finished = false;
+						app->multithread = new std::thread(&HomeState::loadNews, this, std::ref(app->multithreaded_process_finished), newsLoadedDist.first += 2, newsLoadedDist.second += 2);
 
-							viewScroller->setCenter(app->window->getView().getCenter());
-							scrollbar.scrollThumb.setPosition(sf::Vector2f(scrollbar.scrollThumb.getPosition().x, scrollbar.scrollbarTopPosition - (scrollbar.scrollThumb.getPosition().y / 2)));
-						}
+						viewScroller->setCenter(app->window->getView().getCenter());
+						scrollbar.scrollThumb.setPosition(sf::Vector2f(scrollbar.scrollThumb.getPosition().x, scrollbar.scrollbarTopPosition - (scrollbar.scrollThumb.getPosition().y / 2)));
+					}
+					else if (mouseIsOver(previousText, viewScroller))
+					{
+						setStatusText("Loading News...", sf::Vector2f(app->window->getSize().x / 2, app->navbar->bar.getPosition().y + 60));
+
+						app->multithreaded_process_running = true;
+						app->multithreaded_process_finished = false;
+						app->multithread = new std::thread(&HomeState::loadNews, this, std::ref(app->multithreaded_process_finished), newsLoadedDist.first -= 2, newsLoadedDist.second -= 2);
+
+						viewScroller->setCenter(app->window->getView().getCenter());
+						scrollbar.scrollThumb.setPosition(sf::Vector2f(scrollbar.scrollThumb.getPosition().x, scrollbar.scrollbarTopPosition - (scrollbar.scrollThumb.getPosition().y / 2)));
 					}
 				}
 			}
@@ -361,7 +386,10 @@ void HomeState::Draw()
 	for (size_t i = 0; i < newses.size(); i++)
 		app->window->draw(*newses[i]);
 
-	app->window->draw(newsInteraction);
+	app->window->draw(previousText);
+	// FIXME: crash here
+	app->window->draw(nextText);
+	app->window->draw(enableNews);
 
 	// non-moving items
 	app->window->setView(*mainView);
@@ -390,6 +418,7 @@ void HomeState::loadNews(bool &finishedIndicator, int loadFrom, int loadTo)
 		delete newses[i];
 	newses.clear();
 
+	homeStatus.setCharacterSize(16);
 	setStatusText("Downloading news...");
 
 	Download getNews;
@@ -475,16 +504,12 @@ void HomeState::loadNews(bool &finishedIndicator, int loadFrom, int loadTo)
 	}
 	readIndex.close();
 
-	if (!newses.empty())
-	{
-		// TODO: load more news files
-		// TODO: don't show load more if there isn't more
+	nextText.setPosition(newses.back()->getPosition().x, newses.back()->getPosition().y + newses.back()->getLocalHeight() + 10);
 
-		newsInteraction.setString("Load more...");
-		newsInteraction.setStyle(sf::Text::Style::Underlined);
-		newsInteraction.setFillColor(sf::Color(0, 170, 232));
-		newsInteraction.setPosition(newses.back()->getPosition().x, newses.back()->getPosition().y + newses.back()->getLocalHeight() + 10);
-	}
+	if (loadFrom != 0)
+		previousText.setPosition(newses.back()->getPosition().x + nextText.getGlobalBounds().width + 10, newses.back()->getPosition().y + newses.back()->getLocalHeight() + 10);
+	else
+		previousText.setPosition(sf::Vector2f(-100, -100));
 
 	std::cout << "loaded " << newses.size() << " newses" << std::endl;
 
@@ -576,6 +601,7 @@ bool HomeState::mouseIsOver(const sf::Text &object)
 void HomeState::setStatusText(const std::string& string)
 {
 	homeStatus.setString(string);
+	// FIXME: there is a crash here
 	homeStatus.setOrigin(sf::Vector2f(static_cast<int>(homeStatus.getLocalBounds().width / 2.0f), static_cast<int>(homeStatus.getLocalBounds().height / 2.0f)));
 }
 

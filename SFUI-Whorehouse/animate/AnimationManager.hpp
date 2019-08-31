@@ -11,7 +11,7 @@
 
 class AppEngine;
 
-enum EaseType
+enum class EaseType
 {
 	BackEaseIn,
 	BackEaseOut,

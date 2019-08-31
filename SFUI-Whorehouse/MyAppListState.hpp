@@ -1,4 +1,4 @@
-#ifndef APPLIST_STATE_HPP
+ #ifndef APPLIST_STATE_HPP
 #define APPLIST_STATE_HPP
 
 #include "AppState.hpp"
