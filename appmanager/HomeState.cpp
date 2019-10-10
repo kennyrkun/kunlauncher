@@ -3,6 +3,7 @@
 #include "HomeState.hpp"
 #include "AppEditState.hpp"
 #include "AppListState.hpp"
+#include "NewsEditState.hpp"
 
 #include "Globals.hpp"
 #include "Download.hpp"
@@ -18,8 +19,9 @@ namespace fs = std::experimental::filesystem;
 enum MenuCallbacks
 {
 	QUIT,
-	UPLOAD,
-	EDIT
+	UPLOAD_APP,
+	EDIT_APP,
+	EDIT_NEWS
 };
 
 void HomeState::Init(AppEngine* app_)
@@ -31,15 +33,18 @@ void HomeState::Init(AppEngine* app_)
 
 	menu = new SFUI::Menu(*app->window);
 
-	SFUI::HorizontalBoxLayout* hbox1 = menu->addHorizontalBoxLayout();
-	hbox1->addButton("Create New App", MenuCallbacks::UPLOAD);
-	hbox1->addButton("Edit Existing App", MenuCallbacks::EDIT);
+	SFUI::HorizontalBoxLayout* container = menu->addHorizontalBoxLayout();
 
-	SFUI::HorizontalBoxLayout* hbox2 = menu->addHorizontalBoxLayout();
-	hbox2->addButton("Quit", MenuCallbacks::QUIT);
-	hbox2->setPosition(sf::Vector2f(hbox2->getSize().x / 2 + 4, hbox2->getPosition().y));
+	SFUI::VerticalBoxLayout* appButtons = container->addVerticalBoxLayout();
+	appButtons->addButton("Create New App", MenuCallbacks::UPLOAD_APP);
+	appButtons->addButton("Edit Existing App", MenuCallbacks::EDIT_APP);
 
-	menu->setPosition(sf::Vector2f((app->window->getSize().x / 2) - menu->getSize().x / 2, (app->window->getSize().y / 2) - menu->getSize().y / 2));
+	SFUI::VerticalBoxLayout* newsButtons = container->addVerticalBoxLayout();
+	newsButtons->addButton("Edit News...", MenuCallbacks::EDIT_NEWS);
+
+	menu->addButton("Quit", MenuCallbacks::QUIT);
+
+	menu->setPosition(sf::Vector2f(10, 10));
 
 	std::cout << "HomeState ready." << std::endl;
 }
@@ -103,10 +108,13 @@ void HomeState::HandleEvents()
 		int id = menu->onEvent(event);
 		switch (id)
 		{
-		case MenuCallbacks::EDIT:
+		case MenuCallbacks::EDIT_NEWS:
+			app->PushState(new NewsEditState);
+			return;
+		case MenuCallbacks::EDIT_APP:
 			app->PushState(new AppListState);
 			return;
-		case MenuCallbacks::UPLOAD:
+		case MenuCallbacks::UPLOAD_APP:
 			app->appToEdit = -1;
 			app->PushState(new AppEditState);
 			return;

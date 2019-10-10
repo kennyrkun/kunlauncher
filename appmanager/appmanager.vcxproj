@@ -199,6 +199,7 @@
     <ClCompile Include="InitialiseState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageBox.cpp" />
+    <ClCompile Include="NewsEditState.cpp" />
     <ClCompile Include="ToolTip.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +217,7 @@
     <ClInclude Include="HomeState.hpp" />
     <ClInclude Include="InitialiseState.hpp" />
     <ClInclude Include="MessageBox.hpp" />
+    <ClInclude Include="NewsEditState.hpp" />
     <ClInclude Include="ToolTip.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -29,6 +29,9 @@
     <Filter Include="Source Files\States\AppUploadState">
       <UniqueIdentifier>{40705831-cfc2-4c56-a938-13a5702c8004}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\States\NewsEditState">
+      <UniqueIdentifier>{c1c7469d-4fab-403a-96a3-3a68e17a2479}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -69,6 +72,9 @@
     </ClCompile>
     <ClCompile Include="ToolTip.cpp">
       <Filter>Source Files\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="NewsEditState.cpp">
+      <Filter>Source Files\States\NewsEditState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +122,9 @@
     </ClInclude>
     <ClInclude Include="AppInfo.hpp">
       <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="NewsEditState.hpp">
+      <Filter>Source Files\States\NewsEditState</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

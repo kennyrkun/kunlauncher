@@ -1,10 +1,9 @@
 #include "AppEngine.hpp"
-#include "AppListState.hpp"
-#include "AppEditState.hpp"
-#include "AppUploadState.hpp"
+#include "NewsEditState.hpp"
 
 #include "Globals.hpp"
 #include "Download.hpp"
+#include "../SFUI-Whorehouse/SettingsParser.hpp"
 
 #include <SFUI/SFUI.hpp>
 
@@ -17,12 +16,12 @@ namespace fs = std::experimental::filesystem;
 enum MenuCallbacks
 {
 	BACK = -9999,
-	RedownloadAppsList
+	RedownloadNewsList
 };
 
-void AppListState::Init(AppEngine* app_)
+void NewsEditState::Init(AppEngine* app_)
 {
-	std::cout << "AppListState Init" << std::endl;
+	std::cout << "NewsEditState Init" << std::endl;
 	app = app_;
 
 	populateApplist();
@@ -31,29 +30,29 @@ void AppListState::Init(AppEngine* app_)
 	menu = new SFUI::Menu(*app->window);
 	createMenu(*menu);
 
-	std::cout << "AppListState ready." << std::endl;
+	std::cout << "NewsEditState ready." << std::endl;
 }
 
-void AppListState::Cleanup()
+void NewsEditState::Cleanup()
 {
-	std::cout << "Cleaning up AppListState" << std::endl;
+	std::cout << "Cleaning up NewsEditState" << std::endl;
 
 	delete menu;
 
-	std::cout << "Cleaned up AppListState." << std::endl;
+	std::cout << "Cleaned up NewsEditState." << std::endl;
 }
 
-void AppListState::Pause()
+void NewsEditState::Pause()
 {
-	std::cout << "AppListState paused" << std::endl;
+	std::cout << "NewsEditState paused" << std::endl;
 }
 
-void AppListState::Resume()
+void NewsEditState::Resume()
 {
-	std::cout << "AppListState resumed" << std::endl;
+	std::cout << "NewsEditState resumed" << std::endl;
 }
 
-void AppListState::HandleEvents()
+void NewsEditState::HandleEvents()
 {
 	sf::Event event;
 
@@ -93,7 +92,7 @@ void AppListState::HandleEvents()
 		int id = menu->onEvent(event);
 		switch (id)
 		{
-		case MenuCallbacks::RedownloadAppsList:
+		case MenuCallbacks::RedownloadNewsList:
 		{
 			app->drawInformationPanel("Redownloading index...");
 
@@ -112,21 +111,21 @@ void AppListState::HandleEvents()
 
 		if (id > -1)
 		{
-			std::cout << "editing app " << id << std::endl;
+			std::cout << "editing news " << newsList[id] << std::endl;
 
 			app->appToEdit = id;
 
-			app->PushState(new AppEditState);
+			//app->PushState(new AppEditState);
 			return;
 		}
 	}
 }
 
-void AppListState::Update()
+void NewsEditState::Update()
 {
 }
 
-void AppListState::Draw()
+void NewsEditState::Draw()
 {
 	app->window->clear(SFUI::Theme::windowBgColor);
 
@@ -135,70 +134,56 @@ void AppListState::Draw()
 	app->window->display();
 }
 
-void AppListState::createMenu(SFUI::Menu& menu)
+void NewsEditState::createMenu(SFUI::Menu& menu)
 {
 	menu.setPosition(sf::Vector2f(10, 10));
 
-	menu.addButton("Redownload App List", MenuCallbacks::RedownloadAppsList);
+	menu.addButton("Redownload App List", MenuCallbacks::RedownloadNewsList);
 
-	for (const auto& [appid, appname] : applist)
-	{
-		SFUI::HorizontalBoxLayout* hbox = menu.addHorizontalBoxLayout();
-
-		hbox->addButton("Edit " + std::to_string(appid), appid);
-		hbox->addLabel(appname == "n0_aPp_nAm3" ? "App has no name" : appname);
-	}
+	for (size_t i = 0; i < newsList.size(); i++)
+		menu.addButton(newsList[i], i);
 
 	menu.addButton("Back", MenuCallbacks::BACK);
 }
 
 //  FIXME: app names are only properly loaded the first time this is called
-void AppListState::populateApplist()
+void NewsEditState::populateApplist()
 {
 	std::cout << "populating applist" << std::endl;
 
-	applist.clear();
+	newsList.clear();
 
-	std::ifstream readIndex(GBL::DIR::apps + "index.dat", std::ios::in);
+	Download getNews;
+	getNews.setInput("./" + GBL::WEB::NEWS + "/news.txt");
+	getNews.setOutputDir(GBL::DIR::installDir);
+	getNews.setOutputFilename("/news.txt");
 
-	SettingsParser indexParser;
-	indexParser.loadFromFile(GBL::DIR::apps + "index.dat");
+	if (getNews.download() == Download::Status::Ok)
+	{
+		getNews.save();
+	}
+	else
+	{
+		std::cerr << "failed to download news" << std::endl;
+		abort();
+	}
+
+	std::ifstream readIndex(GBL::DIR::installDir + "news.txt", std::ios::in);
 
 	std::string line; // each line of index.dat
-	int loopi(0);
+	bool nextLineIsNewLine = true; // starts as true because the first line is a new one
 	while (std::getline(readIndex, line))
 	{
 		std::cout << std::endl;
 
-		// don't count this one as an app and stop crashing my damn program
-		if (line.find("nextAppID = ") != std::string::npos)
+		if (nextLineIsNewLine)
 		{
-			std::cout << "not an app, skipping" << std::endl;
-			continue;
-		}
-
-		int appid = std::stoi(line.substr(0, line.find_first_of('=') - 1));
-
-		std::cout << "iteration: " << loopi << ", appid: " << appid << std::endl;
-
-		std::string item_name; // the name of the app
-		if (indexParser.get(line.substr(0, 1), item_name))
-		{
-			if (!fs::exists(GBL::DIR::apps + std::to_string(appid)) ||
-				!fs::exists(GBL::DIR::apps + std::to_string(appid) + "/info.dat"))
-			{
-				downloadApp(appid);
-				std::cout << "downloaded info for app " << appid << std::endl;
-			}
-
-			applist.emplace(appid, getAppName(appid));
+			newsList.push_back(line);
+			nextLineIsNewLine = false;
 		}
 		else
-		{
-			std::cerr << "some kind of error happened. line 198 in file AppListState.cpp" << std::endl;
-		}
-
-		loopi += 1;
+			if (line == "-----------------------------")
+				nextLineIsNewLine = true;
 	}
 
 	readIndex.close();
@@ -206,7 +191,7 @@ void AppListState::populateApplist()
 	std::cout << std::endl;
 }
 
-void AppListState::redownloadAppsList()
+void NewsEditState::redownloadAppsList()
 {
 	std::cout << "downloading all apps" << std::endl;
 
@@ -226,7 +211,7 @@ void AppListState::redownloadAppsList()
 	app->window->requestFocus();
 }
 
-std::string AppListState::getAppName(int appid) // a lot easier than I thought it would be.
+std::string NewsEditState::getAppName(int appid) // a lot easier than I thought it would be.
 {
 	std::cout << "parsing info for " << appid << std::endl;
 
@@ -240,10 +225,7 @@ std::string AppListState::getAppName(int appid) // a lot easier than I thought i
 			std::string appname;
 			
 			if (!itemInfoParser.get("name", appname))
-			{
-				std::cerr << "appid " << appid << " does not specify a name" << std::endl;
 				return "n0_aPp_nAm3";
-			}
 
 			return appname;
 		}
@@ -260,7 +242,7 @@ std::string AppListState::getAppName(int appid) // a lot easier than I thought i
 	return "n0_aPp_nAm3";
 }
 
-int AppListState::downloadApp(int appid)
+int NewsEditState::downloadApp(int appid)
 {
 	downloadInfo(appid);
 	// do we actually need tese?
@@ -269,7 +251,7 @@ int AppListState::downloadApp(int appid)
 	return 0;
 }
 
-int AppListState::downloadIcon(int appid)
+int NewsEditState::downloadIcon(int appid)
 {
 	std::cout << "\n" << "downloading icon" << std::endl;
 
@@ -289,7 +271,7 @@ int AppListState::downloadIcon(int appid)
 	}
 }
 
-int AppListState::downloadInfo(int appid)
+int NewsEditState::downloadInfo(int appid)
 {
 	std::cout << "downloading info" << std::endl;
 
@@ -309,7 +291,7 @@ int AppListState::downloadInfo(int appid)
 	}
 }
 
-int AppListState::downloadFiles(int appid)
+int NewsEditState::downloadFiles(int appid)
 {
 	std::cout << "\n" << "downloading files" << std::endl;
 
@@ -329,7 +311,7 @@ int AppListState::downloadFiles(int appid)
 	}
 }
 
-bool AppListState::mouseIsOver(sf::Shape &object)
+bool NewsEditState::mouseIsOver(sf::Shape &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window))))
 		return true;
@@ -337,7 +319,7 @@ bool AppListState::mouseIsOver(sf::Shape &object)
 		return false;
 }
 
-bool AppListState::mouseIsOver(sf::Shape &object, sf::View* view)
+bool NewsEditState::mouseIsOver(sf::Shape &object, sf::View* view)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *view)))
 		return true;
@@ -345,7 +327,7 @@ bool AppListState::mouseIsOver(sf::Shape &object, sf::View* view)
 		return false;
 }
 
-bool AppListState::mouseIsOver(sf::Text &object)
+bool NewsEditState::mouseIsOver(sf::Text &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window))))
 		return true;
