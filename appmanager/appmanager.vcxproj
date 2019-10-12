@@ -201,6 +201,7 @@
     <ClCompile Include="MessageBox.cpp" />
     <ClCompile Include="NewsEditState.cpp" />
     <ClCompile Include="ToolTip.cpp" />
+    <ClCompile Include="VerticalScrollbar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SFUI-Whorehouse\ProgressBar.hpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="MessageBox.hpp" />
     <ClInclude Include="NewsEditState.hpp" />
     <ClInclude Include="ToolTip.hpp" />
+    <ClInclude Include="VerticalScrollbar.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -197,6 +197,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\appmanager\VerticalScrollbar.cpp" />
     <ClCompile Include="AllAppsListState.cpp" />
     <ClCompile Include="animate\AnimationManager.cpp" />
     <ClCompile Include="animate\Interpolate.cpp" />
@@ -209,7 +210,6 @@
     <ClCompile Include="News.cpp" />
     <ClCompile Include="Version.cpp" />
     <ClCompile Include="Theme.cpp" />
-    <ClCompile Include="VerticalScrollbar.cpp" />
     <ClCompile Include="StoreApp.cpp" />
     <ClCompile Include="SettingsParser.cpp" />
     <ClCompile Include="Download.cpp" />
@@ -226,6 +226,7 @@
     <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\appmanager\VerticalScrollbar.hpp" />
     <ClInclude Include="AllAppsListState.hpp" />
     <ClInclude Include="animate\AnimationManager.hpp" />
     <ClInclude Include="animate\Interpolate.hpp" />
@@ -237,7 +238,6 @@
     <ClInclude Include="News.hpp" />
     <ClInclude Include="Theme.hpp" />
     <ClInclude Include="Version.hpp" />
-    <ClInclude Include="VerticalScrollbar.hpp" />
     <ClInclude Include="StoreApp.hpp" />
     <ClInclude Include="SettingsParser.hpp" />
     <ClInclude Include="Globals.hpp" />

@@ -76,6 +76,9 @@
     <ClCompile Include="NewsEditState.cpp">
       <Filter>Source Files\States\NewsEditState</Filter>
     </ClCompile>
+    <ClCompile Include="VerticalScrollbar.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HomeState.hpp">
@@ -125,6 +128,9 @@
     </ClInclude>
     <ClInclude Include="NewsEditState.hpp">
       <Filter>Source Files\States\NewsEditState</Filter>
+    </ClInclude>
+    <ClInclude Include="VerticalScrollbar.hpp">
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

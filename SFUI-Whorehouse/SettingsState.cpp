@@ -239,7 +239,6 @@ void SettingsState::HandleEvents()
 			// after selecting an element and then deselecting it,
 			// pressing either of these buttons will select the top or bottom element
 			// perhaps hasFocusedWidgetInside() is bugged
-
 			if (!menu->hasFocusedWidgetInside())
 				if (event.type == sf::Event::EventType::KeyPressed)
 					if (event.key.code == sf::Keyboard::Key::Up || event.key.code == sf::Keyboard::Key::Down)

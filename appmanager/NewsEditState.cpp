@@ -24,6 +24,10 @@ void NewsEditState::Init(AppEngine* app_)
 	std::cout << "NewsEditState Init" << std::endl;
 	app = app_;
 
+	scrollbar.create(app->window);
+	scrollbar.setTrackHeight(app->window->getSize().y);
+	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, 0));
+
 	populateApplist();
 
 	std::cout << "creating menu" << std::endl;
@@ -87,6 +91,12 @@ void NewsEditState::HandleEvents()
 
 				app->window->setSize(newSize);
 			}
+
+			scrollbar.setTrackHeight(app->window->getSize().y);
+			scrollbar.setPosition(sf::Vector2f(app->window->getSize().x, 0));
+			updateScrollThumbSize();
+
+			menu->setPosition(sf::Vector2f(10, 10));
 		}
 
 		int id = menu->onEvent(event);
@@ -118,6 +128,121 @@ void NewsEditState::HandleEvents()
 			//app->PushState(new AppEditState);
 			return;
 		}
+
+		// TODO: scrollbar control class
+// TODO: scroll up if widget is out of bounds
+		if (scrollbar.isEnabled)
+			//		if (menu->focus == NULL && scrollbar.isEnabled)
+		{
+			if (event.type == sf::Event::EventType::MouseButtonPressed)
+			{
+				if (event.mouseButton.button == sf::Mouse::Button::Left)
+				{
+					if (mouseIsOver(scrollbar.scrollThumb))
+					{
+						scrollbar.dragOffset = scrollbar.scrollThumb.getPosition() - sf::Vector2f(sf::Mouse::getPosition(*app->window));
+						scrollbar.draggingThumb = true;
+//						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB_HOLD);
+
+						originalMenuPosition = menu->getAbsolutePosition();
+						originalThumbPosition = scrollbar.scrollThumb.getPosition();
+					}
+				}
+			}
+			else if (event.type == sf::Event::EventType::MouseButtonReleased)
+			{
+				if (scrollbar.draggingThumb)
+				{
+					scrollbar.draggingThumb = false;
+
+					/*
+					if (mouseIsOver(scrollbar.scrollThumb))
+						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB_HOVER);
+					else
+						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB);
+					*/
+				}
+			}
+			else if (event.type == sf::Event::EventType::MouseWheelMoved)
+			{
+				// TODO: PageUp / PageDown
+				// if PageUp
+				//	viewScroller.move(0, scrollTrack.viewHeight);
+
+				if (event.mouseWheel.delta < 0) // down, or move apps up
+				{
+					scrollbar.jumpDown();
+
+					if (scrollerBottomPosition > scrollerMaxPosition)
+						menuMove(sf::Vector2f(0, -scrollbar.scrollJump));
+				}
+				else if (event.mouseWheel.delta > 0) // scroll up, or move apps down
+				{
+					scrollbar.jumpUp();
+
+					if (scrollerTopPosition < scrollerMinPosition)
+						menuMove(sf::Vector2f(0, scrollbar.scrollJump));
+				}
+
+				testScrollBounds();
+			}
+			else if (event.type == sf::Event::EventType::KeyPressed && !menu->hasFocusedWidgetInside())
+			{
+				if (event.key.code == sf::Keyboard::Key::Down)
+				{
+					scrollbar.stepDown();
+
+					if (scrollerBottomPosition > scrollerMaxPosition)
+						menuMove(sf::Vector2f(0, -scrollbar.scrollStep)); // static cast to avoid pixel-imperfect placement of text
+				}
+				else if (event.key.code == sf::Keyboard::Key::Up)
+				{
+					scrollbar.stepUp();
+
+					if (scrollerTopPosition < scrollerMinPosition)
+						menuMove(sf::Vector2f(0, scrollbar.scrollStep)); // static cast to avoid pixel-imperfect placement of text
+				}
+				else if (event.key.code == sf::Keyboard::Key::Home)
+				{
+					scrollbar.moveToTop();
+					menu->setPosition(sf::Vector2f(10, 10));
+				}
+				else if (event.key.code == sf::Keyboard::Key::End)
+				{
+					scrollbar.moveToBottom();
+					menu->setPosition(sf::Vector2f(10, -menu->getSize().y + app->window->getSize().y - 10));
+				}
+
+				testScrollBounds();
+			}
+			else if (event.type == sf::Event::EventType::MouseMoved)
+			{
+				if (scrollbar.draggingThumb)
+				{
+					scrollbar.scrollThumb.setPosition(sf::Vector2f(scrollbar.scrollThumb.getPosition().x, sf::Mouse::getPosition(*app->window).y + scrollbar.dragOffset.y));
+					if (!scrollbar.boundsCheck()) // scroll from the last legitimate location
+						scrollbar.dragOffset = scrollbar.scrollThumb.getPosition() - sf::Vector2f(sf::Mouse::getPosition(*app->window));
+
+					menu->setPosition(sf::Vector2f(menu->getAbsolutePosition().x, originalMenuPosition.y - ((scrollbar.scrollThumb.getPosition().y - originalThumbPosition.y) * scrollbar.scrollStep)));
+
+//					FIXME: error zone for scrollbar (settingsstate)
+//					if (sf::Mouse::getPosition(*app->window).x > scrollbar.scrollTrack.getPosition().x + 150 || 
+//						sf::Mouse::getPosition(*app->window).x < scrollbar.scrollTrack.getPosition().x - 150) // error zone
+//						scrollbar.scrollThumb.setPosition(scrollbar.originalPosition);
+				}
+				else
+				{
+					// TODO: find a way to not change scrollbar color every update
+
+					/*
+					if (mouseIsOver(scrollbar.scrollThumb))
+						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB_HOVER);
+					else
+						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB);
+					*/
+				}
+			}
+		}
 	}
 }
 
@@ -130,8 +255,43 @@ void NewsEditState::Draw()
 	app->window->clear(SFUI::Theme::windowBgColor);
 
 	app->window->draw(*menu);
+	app->window->draw(scrollbar);
 
 	app->window->display();
+}
+
+void NewsEditState::updateScrollThumbSize()
+{
+	const float contentHeight = menu->getSize().y + 20; // padding * 2 = 20
+
+	scrollbar.update(contentHeight, menu->getSize().y);
+
+	// TODO: update scroll limits separately
+	updateScrollLimits();
+}
+
+void NewsEditState::updateScrollLimits()
+{
+	scrollerTopPosition = menu->getAbsolutePosition().y;
+	scrollerBottomPosition = menu->getAbsolutePosition().y + menu->getSize().y + 10;
+	scrollerMinPosition = 10; // navbar & padding
+	scrollerMaxPosition = app->window->getSize().y;
+}
+
+void NewsEditState::testScrollBounds()
+{
+	updateScrollLimits();
+
+	if (scrollerBottomPosition < scrollerMaxPosition)
+	{
+		menu->setPosition(sf::Vector2f(10, -menu->getSize().y + app->window->getSize().y - 10));
+		updateScrollLimits();
+	}
+	else if (scrollerTopPosition > scrollerMinPosition)
+	{
+		menu->setPosition(sf::Vector2f(10, 10));
+		updateScrollLimits();
+	}
 }
 
 void NewsEditState::createMenu(SFUI::Menu& menu)
@@ -144,6 +304,8 @@ void NewsEditState::createMenu(SFUI::Menu& menu)
 		menu.addButton(newsList[i], i);
 
 	menu.addButton("Back", MenuCallbacks::BACK);
+
+	updateScrollThumbSize();
 }
 
 //  FIXME: app names are only properly loaded the first time this is called
