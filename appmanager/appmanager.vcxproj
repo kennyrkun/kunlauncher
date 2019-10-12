@@ -200,6 +200,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageBox.cpp" />
     <ClCompile Include="NewsEditState.cpp" />
+    <ClCompile Include="NewsListState.cpp" />
     <ClCompile Include="ToolTip.cpp" />
     <ClCompile Include="VerticalScrollbar.cpp" />
   </ItemGroup>
@@ -219,6 +220,7 @@
     <ClInclude Include="InitialiseState.hpp" />
     <ClInclude Include="MessageBox.hpp" />
     <ClInclude Include="NewsEditState.hpp" />
+    <ClInclude Include="NewsListState.hpp" />
     <ClInclude Include="ToolTip.hpp" />
     <ClInclude Include="VerticalScrollbar.hpp" />
   </ItemGroup>

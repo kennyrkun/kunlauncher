@@ -1,4 +1,5 @@
 #include "AppEngine.hpp"
+#include "NewsListState.hpp"
 #include "NewsEditState.hpp"
 
 #include "Globals.hpp"
@@ -19,48 +20,44 @@ enum MenuCallbacks
 	RedownloadNewsList
 };
 
-NewsEditState::NewsEditState(int newsToEdit) : newsToEdit(newsToEdit)
+void NewsListState::Init(AppEngine* app_)
 {
-}
-
-void NewsEditState::Init(AppEngine* app_)
-{
-	std::cout << "NewsEditState Init" << std::endl;
+	std::cout << "NewsListState Init" << std::endl;
 	app = app_;
 
 	scrollbar.create(app->window);
 	scrollbar.setTrackHeight(app->window->getSize().y);
 	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, 0));
 
-	downloadNewsFile(id);
+	populateApplist();
 
 	std::cout << "creating menu" << std::endl;
 	menu = new SFUI::Menu(*app->window);
 	createMenu(*menu);
 
-	std::cout << "NewsEditState ready." << std::endl;
+	std::cout << "NewsListState ready." << std::endl;
 }
 
-void NewsEditState::Cleanup()
+void NewsListState::Cleanup()
 {
-	std::cout << "Cleaning up NewsEditState" << std::endl;
+	std::cout << "Cleaning up NewsListState" << std::endl;
 
 	delete menu;
 
-	std::cout << "Cleaned up NewsEditState." << std::endl;
+	std::cout << "Cleaned up NewsListState." << std::endl;
 }
 
-void NewsEditState::Pause()
+void NewsListState::Pause()
 {
-	std::cout << "NewsEditState paused" << std::endl;
+	std::cout << "NewsListState paused" << std::endl;
 }
 
-void NewsEditState::Resume()
+void NewsListState::Resume()
 {
-	std::cout << "NewsEditState resumed" << std::endl;
+	std::cout << "NewsListState resumed" << std::endl;
 }
 
-void NewsEditState::HandleEvents()
+void NewsListState::HandleEvents()
 {
 	sf::Event event;
 
@@ -127,9 +124,7 @@ void NewsEditState::HandleEvents()
 		{
 			std::cout << "editing news " << newsList[id] << std::endl;
 
-			app->appToEdit = id;
-
-			//app->PushState(new AppEditState);
+			app->PushState(new NewsEditState(id));
 			return;
 		}
 
@@ -250,11 +245,11 @@ void NewsEditState::HandleEvents()
 	}
 }
 
-void NewsEditState::Update()
+void NewsListState::Update()
 {
 }
 
-void NewsEditState::Draw()
+void NewsListState::Draw()
 {
 	app->window->clear(SFUI::Theme::windowBgColor);
 
@@ -264,7 +259,7 @@ void NewsEditState::Draw()
 	app->window->display();
 }
 
-void NewsEditState::updateScrollThumbSize()
+void NewsListState::updateScrollThumbSize()
 {
 	const float contentHeight = menu->getSize().y + 20; // padding * 2 = 20
 
@@ -274,7 +269,7 @@ void NewsEditState::updateScrollThumbSize()
 	updateScrollLimits();
 }
 
-void NewsEditState::updateScrollLimits()
+void NewsListState::updateScrollLimits()
 {
 	scrollerTopPosition = menu->getAbsolutePosition().y;
 	scrollerBottomPosition = menu->getAbsolutePosition().y + menu->getSize().y + 10;
@@ -282,7 +277,7 @@ void NewsEditState::updateScrollLimits()
 	scrollerMaxPosition = app->window->getSize().y;
 }
 
-void NewsEditState::testScrollBounds()
+void NewsListState::testScrollBounds()
 {
 	updateScrollLimits();
 
@@ -298,7 +293,7 @@ void NewsEditState::testScrollBounds()
 	}
 }
 
-void NewsEditState::createMenu(SFUI::Menu& menu)
+void NewsListState::createMenu(SFUI::Menu& menu)
 {
 	menu.setPosition(sf::Vector2f(10, 10));
 
@@ -313,7 +308,7 @@ void NewsEditState::createMenu(SFUI::Menu& menu)
 }
 
 //  FIXME: app names are only properly loaded the first time this is called
-void NewsEditState::populateApplist()
+void NewsListState::populateApplist()
 {
 	std::cout << "populating applist" << std::endl;
 
@@ -357,7 +352,7 @@ void NewsEditState::populateApplist()
 	std::cout << std::endl;
 }
 
-void NewsEditState::redownloadAppsList()
+void NewsListState::redownloadAppsList()
 {
 	std::cout << "downloading all apps" << std::endl;
 
@@ -377,123 +372,7 @@ void NewsEditState::redownloadAppsList()
 	app->window->requestFocus();
 }
 
-std::string NewsEditState::getAppName(int appid) // a lot easier than I thought it would be.
-{
-	std::cout << "parsing info for " << appid << std::endl;
-
-	std::string path = GBL::DIR::apps + std::to_string(appid) + "/";
-
-	if (fs::exists(path))
-	{
-		SettingsParser itemInfoParser;
-		if (itemInfoParser.loadFromFile(path + "info.dat"))
-		{
-			std::string appname;
-			
-			if (!itemInfoParser.get("name", appname))
-				return "n0_aPp_nAm3";
-
-			return appname;
-		}
-		else
-		{
-			std::cerr << "unable to load info for" << appid << std::endl;
-		}
-	}
-	else
-	{
-		std::cerr << "info file for " << appid << " is missing" << std::endl;
-	}
-
-	return "n0_aPp_nAm3";
-}
-
-int NewsEditState::downloadApp(int appid)
-{
-	downloadInfo(appid);
-	// do we actually need tese?
-//	downloadIcon(appid);
-//	downloadFiles(appid);
-	return 0;
-}
-
-int NewsEditState::downloadIcon(int appid)
-{
-	std::cout << "\n" << "downloading icon" << std::endl;
-
-	Download getIcon;
-	getIcon.setInput(".//" + GBL::WEB::APPS + std::to_string(appid) + "//icon.png");
-	getIcon.setOutputDir(GBL::DIR::apps + std::to_string(appid) + "//");
-	getIcon.setOutputFilename("icon.png");
-
-	int status = getIcon.download();
-
-	if (status == Download::Status::Ok)
-		return getIcon.save();
-	else
-	{
-		std::cout << "failed to download app icon, not saving file" << std::endl;
-		return 0;
-	}
-}
-
-int NewsEditState::downloadInfo(int appid)
-{
-	std::cout << "downloading info" << std::endl;
-
-	Download getInfo;
-	getInfo.setInput(GBL::WEB::APPS + std::to_string(appid) + "/info.dat");
-	getInfo.setOutputDir(GBL::DIR::apps + std::to_string(appid) + "//");
-	getInfo.setOutputFilename("info.dat");
-
-	int status = getInfo.download();
-
-	if (status == Download::Status::Ok)
-		return getInfo.save();
-	else
-	{
-		std::cout << "failed to download app info, not saving file" << std::endl;
-		return 0;
-	}
-}
-
-int NewsEditState::downloadFiles(int appid)
-{
-	std::cout << "\n" << "downloading files" << std::endl;
-
-	Download getFiles;
-	getFiles.setInput(GBL::WEB::APPS + std::to_string(appid) + "/release.zip");
-	getFiles.setOutputDir(GBL::DIR::apps + std::to_string(appid) + "//");
-	getFiles.setOutputFilename("release.zip");
-
-	int status = getFiles.download();
-
-	if (status == Download::Status::Ok)
-		return getFiles.save();
-	else
-	{
-		std::cout << "failed to download app info, not saving file" << std::endl;
-		return 0;
-	}
-}
-
-bool NewsEditState::mouseIsOver(sf::Shape &object)
-{
-	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window))))
-		return true;
-	else
-		return false;
-}
-
-bool NewsEditState::mouseIsOver(sf::Shape &object, sf::View* view)
-{
-	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window), *view)))
-		return true;
-	else
-		return false;
-}
-
-bool NewsEditState::mouseIsOver(sf::Text &object)
+bool NewsListState::mouseIsOver(sf::Shape &object)
 {
 	if (object.getGlobalBounds().contains(app->window->mapPixelToCoords(sf::Mouse::getPosition(*app->window))))
 		return true;

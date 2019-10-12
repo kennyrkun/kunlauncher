@@ -3,7 +3,7 @@
 #include "HomeState.hpp"
 #include "AppEditState.hpp"
 #include "AppListState.hpp"
-#include "NewsEditState.hpp"
+#include "NewsListState.hpp"
 
 #include "Globals.hpp"
 #include "Download.hpp"
@@ -109,7 +109,7 @@ void HomeState::HandleEvents()
 		switch (id)
 		{
 		case MenuCallbacks::EDIT_NEWS:
-			app->PushState(new NewsEditState);
+			app->PushState(new NewsListState);
 			return;
 		case MenuCallbacks::EDIT_APP:
 			app->PushState(new AppListState);

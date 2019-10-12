@@ -1,5 +1,5 @@
-#ifndef NEWS_EDIT_STATE_HPP
-#define NEWS_EDIT_STATE_HPP
+#ifndef NEWS_LIST_STATE_HPP
+#define NEWS_LIST_STATE_HPP
 
 #include "VerticalScrollbar.hpp"
 
@@ -13,11 +13,9 @@
 // TODO: include scrollbar
 // TODO: also add scrollbar to applistate
 
-class NewsEditState : public AppState
+class NewsListState : public AppState
 {
 public:
-	NewsEditState(int newsToEdit);
-
 	void Init(AppEngine* app_);
 	void Cleanup();
 
@@ -50,29 +48,16 @@ private:
 		menu->setPosition(sf::Vector2f(menu->getAbsolutePosition().x + offset.x, menu->getAbsolutePosition().y + offset.y));
 	}
 
-	int newsToEdit;
-
 	SFUI::Menu* menu;
 
 	void createMenu(SFUI::Menu& menu);
 
 	void populateApplist();
-
 	void redownloadAppsList();
 
 	std::vector<std::string> newsList;
 
-	std::string getAppName(int appid);
-
-	int downloadApp(int appid);
-	int downloadIcon(int appid);
-	int downloadInfo(int appid);
-	int downloadFiles(int appid);
-
 	bool mouseIsOver(sf::Shape &object);
-	// view: runs the test relative to a view
-	bool mouseIsOver(sf::Shape &object, sf::View* view);
-	bool mouseIsOver(sf::Text &object);
 };
 
 #endif // !APP_LIST_STATE_HPP
