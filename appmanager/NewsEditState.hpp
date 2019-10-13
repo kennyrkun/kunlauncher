@@ -67,10 +67,8 @@ private:
 	void createMenu(SFUI::Menu& menu);
 
 	void loadNewsContent(const std::string& title);
+	void overwriteOldNewsContent();
 	void downloadNewsFiles();
-	void uploadNewsFile();
-
-	std::vector<std::string> newsList;
 
 	bool mouseIsOver(sf::Shape &object);
 };

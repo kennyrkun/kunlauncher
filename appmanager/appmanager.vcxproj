@@ -202,6 +202,7 @@
     <ClCompile Include="MultilineInputBox.cpp" />
     <ClCompile Include="NewsEditState.cpp" />
     <ClCompile Include="NewsListState.cpp" />
+    <ClCompile Include="NewsUploadState.cpp" />
     <ClCompile Include="ToolTip.cpp" />
     <ClCompile Include="VerticalScrollbar.cpp" />
   </ItemGroup>
@@ -223,6 +224,7 @@
     <ClInclude Include="MultilineInputBox.hpp" />
     <ClInclude Include="NewsEditState.hpp" />
     <ClInclude Include="NewsListState.hpp" />
+    <ClInclude Include="NewsUploadState.hpp" />
     <ClInclude Include="ToolTip.hpp" />
     <ClInclude Include="VerticalScrollbar.hpp" />
   </ItemGroup>

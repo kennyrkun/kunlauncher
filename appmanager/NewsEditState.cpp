@@ -1,5 +1,6 @@
 #include "AppEngine.hpp"
 #include "NewsEditState.hpp"
+#include "NewsUploadState.hpp"
 
 #include "Globals.hpp"
 #include "Download.hpp"
@@ -106,6 +107,10 @@ void NewsEditState::HandleEvents()
 		int id = menu->onEvent(event);
 		switch (id)
 		{
+		case MenuCallbacks::Upload:
+			overwriteOldNewsContent();
+			app->PushState(new NewsUploadState);
+			break;
 		case MenuCallbacks::Back:
 			app->PopState();
 			return;
@@ -297,14 +302,12 @@ void NewsEditState::loadNewsContent(const std::string& articleTitle)
 {
 	std::cout << "populating applist" << std::endl;
 
-	newsList.clear();
-
 	title = "";
 	content = "";
 
 	downloadNewsFiles();
 
-	std::ifstream readIndex(GBL::DIR::installDir + "news.txt", std::ios::in);
+	std::ifstream readIndex(GBL::DIR::installDir + "news.txt", std::ios::in | std::ios::binary);
 
 	if (!readIndex.is_open())
 	{
@@ -364,6 +367,91 @@ void NewsEditState::downloadNewsFiles()
 		getNews.save();
 	else
 		std::cerr << "failed to download news" << std::endl;
+}
+
+//  FIXME: app names are only properly loaded the first time this is called
+void NewsEditState::overwriteOldNewsContent()
+{
+	std::cout << "overwriting old news" << std::endl;
+
+	std::ifstream readIndex(GBL::DIR::installDir + "news.txt", std::ios::binary);
+
+	if (!readIndex.is_open())
+	{
+		std::cerr << "failed to open news.txt to read" << std::endl;
+		abort();
+	}
+	
+	std::string index((std::istreambuf_iterator<char>(readIndex)), std::istreambuf_iterator<char>());
+	std::istringstream indexStream(index);
+
+	bool onOurBlock = false;
+	std::streampos startPosition = 0;
+	intmax_t charactersToRemove = 0;
+	for (std::string line; std::getline(indexStream, line);)
+	{
+		if (line == newsToEdit)
+		{
+			onOurBlock = true;
+
+			// set the start position for erasing
+			// this will be the end of the current line
+			startPosition = indexStream.tellg();
+			// so we need to go to the beginning of the current line
+			startPosition -= line.length() + 1;
+		}
+
+		if (onOurBlock)
+		{
+			charactersToRemove += line.length() + 1;
+
+			if (line == "-----------------------------")
+			{
+				std::cout << "end of article, breaking loop" << std::endl;
+				break;
+			}
+		}
+	}
+
+	std::cout << "removing " << charactersToRemove << " characters" << std::endl;
+	std::cout << "from: " << startPosition << " to " << charactersToRemove << std::endl;
+	std::cout << "block to be removed: " << std::endl;
+	std::cout << index.substr(startPosition, charactersToRemove) << std::endl;
+
+	readIndex.close();
+
+	std::ofstream writeIndex(GBL::DIR::installDir + "news.txt", std::ios::trunc | std::ios::binary);
+
+	if (!writeIndex.is_open())
+	{
+		std::cerr << "failed to open news.txt to write" << std::endl;
+		abort();
+	}
+
+	index.erase(startPosition, charactersToRemove);
+
+	std::string newArticle;
+	newArticle += titleBox->getText();
+	newArticle += "\n";
+	newArticle += contentBox->getText();
+	newArticle += "\n";
+	newArticle += "-----------------------------\n";
+
+	index.insert(startPosition, newArticle);
+
+	writeIndex << index;
+
+	if (writeIndex.bad())
+	{
+		// TODO: write the temp news to a file so it's not lost
+
+		std::cerr << "failed to rewrite news to file" << std::endl;
+		abort();
+	}
+
+	writeIndex.close();
+
+	std::cout << "updated news" << std::endl;
 }
 
 bool NewsEditState::mouseIsOver(sf::Shape &object)

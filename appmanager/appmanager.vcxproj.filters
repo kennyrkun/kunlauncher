@@ -20,17 +20,11 @@
     <Filter Include="Source Files\Backend">
       <UniqueIdentifier>{8ff5d3ac-bd7b-494e-a3bf-675df84f9d0c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\States\AppEditState">
-      <UniqueIdentifier>{86fd9323-339b-41fd-8664-2b68f9f44f13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\States\AppListState">
-      <UniqueIdentifier>{f4d1f1df-6ba4-430f-90b6-2ae4a1742f48}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\States\AppUploadState">
-      <UniqueIdentifier>{40705831-cfc2-4c56-a938-13a5702c8004}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\States\News">
       <UniqueIdentifier>{c1c7469d-4fab-403a-96a3-3a68e17a2479}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States\Apps">
+      <UniqueIdentifier>{b6024d84-b270-47fd-a322-06d475760c8c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,9 +43,6 @@
     <ClCompile Include="..\SFUI-Whorehouse\ProgressBar.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
-    <ClCompile Include="AppUploadState.cpp">
-      <Filter>Source Files\States\AppUploadState</Filter>
-    </ClCompile>
     <ClCompile Include="..\SFUI-Whorehouse\SettingsParser.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
@@ -60,12 +51,6 @@
     </ClCompile>
     <ClCompile Include="AppEngine.cpp">
       <Filter>Source Files\AppEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="AppEditState.cpp">
-      <Filter>Source Files\States\AppEditState</Filter>
-    </ClCompile>
-    <ClCompile Include="AppListState.cpp">
-      <Filter>Source Files\States\AppListState</Filter>
     </ClCompile>
     <ClCompile Include="App.cpp">
       <Filter>Source Files\Backend</Filter>
@@ -85,6 +70,18 @@
     <ClCompile Include="MultilineInputBox.cpp">
       <Filter>Source Files\Backend</Filter>
     </ClCompile>
+    <ClCompile Include="NewsUploadState.cpp">
+      <Filter>Source Files\States\News</Filter>
+    </ClCompile>
+    <ClCompile Include="AppEditState.cpp">
+      <Filter>Source Files\States\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="AppListState.cpp">
+      <Filter>Source Files\States\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="AppUploadState.cpp">
+      <Filter>Source Files\States\Apps</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HomeState.hpp">
@@ -102,20 +99,11 @@
     <ClInclude Include="Globals.hpp">
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
-    <ClInclude Include="AppUploadState.hpp">
-      <Filter>Source Files\States\AppUploadState</Filter>
-    </ClInclude>
     <ClInclude Include="..\SFUI-Whorehouse\SettingsParser.hpp">
       <Filter>Source Files\Backend</Filter>
     </ClInclude>
     <ClInclude Include="MessageBox.hpp">
       <Filter>Source Files\Backend</Filter>
-    </ClInclude>
-    <ClInclude Include="AppEditState.hpp">
-      <Filter>Source Files\States\AppEditState</Filter>
-    </ClInclude>
-    <ClInclude Include="AppListState.hpp">
-      <Filter>Source Files\States\AppListState</Filter>
     </ClInclude>
     <ClInclude Include="App.hpp">
       <Filter>Source Files\Backend</Filter>
@@ -143,6 +131,18 @@
     </ClInclude>
     <ClInclude Include="MultilineInputBox.hpp">
       <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="NewsUploadState.hpp">
+      <Filter>Source Files\States\News</Filter>
+    </ClInclude>
+    <ClInclude Include="AppEditState.hpp">
+      <Filter>Source Files\States\Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="AppListState.hpp">
+      <Filter>Source Files\States\Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="AppUploadState.hpp">
+      <Filter>Source Files\States\Apps</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
