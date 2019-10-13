@@ -124,7 +124,7 @@ void NewsListState::HandleEvents()
 		{
 			std::cout << "editing news " << newsList[id] << std::endl;
 
-			app->PushState(new NewsEditState(id));
+			app->PushState(new NewsEditState(newsList[id]));
 			return;
 		}
 
@@ -320,16 +320,17 @@ void NewsListState::populateApplist()
 	getNews.setOutputFilename("/news.txt");
 
 	if (getNews.download() == Download::Status::Ok)
-	{
 		getNews.save();
-	}
 	else
-	{
 		std::cerr << "failed to download news" << std::endl;
-		abort();
-	}
 
 	std::ifstream readIndex(GBL::DIR::installDir + "news.txt", std::ios::in);
+
+	if (!readIndex.is_open())
+	{
+		std::cerr << "failed to open news.txt" << std::endl;
+		abort();
+	}
 
 	std::string line; // each line of index.dat
 	bool nextLineIsNewLine = true; // starts as true because the first line is a new one

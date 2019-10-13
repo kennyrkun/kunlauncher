@@ -4,7 +4,10 @@
 #include "VerticalScrollbar.hpp"
 
 #include "../SFUI-Whorehouse/AppState.hpp"
-#include "SFUI/Layouts/Menu.hpp"
+#include "MultilineInputBox.hpp"
+
+#include <SFUI/Layouts/Menu.hpp>
+#include <SFUI/InputBox.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -16,7 +19,7 @@
 class NewsEditState : public AppState
 {
 public:
-	NewsEditState(int newsToEdit);
+	NewsEditState(const std::string& newsToEdit);
 
 	void Init(AppEngine* app_);
 	void Cleanup();
@@ -50,29 +53,26 @@ private:
 		menu->setPosition(sf::Vector2f(menu->getAbsolutePosition().x + offset.x, menu->getAbsolutePosition().y + offset.y));
 	}
 
-	int newsToEdit;
+	const std::string newsToEdit;
+
+	int newsStartPositionInFile = -1;
 
 	SFUI::Menu* menu;
+	SFUI::InputBox* titleBox;
+	MultilineInputBox* contentBox;
+	
+	std::string title;
+	std::string content;
 
 	void createMenu(SFUI::Menu& menu);
 
-	void populateApplist();
-
-	void redownloadAppsList();
+	void loadNewsContent(const std::string& title);
+	void downloadNewsFiles();
+	void uploadNewsFile();
 
 	std::vector<std::string> newsList;
 
-	std::string getAppName(int appid);
-
-	int downloadApp(int appid);
-	int downloadIcon(int appid);
-	int downloadInfo(int appid);
-	int downloadFiles(int appid);
-
 	bool mouseIsOver(sf::Shape &object);
-	// view: runs the test relative to a view
-	bool mouseIsOver(sf::Shape &object, sf::View* view);
-	bool mouseIsOver(sf::Text &object);
 };
 
 #endif // !APP_LIST_STATE_HPP

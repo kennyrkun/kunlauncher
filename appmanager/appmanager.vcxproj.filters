@@ -82,6 +82,9 @@
     <ClCompile Include="NewsEditState.cpp">
       <Filter>Source Files\States\News</Filter>
     </ClCompile>
+    <ClCompile Include="MultilineInputBox.cpp">
+      <Filter>Source Files\Backend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HomeState.hpp">
@@ -137,6 +140,9 @@
     </ClInclude>
     <ClInclude Include="NewsEditState.hpp">
       <Filter>Source Files\States\News</Filter>
+    </ClInclude>
+    <ClInclude Include="MultilineInputBox.hpp">
+      <Filter>Source Files\Backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

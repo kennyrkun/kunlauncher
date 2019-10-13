@@ -199,6 +199,7 @@
     <ClCompile Include="InitialiseState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageBox.cpp" />
+    <ClCompile Include="MultilineInputBox.cpp" />
     <ClCompile Include="NewsEditState.cpp" />
     <ClCompile Include="NewsListState.cpp" />
     <ClCompile Include="ToolTip.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="HomeState.hpp" />
     <ClInclude Include="InitialiseState.hpp" />
     <ClInclude Include="MessageBox.hpp" />
+    <ClInclude Include="MultilineInputBox.hpp" />
     <ClInclude Include="NewsEditState.hpp" />
     <ClInclude Include="NewsListState.hpp" />
     <ClInclude Include="ToolTip.hpp" />
