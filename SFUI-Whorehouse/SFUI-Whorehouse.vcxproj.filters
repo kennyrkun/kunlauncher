@@ -27,7 +27,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
-    <ClCompile Include="..\appmanager\VerticalScrollbar.cpp" />
+    <ClCompile Include="VerticalScrollbar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllAppsListState.hpp" />
@@ -56,6 +56,6 @@
     <ClInclude Include="ResourceManager.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="ThreadManager.hpp" />
-    <ClInclude Include="..\appmanager\VerticalScrollbar.hpp" />
+    <ClInclude Include="VerticalScrollbar.hpp" />
   </ItemGroup>
 </Project>

@@ -197,7 +197,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\appmanager\VerticalScrollbar.cpp" />
     <ClCompile Include="AllAppsListState.cpp" />
     <ClCompile Include="animate\AnimationManager.cpp" />
     <ClCompile Include="animate\Interpolate.cpp" />
@@ -224,9 +223,9 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
+    <ClCompile Include="VerticalScrollbar.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\appmanager\VerticalScrollbar.hpp" />
     <ClInclude Include="AllAppsListState.hpp" />
     <ClInclude Include="animate\AnimationManager.hpp" />
     <ClInclude Include="animate\Interpolate.hpp" />
@@ -253,6 +252,7 @@
     <ClInclude Include="ResourceManager.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="ThreadManager.hpp" />
+    <ClInclude Include="VerticalScrollbar.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
