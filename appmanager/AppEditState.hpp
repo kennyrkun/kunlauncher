@@ -74,6 +74,8 @@ private:
 	// returns the newly allocated appid
 	int registerNewApp();
 
+	bool downloadAppInfo(const std::string& path, const std::string& appid_s, int appid);
+
 	void saveAppData();
 
 	// creates local files for a new app

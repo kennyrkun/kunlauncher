@@ -62,6 +62,8 @@ App::~App()
 
 void App::setAppInfo(AppInfo appinfo)
 {
+	std::cout << "set appinfo" << std::endl;
+
 	info = appinfo;
 
 	name.setString(info.name);
