@@ -140,7 +140,7 @@ void VisualItemInfo::buildMenu()
 
 		SFUI::Menu* phdr = menu;
 		if (phdr == nullptr)
-			std::cerr << "YOU GET THE BIG FUCK!" << std::endl;
+			std::cerr << "ERROR: guess it's just fucked" << std::endl;
 
 		menu = new SFUI::Menu(window);
 		menu->setPosition(sf::Vector2f(image.getPosition().x + image.getSize().x + 10, 10));

@@ -412,204 +412,140 @@ void InitialiseState::initialise()
 
 int InitialiseState::validateFileStructure()
 {
-	progressBar->reset();
-	progressBar->addThingsToDo(10); // bin, cache, appcache, config, tpn, apps, apps+index, resources, themes, stats
 	setTaskText("validating files");
 
-	std::cout << "checking for bin" << std::endl; { // 1
-		if (!fs::exists(GBL::DIR::installDir))
+	std::map<std::string, std::string> directories;
+	directories.emplace("installDir", GBL::DIR::installDir);
+	directories.emplace("apps", GBL::DIR::apps);
+	directories.emplace("cache", GBL::DIR::cache);
+	directories.emplace("appcache", GBL::DIR::appcache);
+	directories.emplace("stats", GBL::DIR::stats);
+	directories.emplace("resources", GBL::DIR::resources);
+	directories.emplace("textures", GBL::DIR::textures);
+	directories.emplace("fonts", GBL::DIR::fonts);
+	directories.emplace("themes", GBL::DIR::themes);
+
+	progressBar->reset();
+	progressBar->addThingsToDo(directories.size() + 3); // 3 things that we do after we check all the files
+	for (const auto& dir : directories)
+	{
+		const std::string& directory = dir.second;
+		std::cout << "checking for " << directory << std::endl;
+
+		if (!fs::exists(directory))
 		{
-			std::cout << "bin folder missing, creating" << std::endl;
-			fs::create_directories(GBL::DIR::installDir);
-		}
-	} progressBar->oneThingDone();
-
-	std::cout << "checking for cache" << std::endl; { // 2
-		if (!fs::exists(GBL::DIR::cache))
-		{
-			std::cout << "creating cache folder" << std::endl;
-			fs::create_directory(GBL::DIR::cache);
-		}
-	} progressBar->oneThingDone();
-
-	std::cout << "checking for appcache" << std::endl; { // 3
-		if (!fs::exists(GBL::DIR::appcache))
-		{
-			std::cout << "creating appcache folder" << std::endl;
-			fs::create_directory(GBL::DIR::appcache);
-		}
-	} progressBar->oneThingDone();
-
-	std::cout << "checking for config" << std::endl; { // 4
-		if (!fs::exists(GBL::CONFIG::config))
-		{
-			std::cout << "config file missing, creating" << std::endl;
-
-			std::ofstream createConfigurationFile(GBL::CONFIG::config);
-
-			if (createConfigurationFile.is_open())
+			try
 			{
-				createConfigurationFile << "// default configuration for kunlauncher" << std::endl;
-				createConfigurationFile << std::endl;
-
-				createConfigurationFile << GBL::CONFIG::updateOnStart << " = " << (app->settings.updateOnStart ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::logDownloads << " = " << (app->settings.logDownloads ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::SFUIDebug << " = " << (app->settings.SFUIDebug ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::allowStatTracking << " = " << (app->settings.allowStatTracking ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::useAnimations << " = " << (app->settings.useAnimations ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::animationScale << " = " << app->settings.animationScale << std::endl;
-
-				createConfigurationFile << GBL::CONFIG::News::newsEnabled << " = " << (app->settings.news.enabled ? "TRUE" : "FALSE") << std::endl;
-
-				createConfigurationFile << GBL::CONFIG::selectedTheme<< " = " << app->settings.selectedTheme << std::endl;
-
-				createConfigurationFile << GBL::CONFIG::Window::verticalSync << " = " << (app->settings.window.verticalSync ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::Window::width << " = " << app->settings.window.width << std::endl;
-				createConfigurationFile << GBL::CONFIG::Window::height << " = " << app->settings.window.height << std::endl;
-
-				createConfigurationFile << GBL::CONFIG::Apps::updateStoreOnStart << " = " << (app->settings.apps.updateStoreOnStart ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::Apps::autoUpdate << " = " << (app->settings.apps.autoUpdate ? "TRUE" : "FALSE") << std::endl;
-				createConfigurationFile << GBL::CONFIG::Apps::checkForUpdates << " = " << (app->settings.apps.checkForUpdates ? "TRUE" : "FALSE") << std::endl;
-
-				createConfigurationFile << std::endl;
-
-				createConfigurationFile << "// Keys:" << std::endl;
-				createConfigurationFile << "// R: Reload Apps list" << std::endl;
-				createConfigurationFile << "// Control + R: Redownload app index and reload app list" << std::endl;
-				createConfigurationFile << "// Control + Shift + R: delete all apps, redownload app index, and reload applist" << std::endl;
-
-				createConfigurationFile.close();
-
-				if (createConfigurationFile.bad())
-				{
-					std::cerr << "failed to save default config file (it may be corrupt)" << std::endl;
-				}
+				fs::create_directories(directory);
 			}
-			else
+			catch (const std::exception& e)
 			{
-				std::cerr << "failed to create default configuration file" << std::endl;
+				std::cerr << "failed to create " << directory << std::endl;
+				std::cerr << e.what() << std::endl;
 			}
 		}
-	} progressBar->oneThingDone();
+
+		progressBar->oneThingDone();
+	}
+
+	std::cout << "checking for config" << std::endl;
+	if (!fs::exists(GBL::CONFIG::config))
+	{
+		std::cout << "config file missing, creating" << std::endl;
+
+		std::ofstream createConfigurationFile(GBL::CONFIG::config);
+
+		if (createConfigurationFile.is_open())
+		{
+			createConfigurationFile << "// default configuration for kunlauncher" << std::endl;
+			createConfigurationFile << std::endl;
+
+			createConfigurationFile << GBL::CONFIG::updateOnStart << " = " << (app->settings.updateOnStart ? "TRUE" : "FALSE") << std::endl;
+			createConfigurationFile << GBL::CONFIG::logDownloads << " = " << (app->settings.logDownloads ? "TRUE" : "FALSE") << std::endl;
+			createConfigurationFile << GBL::CONFIG::SFUIDebug << " = " << (app->settings.SFUIDebug ? "TRUE" : "FALSE") << std::endl;
+			createConfigurationFile << GBL::CONFIG::allowStatTracking << " = " << (app->settings.allowStatTracking ? "TRUE" : "FALSE") << std::endl;
+			createConfigurationFile << GBL::CONFIG::useAnimations << " = " << (app->settings.useAnimations ? "TRUE" : "FALSE") << std::endl;
+			createConfigurationFile << GBL::CONFIG::animationScale << " = " << app->settings.animationScale << std::endl;
+
+			createConfigurationFile << GBL::CONFIG::News::newsEnabled << " = " << (app->settings.news.enabled ? "TRUE" : "FALSE") << std::endl;
+
+			createConfigurationFile << GBL::CONFIG::selectedTheme<< " = " << app->settings.selectedTheme << std::endl;
+
+			createConfigurationFile << GBL::CONFIG::Window::verticalSync << " = " << (app->settings.window.verticalSync ? "TRUE" : "FALSE") << std::endl;
+			createConfigurationFile << GBL::CONFIG::Window::width << " = " << app->settings.window.width << std::endl;
+			createConfigurationFile << GBL::CONFIG::Window::height << " = " << app->settings.window.height << std::endl;
+
+			createConfigurationFile << GBL::CONFIG::Apps::updateStoreOnStart << " = " << (app->settings.apps.updateStoreOnStart ? "TRUE" : "FALSE") << std::endl;
+			createConfigurationFile << GBL::CONFIG::Apps::autoUpdate << " = " << (app->settings.apps.autoUpdate ? "TRUE" : "FALSE") << std::endl;
+			createConfigurationFile << GBL::CONFIG::Apps::checkForUpdates << " = " << (app->settings.apps.checkForUpdates ? "TRUE" : "FALSE") << std::endl;
+
+			createConfigurationFile << std::endl;
+
+			createConfigurationFile << "// Keys:" << std::endl;
+			createConfigurationFile << "// R: Reload Apps list" << std::endl;
+			createConfigurationFile << "// Control + R: Redownload app index and reload app list" << std::endl;
+			createConfigurationFile << "// Control + Shift + R: delete all apps, redownload app index, and reload applist" << std::endl;
+
+			createConfigurationFile.close();
+
+			if (createConfigurationFile.bad())
+			{
+				std::cerr << "failed to save default config file (it may be corrupt)" << std::endl;
+			}
+		}
+		else
+		{
+			std::cerr << "failed to create default configuration file" << std::endl;
+		}
+	}
+	progressBar->oneThingDone();
+
+	Download downloader;
+
+	std::cout << "checking for appcache+index" << std::endl;
+	if (!fs::exists(GBL::DIR::appcache + "index.dat"))
+	{
+		std::cout << "appcache index missing, creating" << std::endl;
+
+		downloader.setInput(GBL::WEB::APPS + "/index.dat");
+		downloader.setOutputDir(GBL::DIR::appcache);
+		downloader.setOutputFilename("/index.dat");
+		downloader.download();
+		downloader.save();
+	}
+	progressBar->oneThingDone();
 	
-	std::cout << "checking for third party notices" << std::endl; { // 5
-		if (!fs::exists(GBL::DIR::installDir + "thirdpartynotices.txt"))
+	std::cout << "checking for third party notices" << std::endl;
+	if (!fs::exists(GBL::DIR::installDir + "thirdpartynotices.txt"))
+	{
+		setTaskText("retrieving thirdpartynotices");
+		std::cout << "missing thirdpartynotices, downloading..." << std::endl;
+
+		downloader.setInput(GBL::WEB::LATEST::DIR + "/thirdpartynotices.txt");
+		downloader.setOutputDir(GBL::DIR::installDir);
+		downloader.setOutputFilename("//thirdpartynotices.txt");
+		downloader.download();
+		downloader.save();
+
+		// TODO: update this if we already have it
+
+		switch (downloader.htmlReturnCode)
 		{
-			setTaskText("retrieving thirdpartynotices");
-			std::cout << "missing thirdpartynotices, downloading..." << std::endl;
-
-			Download getThirdPartyNotices;
-			getThirdPartyNotices.setInput(GBL::WEB::LATEST::DIR + "/thirdpartynotices.txt");
-			getThirdPartyNotices.setOutputDir(GBL::DIR::installDir);
-			getThirdPartyNotices.setOutputFilename("//thirdpartynotices.txt");
-			getThirdPartyNotices.download();
-			getThirdPartyNotices.save();
-
-			// TODO: update this if we already have it
-
-			switch (getThirdPartyNotices.htmlReturnCode)
-			{
-			case sf::Http::Response::Status::Ok:
-			{
-				getThirdPartyNotices.save();
-
-				std::cout << "successfully downloaded and saved third party notices." << std::endl;
-			}
-			case sf::Http::Response::Status::NotFound:
-			{
-				std::cout << "failed to upload third party notices." << std::endl;
-			}
-			default:
-				break;
-			}
-
-			setTaskText("validating files");
-		}
-	} progressBar->oneThingDone(); 
-
-	std::cout << "checking for apps" << std::endl; { // 6
-		if (!fs::exists(GBL::DIR::apps))
+		case sf::Http::Response::Status::Ok:
 		{
-			std::cout << "apps folder missing, creating" << std::endl;
-			fs::create_directory(GBL::DIR::apps);
-		}
-	} progressBar->oneThingDone();
+			downloader.save();
 
-	std::cout << "checking for appcache+index" << std::endl; {
-		if (!fs::exists(GBL::DIR::appcache + "index.dat")) // 7
+			std::cout << "successfully downloaded and saved third party notices." << std::endl;
+		}
+		case sf::Http::Response::Status::NotFound:
 		{
-			std::cout << "appcache index missing, creating" << std::endl;
-
-			Download getItemIndex;
-			getItemIndex.setInput(GBL::WEB::APPS + "/index.dat");
-			getItemIndex.setOutputDir(GBL::DIR::appcache);
-			getItemIndex.setOutputFilename("/index.dat");
-			getItemIndex.download();
-			getItemIndex.save();
+			std::cout << "failed to upload third party notices." << std::endl;
 		}
-	} progressBar->oneThingDone();
-
-	std::cout << "checking for resource folder" << std::endl; { // 8
-		if (!fs::exists(GBL::DIR::resources))
-		{
-			std::cout << "resource folder is missing, creating" << std::endl;
-
-			try
-			{
-				fs::create_directory(GBL::DIR::resources);
-			}
-			catch (const std::exception& e)
-			{
-				std::cerr << "failed to create resources folder:" << std::endl;
-				std::cerr << e.what() << std::endl;
-			}
+		default:
+			break;
 		}
-	} progressBar->oneThingDone();
-
-	std::cout << "checking for themes folder" << std::endl; { // 9
-		if (!fs::exists(GBL::DIR::themes))
-		{
-			std::cout << "themes folder is missing, creating" << std::endl;
-
-			try
-			{
-				fs::create_directory(GBL::DIR::themes);
-			}
-			catch (const std::exception& e)
-			{
-				std::cerr << "failed to create themes folder:" << std::endl;
-				std::cerr << e.what() << std::endl;
-			}
-		}
-	} progressBar->oneThingDone();
-
-	std::cout << "checking for stats folder" << std::endl; { // 10
-		if (!fs::exists(GBL::DIR::stats))
-		{
-			std::cout << "stats folder is missing, creating" << std::endl;
-
-			try
-			{
-				fs::create_directory(GBL::DIR::stats);
-
-				std::ofstream createStatisticsFile(GBL::DIR::stats + "appstats.dat");
-
-				if (createStatisticsFile.is_open())
-				{
-					createStatisticsFile << "averageAppCreationTime = 0" << std::endl;
-				}
-				else
-				{
-					std::cerr << "failed to app stats file" << std::endl;
-				}
-			}
-			catch (const std::exception& e)
-			{
-				std::cerr << "failed to create stats folder:" << std::endl;
-				std::cerr << e.what() << std::endl;
-			}
-		}
-	} progressBar->oneThingDone();
+	}
+	progressBar->oneThingDone(); 
 
 	return 0;
 }
@@ -632,12 +568,12 @@ int InitialiseState::validateResourceFiles()
 
 	if (getResourceManifest.getFileSize() != fs::file_size(GBL::DIR::resources + "resources.dat"))
 	{
+		std::cout << "resources have been updated" << std::endl;
+
 		getResourceManifest.setOutputDir(GBL::DIR::resources);
 		getResourceManifest.setOutputFilename("//resources.dat");
 		getResourceManifest.download();
 		getResourceManifest.save();
-
-		std::cout << "resources have been updated" << std::endl;
 	}
 	else
 	{
@@ -649,6 +585,7 @@ int InitialiseState::validateResourceFiles()
 	progressBar->oneThingDone();
 
 	SettingsParser getResources;
+	Download resourceDownloader;
 
 	if (getResources.loadFromFile(GBL::DIR::resources + "resources.dat"))
 	{
@@ -668,12 +605,11 @@ int InitialiseState::validateResourceFiles()
 				setTaskText("retrieving " + textures[i]);
 				std::cout << textures[i] << " is missing, downloading." << std::endl;
 
-				Download getTexture;
-				getTexture.setInput(".//" + GBL::WEB::LATEST::RESOURCES + "/textures/" + textures[i]);
-				getTexture.setOutputDir(GBL::DIR::textures);
-				getTexture.setOutputFilename("//" + textures[i]);
-				getTexture.download();
-				getTexture.save();
+				resourceDownloader.setInput(".//" + GBL::WEB::LATEST::RESOURCES + "/textures/" + textures[i]);
+				resourceDownloader.setOutputDir(GBL::DIR::textures);
+				resourceDownloader.setOutputFilename("//" + textures[i]);
+				resourceDownloader.download();
+				resourceDownloader.save();
 			}
 
 			progressBar->oneThingDone();
@@ -687,12 +623,11 @@ int InitialiseState::validateResourceFiles()
 				setTaskText("retrieving " + fonts[i]);
 				std::cout << fonts[i] << " is missing, downloading." << std::endl;
 
-				Download getFont;
-				getFont.setInput(".//" + GBL::WEB::LATEST::RESOURCES + "/fonts/" + fonts[i]);
-				getFont.setOutputDir(GBL::DIR::fonts);
-				getFont.setOutputFilename("//" + fonts[i]);
-				getFont.download();
-				getFont.save();
+				resourceDownloader.setInput(".//" + GBL::WEB::LATEST::RESOURCES + "/fonts/" + fonts[i]);
+				resourceDownloader.setOutputDir(GBL::DIR::fonts);
+				resourceDownloader.setOutputFilename("//" + fonts[i]);
+				resourceDownloader.download();
+				resourceDownloader.save();
 			}
 
 			progressBar->oneThingDone();
@@ -727,39 +662,35 @@ int InitialiseState::getThemeConfiguration()
 				std::cout << "creating dark theme file" << std::endl;
 				std::ofstream darkTheme(GBL::DIR::themes + "dark/dark.sfuitheme");
 
-				darkTheme << "// default 'dark' theme for kunlauncher" << std::endl;
-				darkTheme << std::endl;
-				darkTheme << "name = dark" << std::endl;
-				darkTheme << "author = kennyrkun" << std::endl;
-				darkTheme << "version = 1" << std::endl;
-				darkTheme << "launcherversion = 17" << std::endl;
-				darkTheme << std::endl;
-				darkTheme << "// globals" << std::endl;
-				darkTheme << "primary = 100, 100, 100" << std::endl;
-				darkTheme << "secondary = 150, 150, 150" << std::endl;
-				darkTheme << "tertiary = 50, 50, 50" << std::endl;
-				darkTheme << "text = 255, 255, 255" << std::endl;
-				darkTheme << "text_secondary = 255, 255, 255" << std::endl;
-				darkTheme << std::endl;
-				darkTheme << "// scrollbar" << std::endl;
-				darkTheme << "scrollbar = 80, 80, 80" << std::endl;
-				darkTheme << "scrollthumb = 110, 110, 110" << std::endl;
-				darkTheme << "scrollthumb_hover = 158, 158, 158" << std::endl;
-				darkTheme << "scrollthumb_hold = 239, 235, 239" << std::endl;
-				darkTheme << std::endl;
-				darkTheme << "// apps" << std::endl;
-				darkTheme << "app_card = 100, 100, 100" << std::endl;
-				darkTheme << "app_card2 = 100, 100, 100" << std::endl;
-				darkTheme << "app_image = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon_hover = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon_press = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon_fail = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon_fail_hover = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon_fail_press = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon_warn = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon_warn_hover = 255, 255, 255" << std::endl;
-				darkTheme << "app_icon_warn_press = 255, 255, 255" << std::endl;
+				darkTheme << "// default 'dark' theme for kunlauncher\n"
+					"name = dark\n"
+					"author = kennyrkun\n"
+					"version = 1\n"
+					"launcherversion = 17\n"
+					"// globals\n"
+					"primary = 100, 100, 100\n"
+					"secondary = 150, 150, 150\n"
+					"tertiary = 50, 50, 50\n"
+					"text = 255, 255, 255\n"
+					"text_secondary = 255, 255, 255\n"
+					"// scrollbar\n"
+					"scrollbar = 80, 80, 80\n"
+					"scrollthumb = 110, 110, 110\n"
+					"scrollthumb_hover = 158, 158, 158\n"
+					"scrollthumb_hold = 239, 235, 239\n"
+					"// apps\n"
+					"app_card = 100, 100, 100\n"
+					"app_card2 = 100, 100, 100\n"
+					"app_image = 255, 255, 255\n"
+					"app_icon = 255, 255, 255\n"
+					"app_icon_hover = 255, 255, 255\n"
+					"app_icon_press = 255, 255, 255\n"
+					"app_icon_fail = 255, 255, 255\n"
+					"app_icon_fail_hover = 255, 255, 255\n"
+					"app_icon_fail_press = 255, 255, 255\n"
+					"app_icon_warn = 255, 255, 255\n"
+					"app_icon_warn_hover = 255, 255, 255\n"
+					"app_icon_warn_press = 255, 255, 255\n" << std::endl;
 
 				// create the interfaces by making a bunch of squares, taking a screenshot, and saving
 
@@ -769,61 +700,7 @@ int InitialiseState::getThemeConfiguration()
 			{
 				std::cerr << "failed to create dark theme directory" << std::endl;
 				std::cerr << e.what() << std::endl;
-			}
-		}
-	}
-
-	if (!fs::exists(GBL::DIR::themes + "light/light.sfuitheme"))
-	{
-		if (!fs::exists(GBL::DIR::themes + "light"))
-		{
-			try
-			{
-				fs::create_directory(GBL::DIR::themes + "light");
-
-				std::cout << "creating light theme file" << std::endl;
-				std::ofstream lightTheme(GBL::DIR::themes + "light/light.sfuitheme");
-
-				lightTheme << "// default 'light' theme for kunlauncher" << std::endl;
-				lightTheme << std::endl;
-				lightTheme << "name = light" << std::endl;
-				lightTheme << "author = kennyrkun" << std::endl;
-				lightTheme << "version = 1" << std::endl;
-				lightTheme << "launcherversion = 17" << std::endl;
-				lightTheme << std::endl;
-				lightTheme << "// globals" << std::endl;
-				lightTheme << "primary = 150, 150, 150" << std::endl;
-				lightTheme << "secondary = 180, 180, 180" << std::endl;
-				lightTheme << "tertiary = 220, 220, 220" << std::endl;
-				lightTheme << "text = 0, 0, 0" << std::endl;
-				lightTheme << "text_secondary = 255, 255, 255" << std::endl;
-				lightTheme << std::endl;
-				lightTheme << "// scrollbar" << std::endl;
-				lightTheme << "scrollbar = 241, 241, 241" << std::endl;
-				lightTheme << "scrollthumb = 110, 110, 192" << std::endl;
-				lightTheme << "scrollthumb_hover = 168, 168, 168" << std::endl;
-				lightTheme << "scrollthumb_hold = 120, 120, 120" << std::endl;
-				lightTheme << std::endl;
-				lightTheme << "// apps" << std::endl;
-				lightTheme << "app_card = 100, 100, 100" << std::endl;
-				lightTheme << "app_card2 = 100, 100, 100" << std::endl;
-				lightTheme << "app_image = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon_hover = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon_press = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon_fail = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon_fail_hover = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon_fail_press = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon_warn = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon_warn_hover = 255, 255, 255" << std::endl;
-				lightTheme << "app_icon_warn_press = 255, 255, 255" << std::endl;
-
-				lightTheme.close();
-			}
-			catch (const std::exception& e)
-			{
-				std::cerr << "failed to create light theme directory" << std::endl;
-				std::cerr << e.what() << std::endl;
+				return -1;
 			}
 		}
 	}
@@ -937,7 +814,6 @@ void InitialiseState::setTaskText(std::string text)
 		std::cout << "that's some long text right there!" << std::endl;
 
 		//TODO: text scaling
-
 //		currentLauncherTask.setCharacterSize(currentLauncherTask.getCharacterSize() / 2);
 	}
 	else
@@ -954,6 +830,4 @@ void InitialiseState::setTaskText(std::string text)
 	app->window->draw(thingthatdoesntripoffvisualstudio);
 	app->window->draw(*progressBar);
 	app->window->display();
-
-//	std::cin.get();
 }

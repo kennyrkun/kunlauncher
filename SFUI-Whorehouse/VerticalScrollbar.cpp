@@ -101,11 +101,11 @@ sf::Vector2f VerticalScrollbar::getPosition()
 	return scrollTrack.getPosition();
 }
 
-void VerticalScrollbar::bindToView(sf::View * view)
+void VerticalScrollbar::bindToView(sf::View* view)
 {
 }
 
-void VerticalScrollbar::unbindFromView(sf::View * view)
+void VerticalScrollbar::unbindFromView(sf::View* view)
 {
 }
 
