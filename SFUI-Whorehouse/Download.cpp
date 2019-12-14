@@ -15,6 +15,8 @@ Download::Download()
 
 Download::~Download()
 {
+	ftp.disconnect();
+
 	std::cout << "[DL] downloader killed" << std::endl;
 }
 
@@ -128,13 +130,13 @@ uintmax_t Download::getFileSize()
 			return 0;
 	}
 	else
-	{
 		return fileSize;
-	}
 }
 
 int Download::download()
 {
+	std::cout << "[DL] download initiated" << std::endl;
+
 //	std::cout << "saveDir : " << saveDir << std::endl;
 //	std::cout << "saveFile: " << saveFile << std::endl;
 //	std::cout << "remoteDirectory: " << remoteDirectory << std::endl;
@@ -176,7 +178,7 @@ int Download::download()
 	}
 	else
 	{
-		std::cerr << "[DL] (" << response.getStatus() << ") " << response.getMessage() << std::endl;
+		std::cerr << "[DL] failed to get size: " << response.getStatus() << ": " << response.getMessage() << std::endl;
 	}
 
 	std::cout << "[DL] BEGIN DOWNLOAD" << std::endl;
@@ -215,11 +217,10 @@ int Download::download()
 	}
 	else
 	{
-		std::cerr << "[DL] " << "(" << response.getStatus() << ")" << response.getMessage() << std::endl;
+		std::cerr << "[DL] failed: status: " << "" << response.getStatus() << ": " << response.getMessage() << std::endl;
 		return Status::Fail;
 	}
 
-	ftp.disconnect();
 	downloaded = true;
 
 	return Status::Success;
