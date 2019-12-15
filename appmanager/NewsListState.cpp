@@ -29,7 +29,7 @@ void NewsListState::Init(AppEngine* app_)
 	scrollbar.setTrackHeight(app->window->getSize().y);
 	scrollbar.setPosition(sf::Vector2f(scrollbar.getPosition().x, 0));
 
-	populateApplist();
+	refreshNewsList();
 
 	std::cout << "creating menu" << std::endl;
 	menu = new SFUI::Menu(*app->window);
@@ -105,9 +105,9 @@ void NewsListState::HandleEvents()
 		{
 		case MenuCallbacks::RedownloadNewsList:
 		{
-			app->drawInformationPanel("Redownloading index...");
+			app->drawInformationPanel("Redownloading news...");
 
-			redownloadAppsList();
+			refreshNewsList();
 
 			delete menu;
 			menu = new SFUI::Menu(*app->window);
@@ -141,7 +141,7 @@ void NewsListState::HandleEvents()
 					{
 						scrollbar.dragOffset = scrollbar.scrollThumb.getPosition() - sf::Vector2f(sf::Mouse::getPosition(*app->window));
 						scrollbar.draggingThumb = true;
-//						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB_HOLD);
+//						scrollbar.scrollThumb.setFillColor(GBL::color::SCROLLTHUMB_HOLD);
 
 						originalMenuPosition = menu->getAbsolutePosition();
 						originalThumbPosition = scrollbar.scrollThumb.getPosition();
@@ -154,12 +154,10 @@ void NewsListState::HandleEvents()
 				{
 					scrollbar.draggingThumb = false;
 
-					/*
 					if (mouseIsOver(scrollbar.scrollThumb))
-						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB_HOVER);
+						scrollbar.scrollThumb.setFillColor(GBL::color::SCROLLTHUMB_HOVER);
 					else
-						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB);
-					*/
+						scrollbar.scrollThumb.setFillColor(GBL::color::SCROLLTHUMB);
 				}
 			}
 			else if (event.type == sf::Event::EventType::MouseWheelMoved)
@@ -297,18 +295,22 @@ void NewsListState::createMenu(SFUI::Menu& menu)
 {
 	menu.setPosition(sf::Vector2f(10, 10));
 
-	menu.addButton("Redownload App List", MenuCallbacks::RedownloadNewsList);
+	SFUI::HorizontalBoxLayout* container = menu.addHorizontalBoxLayout();
+
+	SFUI::VerticalBoxLayout* menuControls = container->addVerticalBoxLayout();
+
+	menuControls->addButton("Refresh list", MenuCallbacks::RedownloadNewsList);
+	menuControls->addButton("Back", MenuCallbacks::BACK);
+
+	SFUI::VerticalBoxLayout* newsEntries = container->addVerticalBoxLayout();
 
 	for (size_t i = 0; i < newsList.size(); i++)
-		menu.addButton(newsList[i], i);
-
-	menu.addButton("Back", MenuCallbacks::BACK);
+		newsEntries->addButton(newsList[i], i);
 
 	updateScrollThumbSize();
 }
 
-//  FIXME: app names are only properly loaded the first time this is called
-void NewsListState::populateApplist()
+void NewsListState::refreshNewsList()
 {
 	std::cout << "populating applist" << std::endl;
 
@@ -324,7 +326,7 @@ void NewsListState::populateApplist()
 	else
 		std::cerr << "failed to download news" << std::endl;
 
-	std::ifstream readIndex(GBL::DIR::installDir + "news.txt", std::ios::in);
+	std::ifstream readIndex(GBL::DIR::installDir + "news.txt", std::ios::in | std::ios::binary);
 
 	if (!readIndex.is_open())
 	{
@@ -336,8 +338,6 @@ void NewsListState::populateApplist()
 	bool nextLineIsNewLine = true; // starts as true because the first line is a new one
 	while (std::getline(readIndex, line))
 	{
-		std::cout << std::endl;
-
 		if (nextLineIsNewLine)
 		{
 			newsList.push_back(line);
@@ -350,27 +350,7 @@ void NewsListState::populateApplist()
 
 	readIndex.close();
 
-	std::cout << std::endl;
-}
-
-void NewsListState::redownloadAppsList()
-{
-	std::cout << "downloading all apps" << std::endl;
-
-	sf::Clock appLoadTime;
-
-	// TODO: check for index updates
-	if (!app->updateAppIndex())
-	{
-		std::cerr << "failed to download appslist, giving up." << std::endl;
-		return;
-	}
-
-	populateApplist();
-
-	std::cout << "finished loading apps" << " (" << "in " << appLoadTime.getElapsedTime().asSeconds() << " seconds)" << std::endl;
-
-	app->window->requestFocus();
+	std::cout << "news list reloaded" << std::endl;
 }
 
 bool NewsListState::mouseIsOver(sf::Shape &object)

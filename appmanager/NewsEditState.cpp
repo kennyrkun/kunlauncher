@@ -369,7 +369,6 @@ void NewsEditState::downloadNewsFiles()
 		std::cerr << "failed to download news" << std::endl;
 }
 
-//  FIXME: app names are only properly loaded the first time this is called
 void NewsEditState::overwriteOldNewsContent()
 {
 	std::cout << "overwriting old news" << std::endl;

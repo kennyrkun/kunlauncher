@@ -4,6 +4,10 @@
 // TODO: use path::make_preferred (preferred_separator)
 // do it in KunLauncher too
 
+#include <SFML/Graphics/Color.hpp>
+
+#include <string>
+
 namespace GBL
 {
 	const float VERSION = 1.3f;
@@ -36,6 +40,14 @@ namespace GBL
 			const std::string DIR = VERSIONS + "latest/";
 			const std::string CHANGES = DIR + "change.log";
 		}
+	}
+
+	namespace color
+	{
+		const sf::Color SCROLLBAR;
+		const sf::Color SCROLLTHUMB;
+		const sf::Color SCROLLTHUMB_HOVER;
+		const sf::Color SCROLLTHUMB_HOLD;
 	}
 }
 

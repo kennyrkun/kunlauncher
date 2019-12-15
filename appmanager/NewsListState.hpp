@@ -52,8 +52,7 @@ private:
 
 	void createMenu(SFUI::Menu& menu);
 
-	void populateApplist();
-	void redownloadAppsList();
+	void refreshNewsList();
 
 	std::vector<std::string> newsList;
 
