@@ -198,12 +198,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AllAppsListState.cpp" />
-    <ClCompile Include="animate\AnimationManager.cpp" />
-    <ClCompile Include="animate\Interpolate.cpp" />
+    <ClCompile Include="AnimationManager.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppWindow.cpp" />
     <ClCompile Include="ColorInputBox.cpp" />
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="Interpolate.cpp" />
     <ClCompile Include="MyApp.cpp" />
     <ClCompile Include="Navbar.cpp" />
     <ClCompile Include="News.cpp" />
@@ -227,11 +227,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllAppsListState.hpp" />
-    <ClInclude Include="animate\AnimationManager.hpp" />
-    <ClInclude Include="animate\Interpolate.hpp" />
+    <ClInclude Include="AnimationManager.hpp" />
     <ClInclude Include="App.hpp" />
     <ClInclude Include="AppWindow.hpp" />
     <ClInclude Include="ColorInputBox.hpp" />
+    <ClInclude Include="Interpolate.hpp" />
     <ClInclude Include="MyApp.hpp" />
     <ClInclude Include="Navbar.hpp" />
     <ClInclude Include="News.hpp" />

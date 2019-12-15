@@ -1,7 +1,7 @@
 #ifndef APP_ENGINE_HPP
 #define APP_ENGINE_HPP
 
-#include "animate/AnimationManager.hpp"
+#include "AnimationManager.hpp"
 #include "Navbar.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>

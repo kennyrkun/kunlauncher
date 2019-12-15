@@ -4,7 +4,7 @@
 #include "AppState.hpp"
 
 #include "VerticalScrollbar.hpp"
-#include "animate/AnimationManager.hpp"
+#include "AnimationManager.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
