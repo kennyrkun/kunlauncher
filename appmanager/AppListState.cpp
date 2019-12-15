@@ -159,6 +159,9 @@ void AppListState::populateApplist()
 
 	applist.clear();
 
+	if (!fs::exists(GBL::DIR::apps + "index.dat"))
+		redownloadAppsList();
+
 	std::ifstream readIndex(GBL::DIR::apps + "index.dat", std::ios::in);
 
 	SettingsParser indexParser;
