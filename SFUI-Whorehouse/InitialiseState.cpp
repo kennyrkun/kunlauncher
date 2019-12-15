@@ -568,24 +568,28 @@ int InitialiseState::validateResourceFiles()
 
 	if (getResourceManifest.getFileSize() != fs::file_size(GBL::DIR::resources + "resources.dat"))
 	{
-		std::cout << "resources have been updated" << std::endl;
-
 		getResourceManifest.setOutputDir(GBL::DIR::resources);
 		getResourceManifest.setOutputFilename("//resources.dat");
 		getResourceManifest.download();
-		getResourceManifest.save();
+		
+		if (!getResourceManifest.save())
+			std::cerr << "failed to update resource manifest" << std::endl;
+		else
+			std::cout << "resources have been updated" << std::endl;
 	}
 	else
 	{
 		std::cout << "resource manifest up to date" << std::endl;
 
-		std::cout << getResourceManifest.getFileSize() << std::endl;
-		std::cout << fs::file_size(GBL::DIR::resources + "resources.dat") << std::endl;
+		std::cout << "remote file size" << getResourceManifest.getFileSize() << std::endl;
+		std::cout << "local file size" <<  fs::file_size(GBL::DIR::resources + "resources.dat") << std::endl;
 	}
 	progressBar->oneThingDone();
 
 	SettingsParser getResources;
 	Download resourceDownloader;
+
+	std::cout << "verifiying resources" << std::endl;
 
 	if (getResources.loadFromFile(GBL::DIR::resources + "resources.dat"))
 	{
@@ -609,7 +613,9 @@ int InitialiseState::validateResourceFiles()
 				resourceDownloader.setOutputDir(GBL::DIR::textures);
 				resourceDownloader.setOutputFilename("//" + textures[i]);
 				resourceDownloader.download();
-				resourceDownloader.save();
+
+				if (!resourceDownloader.save())
+					setTaskText("failed");
 			}
 
 			progressBar->oneThingDone();
@@ -627,7 +633,9 @@ int InitialiseState::validateResourceFiles()
 				resourceDownloader.setOutputDir(GBL::DIR::fonts);
 				resourceDownloader.setOutputFilename("//" + fonts[i]);
 				resourceDownloader.download();
-				resourceDownloader.save();
+
+				if (!resourceDownloader.save())
+					setTaskText("failed");
 			}
 
 			progressBar->oneThingDone();
