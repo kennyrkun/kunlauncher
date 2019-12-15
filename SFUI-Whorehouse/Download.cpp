@@ -174,7 +174,16 @@ int Download::download()
 	if (response.isOk())
 	{
 		std::cout << "[DL] remote file size: " << response.getMessage() << std::endl;
-		fileSize = std::stoi(response.getMessage());
+
+		try
+		{
+			fileSize = std::stoi(response.getMessage());
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "attempted to convert non-interger string to integer:" << e.what() << std::endl;
+			std::cerr << response.getMessage() << std::endl;
+		}
 	}
 	else
 	{
@@ -233,35 +242,46 @@ int Download::save()
 		if (!fs::exists(GBL::DIR::cache + remoteDirectory + remoteFilename))
 		{
 			std::cerr << "[DL] downloaded file does not exist in cache" << std::endl;
-			return Status::Fail;
+			return SaveStatus::Failed | SaveStatus::DownloadedFileDoesNotExistInCache;
 		}
 
 		if (!downloaded)
 		{
 			std::cerr << "[DL] download status was not set as true!" << std::endl;
-			return Status::Fail;
+			return SaveStatus::Failed;
 		}
 
 		if (fs::exists(saveDir + saveFile))
 		{
 			std::cout << "[DL] output file already exists, overwriting" << std::endl;
-			fs::remove(saveDir + saveFile);
+
+			try
+			{
+				fs::remove(saveDir + saveFile);
+			}
+			catch (const std::exception& e)
+			{
+				std::cerr << "failed to remove existing file: " << e.what() << std::endl;
+				return SaveStatus::Failed;
+			}
 		}
 
 		fs::copy_file(GBL::DIR::cache + remoteDirectory + remoteFilename, saveDir + saveFile);
 		std::cout << "[DL] saved file" << std::endl;
 
-		return Status::Success;
+		return SaveStatus::Sucess;
 	}
 	catch (const std::exception &e)
 	{
 		std::cerr << "[DL] failed to save file:" << std::endl;
 		std::cerr << e.what() << std::endl;
 
-		return Status::Fail;
+		return SaveStatus::Failed;
 	}
 }
 
+// TODO: a tiny bit of performance could be squeezed out of this
+// since it is called quite often
 std::string Download::getAppropriateFileSize(const long long int bytes, const int decimals)
 {
 	int bytesPerUnit = 1024;
@@ -288,8 +308,6 @@ void Download::clearCache()
 	}
 }
 
-// private:
-
 int Download::setupFTP()
 {
 	sf::Ftp::Response response = ftp.connect("files.000webhost.com", 21, sf::milliseconds(10000));
@@ -302,7 +320,7 @@ int Download::setupFTP()
 	response = ftp.login("kunlauncher", "9fH^!U2=Ys=+XJYq");
 	if (!response.isOk())
 	{
-		std::cout << "[DL] failed to login to ftp" << std::endl;
+		std::cerr << "[DL] failed to login to ftp" << std::endl;
 		return Status::Fail | Status::LoginFailed;
 	}
 

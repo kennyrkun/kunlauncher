@@ -13,6 +13,16 @@
 class Download
 {
 public:
+	enum SaveStatus
+	{
+		Failed,
+		FileAlreadyExists,
+		CouldNotOpenFile,
+		DownloadedFileDoesNotExistInCache,
+
+		Sucess
+	};
+
 	enum Status
 	{
 		Fail,
@@ -21,6 +31,7 @@ public:
 		ConnectionFailed,
 		ConnectionTimedOut,
 		LoginFailed,
+		FileDoesNotExist,
 	};
 
 public:
@@ -46,7 +57,7 @@ public:
 	int download();
 	int save();
 
-	std::string getAppropriateFileSize(const long long int bytes, const int decimals);
+	std::string getAppropriateFileSize(const long long int bytes, const int decimalPlaces);
 
 	void clearCache();
 	void cleanup();
