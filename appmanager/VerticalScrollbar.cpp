@@ -25,10 +25,10 @@ void VerticalScrollbar::create(sf::RenderWindow* target_window)
 //	scrollTrack.setSize(sf::Vector2f(10, targetWindow->getSize().y));
 //	scrollTrack.setOrigin(sf::Vector2f(scrollTrack.getLocalBounds().width / 2, 0));
 	scrollTrack.setPosition(position);
-	scrollTrack.setFillColor(sf::Color::Black);
+	scrollTrack.setFillColor(GBL::color::SCROLLBAR);
 
 //	scrollThumb.setSize(sf::Vector2f(0, 0));
-	scrollThumb.setFillColor(sf::Color::White);
+	scrollThumb.setFillColor(GBL::color::SCROLLTHUMB);
 }
 
 // TODO: don't reposition thumb after update

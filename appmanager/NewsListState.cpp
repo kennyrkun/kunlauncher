@@ -141,7 +141,7 @@ void NewsListState::HandleEvents()
 					{
 						scrollbar.dragOffset = scrollbar.scrollThumb.getPosition() - sf::Vector2f(sf::Mouse::getPosition(*app->window));
 						scrollbar.draggingThumb = true;
-//						scrollbar.scrollThumb.setFillColor(GBL::color::SCROLLTHUMB_HOLD);
+						scrollbar.scrollThumb.setFillColor(GBL::color::SCROLLTHUMB_HOLD);
 
 						originalMenuPosition = menu->getAbsolutePosition();
 						originalThumbPosition = scrollbar.scrollThumb.getPosition();
@@ -231,12 +231,10 @@ void NewsListState::HandleEvents()
 				{
 					// TODO: find a way to not change scrollbar color every update
 
-					/*
 					if (mouseIsOver(scrollbar.scrollThumb))
-						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB_HOVER);
+						scrollbar.scrollThumb.setFillColor(GBL::color::SCROLLTHUMB_HOVER);
 					else
-						scrollbar.scrollThumb.setFillColor(GBL::theme.palatte.SCROLLTHUMB);
-					*/
+						scrollbar.scrollThumb.setFillColor(GBL::color::SCROLLTHUMB);
 				}
 			}
 		}

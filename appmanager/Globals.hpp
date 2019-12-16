@@ -44,10 +44,10 @@ namespace GBL
 
 	namespace color
 	{
-		const sf::Color SCROLLBAR;
-		const sf::Color SCROLLTHUMB;
-		const sf::Color SCROLLTHUMB_HOVER;
-		const sf::Color SCROLLTHUMB_HOLD;
+		const sf::Color SCROLLBAR = sf::Color(80, 80, 80);
+		const sf::Color SCROLLTHUMB = sf::Color(110, 100, 100);
+		const sf::Color SCROLLTHUMB_HOVER = sf::Color(158, 158, 158);
+		const sf::Color SCROLLTHUMB_HOLD = sf::Color(239, 235, 239);
 	}
 }
 
