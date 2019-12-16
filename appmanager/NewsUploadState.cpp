@@ -13,12 +13,6 @@
 
 namespace fs = std::experimental::filesystem;
 
-enum MenuCallbacks
-{
-	Upload,
-	Back
-};
-
 void NewsUploadState::Init(AppEngine* app_)
 {
 	std::cout << "NewsUploadState Init" << std::endl;
