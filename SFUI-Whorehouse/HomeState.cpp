@@ -467,14 +467,7 @@ void HomeState::loadNews(bool &finishedIndicator, int loadFrom, int loadTo)
 			std::string newline;
 			std::getline(readIndex, newline);
 
-			if (newline != "-----------------------------")
-			{
-				if (newline.empty())
-					break;
-
-				text.append(newline + "\n");
-			}
-			else
+			if (newline == "-----------------------------")
 			{
 				text.erase(text.length() - 1, text.length());
 
@@ -483,6 +476,13 @@ void HomeState::loadNews(bool &finishedIndicator, int loadFrom, int loadTo)
 				std::cout << text << std::endl;
 
 				break;
+			}
+			else
+			{
+				if (newline.empty())
+					text.append("\n");
+				else
+					text.append(newline + "\n");
 			}
 		}
 
