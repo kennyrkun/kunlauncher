@@ -105,8 +105,6 @@ void NewsListState::HandleEvents()
 		{
 		case MenuCallbacks::RedownloadNewsList:
 		{
-			app->drawInformationPanel("Redownloading news...");
-
 			refreshNewsList();
 
 			delete menu;
@@ -311,6 +309,8 @@ void NewsListState::createMenu(SFUI::Menu& menu)
 void NewsListState::refreshNewsList()
 {
 	std::cout << "populating applist" << std::endl;
+
+	app->drawInformationPanel("downloading news...");
 
 	newsList.clear();
 

@@ -95,8 +95,6 @@ void AppListState::HandleEvents()
 		{
 		case MenuCallbacks::RedownloadAppsList:
 		{
-			app->drawInformationPanel("Redownloading index...");
-
 			redownloadAppsList();
 
 			delete menu;
@@ -212,6 +210,8 @@ void AppListState::populateApplist()
 void AppListState::redownloadAppsList()
 {
 	std::cout << "downloading all apps" << std::endl;
+
+	app->drawInformationPanel("Redownloading index...");
 
 	sf::Clock appLoadTime;
 
