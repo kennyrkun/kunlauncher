@@ -300,8 +300,20 @@ void NewsListState::createMenu(SFUI::Menu& menu)
 
 	SFUI::VerticalBoxLayout* newsEntries = container->addVerticalBoxLayout();
 
+	int maxBeforeNewBox = 10;
+	int count = 0;
 	for (size_t i = 0; i < newsList.size(); i++)
+	{
+		if (count == maxBeforeNewBox)
+		{
+			newsEntries = container->addVerticalBoxLayout();
+			count = 0;
+		}
+
 		newsEntries->addButton(newsList[i], i);
+
+		count++;
+	}
 
 	updateScrollThumbSize();
 }
