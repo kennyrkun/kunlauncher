@@ -20,6 +20,9 @@ struct AppInfo
 	std::string iconpath;
 
 	int release;
+
+	// TODO:
+	// typedef uint64_t appid_t;
 	int appid;
 
 	bool loadByAppID(int id)
@@ -34,7 +37,7 @@ struct AppInfo
 			parser.get("author", author);
 			parser.get("github", github);
 			parser.get("release", release);
-			parser.get("appid", id);
+			parser.get("appid", appid);
 
 			return true;
 		}
