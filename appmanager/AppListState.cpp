@@ -143,8 +143,8 @@ void AppListState::createMenu(SFUI::Menu& menu)
 	{
 		SFUI::HorizontalBoxLayout* hbox = menu.addHorizontalBoxLayout();
 
-		hbox->addButton("Edit " + std::to_string(appid), appid);
-		hbox->addLabel(appname == "n0_aPp_nAm3" ? "App has no name" : appname);
+		hbox->addButton(appname == "n0_aPp_nAm3" ? "App has no name" : appname, appid);
+		hbox->addLabel(std::to_string(appid));
 	}
 
 	menu.addButton("Back", MenuCallbacks::BACK);
