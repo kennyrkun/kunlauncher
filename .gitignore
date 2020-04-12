@@ -261,17 +261,21 @@ __pycache__/
 *.pyc
 
 # Custom
+SFUI
+SFML
+a-server
 /upload
 /notes.txt
 /SFUI-Whorehouse/bin
 /SFUI-Whorehouse/latest_launcher.exe
 /SFUI-Whorehouse/kunlauncher.exe
 /SFUI-Whorehouse/kunlaucher.exe.old
-SFUI
-SFML
-a-server
-/appmanager/Debug no Console
-/Debug no Console
-/SFUI-Whorehouse/Debug no Console
 /appmanager/appmanagerbin
-SFUI
+
+/appmanager/CMakeFiles
+/appmanager/CMakeCache.txt
+/appmanager/build
+
+/kunlauncher/CMakeFiles
+/kunlauncher/CMakeCache.txt
+/kunlauncher/build
