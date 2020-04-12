@@ -22,9 +22,9 @@ bool Theme::loadFromFile(std::string file)
 	{
 		themeParser.get("name", name);
 		themeParser.get("author", author);
-		themeParser.get("version", version);
+		themeParser.get("release", release);
 		// TODO: rename this to launcherVersion
-		themeParser.get("launcherversion", themeLauncherVersion);
+		themeParser.get("laucherrelease", launcherRelease);
 
 		{
 			std::vector<int> colors; // TODO: improve this conversion
@@ -227,8 +227,8 @@ bool Theme::saveToFile(std::string file)
 	{
 		themeParser.set("name", name);
 		themeParser.set("author", author);
-		themeParser.set("version", version);
-		themeParser.set("launcherversion", themeLauncherVersion);
+		themeParser.set("release", release);
+		themeParser.set("launcherrelease", launcherRelease);
 
 		themeParser.set("primary", colorAsString(palatte.PRIMARY));
 		themeParser.set("secondary", colorAsString(palatte.SECONDARY));

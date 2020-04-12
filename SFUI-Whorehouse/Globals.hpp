@@ -1,15 +1,15 @@
 #ifndef GLOBALS_HPP
 #define GLOBALS_HPP
 
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <string>
-
-// Things we want widely included.
 #include "Theme.hpp"
 #include "ThreadManager.hpp"
-#include "Version.hpp"
+
 #include <SFUI/Theme.hpp>
+
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Font.hpp>
+
+#include <string>
 
 // TODO: improve Globals system
 // TODO: Windows wrapper
@@ -31,6 +31,8 @@ namespace GBL
 	extern ThreadManager threadManager;
 
 	const std::string appName = "KunLauncher";
+
+	const float release = 17;
 
 	namespace DIR
 	{

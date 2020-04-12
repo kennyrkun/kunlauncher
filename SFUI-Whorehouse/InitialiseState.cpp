@@ -338,7 +338,7 @@ void InitialiseState::initialise()
 			MessageBox::Options modOptions;
 			//TODO: add error handling
 			modOptions.title = "Update Available";
-			modOptions.text = "Version " + updater.remoteVersion.asString() + " is available, would you like to update?";
+			modOptions.text = "release " + std::to_string(updater.remoteRelease) + " is available, would you like to update?";
 			modOptions.settings = { "Yes", "No" };
 
 			MessageBox doYouWannaUpdate(modOptions);
@@ -364,7 +364,7 @@ void InitialiseState::initialise()
 				modOptions.text = "Update Complete";
 
 				// TODO: don't allow restart now on platforms other than windows (we don't know how to start the applicationa again)
-				updateSuccessful_options.text = "The launcher has been updated to version " + updater.remoteVersion.asString() + "\n A restart is required.";
+				updateSuccessful_options.text = "The launcher has been updated to release " + std::to_string(updater.remoteRelease) + "\n A restart is required.";
 				updateSuccessful_options.settings = { "Restart Now", "Restart Later" };
 
 				MessageBox updateSuccessfulModal(updateSuccessful_options);
@@ -731,8 +731,8 @@ int InitialiseState::getThemeConfiguration()
 				darkTheme << std::endl;
 				darkTheme << "name = dark" << std::endl;
 				darkTheme << "author = kennyrkun" << std::endl;
-				darkTheme << "version = 1" << std::endl;
-				darkTheme << "launcherversion = 17" << std::endl;
+				darkTheme << "release = 1" << std::endl;
+				darkTheme << "launcherrelease = 17" << std::endl;
 				darkTheme << std::endl;
 				darkTheme << "// globals" << std::endl;
 				darkTheme << "primary = 100, 100, 100" << std::endl;
@@ -788,8 +788,8 @@ int InitialiseState::getThemeConfiguration()
 				lightTheme << std::endl;
 				lightTheme << "name = light" << std::endl;
 				lightTheme << "author = kennyrkun" << std::endl;
-				lightTheme << "version = 1" << std::endl;
-				lightTheme << "launcherversion = 17" << std::endl;
+				lightTheme << "release = 1" << std::endl;
+				lightTheme << "launcherrelease = 17" << std::endl;
 				lightTheme << std::endl;
 				lightTheme << "// globals" << std::endl;
 				lightTheme << "primary = 150, 150, 150" << std::endl;

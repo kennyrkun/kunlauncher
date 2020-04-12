@@ -1,7 +1,7 @@
 #ifndef NAVBAR_HPP
 #define NAVBAR_HPP
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <map>
 

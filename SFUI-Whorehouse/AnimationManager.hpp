@@ -1,7 +1,7 @@
 #ifndef ANIMATION_MANAGER_HPP
 #define ANIMATION_MANAGER_HPP
 
-#include "../App.hpp"
+#include "App.hpp"
 
 #include <SFML/Graphics.hpp>
 

@@ -74,7 +74,7 @@ void VisualItemInfo::HandleEvents()
 #ifdef _WIN32
 			system("start explorer.exe \"C:/Users/xxxxxxxxxx/Pictures\"");
 #else
-			GBL::MESSAGES::cantOpenNotWindows();
+			GBL::MESSAGE_BOXES::cantOpenNotWindows();
 #endif
 			break;
 		}

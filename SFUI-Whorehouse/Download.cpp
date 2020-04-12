@@ -190,7 +190,7 @@ int Download::download()
 			saveFile = remoteFilename;
 
 		// TODO: possibly don't overwrite file
-		std::ifstream fileContent(GBL::DIR::cache + remoteDirectory + remoteFilename, std::ios::binary, std::ios::trunc);
+		std::ifstream fileContent(GBL::DIR::cache + remoteDirectory + remoteFilename, std::ios::binary | std::ios::trunc);
 		if (fileContent.is_open())
 		{
 			fileBuffer = (std::string((std::istreambuf_iterator<char>(fileContent)), std::istreambuf_iterator<char>()));
@@ -329,6 +329,6 @@ void Download::createDirectory(std::string dir) // recursively
 	for (size_t i = 0; i < subdirectories.size() - 1; i++)
 	{
 		fs::create_directory(last);
-		last = last.append(subdirectories[i + 1]); // add the next path to this path
+		last += subdirectories[i + 1]; // add the next path to this path
 	}
 }

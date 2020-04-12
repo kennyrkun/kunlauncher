@@ -3,7 +3,7 @@
 
 // TODO: changed_files files with a list of files needing to be updated
 
-// KunLaucher uses something like semantic versioning.
+// KunLaucher uses something like semantic releaseing.
 // MAJOR . MINOR . PATCH
 // major is big new features
 // minor is small, QoL features
@@ -13,7 +13,7 @@
 // buildtype = release
 // only download updates with "release" in them
 
-// TODO: if we are unable to recognise the version format, try to update anyway
+// TODO: if we are unable to recognise the release format, try to update anyway
 // rename old executable to allow people to go back if it fucks itself up
 
 #include "Globals.hpp"
@@ -35,8 +35,8 @@ public:
 
 	LauncherUpdater();
 
-	GBL::LauncherVersion remoteVersion;
-	GBL::LauncherVersion localVersion = GBL::version;
+	float remoteRelease;
+	float localRelease = GBL::release;
 
 	int checkForUpdates();
 	int downloadUpdate();
@@ -49,7 +49,7 @@ public:
 	bool requiredUpdate;
 
 private:
-	GBL::LauncherVersion getRemoteVersion();
+	float getRemoteRelease();
 };
 
 #endif // !LAUNCHER_UPDATER_HPP

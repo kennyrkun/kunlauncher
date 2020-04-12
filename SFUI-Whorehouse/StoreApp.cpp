@@ -282,7 +282,7 @@ void StoreApp::openItem()
 	std::string launch = "start " + itemInstallDir + "release.zip -kunlaunched";
 	system(launch.c_str());
 #else
-	GBL::MESSAGES::cantOpenNotWindows();
+	GBL::MESSAGE_BOXES::cantOpenNotWindows();
 #endif
 }
 

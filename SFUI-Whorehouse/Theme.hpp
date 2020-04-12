@@ -1,8 +1,6 @@
 #ifndef THEME_HPP
 #define THEME_HPP
 
-#include "Version.hpp"
-
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
@@ -14,14 +12,14 @@ class Theme
 public:
 	std::string name;
 	std::string author;
-	float version;
+	float release;
 	// TODO: use an actual GBL::Version
 	// then just use .asString to show things
 	// TODO: alert the user when the theme they have is outdated
 	// version of the launcher the theme was built
 
 	// TODO: rename this to ThemeAPIVersion
-	std::string themeLauncherVersion;
+	std::string launcherRelease;
 
 	// file: the name of the theme to be loaded
 	// this assumes the theme file is in GBL::DIR::themes, and has the correct file extension

@@ -27,6 +27,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
+#include <iostream>
 
 // TODO: I don't think `set` will set keys that don't already exist, this needs to be fixed.
 // I think it's fixed in another version of this file in another project.

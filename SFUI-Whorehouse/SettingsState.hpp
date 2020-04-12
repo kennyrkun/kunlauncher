@@ -8,6 +8,7 @@
 #include "Theme.hpp"
 
 #include <SFUI/SFUI.hpp>
+
 #include <SFML/Graphics.hpp>
 
 // TODO: add button to reset settings
@@ -75,7 +76,7 @@ private:
 	{
 		SFUI::InputBox* name;
 		SFUI::InputBox* author;
-		SFUI::InputBox* version;
+		SFUI::InputBox* release;
 
 		ColorInputBox* primaryColor;
 		ColorInputBox* secondaryColor;

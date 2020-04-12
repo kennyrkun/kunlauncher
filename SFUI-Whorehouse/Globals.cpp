@@ -1,6 +1,8 @@
 #include "Globals.hpp"
 #include "MessageBox.hpp"
 
+#include <iostream>
+
 namespace GBL
 {
 	Theme theme;

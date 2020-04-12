@@ -1,7 +1,7 @@
 #ifndef DOWNLOAD_HPP
 #define DOWNLOAD_HPP
 
-#include "SFML\Network.hpp"
+#include <SFML/Network.hpp>
 
 #include <string>
 

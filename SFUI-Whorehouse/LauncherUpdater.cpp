@@ -11,10 +11,10 @@ namespace fs = std::experimental::filesystem;
 
 LauncherUpdater::LauncherUpdater()
 {
-	getRemoteVersion();
+	getRemoteRelease();
 }
 
-GBL::LauncherVersion LauncherUpdater::getRemoteVersion()
+float LauncherUpdater::getRemoteRelease()
 {
 	Download getVersion;
 	getVersion.setInput(GBL::WEB::LATEST::DIR + "version.info");
@@ -23,28 +23,26 @@ GBL::LauncherVersion LauncherUpdater::getRemoteVersion()
 	SettingsParser parseVersion;
 	parseVersion.loadFromFile(GBL::DIR::cache + "/version/latest/version.info");
 
-	GBL::LauncherVersion version;
+	float release;
+	parseVersion.get("release", release);
 
-	parseVersion.get("major", version.major);
-	parseVersion.get("minor", version.minor);
-	parseVersion.get("patch", version.patch);
+//	parseVersion.get("major", version.major);
+//	parseVersion.get("minor", version.minor);
+//	parseVersion.get("patch", version.patch);
 
 	parseVersion.get("required", requiredUpdate);
 
-	return remoteVersion = version;
+	return remoteRelease = release;
 }
 
 int LauncherUpdater::checkForUpdates()
 {
-	std::cout << "[UPD] " <<
-		"r" << remoteVersion.major << "." << remoteVersion.minor << "." << remoteVersion.patch <<
-		" : " << 
-		"l" << localVersion.major << "." << localVersion.minor << "." << localVersion.patch << std::endl;
+	std::cout << "[UPD] r" << remoteRelease << " : l" << localRelease << std::endl;
 
 	if (requiredUpdate)
 		return Status::RequiredUpdate | Status::UpdateAvailable;
 
-	if (remoteVersion > localVersion)
+	if (remoteRelease > localRelease)
 		return Status::UpdateAvailable;
 
 	return Status::NoUpdateAvailable;

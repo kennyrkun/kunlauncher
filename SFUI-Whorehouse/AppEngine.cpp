@@ -5,6 +5,7 @@
 #include "Download.hpp"
 
 #include <SFUI/Theme.hpp>
+
 #include <iostream>
 #include <ctime>
 
@@ -225,7 +226,11 @@ const std::string AppEngine::currentDateTime()
 	time_t     now = time(0);
 	struct tm  timeinfo;
 	char       buf[80];
+#ifdef _WIN32
 	localtime_s(&timeinfo, &now);
+#else
+	localtime_r(&now, &timeinfo);
+#endif // _WIN32
 	strftime(buf, sizeof(buf), "%F.%H-%M-%S", &timeinfo);
 
 	return buf;

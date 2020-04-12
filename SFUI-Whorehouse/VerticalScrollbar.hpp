@@ -1,7 +1,7 @@
 #ifndef SCROLLBAR_HPP
 #define SCROLLBAR_HPP
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 // TODO: improve the way scrollbar works when things are loading or moving
 // TODO: center the scrollbar

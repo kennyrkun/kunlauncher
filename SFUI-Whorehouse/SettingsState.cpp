@@ -351,7 +351,7 @@ void SettingsState::HandleEvents()
 					std::string launch = "start " + GBL::DIR::installDir + "thirdpartynotices.txt";
 					system(launch.c_str());
 #else
-					GBL::MESSAGES::cantOpenNotWindows();
+					GBL::MESSAGE_BOXES::cantOpenNotWindows();
 #endif
 					break;
 				};
@@ -459,7 +459,7 @@ void SettingsState::HandleEvents()
 					std::string date = app->currentDateTime();
 					std::string file = GBL::DIR::installDir + "iss" + date + ".txt";
 
-					std::ofstream issue(file, std::ios::out, std::ios::trunc);
+					std::ofstream issue(file, std::ios::out | std::ios::trunc);
 					if (issue.is_open())
 					{
 						issue.close();
@@ -470,7 +470,7 @@ void SettingsState::HandleEvents()
 							sp.set("name", std::string(reporter.name->getText()));
 							sp.set("description", std::string(reporter.description->getText()));
 							sp.set("date", date);
-							sp.set("version", GBL::version.asString());
+							sp.set("release", GBL::release);
 
 							// system information
 
@@ -762,7 +762,7 @@ void SettingsState::buildDefaultMenu()
 	hbox->addButton("Report Issue...", CALLBACK::REPORT_ISSUE);
 	hbox->addButton("Third Party Notices...", CALLBACK::THIRD_PARTY_NOTICES);
 
-	form->addLabel("KunLauncher\nVersion: " + GBL::version.asString() + "\nBuilt " __DATE__ " at " __TIME__);
+	form->addLabel("KunLauncher\nRelease: " + std::to_string(GBL::release) + "\nBuilt " __DATE__ " at " __TIME__);
 	
 	updateScrollThumbSize();
 }
@@ -804,22 +804,22 @@ void SettingsState::buildThemeEditor(bool editingCurrentTheme)
 
 		mainForm->addLabel("Name: " + editor.theme.name);
 		mainForm->addLabel("Author: " + editor.theme.author);
-		mainForm->addRow("Theme Version: ", editor.version = new SFUI::InputBox, THEME_EDITOR_VERSION);
-		editor.version->setText(std::to_string(editor.theme.version));
-		mainForm->addLabel("LauncherVersion: " + editor.theme.themeLauncherVersion);  \
+		mainForm->addRow("Theme Release: ", editor.release = new SFUI::InputBox, THEME_EDITOR_VERSION);
+		editor.release->setText(std::to_string(editor.theme.release));
+		mainForm->addLabel("LauncherRelease: " + editor.theme.launcherRelease);  \
 		editor.overridenFiles->setText(GBL::theme.overridenFilesAsString());
 	}
 	else // new theme
 	{
 		editor.theme = Theme();
 		editor.theme.name = "new theme";
-		editor.theme.version = 1.0f;
-		editor.theme.themeLauncherVersion = GBL::version.asString();
+		editor.theme.release = 1.0f;
+		editor.theme.launcherRelease = GBL::release;
 
 		mainForm->addRow("Name: ", editor.name = new SFUI::InputBox, THEME_NAME);
 		mainForm->addRow("Author: ", editor.author = new SFUI::InputBox, THEME_EDITOR_AUTHOR);
-		mainForm->addRow("Theme Version: ", editor.version = new SFUI::InputBox, THEME_EDITOR_VERSION);
-		mainForm->addLabel("LauncherVersion: " + editor.theme.themeLauncherVersion);
+		mainForm->addRow("Theme Release: ", editor.release = new SFUI::InputBox, THEME_EDITOR_VERSION);
+		mainForm->addLabel("LauncherRelease: " + editor.theme.launcherRelease);
 	}
 
 	menu->addHorizontalBoxLayout();
@@ -929,7 +929,7 @@ void SettingsState::buildIssueReporter()
 		System Architecture of user
 		System GPU of user
 		Time of report --
-		LauncherVersion --
+		LauncherRelease --
 		Number of apps downloaded
 		Settings of Launcher
 	*/
@@ -944,7 +944,7 @@ void SettingsState::buildIssueReporter()
 	SFUI::FormLayout* mainForm = menu->addFormLayout();
 	mainForm->addRow("Name: ", reporter.name = new SFUI::InputBox);
 	mainForm->addRow("Description: ", reporter.description = new SFUI::InputBox);
-	mainForm->addLabel("Version: " + GBL::version.asString());
+	mainForm->addLabel("Release: " + std::to_string(GBL::release));
 //	mainForm->addRow("Include System Information? ", reporter.includeSystemInformation = new SFUI::CheckBox); // TODO: clean way to get sys info
 
 	/*

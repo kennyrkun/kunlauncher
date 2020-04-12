@@ -1,8 +1,9 @@
 #ifndef NEWS_HPP
 #define NEWS_HPP
 
+#include <SFML/Graphics.hpp>
+
 #include <string>
-#include <SFML\Graphics.hpp>
 
 // TODO: links to the news and ratings and stuff
 // TODO: much better news system
