@@ -2,11 +2,11 @@ SFUI
 SFML
 SFWS
 
-/SFUI-Whorehouse/bin
-/SFUI-Whorehouse/latest_launcher.exe
-/SFUI-Whorehouse/kunlauncher.exe
-/SFUI-Whorehouse/kunlaucher.exe.old
-/SFUI-Whorehouse/build
+/kunlauncher/bin
+/kunlauncher/latest_launcher.exe
+/kunlauncher/kunlauncher.exe
+/kunlauncher/kunlaucher.exe.old
+/kunlauncher/build
 
 /appmanager/build
 /appmanager/appmanagerbin
